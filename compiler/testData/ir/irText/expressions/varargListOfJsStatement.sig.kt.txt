@@ -100,7 +100,7 @@ interface JsStatement : JsNode {
 interface SomeOtherInterface {
 }
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #listOfFooBar(){}
 //   Public signature: /listOfFooBar|-2132939493019270148[0]
 //   Public signature debug description: listOfFooBar(){}
@@ -110,7 +110,7 @@ interface SomeOtherInterface {
 //   Public signature debug description: listOfFooBar(){}kotlin.collections.List<SomeOtherInterface>
 fun listOfFooBar(): List<SomeOtherInterface>
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #listOfVarsExport(){}
 //   Public signature: /listOfVarsExport|-7269711162655089618[0]
 //   Public signature debug description: listOfVarsExport(){}
@@ -120,7 +120,7 @@ fun listOfFooBar(): List<SomeOtherInterface>
 //   Public signature debug description: listOfVarsExport(){}kotlin.collections.List<JsStatement>
 fun listOfVarsExport(): List<JsStatement>
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #listOfVarsNonJsNode(){}
 //   Public signature: /listOfVarsNonJsNode|-1524521566578269376[0]
 //   Public signature debug description: listOfVarsNonJsNode(){}

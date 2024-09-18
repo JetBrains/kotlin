@@ -7,7 +7,7 @@ var p: Int
   //   Mangled name: #<get-p>(){}kotlin.Int
   //   Public signature: /p.<get-p>|5329635969197638839[0]
   //   Public signature debug description: <get-p>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
   //   Public signature debug description: <get-p>(){}

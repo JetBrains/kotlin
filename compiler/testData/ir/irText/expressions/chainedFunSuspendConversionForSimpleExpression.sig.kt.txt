@@ -14,7 +14,7 @@ fun interface SuspendRunnable {
 //   Mangled name: #bar(){}kotlin.Function0<kotlin.Unit>
 //   Public signature: /bar|-2077237772809994309[0]
 //   Public signature debug description: bar(){}kotlin.Function0<kotlin.Unit>
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar(){}
 //   Public signature: /bar|496682602797471549[0]
 //   Public signature debug description: bar(){}

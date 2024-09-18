@@ -14,7 +14,7 @@ class C2 : C1 {
   //   Mangled name: C2#f(){}kotlin.String
   //   Public signature: /C2.f|9098388873611041001[0]
   //   Public signature debug description: f(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C2#f(){}
   //   Public signature: /C2.f|5316533450599009716[0]
   //   Public signature debug description: f(){}
@@ -29,7 +29,7 @@ class C2 : C1 {
     //   Mangled name: C2#<get-p>(){}kotlin.Int
     //   Public signature: /C2.p.<get-p>|5329635969197638839[0]
     //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C2#<get-p>(){}
     //   Public signature: /C2.p.<get-p>|-1162552463316289847[0]
     //   Public signature debug description: <get-p>(){}
@@ -52,7 +52,7 @@ open class C1 {
     //   Mangled name: C1#<get-p>(){}kotlin.Int
     //   Public signature: /C1.p.<get-p>|5329635969197638839[0]
     //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C1#<get-p>(){}
     //   Public signature: /C1.p.<get-p>|-1162552463316289847[0]
     //   Public signature debug description: <get-p>(){}
@@ -68,7 +68,7 @@ open class C1 {
   //   Mangled name: C1#f(){}kotlin.String
   //   Public signature: /C1.f|9098388873611041001[0]
   //   Public signature debug description: f(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C1#f(){}
   //   Public signature: /C1.f|5316533450599009716[0]
   //   Public signature debug description: f(){}

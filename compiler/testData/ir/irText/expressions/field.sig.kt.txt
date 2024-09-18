@@ -7,7 +7,7 @@ var testSimple: Int
   //   Mangled name: #<get-testSimple>(){}kotlin.Int
   //   Public signature: /testSimple.<get-testSimple>|-8005436010067357235[0]
   //   Public signature debug description: <get-testSimple>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-testSimple>(){}
   //   Public signature: /testSimple.<get-testSimple>|-8679451114963008530[0]
   //   Public signature debug description: <get-testSimple>(){}
@@ -27,7 +27,7 @@ var testAugmented: Int
   //   Mangled name: #<get-testAugmented>(){}kotlin.Int
   //   Public signature: /testAugmented.<get-testAugmented>|2800173571752957459[0]
   //   Public signature debug description: <get-testAugmented>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-testAugmented>(){}
   //   Public signature: /testAugmented.<get-testAugmented>|-3271199584899613905[0]
   //   Public signature debug description: <get-testAugmented>(){}

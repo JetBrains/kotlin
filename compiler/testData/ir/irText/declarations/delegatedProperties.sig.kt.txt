@@ -7,7 +7,7 @@ val test1: Int /* by */
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   //   Public signature debug description: <get-test1>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -22,7 +22,7 @@ var test4: Any /* by */
   //   Mangled name: #<get-test4>(){}kotlin.Any
   //   Public signature: /test4.<get-test4>|-6534367907772852251[0]
   //   Public signature debug description: <get-test4>(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test4>(){}
   //   Public signature: /test4.<get-test4>|4166854324968284003[0]
   //   Public signature debug description: <get-test4>(){}
@@ -46,7 +46,7 @@ class C {
     //   Mangled name: C#<get-map>(){}kotlin.collections.MutableMap<kotlin.String,kotlin.Any>
     //   Public signature: /C.map.<get-map>|-8717997113067483919[0]
     //   Public signature debug description: <get-map>(){}kotlin.collections.MutableMap<kotlin.String,kotlin.Any>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-map>(){}
     //   Public signature: /C.map.<get-map>|4042543427940588392[0]
     //   Public signature debug description: <get-map>(){}
@@ -61,7 +61,7 @@ class C {
     //   Mangled name: C#<get-test2>(){}kotlin.Int
     //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
     //   Public signature debug description: <get-test2>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test2>(){}
     //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
     //   Public signature debug description: <get-test2>(){}
@@ -76,7 +76,7 @@ class C {
     //   Mangled name: C#<get-test3>(){}kotlin.Any
     //   Public signature: /C.test3.<get-test3>|-7091348225606608458[0]
     //   Public signature debug description: <get-test3>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test3>(){}
     //   Public signature: /C.test3.<get-test3>|-7333791615083236686[0]
     //   Public signature debug description: <get-test3>(){}

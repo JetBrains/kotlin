@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-test1>(){}kotlin.Int
     //   Public signature: /C.test1.<get-test1>|3978508226793108919[0]
     //   Public signature debug description: <get-test1>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test1>(){}
     //   Public signature: /C.test1.<get-test1>|-5735092642142423279[0]
     //   Public signature debug description: <get-test1>(){}
@@ -26,7 +26,7 @@ class C {
     //   Mangled name: C#<get-test3>(){}kotlin.Int
     //   Public signature: /C.test3.<get-test3>|6145294165644146033[0]
     //   Public signature debug description: <get-test3>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test3>(){}
     //   Public signature: /C.test3.<get-test3>|-7333791615083236686[0]
     //   Public signature debug description: <get-test3>(){}
@@ -46,7 +46,7 @@ class C {
     //   Mangled name: C#<get-test4>(){}kotlin.Int
     //   Public signature: /C.test4.<get-test4>|-8911174941514444072[0]
     //   Public signature debug description: <get-test4>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test4>(){}
     //   Public signature: /C.test4.<get-test4>|4166854324968284003[0]
     //   Public signature debug description: <get-test4>(){}
@@ -66,7 +66,7 @@ class C {
     //   Mangled name: C#<get-test5>(){}kotlin.Int
     //   Public signature: /C.test5.<get-test5>|-639929328226188476[0]
     //   Public signature debug description: <get-test5>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test5>(){}
     //   Public signature: /C.test5.<get-test5>|-839819880171293643[0]
     //   Public signature debug description: <get-test5>(){}
@@ -86,7 +86,7 @@ class C {
     //   Mangled name: C#<get-test6>(){}kotlin.Int
     //   Public signature: /C.test6.<get-test6>|-7378740493776144578[0]
     //   Public signature debug description: <get-test6>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test6>(){}
     //   Public signature: /C.test6.<get-test6>|2028965735388282488[0]
     //   Public signature debug description: <get-test6>(){}
@@ -101,7 +101,7 @@ class C {
     //   Mangled name: C#<get-test7>(){}kotlin.Int
     //   Public signature: /C.test7.<get-test7>|-7305979124924885797[0]
     //   Public signature debug description: <get-test7>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test7>(){}
     //   Public signature: /C.test7.<get-test7>|-4463638325142628163[0]
     //   Public signature debug description: <get-test7>(){}
@@ -116,7 +116,7 @@ class C {
     //   Mangled name: C#<get-test8>(){}kotlin.Int
     //   Public signature: /C.test8.<get-test8>|-4986202166917088055[0]
     //   Public signature debug description: <get-test8>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test8>(){}
     //   Public signature: /C.test8.<get-test8>|-4670710835380513070[0]
     //   Public signature debug description: <get-test8>(){}
@@ -142,7 +142,7 @@ class C {
     //   Mangled name: C#<get-test2>(){}kotlin.Int
     //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
     //   Public signature debug description: <get-test2>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test2>(){}
     //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
     //   Public signature debug description: <get-test2>(){}

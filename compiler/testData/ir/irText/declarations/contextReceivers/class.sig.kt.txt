@@ -12,7 +12,7 @@ class Inner {
   //   Mangled name: Inner#bar(){}kotlin.Int
   //   Public signature: /Inner.bar|-6436649210114349217[0]
   //   Public signature debug description: bar(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Inner#bar(){}
   //   Public signature: /Inner.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -33,7 +33,7 @@ class Outer {
     //   Mangled name: Outer#<get-x>(){}kotlin.Int
     //   Public signature: /Outer.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Outer#<get-x>(){}
     //   Public signature: /Outer.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

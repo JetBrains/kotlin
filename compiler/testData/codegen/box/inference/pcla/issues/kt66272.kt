@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-66272
-// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM, NATIVE
+// IGNORE_BACKEND_K1: JVM_IR, JS, JS_ES6, WASM, NATIVE
 // Reason: Could not load module <Error module>
 
 data class DataClass(val data: String)

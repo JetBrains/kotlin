@@ -34,7 +34,7 @@ inline fun foo(f: () -> Unit) {
 // test.kt:18 box
 // test.kt:13 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:16 box
 // test.kt:7 box
 // test.kt:16 box

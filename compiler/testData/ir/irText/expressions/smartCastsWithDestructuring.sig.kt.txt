@@ -14,7 +14,7 @@ interface I2 {
 //   Mangled name: #component1@I1(){}kotlin.Int
 //   Public signature: /component1|8801376328143328436[0]
 //   Public signature debug description: component1@I1(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #component1@I1(){}
 //   Public signature: /component1|-7381230852082083752[0]
 //   Public signature debug description: component1@I1(){}
@@ -24,7 +24,7 @@ operator fun I1.component1(): Int
 //   Mangled name: #component2@I2(){}kotlin.String
 //   Public signature: /component2|-3393912940495634771[0]
 //   Public signature debug description: component2@I2(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #component2@I2(){}
 //   Public signature: /component2|-7506551577483428650[0]
 //   Public signature debug description: component2@I2(){}

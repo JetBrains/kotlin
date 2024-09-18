@@ -44,7 +44,7 @@ fun <T : Any?> Foo<T>.extFoo(): Unit
 //   Mangled name: #materialize(){0§<kotlin.Any?>}0:0
 //   Public signature: /materialize|4529465674657197020[0]
 //   Public signature debug description: materialize(){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #materialize(){0§<kotlin.Any?>}
 //   Public signature: /materialize|5983574876741311895[0]
 //   Public signature debug description: materialize(){0§<kotlin.Any?>}

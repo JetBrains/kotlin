@@ -1,8 +1,8 @@
 // LANGUAGE: +SuspendConversion
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM, JS, JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JVM, JS
+// IGNORE_BACKEND: JS_ES6
 
 import helpers.*
 import kotlin.coroutines.*

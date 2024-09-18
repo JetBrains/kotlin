@@ -20,7 +20,7 @@ abstract enum class X : Enum<X> {
       //   Mangled name: X.B#<get-value2>(){}kotlin.String
       //   Public signature: /X.B.<EEC>.value2.<get-value2>|2390168402748813003[0]
       //   Public signature debug description: <get-value2>(){}kotlin.String
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: X.B#<get-value2>(){}
       //   Public signature: /X.B.<EEC>.value2.<get-value2>|1776957621204807843[0]
       //   Public signature debug description: <get-value2>(){}
@@ -35,7 +35,7 @@ abstract enum class X : Enum<X> {
       //   Mangled name: X.B#<get-value>(){}kotlin.Function0<kotlin.String>
       //   Public signature: /X.B.<EEC>.value.<get-value>|-2160558915408168462[0]
       //   Public signature debug description: <get-value>(){}kotlin.Function0<kotlin.String>
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: X.B#<get-value>(){}
       //   Public signature: /X.B.<EEC>.value.<get-value>|3260093555963109437[0]
       //   Public signature debug description: <get-value>(){}
@@ -51,7 +51,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X.B#compareTo(X){}kotlin.Int
     //   Public signature: /X.B.<EEC>.compareTo|-4945307460605318887[0]
     //   Public signature debug description: compareTo(X){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X.B#compareTo(X){}
     //   Public signature: /X.B.<EEC>.compareTo|1261254128967309541[0]
     //   Public signature debug description: compareTo(X){}
@@ -61,7 +61,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X.B#equals(kotlin.Any?){}kotlin.Boolean
     //   Public signature: /X.B.<EEC>.equals|722809408929142791[0]
     //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X.B#equals(kotlin.Any?){}
     //   Public signature: /X.B.<EEC>.equals|4638265728071529943[0]
     //   Public signature debug description: equals(kotlin.Any?){}
@@ -71,7 +71,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X.B#hashCode(){}kotlin.Int
     //   Public signature: /X.B.<EEC>.hashCode|-8048879360829830756[0]
     //   Public signature debug description: hashCode(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X.B#hashCode(){}
     //   Public signature: /X.B.<EEC>.hashCode|3409210261493131192[0]
     //   Public signature debug description: hashCode(){}
@@ -81,7 +81,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X.B#toString(){}kotlin.String
     //   Public signature: /X.B.<EEC>.toString|6958853723545266802[0]
     //   Public signature debug description: toString(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X.B#toString(){}
     //   Public signature: /X.B.<EEC>.toString|-1522858123163872138[0]
     //   Public signature debug description: toString(){}
@@ -96,7 +96,7 @@ abstract enum class X : Enum<X> {
       //   Mangled name: X.B#<get-name>(){}kotlin.String
       //   Public signature: /X.B.<EEC>.name.<get-name>|-8006111524522882650[0]
       //   Public signature debug description: <get-name>(){}kotlin.String
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: X.B#<get-name>(){}
       //   Public signature: /X.B.<EEC>.name.<get-name>|5879344792307730109[0]
       //   Public signature debug description: <get-name>(){}
@@ -111,7 +111,7 @@ abstract enum class X : Enum<X> {
       //   Mangled name: X.B#<get-ordinal>(){}kotlin.Int
       //   Public signature: /X.B.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
       //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: X.B#<get-ordinal>(){}
       //   Public signature: /X.B.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
       //   Public signature debug description: <get-ordinal>(){}
@@ -129,7 +129,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#valueOf#static(kotlin.String){}X
   //   Public signature: /X.valueOf|5795127078210310399[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}X
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#valueOf#static(kotlin.String){}
   //   Public signature: /X.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
@@ -139,7 +139,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#values#static(){}kotlin.Array<X>
   //   Public signature: /X.values|-7109739533511471403[0]
   //   Public signature debug description: values#static(){}kotlin.Array<X>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#values#static(){}
   //   Public signature: /X.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
@@ -149,7 +149,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#compareTo(X){}kotlin.Int
   //   Public signature: /X.compareTo|-4945307460605318887[0]
   //   Public signature debug description: compareTo(X){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#compareTo(X){}
   //   Public signature: /X.compareTo|1261254128967309541[0]
   //   Public signature debug description: compareTo(X){}
@@ -159,7 +159,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /X.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#equals(kotlin.Any?){}
   //   Public signature: /X.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -169,7 +169,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#hashCode(){}kotlin.Int
   //   Public signature: /X.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#hashCode(){}
   //   Public signature: /X.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -179,7 +179,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#toString(){}kotlin.String
   //   Public signature: /X.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: X#toString(){}
   //   Public signature: /X.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -194,7 +194,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X#<get-entries>#static(){}kotlin.enums.EnumEntries<X>
     //   Public signature: /X.entries.<get-entries>|6681560497291336349[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<X>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X#<get-entries>#static(){}
     //   Public signature: /X.entries.<get-entries>|-6068527377476727729[0]
     //   Public signature debug description: <get-entries>#static(){}
@@ -209,7 +209,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X#<get-name>(){}kotlin.String
     //   Public signature: /X.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X#<get-name>(){}
     //   Public signature: /X.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -224,7 +224,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X#<get-ordinal>(){}kotlin.Int
     //   Public signature: /X.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X#<get-ordinal>(){}
     //   Public signature: /X.ordinal.<get-ordinal>|8409904226035914023[0]
     //   Public signature debug description: <get-ordinal>(){}
@@ -239,7 +239,7 @@ abstract enum class X : Enum<X> {
     //   Mangled name: X#<get-value>(){}kotlin.Function0<kotlin.String>
     //   Public signature: /X.value.<get-value>|-2160558915408168462[0]
     //   Public signature debug description: <get-value>(){}kotlin.Function0<kotlin.String>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X#<get-value>(){}
     //   Public signature: /X.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -251,7 +251,7 @@ abstract enum class X : Enum<X> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTest {
   @Test
   public void testAllFilesPresentInLocalVariables() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "inlineScopes");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true, "inlineScopes");
   }
 
   @Test
@@ -79,12 +79,6 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @TestMetadata("inlineProperty.kt")
   public void testInlineProperty() {
     runTest("compiler/testData/debug/localVariables/inlineProperty.kt");
-  }
-
-  @Test
-  @TestMetadata("jsCode.kt")
-  public void testJsCode() {
-    runTest("compiler/testData/debug/localVariables/jsCode.kt");
   }
 
   @Test
@@ -238,7 +232,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   public class Constructors {
     @Test
     public void testAllFilesPresentInConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Test
@@ -261,7 +255,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   public class Destructuring {
     @Test
     public void testAllFilesPresentInDestructuring() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Test
@@ -350,7 +344,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   public class ReceiverMangling {
     @Test
     public void testAllFilesPresentInReceiverMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Test
@@ -409,7 +403,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   public class Suspend {
     @Test
     public void testAllFilesPresentInSuspend() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Test
@@ -467,13 +461,19 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
     public class Completion {
       @Test
       public void testAllFilesPresentInCompletion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
       @TestMetadata("nonStaticSimple.kt")
       public void testNonStaticSimple() {
         runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticSimple.kt");
+      }
+
+      @Test
+      @TestMetadata("nonStaticStateMachine.kt")
+      public void testNonStaticStateMachine() {
+        runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticStateMachine.kt");
       }
 
       @Test

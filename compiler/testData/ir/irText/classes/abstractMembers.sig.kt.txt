@@ -23,7 +23,7 @@ abstract class AbstractClass {
     //   Mangled name: AbstractClass#<get-abstractVal>(){}kotlin.Int
     //   Public signature: /AbstractClass.abstractVal.<get-abstractVal>|1560246296064696993[0]
     //   Public signature debug description: <get-abstractVal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AbstractClass#<get-abstractVal>(){}
     //   Public signature: /AbstractClass.abstractVal.<get-abstractVal>|-836793625462255519[0]
     //   Public signature debug description: <get-abstractVal>(){}
@@ -38,7 +38,7 @@ abstract class AbstractClass {
     //   Mangled name: AbstractClass#<get-abstractVar>(){}kotlin.Int
     //   Public signature: /AbstractClass.abstractVar.<get-abstractVar>|-3718567610021314347[0]
     //   Public signature debug description: <get-abstractVar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AbstractClass#<get-abstractVar>(){}
     //   Public signature: /AbstractClass.abstractVar.<get-abstractVar>|7559126596100066971[0]
     //   Public signature debug description: <get-abstractVar>(){}
@@ -70,7 +70,7 @@ interface Interface {
     //   Mangled name: Interface#<get-abstractVal>(){}kotlin.Int
     //   Public signature: /Interface.abstractVal.<get-abstractVal>|1560246296064696993[0]
     //   Public signature debug description: <get-abstractVal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Interface#<get-abstractVal>(){}
     //   Public signature: /Interface.abstractVal.<get-abstractVal>|-836793625462255519[0]
     //   Public signature debug description: <get-abstractVal>(){}
@@ -85,7 +85,7 @@ interface Interface {
     //   Mangled name: Interface#<get-abstractVar>(){}kotlin.Int
     //   Public signature: /Interface.abstractVar.<get-abstractVar>|-3718567610021314347[0]
     //   Public signature debug description: <get-abstractVar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Interface#<get-abstractVar>(){}
     //   Public signature: /Interface.abstractVar.<get-abstractVar>|7559126596100066971[0]
     //   Public signature debug description: <get-abstractVar>(){}

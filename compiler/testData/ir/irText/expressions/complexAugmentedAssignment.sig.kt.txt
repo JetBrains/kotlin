@@ -11,7 +11,7 @@ class B {
     //   Mangled name: B#<get-s>(){}kotlin.Int
     //   Public signature: /B.s.<get-s>|-4647012324166823285[0]
     //   Public signature debug description: <get-s>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: B#<get-s>(){}
     //   Public signature: /B.s.<get-s>|-1662172381559511151[0]
     //   Public signature debug description: <get-s>(){}
@@ -61,7 +61,7 @@ object X1 {
     //   Mangled name: X1#<get-x1>(){}kotlin.Int
     //   Public signature: /X1.x1.<get-x1>|7552224918031182012[0]
     //   Public signature debug description: <get-x1>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X1#<get-x1>(){}
     //   Public signature: /X1.x1.<get-x1>|-6784695929064323344[0]
     //   Public signature debug description: <get-x1>(){}
@@ -85,7 +85,7 @@ object X1 {
       //   Mangled name: X1.X2#<get-x2>(){}kotlin.Int
       //   Public signature: /X1.X2.x2.<get-x2>|8643944297803616344[0]
       //   Public signature debug description: <get-x2>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: X1.X2#<get-x2>(){}
       //   Public signature: /X1.X2.x2.<get-x2>|4516516368910539088[0]
       //   Public signature debug description: <get-x2>(){}
@@ -109,7 +109,7 @@ object X1 {
         //   Mangled name: X1.X2.X3#<get-x3>(){}kotlin.Int
         //   Public signature: /X1.X2.X3.x3.<get-x3>|8346856633438806711[0]
         //   Public signature debug description: <get-x3>(){}kotlin.Int
-        // CHECK JS_IR NATIVE:
+        // CHECK JS NATIVE:
         //   Mangled name: X1.X2.X3#<get-x3>(){}
         //   Public signature: /X1.X2.X3.x3.<get-x3>|1880487902145043103[0]
         //   Public signature debug description: <get-x3>(){}

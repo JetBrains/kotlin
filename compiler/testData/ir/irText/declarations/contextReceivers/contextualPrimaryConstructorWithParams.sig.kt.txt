@@ -11,7 +11,7 @@ class O {
     //   Mangled name: O#<get-o>(){}kotlin.String
     //   Public signature: /O.o.<get-o>|2606027183154875572[0]
     //   Public signature debug description: <get-o>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: O#<get-o>(){}
     //   Public signature: /O.o.<get-o>|-5005637647237604760[0]
     //   Public signature debug description: <get-o>(){}
@@ -38,7 +38,7 @@ class OK {
     //   Mangled name: OK#<get-k>(){}kotlin.String
     //   Public signature: /OK.k.<get-k>|-8248201737917988340[0]
     //   Public signature debug description: <get-k>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: OK#<get-k>(){}
     //   Public signature: /OK.k.<get-k>|2619553883593572199[0]
     //   Public signature debug description: <get-k>(){}
@@ -53,7 +53,7 @@ class OK {
     //   Mangled name: OK#<get-result>(){}kotlin.String
     //   Public signature: /OK.result.<get-result>|8441547134620975366[0]
     //   Public signature debug description: <get-result>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: OK#<get-result>(){}
     //   Public signature: /OK.result.<get-result>|7945192536455394063[0]
     //   Public signature debug description: <get-result>(){}
@@ -71,7 +71,7 @@ class OK {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

@@ -6,7 +6,7 @@ interface A {
   //   Mangled name: A#a(){}kotlin.Int
   //   Public signature: /A.a|5993980063692763883[0]
   //   Public signature debug description: a(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#a(){}
   //   Public signature: /A.a|-4432112437378250461[0]
   //   Public signature debug description: a(){}
@@ -22,7 +22,7 @@ interface B {
   //   Mangled name: B#b(){}kotlin.Int
   //   Public signature: /B.b|-6472101675379091489[0]
   //   Public signature debug description: b(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: B#b(){}
   //   Public signature: /B.b|4789657038926421504[0]
   //   Public signature debug description: b(){}
@@ -39,7 +39,7 @@ val c: Int
   //   Mangled name: #<get-c>!A!B(){}kotlin.Int
   //   Public signature: /c.<get-c>|-2082007887378586898[0]
   //   Public signature debug description: <get-c>!A!B(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-c>!A!B(){}
   //   Public signature: /c.<get-c>|2760865531401172403[0]
   //   Public signature debug description: <get-c>!A!B(){}

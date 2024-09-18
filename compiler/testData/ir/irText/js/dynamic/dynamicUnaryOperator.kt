@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FIR_IDENTICAL
 fun testUnaryMinus(d: dynamic) = -d
 fun testUnaryPlus(d: dynamic) = +d

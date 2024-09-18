@@ -92,7 +92,7 @@ private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testSer
             writeText(generatedCode)
         }
 
-        val linesPattern = Regex("^ *// *LINES\\((?:$frontend )? *JS_IR\\): *(.*)$", RegexOption.MULTILINE)
+        val linesPattern = Regex("^ *// *LINES\\((?:$frontend )? *JS\\): *(.*)$", RegexOption.MULTILINE)
 
         val linesMatcher = module.files
             .firstNotNullOfOrNull { linesPattern.find(it.originalContent) }

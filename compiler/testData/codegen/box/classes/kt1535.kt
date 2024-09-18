@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 // TODO: Enable when JS backend supports Java class library, since FunctionX are required for interoperation
 class Works() : Function0<Any> {
     public override fun invoke():Any {

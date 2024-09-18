@@ -1,6 +1,6 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // LANGUAGE: +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument -SamConversionPerArgument
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // SKIP_TXT
 
 // FILE: Test.java

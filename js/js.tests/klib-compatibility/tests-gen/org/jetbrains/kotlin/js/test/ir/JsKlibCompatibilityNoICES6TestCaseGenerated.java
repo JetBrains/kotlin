@@ -27,7 +27,7 @@ public class JsKlibCompatibilityNoICES6TestCaseGenerated extends AbstractJsKlibC
 
   @Test
   public void testAllFilesPresentInVersionCompatibility() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/versionCompatibility"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/versionCompatibility"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS, false);
   }
 
   @Test

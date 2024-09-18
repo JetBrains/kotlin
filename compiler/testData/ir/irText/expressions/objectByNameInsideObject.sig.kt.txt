@@ -11,7 +11,7 @@ open class Base {
     //   Mangled name: Base#<get-f1>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Base.f1.<get-f1>|8566118280674785385[0]
     //   Public signature debug description: <get-f1>(){}kotlin.Function0<kotlin.Any>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-f1>(){}
     //   Public signature: /Base.f1.<get-f1>|-4995485398991269878[0]
     //   Public signature debug description: <get-f1>(){}
@@ -39,7 +39,7 @@ object Thing : Base {
   //   Mangled name: Thing#test1(){}Thing
   //   Public signature: /Thing.test1|3967638963180272121[0]
   //   Public signature debug description: test1(){}Thing
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Thing#test1(){}
   //   Public signature: /Thing.test1|4297044443957252634[0]
   //   Public signature debug description: test1(){}
@@ -49,7 +49,7 @@ object Thing : Base {
   //   Mangled name: Thing#test2(){}Thing
   //   Public signature: /Thing.test2|-7201124175106784013[0]
   //   Public signature debug description: test2(){}Thing
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Thing#test2(){}
   //   Public signature: /Thing.test2|4279114864133353152[0]
   //   Public signature debug description: test2(){}
@@ -64,7 +64,7 @@ object Thing : Base {
     //   Mangled name: Thing#<get-f1>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Thing.f1.<get-f1>|8566118280674785385[0]
     //   Public signature debug description: <get-f1>(){}kotlin.Function0<kotlin.Any>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Thing#<get-f1>(){}
     //   Public signature: /Thing.f1.<get-f1>|-4995485398991269878[0]
     //   Public signature debug description: <get-f1>(){}

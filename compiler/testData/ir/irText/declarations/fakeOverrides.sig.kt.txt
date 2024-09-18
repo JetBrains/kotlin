@@ -29,7 +29,7 @@ class Test1 : CFoo<String>, IBar, IFooStr {
     //   Mangled name: Test1#<get-bar>(){}kotlin.Int
     //   Public signature: /Test1.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-bar>(){}
     //   Public signature: /Test1.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -62,7 +62,7 @@ interface IBar {
     //   Mangled name: IBar#<get-bar>(){}kotlin.Int
     //   Public signature: /IBar.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IBar#<get-bar>(){}
     //   Public signature: /IBar.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}

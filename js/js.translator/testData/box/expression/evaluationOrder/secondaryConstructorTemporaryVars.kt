@@ -1,5 +1,5 @@
-// HAS_NO_CAPTURED_VARS: function=A_init_$Init$ except=A;equals TARGET_BACKENDS=JS_IR
-// HAS_NO_CAPTURED_VARS: function=new_A_z6ztw9_k$ except=equals TARGET_BACKENDS=JS_IR_ES6
+// HAS_NO_CAPTURED_VARS: function=A_init_$Init$ except=A;equals TARGET_BACKENDS=JS
+// HAS_NO_CAPTURED_VARS: function=new_A_z6ztw9_k$ except=equals TARGET_BACKENDS=JS_ES6
 
 class A() {
     var y: String? = null

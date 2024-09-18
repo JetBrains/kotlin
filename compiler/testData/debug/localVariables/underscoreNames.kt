@@ -61,7 +61,7 @@ fun box() {
 // test.kt:12 box:
 // test.kt:24 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:

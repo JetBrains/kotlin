@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS
 // ^ This test is very flaky on JS due to a Node.js bug https://github.com/nodejs/node/issues/45410
 // FILE: test.kt
 class A {

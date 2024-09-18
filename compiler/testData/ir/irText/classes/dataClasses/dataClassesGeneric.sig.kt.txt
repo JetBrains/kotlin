@@ -11,7 +11,7 @@ data class Test1<T : Any?> {
     //   Mangled name: Test1#<get-x>(){}1:0
     //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-x>(){}
     //   Public signature: /Test1.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -27,7 +27,7 @@ data class Test1<T : Any?> {
   //   Mangled name: Test1#component1(){}1:0
   //   Public signature: /Test1.component1|2393470133763651536[0]
   //   Public signature debug description: component1(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#component1(){}
   //   Public signature: /Test1.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -37,7 +37,7 @@ data class Test1<T : Any?> {
   //   Mangled name: Test1#copy(1:0){}Test1<1:0>
   //   Public signature: /Test1.copy|-3829390724189512274[0]
   //   Public signature debug description: copy(1:0){}Test1<1:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#copy(1:0){}
   //   Public signature: /Test1.copy|3824555624975687868[0]
   //   Public signature debug description: copy(1:0){}
@@ -47,7 +47,7 @@ data class Test1<T : Any?> {
   //   Mangled name: Test1#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test1.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#equals(kotlin.Any?){}
   //   Public signature: /Test1.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -57,7 +57,7 @@ data class Test1<T : Any?> {
   //   Mangled name: Test1#hashCode(){}kotlin.Int
   //   Public signature: /Test1.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#hashCode(){}
   //   Public signature: /Test1.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -67,7 +67,7 @@ data class Test1<T : Any?> {
   //   Mangled name: Test1#toString(){}kotlin.String
   //   Public signature: /Test1.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#toString(){}
   //   Public signature: /Test1.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -88,7 +88,7 @@ data class Test2<T : Number> {
     //   Mangled name: Test2#<get-x>(){}1:0
     //   Public signature: /Test2.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-x>(){}
     //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -104,7 +104,7 @@ data class Test2<T : Number> {
   //   Mangled name: Test2#component1(){}1:0
   //   Public signature: /Test2.component1|2393470133763651536[0]
   //   Public signature debug description: component1(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#component1(){}
   //   Public signature: /Test2.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -114,7 +114,7 @@ data class Test2<T : Number> {
   //   Mangled name: Test2#copy(1:0){}Test2<1:0>
   //   Public signature: /Test2.copy|6320544838333919124[0]
   //   Public signature debug description: copy(1:0){}Test2<1:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#copy(1:0){}
   //   Public signature: /Test2.copy|3824555624975687868[0]
   //   Public signature debug description: copy(1:0){}
@@ -124,7 +124,7 @@ data class Test2<T : Number> {
   //   Mangled name: Test2#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test2.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#equals(kotlin.Any?){}
   //   Public signature: /Test2.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -134,7 +134,7 @@ data class Test2<T : Number> {
   //   Mangled name: Test2#hashCode(){}kotlin.Int
   //   Public signature: /Test2.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#hashCode(){}
   //   Public signature: /Test2.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -144,7 +144,7 @@ data class Test2<T : Number> {
   //   Mangled name: Test2#toString(){}kotlin.String
   //   Public signature: /Test2.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#toString(){}
   //   Public signature: /Test2.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -165,7 +165,7 @@ data class Test3<T : Any?> {
     //   Mangled name: Test3#<get-x>(){}kotlin.collections.List<1:0>
     //   Public signature: /Test3.x.<get-x>|-8777382765774009671[0]
     //   Public signature debug description: <get-x>(){}kotlin.collections.List<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test3#<get-x>(){}
     //   Public signature: /Test3.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -181,7 +181,7 @@ data class Test3<T : Any?> {
   //   Mangled name: Test3#component1(){}kotlin.collections.List<1:0>
   //   Public signature: /Test3.component1|-4141154284195946749[0]
   //   Public signature debug description: component1(){}kotlin.collections.List<1:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test3#component1(){}
   //   Public signature: /Test3.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -191,7 +191,7 @@ data class Test3<T : Any?> {
   //   Mangled name: Test3#copy(kotlin.collections.List<1:0>){}Test3<1:0>
   //   Public signature: /Test3.copy|-1250137760207177088[0]
   //   Public signature debug description: copy(kotlin.collections.List<1:0>){}Test3<1:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test3#copy(kotlin.collections.List<1:0>){}
   //   Public signature: /Test3.copy|9161286063615545697[0]
   //   Public signature debug description: copy(kotlin.collections.List<1:0>){}
@@ -201,7 +201,7 @@ data class Test3<T : Any?> {
   //   Mangled name: Test3#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test3.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test3#equals(kotlin.Any?){}
   //   Public signature: /Test3.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -211,7 +211,7 @@ data class Test3<T : Any?> {
   //   Mangled name: Test3#hashCode(){}kotlin.Int
   //   Public signature: /Test3.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test3#hashCode(){}
   //   Public signature: /Test3.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -221,7 +221,7 @@ data class Test3<T : Any?> {
   //   Mangled name: Test3#toString(){}kotlin.String
   //   Public signature: /Test3.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test3#toString(){}
   //   Public signature: /Test3.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -242,7 +242,7 @@ data class Test4 {
     //   Mangled name: Test4#<get-x>(){}kotlin.collections.List<kotlin.String>
     //   Public signature: /Test4.x.<get-x>|-612381453611729517[0]
     //   Public signature debug description: <get-x>(){}kotlin.collections.List<kotlin.String>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test4#<get-x>(){}
     //   Public signature: /Test4.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -258,7 +258,7 @@ data class Test4 {
   //   Mangled name: Test4#component1(){}kotlin.collections.List<kotlin.String>
   //   Public signature: /Test4.component1|-4918334505452908017[0]
   //   Public signature debug description: component1(){}kotlin.collections.List<kotlin.String>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test4#component1(){}
   //   Public signature: /Test4.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -268,7 +268,7 @@ data class Test4 {
   //   Mangled name: Test4#copy(kotlin.collections.List<kotlin.String>){}Test4
   //   Public signature: /Test4.copy|8976360980800871723[0]
   //   Public signature debug description: copy(kotlin.collections.List<kotlin.String>){}Test4
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test4#copy(kotlin.collections.List<kotlin.String>){}
   //   Public signature: /Test4.copy|8294748365935686629[0]
   //   Public signature debug description: copy(kotlin.collections.List<kotlin.String>){}
@@ -278,7 +278,7 @@ data class Test4 {
   //   Mangled name: Test4#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test4.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test4#equals(kotlin.Any?){}
   //   Public signature: /Test4.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -288,7 +288,7 @@ data class Test4 {
   //   Mangled name: Test4#hashCode(){}kotlin.Int
   //   Public signature: /Test4.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test4#hashCode(){}
   //   Public signature: /Test4.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -298,7 +298,7 @@ data class Test4 {
   //   Mangled name: Test4#toString(){}kotlin.String
   //   Public signature: /Test4.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test4#toString(){}
   //   Public signature: /Test4.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}

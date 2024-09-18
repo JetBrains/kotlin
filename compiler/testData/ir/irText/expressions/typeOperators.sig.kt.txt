@@ -8,7 +8,7 @@ interface IThing {
 //   Mangled name: #test1(kotlin.Any){}kotlin.Boolean
 //   Public signature: /test1|1992455603103220352[0]
 //   Public signature debug description: test1(kotlin.Any){}kotlin.Boolean
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test1(kotlin.Any){}
 //   Public signature: /test1|-4133164698161335314[0]
 //   Public signature debug description: test1(kotlin.Any){}
@@ -18,7 +18,7 @@ fun test1(x: Any): Boolean
 //   Mangled name: #test2(kotlin.Any){}kotlin.Boolean
 //   Public signature: /test2|3521389046788459849[0]
 //   Public signature debug description: test2(kotlin.Any){}kotlin.Boolean
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test2(kotlin.Any){}
 //   Public signature: /test2|-8648451680149324146[0]
 //   Public signature debug description: test2(kotlin.Any){}
@@ -28,7 +28,7 @@ fun test2(x: Any): Boolean
 //   Mangled name: #test3(kotlin.Any){}IThing
 //   Public signature: /test3|4511496264328134559[0]
 //   Public signature debug description: test3(kotlin.Any){}IThing
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test3(kotlin.Any){}
 //   Public signature: /test3|165168275269731002[0]
 //   Public signature debug description: test3(kotlin.Any){}
@@ -38,7 +38,7 @@ fun test3(x: Any): IThing
 //   Mangled name: #test4(kotlin.Any){}IThing?
 //   Public signature: /test4|754810918571935352[0]
 //   Public signature debug description: test4(kotlin.Any){}IThing?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test4(kotlin.Any){}
 //   Public signature: /test4|-9023258848991787985[0]
 //   Public signature debug description: test4(kotlin.Any){}

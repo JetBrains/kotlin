@@ -11,7 +11,7 @@ class Outer<T : Any?> {
     //   Mangled name: Outer#<get-x>(){}1:0
     //   Public signature: /Outer.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Outer#<get-x>(){}
     //   Public signature: /Outer.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -30,7 +30,7 @@ class Outer<T : Any?> {
       //   Mangled name: Outer.Inner#<get-y>(){}kotlin.Int
       //   Public signature: /Outer.Inner.y.<get-y>|-6745575372101973707[0]
       //   Public signature debug description: <get-y>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Outer.Inner#<get-y>(){}
       //   Public signature: /Outer.Inner.y.<get-y>|-7902422373892128922[0]
       //   Public signature debug description: <get-y>(){}
@@ -56,7 +56,7 @@ class Outer<T : Any?> {
 //   Mangled name: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>
 //   Public signature: /test|7679810293855475963[0]
 //   Public signature debug description: test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test@Outer<kotlin.Int>(){}
 //   Public signature: /test|6770853626275071541[0]
 //   Public signature debug description: test@Outer<kotlin.Int>(){}

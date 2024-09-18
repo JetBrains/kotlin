@@ -6,7 +6,7 @@
 // IGNORE_BACKEND: WASM
 //  ^ wasm-function[1893]:0x1cf8a: RuntimeError: dereferencing a null pointer
 
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 //  ^ TypeError: tmp is not a function
 
 // FILE: funInterfaceConstructedObjectsEquality.kt

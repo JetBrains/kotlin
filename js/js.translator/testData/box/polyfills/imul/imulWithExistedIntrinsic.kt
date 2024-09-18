@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FILE: main.js
 Math.imul = function imul(a, b) {
     imul.called = true;

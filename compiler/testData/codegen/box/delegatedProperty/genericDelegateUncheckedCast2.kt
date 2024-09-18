@@ -4,8 +4,8 @@
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 // IGNORE_BACKEND: JVM, JS
 
 import kotlin.reflect.KProperty

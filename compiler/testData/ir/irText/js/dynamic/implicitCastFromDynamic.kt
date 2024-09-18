@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FIR_IDENTICAL
 
 val d: dynamic = 1

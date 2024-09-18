@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FILE: main.js
 Math.log1p = function log1p(x) {
     log1p.called = true;

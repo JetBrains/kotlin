@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+    AbstractIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS) {
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(

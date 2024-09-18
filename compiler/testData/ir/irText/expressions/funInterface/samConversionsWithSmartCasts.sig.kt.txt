@@ -20,7 +20,7 @@ interface Unrelated {
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /id|-6791396263062521506[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}
 //   Public signature: /id|9187295668833355463[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}

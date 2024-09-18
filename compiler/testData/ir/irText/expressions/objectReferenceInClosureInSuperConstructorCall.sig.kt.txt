@@ -11,7 +11,7 @@ abstract class Base {
     //   Mangled name: Base#<get-lambda>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Base.lambda.<get-lambda>|7399510716625048505[0]
     //   Public signature debug description: <get-lambda>(){}kotlin.Function0<kotlin.Any>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-lambda>(){}
     //   Public signature: /Base.lambda.<get-lambda>|-6620550812344419453[0]
     //   Public signature debug description: <get-lambda>(){}
@@ -44,7 +44,7 @@ object Test : Base {
     //   Mangled name: Test#<get-lambda>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Test.lambda.<get-lambda>|7399510716625048505[0]
     //   Public signature debug description: <get-lambda>(){}kotlin.Function0<kotlin.Any>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test#<get-lambda>(){}
     //   Public signature: /Test.lambda.<get-lambda>|-6620550812344419453[0]
     //   Public signature debug description: <get-lambda>(){}

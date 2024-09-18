@@ -3,9 +3,9 @@
 // WITH_STDLIB
 
 // KT-57391: CONFLICTING_OVERLOADS
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K1: JS, JS_ES6, WASM
 // KT-57391: java.lang.IllegalStateException: IrSimpleFunctionSymbolImpl for /main|main(){}[0] is already bound
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K2: JS, JS_ES6, WASM
 
 // KT-57391: Backend Internal error: Exception during psi2ir
 // in K1/NATIVE/ONE_STAGE_MULTI_MODULE, native testsystem ignores fun `main` in `common` module, hence `common` module is not compiled at all.

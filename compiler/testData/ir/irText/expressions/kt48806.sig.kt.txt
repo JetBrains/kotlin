@@ -11,7 +11,7 @@ class A {
     //   Mangled name: A#<get-test_1>(){}kotlin.Int
     //   Public signature: /A.test_1.<get-test_1>|-1575767838400056236[0]
     //   Public signature debug description: <get-test_1>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-test_1>(){}
     //   Public signature: /A.test_1.<get-test_1>|5475165570968103805[0]
     //   Public signature debug description: <get-test_1>(){}
@@ -26,7 +26,7 @@ class A {
     //   Mangled name: A#<get-test_2>(){}kotlin.Int
     //   Public signature: /A.test_2.<get-test_2>|1438436459582874026[0]
     //   Public signature debug description: <get-test_2>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-test_2>(){}
     //   Public signature: /A.test_2.<get-test_2>|-7104054319481711057[0]
     //   Public signature debug description: <get-test_2>(){}

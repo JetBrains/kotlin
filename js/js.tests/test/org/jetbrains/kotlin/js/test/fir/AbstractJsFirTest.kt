@@ -39,7 +39,7 @@ import java.lang.Boolean.getBoolean
 open class AbstractFirJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
-    targetBackend: TargetBackend = TargetBackend.JS_IR,
+    targetBackend: TargetBackend = TargetBackend.JS,
     val parser: FirParser = FirParser.Psi,
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.FIR, targetBackend, pathToTestDir, testGroupOutputDirPrefix

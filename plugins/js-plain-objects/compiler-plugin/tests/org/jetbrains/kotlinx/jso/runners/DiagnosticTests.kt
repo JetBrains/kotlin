@@ -18,7 +18,7 @@ abstract class AbstractFirJsPlainObjectsPluginDiagnosticTest : AbstractFirPsiDia
         with(builder) {
             globalDefaults {
                 targetPlatform = JsPlatforms.defaultJsPlatform
-                targetBackend = TargetBackend.JS_IR
+                targetBackend = TargetBackend.JS
                 dependencyKind = DependencyKind.Source
             }
 

@@ -13,7 +13,7 @@ class DirectChild : KotlinBase {
   //   Public signature: /DirectChild.a|-1200697420457237799[0]
   //   Public signature debug description: {}a
   /* fake */ override var a: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DirectChild#<get-a>(){}
     //   Public signature: /DirectChild.a.<get-a>|6785176174175479410[0]
     //   Public signature debug description: <get-a>(){}
@@ -33,7 +33,7 @@ class DirectChild : KotlinBase {
   //   Public signature: /DirectChild.b|772347207915745207[0]
   //   Public signature debug description: {}b
   /* fake */ override var b: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DirectChild#<get-b>(){}
     //   Public signature: /DirectChild.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -53,7 +53,7 @@ class DirectChild : KotlinBase {
   //   Public signature: /DirectChild.c|-4416962153448040627[0]
   //   Public signature debug description: {}c
   /* fake */ override var c: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DirectChild#<get-c>(){}
     //   Public signature: /DirectChild.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -68,7 +68,7 @@ class DirectChild : KotlinBase {
   //   Public signature: /DirectChild.d|5174763769109925331[0]
   //   Public signature debug description: {}d
   /* fake */ override var d: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DirectChild#<get-d>(){}
     //   Public signature: /DirectChild.d.<get-d>|-6701718004621354461[0]
     //   Public signature debug description: <get-d>(){}
@@ -88,7 +88,7 @@ class DirectChild : KotlinBase {
   //   Public signature: /DirectChild.e|-5812214850253973038[0]
   //   Public signature debug description: {}e
   /* fake */ override var e: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DirectChild#<get-e>(){}
     //   Public signature: /DirectChild.e.<get-e>|-6737887868742748227[0]
     //   Public signature debug description: <get-e>(){}
@@ -114,7 +114,7 @@ open class KotlinBase {
   //   Public signature: /KotlinBase.a|-1200697420457237799[0]
   //   Public signature debug description: {}a
   var a: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: KotlinBase#<get-a>(){}
     //   Public signature: /KotlinBase.a.<get-a>|6785176174175479410[0]
     //   Public signature debug description: <get-a>(){}
@@ -134,7 +134,7 @@ open class KotlinBase {
   //   Public signature: /KotlinBase.b|772347207915745207[0]
   //   Public signature debug description: {}b
   var b: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: KotlinBase#<get-b>(){}
     //   Public signature: /KotlinBase.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -154,7 +154,7 @@ open class KotlinBase {
   //   Public signature: /KotlinBase.c|-4416962153448040627[0]
   //   Public signature debug description: {}c
   var c: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: KotlinBase#<get-c>(){}
     //   Public signature: /KotlinBase.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -174,7 +174,7 @@ open class KotlinBase {
   //   Public signature: /KotlinBase.d|5174763769109925331[0]
   //   Public signature debug description: {}d
   var d: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: KotlinBase#<get-d>(){}
     //   Public signature: /KotlinBase.d.<get-d>|-6701718004621354461[0]
     //   Public signature debug description: <get-d>(){}
@@ -194,7 +194,7 @@ open class KotlinBase {
   //   Public signature: /KotlinBase.e|-5812214850253973038[0]
   //   Public signature debug description: {}e
   open var e: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: KotlinBase#<get-e>(){}
     //   Public signature: /KotlinBase.e.<get-e>|-6737887868742748227[0]
     //   Public signature debug description: <get-e>(){}

@@ -1,7 +1,7 @@
 // WITH_STDLIB
 
 // See KT-65230
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 
 fun toStringTemplateAny(x: Any) = " $x "
 fun <T> toStringTemplateGeneric(x: T) = " $x "

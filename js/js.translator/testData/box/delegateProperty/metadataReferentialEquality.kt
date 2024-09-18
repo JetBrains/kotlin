@@ -1,6 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 import kotlin.reflect.KProperty
 
 var lastGeneratedId = 0

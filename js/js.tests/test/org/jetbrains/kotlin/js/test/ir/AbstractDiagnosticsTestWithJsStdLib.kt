@@ -31,7 +31,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
-            targetBackend = TargetBackend.JS_IR
+            targetBackend = TargetBackend.JS
             dependencyKind = DependencyKind.Source
         }
 

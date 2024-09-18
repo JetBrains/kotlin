@@ -11,7 +11,7 @@ object Z {
     //   Mangled name: Z#<get-counter>(){}kotlin.Int
     //   Public signature: /Z.counter.<get-counter>|6416265643848993228[0]
     //   Public signature debug description: <get-counter>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-counter>(){}
     //   Public signature: /Z.counter.<get-counter>|6903507550118978958[0]
     //   Public signature debug description: <get-counter>(){}
@@ -31,7 +31,7 @@ object Z {
     //   Mangled name: Z#<get-aLambda>(){}kotlin.Function0<kotlin.Unit>
     //   Public signature: /Z.aLambda.<get-aLambda>|9058518221524596568[0]
     //   Public signature debug description: <get-aLambda>(){}kotlin.Function0<kotlin.Unit>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-aLambda>(){}
     //   Public signature: /Z.aLambda.<get-aLambda>|8927671768328125269[0]
     //   Public signature debug description: <get-aLambda>(){}
@@ -46,7 +46,7 @@ object Z {
     //   Mangled name: Z#<get-anObject>(){}kotlin.Any
     //   Public signature: /Z.anObject.<get-anObject>|-6807306499596507825[0]
     //   Public signature debug description: <get-anObject>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-anObject>(){}
     //   Public signature: /Z.anObject.<get-anObject>|6468357437342963609[0]
     //   Public signature debug description: <get-anObject>(){}

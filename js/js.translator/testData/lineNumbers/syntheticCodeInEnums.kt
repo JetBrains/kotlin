@@ -8,4 +8,4 @@ enum class E {
     }
 }
 
-// LINES(JS_IR): 4 4 * 6 6 * 1 * 1 1 * 1 * 1 1
+// LINES(JS): 4 4 * 6 6 * 1 * 1 1 * 1 * 1 1

@@ -11,7 +11,7 @@ class C<T : Any?> {
     //   Mangled name: C#<get-x>(){}1:0
     //   Public signature: /C.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -57,7 +57,7 @@ var <T : Any?> C<T>.y: T
   //   Mangled name: #<get-y>@C<0:0>(){0§<kotlin.Any?>}0:0
   //   Public signature: /y.<get-y>|-1625423128410329211[0]
   //   Public signature debug description: <get-y>@C<0:0>(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-y>@C<0:0>(){0§<kotlin.Any?>}
   //   Public signature: /y.<get-y>|5204013647875052288[0]
   //   Public signature debug description: <get-y>@C<0:0>(){0§<kotlin.Any?>}

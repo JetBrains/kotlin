@@ -48,7 +48,7 @@ fun box() {
 // test.kt:29 box:
 // test.kt:30 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:29 box:
 // test.kt:7 compute:
 // test.kt:9 compute: result="":kotlin.String

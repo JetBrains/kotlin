@@ -11,7 +11,7 @@ open annotation class A : Annotation {
     //   Mangled name: A#<get-x>(){}kotlin.String
     //   Public signature: /A.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

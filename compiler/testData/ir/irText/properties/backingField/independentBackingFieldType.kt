@@ -1,7 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // FIR_IDENTICAL
 
-// IGNORE_BACKEND_KLIB: JS_IR
+// IGNORE_BACKEND_KLIB: JS
 
 class A {
     var it: Int

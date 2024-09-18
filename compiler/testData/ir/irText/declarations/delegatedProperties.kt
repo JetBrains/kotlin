@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // KT-61141: kotlin.collections.HashMap instead of java.util.HashMap
 // IGNORE_BACKEND: NATIVE
 

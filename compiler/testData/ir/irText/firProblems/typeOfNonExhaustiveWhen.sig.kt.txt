@@ -1,4 +1,4 @@
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

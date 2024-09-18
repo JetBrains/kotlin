@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // KT-66097: java.lang.IllegalStateException: JS_FAKE_NAME_CLASH: JavaScript name parse_trkh7z$ is generated for different inherited members: fun parse(source: A): C and fun parse(source: B): Collection<C> (32,17) in /returnTypeSignature.kt
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K1: JS, JS_ES6, WASM
 
 // WITH_STDLIB
 

@@ -11,7 +11,7 @@ data class DataClass : Delegate, Derived {
     //   Mangled name: DataClass#<get-delegate>(){}Delegate
     //   Public signature: /DataClass.delegate.<get-delegate>|6133163829830511426[0]
     //   Public signature debug description: <get-delegate>(){}Delegate
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DataClass#<get-delegate>(){}
     //   Public signature: /DataClass.delegate.<get-delegate>|448313462178410567[0]
     //   Public signature debug description: <get-delegate>(){}
@@ -33,7 +33,7 @@ data class DataClass : Delegate, Derived {
   //   Mangled name: DataClass#component1(){}Delegate
   //   Public signature: /DataClass.component1|748132671697339477[0]
   //   Public signature debug description: component1(){}Delegate
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DataClass#component1(){}
   //   Public signature: /DataClass.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -43,7 +43,7 @@ data class DataClass : Delegate, Derived {
   //   Mangled name: DataClass#copy(Delegate){}DataClass
   //   Public signature: /DataClass.copy|-3599253859920134304[0]
   //   Public signature debug description: copy(Delegate){}DataClass
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DataClass#copy(Delegate){}
   //   Public signature: /DataClass.copy|-6641847768161473840[0]
   //   Public signature debug description: copy(Delegate){}
@@ -53,7 +53,7 @@ data class DataClass : Delegate, Derived {
   //   Mangled name: DataClass#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /DataClass.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DataClass#equals(kotlin.Any?){}
   //   Public signature: /DataClass.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -63,7 +63,7 @@ data class DataClass : Delegate, Derived {
   //   Mangled name: DataClass#hashCode(){}kotlin.Int
   //   Public signature: /DataClass.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DataClass#hashCode(){}
   //   Public signature: /DataClass.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -73,7 +73,7 @@ data class DataClass : Delegate, Derived {
   //   Mangled name: DataClass#toString(){}kotlin.String
   //   Public signature: /DataClass.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DataClass#toString(){}
   //   Public signature: /DataClass.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -125,7 +125,7 @@ object Factory {
   //   Mangled name: Factory#foo(kotlin.String){}kotlin.String
   //   Public signature: /Factory.foo|-5534735991146511619[0]
   //   Public signature debug description: foo(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Factory#foo(kotlin.String){}
   //   Public signature: /Factory.foo|1351044947738582195[0]
   //   Public signature debug description: foo(kotlin.String){}
@@ -135,7 +135,7 @@ object Factory {
   //   Mangled name: Factory#foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}kotlin.String
   //   Public signature: /Factory.foo|-1406038686123493927[0]
   //   Public signature debug description: foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Factory#foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}
   //   Public signature: /Factory.foo|555399751922815029[0]
   //   Public signature debug description: foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}

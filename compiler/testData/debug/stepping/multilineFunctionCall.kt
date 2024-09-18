@@ -16,7 +16,7 @@ fun foo(i: Int) {
 // test.kt:11 foo
 // test.kt:8 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:5 box
 // test.kt:11 foo
 // test.kt:8 box

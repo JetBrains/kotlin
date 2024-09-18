@@ -23,7 +23,7 @@ class CBoth : ILeft, IRight {
     //   Mangled name: CBoth#<get-bar>(){}kotlin.Int
     //   Public signature: /CBoth.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: CBoth#<get-bar>(){}
     //   Public signature: /CBoth.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -50,7 +50,7 @@ interface ILeft {
     //   Mangled name: ILeft#<get-bar>(){}kotlin.Int
     //   Public signature: /ILeft.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ILeft#<get-bar>(){}
     //   Public signature: /ILeft.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -77,7 +77,7 @@ interface IRight {
     //   Mangled name: IRight#<get-bar>(){}kotlin.Int
     //   Public signature: /IRight.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IRight#<get-bar>(){}
     //   Public signature: /IRight.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}

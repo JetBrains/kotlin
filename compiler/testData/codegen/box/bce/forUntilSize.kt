@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // KT-66100: AssertionError: Expected an exception of class IndexOutOfBoundsException to be thrown, but was completed successfully.
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 // WITH_STDLIB
 import kotlin.test.*
 

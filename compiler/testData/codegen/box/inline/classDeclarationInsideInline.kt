@@ -4,7 +4,7 @@
  */
 // KT-54635: Kotlin/JS cannot distinguish between Int and Double at runtime
 // AssertionError: Expected <test1: 1.0>, actual <test1: 1>
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 // WITH_STDLIB
 
 import kotlin.test.*

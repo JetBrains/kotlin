@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FIR_IDENTICAL
 fun testBinaryPlus(d: dynamic) = d + 1
 fun testBinaryMinus(d: dynamic) = d - 1

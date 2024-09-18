@@ -61,7 +61,7 @@ fun box() {
 // test.kt:25 box
 // test.kt:26 box
 
-// EXPECTATIONS ClassicFrontend JS_IR
+// EXPECTATIONS ClassicFrontend JS
 // test.kt:14 box
 // test.kt:4 <init>
 // test.kt:4 <init>
@@ -118,7 +118,7 @@ fun box() {
 // test.kt:6 <init>
 // test.kt:26 box
 
-// EXPECTATIONS FIR JS_IR // TODO: There is an inconsistency in names between K1 and K2. This should be fixed in KT-64435.
+// EXPECTATIONS FIR JS // TODO: There is an inconsistency in names between K1 and K2. This should be fixed in KT-64435.
 // test.kt:14 box
 // test.kt:4 <init>
 // test.kt:4 <init>

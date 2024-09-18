@@ -6,7 +6,7 @@ interface IC1 {
   //   Mangled name: IC1#component1(){}kotlin.Int
   //   Public signature: /IC1.component1|-8217597213800111288[0]
   //   Public signature debug description: component1(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC1#component1(){}
   //   Public signature: /IC1.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -22,7 +22,7 @@ interface IC2 {
   //   Mangled name: IC2#component2(){}kotlin.String
   //   Public signature: /IC2.component2|1228864375093914597[0]
   //   Public signature debug description: component2(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC2#component2(){}
   //   Public signature: /IC2.component2|3796717572321500973[0]
   //   Public signature debug description: component2(){}

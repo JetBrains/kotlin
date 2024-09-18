@@ -7,7 +7,7 @@ val x1: String
   //   Mangled name: #<get-x1>(){}kotlin.String
   //   Public signature: /x1.<get-x1>|7296650639492564082[0]
   //   Public signature debug description: <get-x1>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-x1>(){}
   //   Public signature: /x1.<get-x1>|-6784695929064323344[0]
   //   Public signature debug description: <get-x1>(){}
@@ -22,7 +22,7 @@ val x2: String
   //   Mangled name: #<get-x2>(){}kotlin.String
   //   Public signature: /x2.<get-x2>|-8860170276198448021[0]
   //   Public signature debug description: <get-x2>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-x2>(){}
   //   Public signature: /x2.<get-x2>|4516516368910539088[0]
   //   Public signature debug description: <get-x2>(){}
@@ -37,7 +37,7 @@ val expectedType1: Function1<String, Int>
   //   Mangled name: #<get-expectedType1>(){}kotlin.Function1<kotlin.String,kotlin.Int>
   //   Public signature: /expectedType1.<get-expectedType1>|1193976485714836567[0]
   //   Public signature debug description: <get-expectedType1>(){}kotlin.Function1<kotlin.String,kotlin.Int>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-expectedType1>(){}
   //   Public signature: /expectedType1.<get-expectedType1>|3207114646641074379[0]
   //   Public signature debug description: <get-expectedType1>(){}
@@ -52,7 +52,7 @@ val expectedType2: Function1<String, Int>
   //   Mangled name: #<get-expectedType2>(){}kotlin.Function1<kotlin.String,kotlin.Int>
   //   Public signature: /expectedType2.<get-expectedType2>|-618381833021808630[0]
   //   Public signature debug description: <get-expectedType2>(){}kotlin.Function1<kotlin.String,kotlin.Int>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-expectedType2>(){}
   //   Public signature: /expectedType2.<get-expectedType2>|-2400466064189184351[0]
   //   Public signature debug description: <get-expectedType2>(){}
@@ -62,7 +62,7 @@ val expectedType2: Function1<String, Int>
 //   Mangled name: #bar(){}kotlin.String
 //   Public signature: /bar|1214702899383694193[0]
 //   Public signature debug description: bar(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar(){}
 //   Public signature: /bar|496682602797471549[0]
 //   Public signature debug description: bar(){}
@@ -72,7 +72,7 @@ fun bar(): String
 //   Mangled name: #foo(0:0;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}0:1
 //   Public signature: /foo|6961402108839292116[0]
 //   Public signature debug description: foo(0:0;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}0:1
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(0:0;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}
 //   Public signature: /foo|-3477250227431963618[0]
 //   Public signature debug description: foo(0:0;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}

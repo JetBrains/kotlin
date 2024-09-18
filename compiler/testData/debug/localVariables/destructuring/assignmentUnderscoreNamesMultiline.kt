@@ -28,7 +28,7 @@ fun box(): String {
 // test.kt:14 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String
 // test.kt:19 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String, k:java.lang.String="K":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:6 box:
 // test.kt:12 box: p=kotlin.Triple
 // test.kt:14 box: p=kotlin.Triple, o="O":kotlin.String

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenInlineTest {
   @Test
   public void testAllFilesPresentInBoxInline() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Annotations {
     @Test
     public void testAllFilesPresentInAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class AnonymousObject {
     @Test
     public void testAllFilesPresentInAnonymousObject() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -476,7 +476,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class EnumEntries {
       @Test
       public void testAllFilesPresentInEnumEntries() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
     }
 
@@ -486,7 +486,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class EnumWhen {
       @Test
       public void testAllFilesPresentInEnumWhen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -520,7 +520,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class ProperRecapturing {
       @Test
       public void testAllFilesPresentInProperRecapturing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -566,7 +566,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class ProperRecapturingInClass {
       @Test
       public void testAllFilesPresentInProperRecapturingInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -648,7 +648,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
     }
 
@@ -658,7 +658,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class TwoCapturedReceivers {
       @Test
       public void testAllFilesPresentInTwoCapturedReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -711,7 +711,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class ArgumentOrder {
     @Test
     public void testAllFilesPresentInArgumentOrder() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -805,7 +805,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class ArrayConvention {
     @Test
     public void testAllFilesPresentInArrayConvention() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -851,7 +851,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Assert {
     @Test
     public void testAllFilesPresentInAssert() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -861,7 +861,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Builders {
     @Test
     public void testAllFilesPresentInBuilders() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -871,7 +871,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class BytecodePreprocessing {
     @Test
     public void testAllFilesPresentInBytecodePreprocessing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -887,7 +887,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
 
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -998,7 +998,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class AdaptedReferences {
       @Test
       public void testAllFilesPresentInAdaptedReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -1050,7 +1050,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Bound {
       @Test
       public void testAllFilesPresentInBound() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -1217,7 +1217,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Capture {
     @Test
     public void testAllFilesPresentInCapture() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -1293,7 +1293,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Complex {
     @Test
     public void testAllFilesPresentInComplex() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -1351,7 +1351,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class ComplexStack {
     @Test
     public void testAllFilesPresentInComplexStack() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -1415,7 +1415,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Contracts {
     @Test
     public void testAllFilesPresentInContracts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -1527,7 +1527,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
 
     @Test
     public void testAllFilesPresentInDefaultValues() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -1644,7 +1644,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class LambdaInlining {
       @Test
       public void testAllFilesPresentInLambdaInlining() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -1851,7 +1851,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class CallableReferences {
         @Test
         public void testAllFilesPresentInCallableReferences() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -2048,7 +2048,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
 
       @Test
       public void testAllFilesPresentInMaskElimination() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -2089,7 +2089,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class DelegatedProperty {
     @Test
     public void testAllFilesPresentInDelegatedProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2135,7 +2135,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class DontReify {
     @Test
     public void testAllFilesPresentInDontReify() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2205,7 +2205,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class EnclosingInfo {
     @Test
     public void testAllFilesPresentInEnclosingInfo() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -2215,7 +2215,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Enum {
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2315,7 +2315,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class FunctionExpression {
     @Test
     public void testAllFilesPresentInFunctionExpression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2331,7 +2331,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class InlineArgsInplace {
     @Test
     public void testAllFilesPresentInInlineArgsInplace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2347,7 +2347,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2404,7 +2404,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class UnboxGenericParameter {
       @Test
       public void testAllFilesPresentInUnboxGenericParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Nested
@@ -2413,7 +2413,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -2459,7 +2459,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class Lambda {
         @Test
         public void testAllFilesPresentInLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -2505,7 +2505,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class ObjectLiteral {
         @Test
         public void testAllFilesPresentInObjectLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -2553,7 +2553,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class InnerClasses {
     @Test
     public void testAllFilesPresentInInnerClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2611,7 +2611,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Invokedynamic {
     @Test
     public void testAllFilesPresentInInvokedynamic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Nested
@@ -2620,7 +2620,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Lambdas {
       @Test
       public void testAllFilesPresentInLambdas() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
     }
 
@@ -2630,7 +2630,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
     }
   }
@@ -2641,7 +2641,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class JvmName {
     @Test
     public void testAllFilesPresentInJvmName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -2651,7 +2651,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class JvmPackageName {
     @Test
     public void testAllFilesPresentInJvmPackageName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -2661,7 +2661,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class LambdaClassClash {
     @Test
     public void testAllFilesPresentInLambdaClassClash() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2683,7 +2683,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class LambdaTransformation {
     @Test
     public void testAllFilesPresentInLambdaTransformation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2723,7 +2723,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class LocalFunInLambda {
     @Test
     public void testAllFilesPresentInLocalFunInLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2763,7 +2763,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class MultiModule {
     @Test
     public void testAllFilesPresentInMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2779,7 +2779,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -2789,7 +2789,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Nested
@@ -2798,7 +2798,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -2815,7 +2815,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class NoInline {
     @Test
     public void testAllFilesPresentInNoInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -2867,7 +2867,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class NonLocalReturns {
     @Test
     public void testAllFilesPresentInNonLocalReturns() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -3014,7 +3014,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Deparenthesize {
       @Test
       public void testAllFilesPresentInDeparenthesize() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -3036,7 +3036,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class TryFinally {
       @Test
       public void testAllFilesPresentInTryFinally() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -3123,7 +3123,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class CallSite {
         @Test
         public void testAllFilesPresentInCallSite() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -3169,7 +3169,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class Chained {
         @Test
         public void testAllFilesPresentInChained() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -3227,7 +3227,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class DeclSite {
         @Test
         public void testAllFilesPresentInDeclSite() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -3309,7 +3309,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class ExceptionTable {
         @Test
         public void testAllFilesPresentInExceptionTable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -3439,7 +3439,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public class Variables {
         @Test
         public void testAllFilesPresentInVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
         }
 
         @Test
@@ -3457,7 +3457,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Optimizations {
     @Test
     public void testAllFilesPresentInOptimizations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -3491,7 +3491,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
 
     @Test
     public void testAllFilesPresentInPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -3555,7 +3555,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Property {
     @Test
     public void testAllFilesPresentInProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -3649,7 +3649,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -3778,7 +3778,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class CheckCast {
       @Test
       public void testAllFilesPresentInCheckCast() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -3842,7 +3842,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class DefaultLambda {
       @Test
       public void testAllFilesPresentInDefaultLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
     }
 
@@ -3852,7 +3852,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class IsCheck {
       @Test
       public void testAllFilesPresentInIsCheck() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -3881,7 +3881,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Signature {
     @Test
     public void testAllFilesPresentInSignature() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -3891,7 +3891,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class SignatureMangling {
     @Test
     public void testAllFilesPresentInSignatureMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 
@@ -3901,7 +3901,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Simple {
     @Test
     public void testAllFilesPresentInSimple() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -4049,7 +4049,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Smap {
     @Test
     public void testAllFilesPresentInSmap() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -4184,7 +4184,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Anonymous {
       @Test
       public void testAllFilesPresentInAnonymous() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4254,7 +4254,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class DefaultLambda {
       @Test
       public void testAllFilesPresentInDefaultLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4318,7 +4318,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class InlineOnly {
       @Test
       public void testAllFilesPresentInInlineOnly() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4352,7 +4352,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Newsmap {
       @Test
       public void testAllFilesPresentInNewsmap() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4386,7 +4386,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Resolve {
       @Test
       public void testAllFilesPresentInResolve() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4409,7 +4409,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Special {
     @Test
     public void testAllFilesPresentInSpecial() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -4479,7 +4479,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class StackOnReturn {
     @Test
     public void testAllFilesPresentInStackOnReturn() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -4585,7 +4585,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Suspend {
     @Test
     public void testAllFilesPresentInSuspend() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -4744,7 +4744,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class CallableReference {
       @Test
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4784,7 +4784,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class DefaultParameter {
       @Test
       public void testAllFilesPresentInDefaultParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4830,7 +4830,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class InlineClass {
       @Test
       public void testAllFilesPresentInInlineClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4864,7 +4864,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class InlineUsedAsNoinline {
       @Test
       public void testAllFilesPresentInInlineUsedAsNoinline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4886,7 +4886,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class Receiver {
       @Test
       public void testAllFilesPresentInReceiver() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -4944,7 +4944,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class StateMachine {
       @Test
       public void testAllFilesPresentInStateMachine() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -5093,7 +5093,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class SyntheticAccessors {
     @Test
     public void testAllFilesPresentInSyntheticAccessors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -5150,7 +5150,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public class WithinInlineLambda {
       @Test
       public void testAllFilesPresentInWithinInlineLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
       }
 
       @Test
@@ -5215,7 +5215,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Trait {
     @Test
     public void testAllFilesPresentInTrait() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -5231,7 +5231,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class TryCatchFinally {
     @Test
     public void testAllFilesPresentInTryCatchFinally() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -5265,7 +5265,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class TypeParameters {
     @Test
     public void testAllFilesPresentInTypeParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -5311,7 +5311,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Varargs {
     @Test
     public void testAllFilesPresentInVarargs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
 
     @Test
@@ -5339,7 +5339,7 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
   public class Wasm_new_exception_handling {
     @Test
     public void testAllFilesPresentInWasm_new_exception_handling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
     }
   }
 }

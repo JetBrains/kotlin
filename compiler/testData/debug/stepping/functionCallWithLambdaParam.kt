@@ -46,7 +46,7 @@ fun foo(f: () -> Unit) {
 // test.kt:16 foo
 // test.kt:12 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:5 box
 // test.kt:15 foo
 // test.kt:6 box$lambda

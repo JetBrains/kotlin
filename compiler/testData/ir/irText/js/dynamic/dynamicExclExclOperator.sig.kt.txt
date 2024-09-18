@@ -1,4 +1,4 @@
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test(<dynamic>){}
 //   Public signature: /test|8843648336650546510[0]
 //   Public signature debug description: test(<dynamic>){}

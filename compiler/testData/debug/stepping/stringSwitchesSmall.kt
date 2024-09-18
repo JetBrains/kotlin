@@ -77,7 +77,7 @@ fun box() {
 // test.kt:24 stringSwitch
 // test.kt:30 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:27 box
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch

@@ -11,7 +11,7 @@ class A<T : Any?> {
     //   Mangled name: A#<get-a>(){}1:0
     //   Public signature: /A.a.<get-a>|5765441560292063424[0]
     //   Public signature debug description: <get-a>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-a>(){}
     //   Public signature: /A.a.<get-a>|6785176174175479410[0]
     //   Public signature debug description: <get-a>(){}
@@ -38,7 +38,7 @@ class B {
     //   Mangled name: B#<get-b>(){}kotlin.Any
     //   Public signature: /B.b.<get-b>|4768115582956424363[0]
     //   Public signature debug description: <get-b>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: B#<get-b>(){}
     //   Public signature: /B.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -65,7 +65,7 @@ class C {
     //   Mangled name: C#<get-c>(){}kotlin.Any
     //   Public signature: /C.c.<get-c>|-7073232512849879703[0]
     //   Public signature debug description: <get-c>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-c>(){}
     //   Public signature: /C.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -94,7 +94,7 @@ val C.p: Int
   //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
   //   Public signature: /p.<get-p>|-7725362510645392909[0]
   //   Public signature debug description: <get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}
   //   Public signature: /p.<get-p>|-2698360468898936971[0]
   //   Public signature debug description: <get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}

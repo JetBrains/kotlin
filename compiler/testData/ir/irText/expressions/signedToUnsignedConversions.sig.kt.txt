@@ -25,7 +25,7 @@ val NON_CONST: Int
   //   Mangled name: #<get-NON_CONST>(){}kotlin.Int
   //   Public signature: /NON_CONST.<get-NON_CONST>|991601838629936197[0]
   //   Public signature debug description: <get-NON_CONST>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-NON_CONST>(){}
   //   Public signature: /NON_CONST.<get-NON_CONST>|-5428611507548024969[0]
   //   Public signature debug description: <get-NON_CONST>(){}
@@ -83,7 +83,7 @@ const val BIGGER_THAN_UBYTE: Int
   //   Mangled name: #<get-BIGGER_THAN_UBYTE>(){}kotlin.Int
   //   Public signature: /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|-3586420332237318918[0]
   //   Public signature debug description: <get-BIGGER_THAN_UBYTE>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-BIGGER_THAN_UBYTE>(){}
   //   Public signature: /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|3874178522908266564[0]
   //   Public signature debug description: <get-BIGGER_THAN_UBYTE>(){}
@@ -99,7 +99,7 @@ const val EXPLICIT_INT: Int
   //   Mangled name: #<get-EXPLICIT_INT>(){}kotlin.Int
   //   Public signature: /EXPLICIT_INT.<get-EXPLICIT_INT>|-1305181552966507212[0]
   //   Public signature debug description: <get-EXPLICIT_INT>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-EXPLICIT_INT>(){}
   //   Public signature: /EXPLICIT_INT.<get-EXPLICIT_INT>|-2807246340269758912[0]
   //   Public signature debug description: <get-EXPLICIT_INT>(){}
@@ -115,7 +115,7 @@ const val IMPLICIT_INT: Int
   //   Mangled name: #<get-IMPLICIT_INT>(){}kotlin.Int
   //   Public signature: /IMPLICIT_INT.<get-IMPLICIT_INT>|-1175271202914280523[0]
   //   Public signature debug description: <get-IMPLICIT_INT>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-IMPLICIT_INT>(){}
   //   Public signature: /IMPLICIT_INT.<get-IMPLICIT_INT>|-5720776855566649215[0]
   //   Public signature debug description: <get-IMPLICIT_INT>(){}
@@ -131,7 +131,7 @@ const val LONG_CONST: Long
   //   Mangled name: #<get-LONG_CONST>(){}kotlin.Long
   //   Public signature: /LONG_CONST.<get-LONG_CONST>|-7734005070309874987[0]
   //   Public signature debug description: <get-LONG_CONST>(){}kotlin.Long
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-LONG_CONST>(){}
   //   Public signature: /LONG_CONST.<get-LONG_CONST>|6497266276251766459[0]
   //   Public signature debug description: <get-LONG_CONST>(){}
@@ -147,7 +147,7 @@ const val UINT_CONST: UInt
   //   Mangled name: #<get-UINT_CONST>(){}kotlin.UInt
   //   Public signature: /UINT_CONST.<get-UINT_CONST>|-8736947558233336085[0]
   //   Public signature debug description: <get-UINT_CONST>(){}kotlin.UInt
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-UINT_CONST>(){}
   //   Public signature: /UINT_CONST.<get-UINT_CONST>|7117473646004511278[0]
   //   Public signature debug description: <get-UINT_CONST>(){}

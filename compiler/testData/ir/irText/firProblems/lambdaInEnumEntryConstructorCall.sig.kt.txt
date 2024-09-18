@@ -11,7 +11,7 @@ class Wrapper {
     //   Mangled name: Wrapper#<get-baseUrl>(){}kotlin.String
     //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-3814925406424189958[0]
     //   Public signature debug description: <get-baseUrl>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Wrapper#<get-baseUrl>(){}
     //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-5017063075718914624[0]
     //   Public signature debug description: <get-baseUrl>(){}
@@ -49,7 +49,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}ConfigurationParameter
   //   Public signature: /ConfigurationParameter.valueOf|4681288256259957260[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}ConfigurationParameter
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}
   //   Public signature: /ConfigurationParameter.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
@@ -59,7 +59,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#values#static(){}kotlin.Array<ConfigurationParameter>
   //   Public signature: /ConfigurationParameter.values|-8145439714348067759[0]
   //   Public signature debug description: values#static(){}kotlin.Array<ConfigurationParameter>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#values#static(){}
   //   Public signature: /ConfigurationParameter.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
@@ -69,7 +69,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#compareTo(ConfigurationParameter){}kotlin.Int
   //   Public signature: /ConfigurationParameter.compareTo|-5479522582886187389[0]
   //   Public signature debug description: compareTo(ConfigurationParameter){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#compareTo(ConfigurationParameter){}
   //   Public signature: /ConfigurationParameter.compareTo|1827634897792549080[0]
   //   Public signature debug description: compareTo(ConfigurationParameter){}
@@ -79,7 +79,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /ConfigurationParameter.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#equals(kotlin.Any?){}
   //   Public signature: /ConfigurationParameter.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -89,7 +89,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#hashCode(){}kotlin.Int
   //   Public signature: /ConfigurationParameter.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#hashCode(){}
   //   Public signature: /ConfigurationParameter.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -99,7 +99,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter#toString(){}kotlin.String
   //   Public signature: /ConfigurationParameter.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ConfigurationParameter#toString(){}
   //   Public signature: /ConfigurationParameter.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -114,7 +114,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
     //   Mangled name: ConfigurationParameter#<get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
     //   Public signature: /ConfigurationParameter.entries.<get-entries>|-1947990751381640787[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ConfigurationParameter#<get-entries>#static(){}
     //   Public signature: /ConfigurationParameter.entries.<get-entries>|-6068527377476727729[0]
     //   Public signature debug description: <get-entries>#static(){}
@@ -129,7 +129,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
     //   Mangled name: ConfigurationParameter#<get-name>(){}kotlin.String
     //   Public signature: /ConfigurationParameter.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ConfigurationParameter#<get-name>(){}
     //   Public signature: /ConfigurationParameter.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -144,7 +144,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
     //   Mangled name: ConfigurationParameter#<get-ordinal>(){}kotlin.Int
     //   Public signature: /ConfigurationParameter.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ConfigurationParameter#<get-ordinal>(){}
     //   Public signature: /ConfigurationParameter.ordinal.<get-ordinal>|8409904226035914023[0]
     //   Public signature debug description: <get-ordinal>(){}

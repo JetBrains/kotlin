@@ -14,7 +14,7 @@ object Host {
   //   Mangled name: test.Host#foo(){0§<kotlin.Any?>}kotlin.String
   //   Public signature: test/Host.foo|-170825690606698604[0]
   //   Public signature debug description: foo(){0§<kotlin.Any?>}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: test.Host#foo(){0§<kotlin.Any?>}
   //   Public signature: test/Host.foo|-7822584347064313243[0]
   //   Public signature debug description: foo(){0§<kotlin.Any?>}
@@ -26,7 +26,7 @@ object Host {
 //   Mangled name: test#test(){}kotlin.String
 //   Public signature: test/test|-7008832412320199001[0]
 //   Public signature debug description: test(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: test#test(){}
 //   Public signature: test/test|6620506149988718649[0]
 //   Public signature debug description: test(){}

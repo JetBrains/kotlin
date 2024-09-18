@@ -2,7 +2,7 @@
 //   Mangled name: #k@kotlin.String(){}kotlin.Function0<kotlin.String>
 //   Public signature: /k|-4623891636485044145[0]
 //   Public signature debug description: k@kotlin.String(){}kotlin.Function0<kotlin.String>
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #k@kotlin.String(){}
 //   Public signature: /k|603037284564559001[0]
 //   Public signature debug description: k@kotlin.String(){}
@@ -24,7 +24,7 @@ fun test2(f: @ExtensionFunctionType Function1<String, Unit>): Unit
 //   Mangled name: #test3(){}kotlin.String
 //   Public signature: /test3|3344305992477585251[0]
 //   Public signature debug description: test3(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
 //   Public signature debug description: test3(){}
@@ -34,7 +34,7 @@ fun test3(): String
 //   Mangled name: #test4(kotlin.String?){}kotlin.String?
 //   Public signature: /test4|-1434334118883225411[0]
 //   Public signature debug description: test4(kotlin.String?){}kotlin.String?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test4(kotlin.String?){}
 //   Public signature: /test4|-2246924836724040051[0]
 //   Public signature debug description: test4(kotlin.String?){}

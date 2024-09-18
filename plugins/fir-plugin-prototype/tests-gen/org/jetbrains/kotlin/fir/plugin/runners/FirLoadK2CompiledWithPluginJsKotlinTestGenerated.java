@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirLoadK2CompiledWithPluginJsKotlinTestGenerated extends AbstractFirLoadK2CompiledWithPluginJsKotlinTest {
   @Test
   public void testAllFilesPresentInFirLoadK2Compiled() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
   }
 
   @Test

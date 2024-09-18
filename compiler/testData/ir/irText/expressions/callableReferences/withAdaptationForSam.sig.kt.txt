@@ -26,7 +26,7 @@ fun useFoo(foo: IFoo): Unit
 //   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /withVararg|2262699225692856772[0]
 //   Public signature debug description: withVararg(kotlin.IntArray...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #withVararg(kotlin.IntArray...){}
 //   Public signature: /withVararg|2511032413940817176[0]
 //   Public signature debug description: withVararg(kotlin.IntArray...){}

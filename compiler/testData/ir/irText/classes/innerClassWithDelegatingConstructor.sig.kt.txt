@@ -15,7 +15,7 @@ class Outer {
       //   Mangled name: Outer.Inner#<get-x>(){}kotlin.Int
       //   Public signature: /Outer.Inner.x.<get-x>|4966956098150895696[0]
       //   Public signature debug description: <get-x>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Outer.Inner#<get-x>(){}
       //   Public signature: /Outer.Inner.x.<get-x>|1482705010654679335[0]
       //   Public signature debug description: <get-x>(){}

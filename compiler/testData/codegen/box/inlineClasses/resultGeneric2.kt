@@ -1,6 +1,6 @@
-// NATIVE, WASM, JS_IR errors are same as for `resultGeneric.kt`
+// NATIVE, WASM, JS errors are same as for `resultGeneric.kt`
 // DONT_TARGET_EXACT_BACKEND: NATIVE
-// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: WASM, JS, JS_ES6
 // IGNORE_BACKEND: ANDROID
 
 // ALLOW_KOTLIN_PACKAGE

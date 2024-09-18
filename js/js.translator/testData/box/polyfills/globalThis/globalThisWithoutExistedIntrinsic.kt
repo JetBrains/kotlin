@@ -1,5 +1,5 @@
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FILE: main.js
 this.globalThis = undefined
 this["Is Just Created Global This"] = true

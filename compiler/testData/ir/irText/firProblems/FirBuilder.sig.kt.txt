@@ -15,7 +15,7 @@ abstract class BaseFirBuilder<T : Any?> {
   //   Mangled name: BaseFirBuilder#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /BaseFirBuilder.withCapturedTypeParameters|9205970479583592258[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: BaseFirBuilder#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /BaseFirBuilder.withCapturedTypeParameters|6883879135586930649[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
@@ -40,7 +40,7 @@ open class BaseConverter : BaseFirBuilder<Any> {
   //   Mangled name: BaseConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /BaseConverter.withCapturedTypeParameters|9205970479583592258[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: BaseConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /BaseConverter.withCapturedTypeParameters|6883879135586930649[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
@@ -62,7 +62,7 @@ class DeclarationsConverter : BaseConverter {
   //   Mangled name: DeclarationsConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
   //   Public signature: /DeclarationsConverter.withCapturedTypeParameters|9205970479583592258[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DeclarationsConverter#withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}
   //   Public signature: /DeclarationsConverter.withCapturedTypeParameters|6883879135586930649[0]
   //   Public signature debug description: withCapturedTypeParameters(kotlin.Function0<0:0>){0§<kotlin.Any?>}

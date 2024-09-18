@@ -11,7 +11,7 @@ abstract class A {
     //   Mangled name: A#<get-x>(){}X
     //   Public signature: /A.x.<get-x>|4318922799872535978[0]
     //   Public signature debug description: <get-x>(){}X
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -31,7 +31,7 @@ abstract class A {
     //   Mangled name: A#<get-y>(){}X
     //   Public signature: /A.y.<get-y>|-1726466926791307923[0]
     //   Public signature debug description: <get-y>(){}X
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-y>(){}
     //   Public signature: /A.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -69,7 +69,7 @@ class B : A {
     //   Mangled name: B#<get-x>(){}X
     //   Public signature: /B.x.<get-x>|4318922799872535978[0]
     //   Public signature debug description: <get-x>(){}X
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: B#<get-x>(){}
     //   Public signature: /B.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -84,7 +84,7 @@ class B : A {
     //   Mangled name: B#<get-y>(){}X
     //   Public signature: /B.y.<get-y>|-1726466926791307923[0]
     //   Public signature debug description: <get-y>(){}X
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: B#<get-y>(){}
     //   Public signature: /B.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -105,7 +105,7 @@ class X {
     //   Mangled name: X#<get-value>(){}kotlin.String
     //   Public signature: /X.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: X#<get-value>(){}
     //   Public signature: /X.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}

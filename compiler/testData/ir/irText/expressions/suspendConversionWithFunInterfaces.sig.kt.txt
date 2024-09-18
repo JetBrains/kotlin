@@ -20,7 +20,7 @@ fun bar1(): Unit
 //   Mangled name: #bar2(kotlin.String){}kotlin.Int
 //   Public signature: /bar2|3267780493794663662[0]
 //   Public signature debug description: bar2(kotlin.String){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar2(kotlin.String){}
 //   Public signature: /bar2|871846488143355822[0]
 //   Public signature debug description: bar2(kotlin.String){}
@@ -36,7 +36,7 @@ fun bar3(): Unit
 //   Mangled name: #bar3(kotlin.String){}kotlin.Int
 //   Public signature: /bar3|-5694254873370624097[0]
 //   Public signature debug description: bar3(kotlin.String){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar3(kotlin.String){}
 //   Public signature: /bar3|-8604784325283105439[0]
 //   Public signature debug description: bar3(kotlin.String){}

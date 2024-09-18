@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-57192
 // Promise<Unit> wrongly raised NON_EXPORTABLE_TYPE
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 
 @file:OptIn(ExperimentalJsExport::class)
 import kotlin.js.Promise

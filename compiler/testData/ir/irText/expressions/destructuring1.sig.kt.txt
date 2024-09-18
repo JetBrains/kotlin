@@ -24,7 +24,7 @@ object B {
   //   Mangled name: B#component1@A(){}kotlin.Int
   //   Public signature: /B.component1|-7852292492190161170[0]
   //   Public signature debug description: component1@A(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: B#component1@A(){}
   //   Public signature: /B.component1|-5209316971718544805[0]
   //   Public signature debug description: component1@A(){}
@@ -34,7 +34,7 @@ object B {
   //   Mangled name: B#component2@A(){}kotlin.Int
   //   Public signature: /B.component2|-9145888741821901515[0]
   //   Public signature debug description: component2@A(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: B#component2@A(){}
   //   Public signature: /B.component2|-4967140045736561606[0]
   //   Public signature debug description: component2@A(){}

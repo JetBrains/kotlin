@@ -11,7 +11,7 @@ abstract class AC<T : Any?> : I1<T>, I2<T> {
     //   Mangled name: AC#<get-sam>(){}FIn<1:0>
     //   Public signature: /AC.sam.<get-sam>|7063493038287370262[0]
     //   Public signature debug description: <get-sam>(){}FIn<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AC#<get-sam>(){}
     //   Public signature: /AC.sam.<get-sam>|6359168897517051114[0]
     //   Public signature debug description: <get-sam>(){}
@@ -32,7 +32,7 @@ abstract class AC<T : Any?> : I1<T>, I2<T> {
     //   Mangled name: AC#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
     //   Public signature: /AC.l.<get-l>|-5292723073790207311[0]
     //   Public signature debug description: <get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AC#<get-l>(){}
     //   Public signature: /AC.l.<get-l>|3795442967620585[0]
     //   Public signature debug description: <get-l>(){}
@@ -53,7 +53,7 @@ abstract class AD<T : Any?> : AC<(T & Any)> {
     //   Mangled name: AD#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
     //   Public signature: /AD.l.<get-l>|-5292723073790207311[0]
     //   Public signature debug description: <get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AD#<get-l>(){}
     //   Public signature: /AD.l.<get-l>|3795442967620585[0]
     //   Public signature debug description: <get-l>(){}
@@ -74,7 +74,7 @@ abstract class AD<T : Any?> : AC<(T & Any)> {
     //   Mangled name: AD#<get-sam>(){}FIn<1:0>
     //   Public signature: /AD.sam.<get-sam>|7063493038287370262[0]
     //   Public signature debug description: <get-sam>(){}FIn<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AD#<get-sam>(){}
     //   Public signature: /AD.sam.<get-sam>|6359168897517051114[0]
     //   Public signature debug description: <get-sam>(){}
@@ -96,7 +96,7 @@ class Test<S : Any?> {
   //   Mangled name: Test#foo(){}FIn<1:0>
   //   Public signature: /Test.foo|8840966648510275976[0]
   //   Public signature debug description: foo(){}FIn<1:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test#foo(){}
   //   Public signature: /Test.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}
@@ -129,7 +129,7 @@ interface I1<in T : Any?> {
     //   Mangled name: I1#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
     //   Public signature: /I1.l.<get-l>|-5292723073790207311[0]
     //   Public signature debug description: <get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: I1#<get-l>(){}
     //   Public signature: /I1.l.<get-l>|3795442967620585[0]
     //   Public signature debug description: <get-l>(){}
@@ -150,7 +150,7 @@ interface I2<in T : Any?> {
     //   Mangled name: I2#<get-sam>(){}FIn<1:0>
     //   Public signature: /I2.sam.<get-sam>|7063493038287370262[0]
     //   Public signature debug description: <get-sam>(){}FIn<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: I2#<get-sam>(){}
     //   Public signature: /I2.sam.<get-sam>|6359168897517051114[0]
     //   Public signature debug description: <get-sam>(){}

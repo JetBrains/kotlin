@@ -13,7 +13,7 @@ class A {
     //   Mangled name: test.A#<get-b>(){}kotlin.Int
     //   Public signature: test/A.b.<get-b>|-2902143276921469679[0]
     //   Public signature debug description: <get-b>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: test.A#<get-b>(){}
     //   Public signature: test/A.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -28,7 +28,7 @@ class A {
     //   Mangled name: test.A#<get-a>(){}kotlin.Int
     //   Public signature: test/A.a.<get-a>|4232747788241509192[0]
     //   Public signature debug description: <get-a>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: test.A#<get-a>(){}
     //   Public signature: test/A.a.<get-a>|6785176174175479410[0]
     //   Public signature debug description: <get-a>(){}
@@ -91,7 +91,7 @@ class A {
     //   Mangled name: test.A#<get-a>@kotlin.Int(){}kotlin.String
     //   Public signature: test/A.a.<get-a>|-8980177656795826496[0]
     //   Public signature debug description: <get-a>@kotlin.Int(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: test.A#<get-a>@kotlin.Int(){}
     //   Public signature: test/A.a.<get-a>|7799474542058666497[0]
     //   Public signature debug description: <get-a>@kotlin.Int(){}
@@ -106,7 +106,7 @@ class A {
     //   Mangled name: test.A#<get-b>@kotlin.Int(){}kotlin.String
     //   Public signature: test/A.b.<get-b>|-3427454669423307773[0]
     //   Public signature debug description: <get-b>@kotlin.Int(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: test.A#<get-b>@kotlin.Int(){}
     //   Public signature: test/A.b.<get-b>|1001308148257010945[0]
     //   Public signature debug description: <get-b>@kotlin.Int(){}

@@ -3,7 +3,7 @@
 //   Public signature: /d1|-2026668325688559202[0]
 //   Public signature debug description: {}d1
 val d1: dynamic
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-d1>(){}
   //   Public signature: /d1.<get-d1>|3799770350020755350[0]
   //   Public signature debug description: <get-d1>(){}
@@ -14,7 +14,7 @@ val d1: dynamic
 //   Public signature: /p|6715504260787941082[0]
 //   Public signature debug description: {}p
 val p: Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
   //   Public signature debug description: <get-p>(){}
@@ -25,7 +25,7 @@ val p: Int
 //   Public signature: /d2|-7196645270133305146[0]
 //   Public signature debug description: {}d2
 var d2: dynamic
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-d2>(){}
   //   Public signature: /d2.<get-d2>|-1981535204947042648[0]
   //   Public signature debug description: <get-d2>(){}
@@ -66,7 +66,7 @@ fun test4(a: Any, s: String, na: Any?): Unit
 //   Public signature debug description: test5(kotlin.Any;kotlin.String;kotlin.Any?){}
 fun test5(a: Any, s: String, na: Any?): Unit
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #withDynamic(<dynamic>){}
 //   Public signature: /withDynamic|4181319760857558891[0]
 //   Public signature debug description: withDynamic(<dynamic>){}

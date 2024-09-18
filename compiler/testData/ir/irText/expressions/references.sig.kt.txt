@@ -7,7 +7,7 @@ val ok: String
   //   Mangled name: #<get-ok>(){}kotlin.String
   //   Public signature: /ok.<get-ok>|-4000622060828023401[0]
   //   Public signature debug description: <get-ok>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-ok>(){}
   //   Public signature: /ok.<get-ok>|6963158084917262476[0]
   //   Public signature debug description: <get-ok>(){}
@@ -22,7 +22,7 @@ val ok2: String
   //   Mangled name: #<get-ok2>(){}kotlin.String
   //   Public signature: /ok2.<get-ok2>|-1465577528977290579[0]
   //   Public signature debug description: <get-ok2>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-ok2>(){}
   //   Public signature: /ok2.<get-ok2>|7829439004828667170[0]
   //   Public signature debug description: <get-ok2>(){}
@@ -32,7 +32,7 @@ val ok2: String
 //   Mangled name: #test1(){}kotlin.String
 //   Public signature: /test1|5794939649815924341[0]
 //   Public signature debug description: test1(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test1(){}
 //   Public signature: /test1|4297044443957252634[0]
 //   Public signature debug description: test1(){}
@@ -42,7 +42,7 @@ fun test1(): String
 //   Mangled name: #test2(kotlin.String){}kotlin.String
 //   Public signature: /test2|-9053313790968627079[0]
 //   Public signature debug description: test2(kotlin.String){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test2(kotlin.String){}
 //   Public signature: /test2|8672709278877196328[0]
 //   Public signature debug description: test2(kotlin.String){}
@@ -52,7 +52,7 @@ fun test2(x: String): String
 //   Mangled name: #test3(){}kotlin.String
 //   Public signature: /test3|3344305992477585251[0]
 //   Public signature debug description: test3(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test3(){}
 //   Public signature: /test3|-3759735065270951803[0]
 //   Public signature debug description: test3(){}
@@ -62,7 +62,7 @@ fun test3(): String
 //   Mangled name: #test4(){}kotlin.String
 //   Public signature: /test4|4822743421999784081[0]
 //   Public signature debug description: test4(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test4(){}
 //   Public signature: /test4|5588455914500386239[0]
 //   Public signature debug description: test4(){}
@@ -72,7 +72,7 @@ fun test4(): String
 //   Mangled name: #test5@kotlin.String(){}kotlin.String
 //   Public signature: /test5|7396849134865790053[0]
 //   Public signature debug description: test5@kotlin.String(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test5@kotlin.String(){}
 //   Public signature: /test5|6764932899271361379[0]
 //   Public signature debug description: test5@kotlin.String(){}
@@ -87,7 +87,7 @@ val ok3: String
   //   Mangled name: #<get-ok3>(){}kotlin.String
   //   Public signature: /ok3.<get-ok3>|-2021208757621779282[0]
   //   Public signature debug description: <get-ok3>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-ok3>(){}
   //   Public signature: /ok3.<get-ok3>|-6867262654716867671[0]
   //   Public signature debug description: <get-ok3>(){}
@@ -102,7 +102,7 @@ val String.okext: String
   //   Mangled name: #<get-okext>@kotlin.String(){}kotlin.String
   //   Public signature: /okext.<get-okext>|-4397362169527603922[0]
   //   Public signature debug description: <get-okext>@kotlin.String(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-okext>@kotlin.String(){}
   //   Public signature: /okext.<get-okext>|-5103161093403962760[0]
   //   Public signature debug description: <get-okext>@kotlin.String(){}

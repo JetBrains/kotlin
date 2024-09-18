@@ -11,7 +11,7 @@ open annotation class TestAnnWithIntArray : Annotation {
     //   Mangled name: TestAnnWithIntArray#<get-x>(){}kotlin.IntArray
     //   Public signature: /TestAnnWithIntArray.x.<get-x>|-5699461780158713262[0]
     //   Public signature debug description: <get-x>(){}kotlin.IntArray
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestAnnWithIntArray#<get-x>(){}
     //   Public signature: /TestAnnWithIntArray.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -38,7 +38,7 @@ open annotation class TestAnnWithStringArray : Annotation {
     //   Mangled name: TestAnnWithStringArray#<get-x>(){}kotlin.Array<kotlin.String>
     //   Public signature: /TestAnnWithStringArray.x.<get-x>|-709321774523398734[0]
     //   Public signature debug description: <get-x>(){}kotlin.Array<kotlin.String>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestAnnWithStringArray#<get-x>(){}
     //   Public signature: /TestAnnWithStringArray.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

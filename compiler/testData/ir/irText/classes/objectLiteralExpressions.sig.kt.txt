@@ -7,7 +7,7 @@ val test1: Any
   //   Mangled name: #<get-test1>(){}kotlin.Any
   //   Public signature: /test1.<get-test1>|-6000098324399857556[0]
   //   Public signature debug description: <get-test1>(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -22,7 +22,7 @@ val test2: IFoo
   //   Mangled name: #<get-test2>(){}IFoo
   //   Public signature: /test2.<get-test2>|8558399082919905120[0]
   //   Public signature debug description: <get-test2>(){}IFoo
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   //   Public signature debug description: <get-test2>(){}
@@ -60,7 +60,7 @@ class Outer {
   //   Mangled name: Outer#test3(){}Outer.Inner
   //   Public signature: /Outer.test3|6083507929198720424[0]
   //   Public signature debug description: test3(){}Outer.Inner
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Outer#test3(){}
   //   Public signature: /Outer.test3|-3759735065270951803[0]
   //   Public signature debug description: test3(){}
@@ -84,7 +84,7 @@ interface IFoo {
 //   Mangled name: #test4@Outer(){}Outer.Inner
 //   Public signature: /test4|-5948342138475838209[0]
 //   Public signature debug description: test4@Outer(){}Outer.Inner
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test4@Outer(){}
 //   Public signature: /test4|5715080467126173402[0]
 //   Public signature debug description: test4@Outer(){}

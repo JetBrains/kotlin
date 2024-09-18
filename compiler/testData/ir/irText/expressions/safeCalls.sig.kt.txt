@@ -11,7 +11,7 @@ class Ref {
     //   Mangled name: Ref#<get-value>(){}kotlin.Int
     //   Public signature: /Ref.value.<get-value>|-5900028706170996[0]
     //   Public signature debug description: <get-value>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Ref#<get-value>(){}
     //   Public signature: /Ref.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -38,7 +38,7 @@ interface IHost {
   //   Mangled name: IHost#extLength@kotlin.String(){}kotlin.Int
   //   Public signature: /IHost.extLength|-6119453020131348069[0]
   //   Public signature debug description: extLength@kotlin.String(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IHost#extLength@kotlin.String(){}
   //   Public signature: /IHost.extLength|6995498075491607398[0]
   //   Public signature debug description: extLength@kotlin.String(){}
@@ -56,7 +56,7 @@ fun box(): Unit
 //   Mangled name: #foo@kotlin.Int(){}kotlin.Int
 //   Public signature: /foo|-8806072392141306410[0]
 //   Public signature debug description: foo@kotlin.Int(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo@kotlin.Int(){}
 //   Public signature: /foo|4521317896132265411[0]
 //   Public signature debug description: foo@kotlin.Int(){}
@@ -66,7 +66,7 @@ fun Int.foo(): Int
 //   Mangled name: #test1(kotlin.String?){}kotlin.Int?
 //   Public signature: /test1|3311195222465373373[0]
 //   Public signature debug description: test1(kotlin.String?){}kotlin.Int?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test1(kotlin.String?){}
 //   Public signature: /test1|-2987894258831182637[0]
 //   Public signature debug description: test1(kotlin.String?){}
@@ -76,7 +76,7 @@ fun test1(x: String?): Int?
 //   Mangled name: #test2(kotlin.String?){}kotlin.Int?
 //   Public signature: /test2|6693863336392834701[0]
 //   Public signature debug description: test2(kotlin.String?){}kotlin.Int?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test2(kotlin.String?){}
 //   Public signature: /test2|-4736304558227690758[0]
 //   Public signature debug description: test2(kotlin.String?){}
@@ -86,7 +86,7 @@ fun test2(x: String?): Int?
 //   Mangled name: #test3(kotlin.String?;kotlin.Any?){}kotlin.Boolean?
 //   Public signature: /test3|-1947502248408841684[0]
 //   Public signature debug description: test3(kotlin.String?;kotlin.Any?){}kotlin.Boolean?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test3(kotlin.String?;kotlin.Any?){}
 //   Public signature: /test3|420341366861601133[0]
 //   Public signature debug description: test3(kotlin.String?;kotlin.Any?){}
@@ -102,7 +102,7 @@ fun test4(x: Ref?): Unit
 //   Mangled name: #test5@IHost(kotlin.String?){}kotlin.Int?
 //   Public signature: /test5|-1299994974065505995[0]
 //   Public signature debug description: test5@IHost(kotlin.String?){}kotlin.Int?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test5@IHost(kotlin.String?){}
 //   Public signature: /test5|7033598970433422701[0]
 //   Public signature debug description: test5@IHost(kotlin.String?){}

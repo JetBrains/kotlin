@@ -1,4 +1,4 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR JS_IR NATIVE
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR JS NATIVE
 // ^ KT-63724: all signatures match, but @Test5 has different value parameters structure
 
 package ann

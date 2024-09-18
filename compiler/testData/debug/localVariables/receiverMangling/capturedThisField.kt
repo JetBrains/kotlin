@@ -18,7 +18,7 @@ fun box() {
 // test.kt:9 box: x:Foo=Foo
 // test.kt:10 box: x:Foo=Foo
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:8 box:
 // test.kt:2 <init>:
 // test.kt:9 box: x=Foo

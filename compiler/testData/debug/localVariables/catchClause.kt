@@ -19,7 +19,7 @@ fun box() {
 // test.kt:9 box: e:java.lang.Throwable=java.lang.ArithmeticException
 // test.kt:11 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:4 box:
 // test.kt:5 box: a=1:number
 // test.kt:6 box: a=0:number

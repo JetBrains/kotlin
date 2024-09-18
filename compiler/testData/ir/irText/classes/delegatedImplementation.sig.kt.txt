@@ -12,7 +12,7 @@ class Test1 : IBase {
   //   Mangled name: Test1#bar(){}kotlin.Int
   //   Public signature: /Test1.bar|-6436649210114349217[0]
   //   Public signature debug description: bar(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test1#bar(){}
   //   Public signature: /Test1.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -46,7 +46,7 @@ class Test2 : IBase, IOther {
   //   Mangled name: Test2#bar(){}kotlin.Int
   //   Public signature: /Test2.bar|-6436649210114349217[0]
   //   Public signature debug description: bar(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test2#bar(){}
   //   Public signature: /Test2.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -73,7 +73,7 @@ class Test2 : IBase, IOther {
     //   Mangled name: Test2#<get-x>(){}kotlin.String
     //   Public signature: /Test2.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-x>(){}
     //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -88,7 +88,7 @@ class Test2 : IBase, IOther {
     //   Mangled name: Test2#<get-y>(){}kotlin.Int
     //   Public signature: /Test2.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-y>(){}
     //   Public signature: /Test2.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -108,7 +108,7 @@ class Test2 : IBase, IOther {
     //   Mangled name: Test2#<get-z1>@kotlin.Byte(){}kotlin.Int
     //   Public signature: /Test2.z1.<get-z1>|202969018831811261[0]
     //   Public signature debug description: <get-z1>@kotlin.Byte(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-z1>@kotlin.Byte(){}
     //   Public signature: /Test2.z1.<get-z1>|1974735559523490070[0]
     //   Public signature debug description: <get-z1>@kotlin.Byte(){}
@@ -123,7 +123,7 @@ class Test2 : IBase, IOther {
     //   Mangled name: Test2#<get-z2>@kotlin.Byte(){}kotlin.Int
     //   Public signature: /Test2.z2.<get-z2>|7197655500603983642[0]
     //   Public signature debug description: <get-z2>@kotlin.Byte(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-z2>@kotlin.Byte(){}
     //   Public signature: /Test2.z2.<get-z2>|-8674032209594777706[0]
     //   Public signature debug description: <get-z2>@kotlin.Byte(){}
@@ -144,7 +144,7 @@ interface IBase {
   //   Mangled name: IBase#bar(){}kotlin.Int
   //   Public signature: /IBase.bar|-6436649210114349217[0]
   //   Public signature debug description: bar(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IBase#bar(){}
   //   Public signature: /IBase.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -177,7 +177,7 @@ interface IOther {
     //   Mangled name: IOther#<get-x>(){}kotlin.String
     //   Public signature: /IOther.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IOther#<get-x>(){}
     //   Public signature: /IOther.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -192,7 +192,7 @@ interface IOther {
     //   Mangled name: IOther#<get-y>(){}kotlin.Int
     //   Public signature: /IOther.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IOther#<get-y>(){}
     //   Public signature: /IOther.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -212,7 +212,7 @@ interface IOther {
     //   Mangled name: IOther#<get-z1>@kotlin.Byte(){}kotlin.Int
     //   Public signature: /IOther.z1.<get-z1>|202969018831811261[0]
     //   Public signature debug description: <get-z1>@kotlin.Byte(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IOther#<get-z1>@kotlin.Byte(){}
     //   Public signature: /IOther.z1.<get-z1>|1974735559523490070[0]
     //   Public signature debug description: <get-z1>@kotlin.Byte(){}
@@ -227,7 +227,7 @@ interface IOther {
     //   Mangled name: IOther#<get-z2>@kotlin.Byte(){}kotlin.Int
     //   Public signature: /IOther.z2.<get-z2>|7197655500603983642[0]
     //   Public signature debug description: <get-z2>@kotlin.Byte(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IOther#<get-z2>@kotlin.Byte(){}
     //   Public signature: /IOther.z2.<get-z2>|-8674032209594777706[0]
     //   Public signature debug description: <get-z2>@kotlin.Byte(){}
@@ -254,7 +254,7 @@ object BaseImpl : IBase {
   //   Mangled name: BaseImpl#bar(){}kotlin.Int
   //   Public signature: /BaseImpl.bar|-6436649210114349217[0]
   //   Public signature debug description: bar(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: BaseImpl#bar(){}
   //   Public signature: /BaseImpl.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -278,7 +278,7 @@ object BaseImpl : IBase {
 //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther
 //   Public signature: /otherImpl|6303285997838013800[0]
 //   Public signature debug description: otherImpl(kotlin.String;kotlin.Int){}IOther
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}
 //   Public signature: /otherImpl|4856050071539374055[0]
 //   Public signature debug description: otherImpl(kotlin.String;kotlin.Int){}

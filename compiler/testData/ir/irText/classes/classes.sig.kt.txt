@@ -36,7 +36,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#valueOf#static(kotlin.String){}TestEnumClass
   //   Public signature: /TestEnumClass.valueOf|3258702714702284561[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}TestEnumClass
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#valueOf#static(kotlin.String){}
   //   Public signature: /TestEnumClass.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
@@ -46,7 +46,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#values#static(){}kotlin.Array<TestEnumClass>
   //   Public signature: /TestEnumClass.values|2819729310351736077[0]
   //   Public signature debug description: values#static(){}kotlin.Array<TestEnumClass>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#values#static(){}
   //   Public signature: /TestEnumClass.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
@@ -56,7 +56,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#compareTo(TestEnumClass){}kotlin.Int
   //   Public signature: /TestEnumClass.compareTo|-9135154948806454387[0]
   //   Public signature debug description: compareTo(TestEnumClass){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#compareTo(TestEnumClass){}
   //   Public signature: /TestEnumClass.compareTo|5404150121610277282[0]
   //   Public signature debug description: compareTo(TestEnumClass){}
@@ -66,7 +66,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /TestEnumClass.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#equals(kotlin.Any?){}
   //   Public signature: /TestEnumClass.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -76,7 +76,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#hashCode(){}kotlin.Int
   //   Public signature: /TestEnumClass.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#hashCode(){}
   //   Public signature: /TestEnumClass.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -86,7 +86,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Mangled name: TestEnumClass#toString(){}kotlin.String
   //   Public signature: /TestEnumClass.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TestEnumClass#toString(){}
   //   Public signature: /TestEnumClass.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -101,7 +101,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
     //   Mangled name: TestEnumClass#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnumClass>
     //   Public signature: /TestEnumClass.entries.<get-entries>|-5859730592340272958[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<TestEnumClass>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestEnumClass#<get-entries>#static(){}
     //   Public signature: /TestEnumClass.entries.<get-entries>|-6068527377476727729[0]
     //   Public signature debug description: <get-entries>#static(){}
@@ -116,7 +116,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
     //   Mangled name: TestEnumClass#<get-name>(){}kotlin.String
     //   Public signature: /TestEnumClass.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestEnumClass#<get-name>(){}
     //   Public signature: /TestEnumClass.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -131,7 +131,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
     //   Mangled name: TestEnumClass#<get-ordinal>(){}kotlin.Int
     //   Public signature: /TestEnumClass.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestEnumClass#<get-ordinal>(){}
     //   Public signature: /TestEnumClass.ordinal.<get-ordinal>|8409904226035914023[0]
     //   Public signature debug description: <get-ordinal>(){}

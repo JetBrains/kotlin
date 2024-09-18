@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 
 // FILE: lib.kt
 package com.baz

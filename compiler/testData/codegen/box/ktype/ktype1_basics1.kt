@@ -4,7 +4,7 @@
  */
 // AssertionError: Expected <C<kotlin.Int?>>, actual <C<Int?>>.
 // AssertionError: Expected <C<C<kotlin.Any>>>, actual <C<C<Any>>>.
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, ANDROID
+// IGNORE_BACKEND: JS, JS_ES6, WASM, ANDROID
 
 // WITH_STDLIB
 // WITH_REFLECT

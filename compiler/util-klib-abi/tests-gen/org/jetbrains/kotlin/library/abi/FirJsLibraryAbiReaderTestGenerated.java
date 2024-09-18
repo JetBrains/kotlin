@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInContent() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
   }
 
   @Test
@@ -112,12 +112,6 @@ public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiR
   @TestMetadata("specific_types_dnn.kt")
   public void testSpecific_types_dnn() {
     runTest("compiler/testData/klib/dump-abi/content/specific_types_dnn.kt");
-  }
-
-  @Test
-  @TestMetadata("specific_types_dynamic.kt")
-  public void testSpecific_types_dynamic() {
-    runTest("compiler/testData/klib/dump-abi/content/specific_types_dynamic.kt");
   }
 
   @Test

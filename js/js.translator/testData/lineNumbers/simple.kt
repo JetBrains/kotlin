@@ -3,4 +3,4 @@ fun box() {
     println("bar")
 }
 
-// LINES(JS_IR): 1 1 2 2 3 3
+// LINES(JS): 1 1 2 2 3 3

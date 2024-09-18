@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FIR_IDENTICAL
 fun test1(d: dynamic) = d.member(1, 2, 3)
 

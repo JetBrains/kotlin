@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS_ES6
 // KT-41227
 
 var result = ""

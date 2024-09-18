@@ -12,7 +12,7 @@ class Wrapper {
     //   Mangled name (compatible mode: true):  Wrapper#<get-dummy>(){}Wrapper.dummy.<no name provided>
     //   Public signature: /Wrapper.dummy.<get-dummy>|-1011589390871666922[0]
     //   Public signature debug description: <get-dummy>(){}Wrapper{}dummy.<no name provided>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Wrapper#<get-dummy>(){}
     //   Public signature: /Wrapper.dummy.<get-dummy>|2827030438021585844[0]
     //   Public signature debug description: <get-dummy>(){}
@@ -28,7 +28,7 @@ class Wrapper {
     //   Mangled name (compatible mode: true):  Wrapper#<get-bar>(){}Wrapper.bar.<no name provided>
     //   Public signature: /Wrapper.bar.<get-bar>|-6775654681164748186[0]
     //   Public signature debug description: <get-bar>(){}Wrapper{}bar.<no name provided>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Wrapper#<get-bar>(){}
     //   Public signature: /Wrapper.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -55,7 +55,7 @@ interface Bar {
     //   Mangled name: Bar#<get-foo>(){}kotlin.String
     //   Public signature: /Bar.foo.<get-foo>|9191418659696353323[0]
     //   Public signature debug description: <get-foo>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Bar#<get-foo>(){}
     //   Public signature: /Bar.foo.<get-foo>|-2462361841367688099[0]
     //   Public signature debug description: <get-foo>(){}

@@ -11,7 +11,7 @@ open class Base {
     //   Mangled name: Base#<get-x>(){}kotlin.Int
     //   Public signature: /Base.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-x>(){}
     //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -26,7 +26,7 @@ open class Base {
     //   Mangled name: Base#<get-y>(){}kotlin.Int
     //   Public signature: /Base.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-y>(){}
     //   Public signature: /Base.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -59,7 +59,7 @@ class Test1 : Base {
     //   Mangled name: Test1#<get-x>(){}kotlin.Int
     //   Public signature: /Test1.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-x>(){}
     //   Public signature: /Test1.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -74,7 +74,7 @@ class Test1 : Base {
     //   Mangled name: Test1#<get-y>(){}kotlin.Int
     //   Public signature: /Test1.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-y>(){}
     //   Public signature: /Test1.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -107,7 +107,7 @@ class Test2 : Base {
     //   Mangled name: Test2#<get-x>(){}kotlin.Int
     //   Public signature: /Test2.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-x>(){}
     //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -122,7 +122,7 @@ class Test2 : Base {
     //   Mangled name: Test2#<get-y>(){}kotlin.Int
     //   Public signature: /Test2.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-y>(){}
     //   Public signature: /Test2.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}

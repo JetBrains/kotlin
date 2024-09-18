@@ -2,7 +2,7 @@
 //   Mangled name: #magic(){0§<kotlin.Any?>}0:0
 //   Public signature: /magic|-2053324167820994651[0]
 //   Public signature debug description: magic(){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #magic(){0§<kotlin.Any?>}
 //   Public signature: /magic|1377498203473786813[0]
 //   Public signature debug description: magic(){0§<kotlin.Any?>}

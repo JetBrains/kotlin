@@ -7,7 +7,7 @@ val testTopLevel: String /* by */
   //   Mangled name: #<get-testTopLevel>(){}kotlin.String
   //   Public signature: /testTopLevel.<get-testTopLevel>|2099979481809527830[0]
   //   Public signature debug description: <get-testTopLevel>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-testTopLevel>(){}
   //   Public signature: /testTopLevel.<get-testTopLevel>|6926646903306405207[0]
   //   Public signature debug description: <get-testTopLevel>(){}
@@ -26,7 +26,7 @@ class Delegate {
     //   Mangled name: Delegate#<get-value>(){}kotlin.String
     //   Public signature: /Delegate.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegate#<get-value>(){}
     //   Public signature: /Delegate.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -42,7 +42,7 @@ class Delegate {
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}kotlin.String
   //   Public signature: /Delegate.getValue|-3989854329232997863[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /Delegate.getValue|-9077843357189755365[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}
@@ -63,7 +63,7 @@ class DelegateProvider {
     //   Mangled name: DelegateProvider#<get-value>(){}kotlin.String
     //   Public signature: /DelegateProvider.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DelegateProvider#<get-value>(){}
     //   Public signature: /DelegateProvider.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -79,7 +79,7 @@ class DelegateProvider {
   //   Mangled name: DelegateProvider#provideDelegate(kotlin.Any?;kotlin.Any?){}Delegate
   //   Public signature: /DelegateProvider.provideDelegate|8347738726431448305[0]
   //   Public signature debug description: provideDelegate(kotlin.Any?;kotlin.Any?){}Delegate
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DelegateProvider#provideDelegate(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /DelegateProvider.provideDelegate|-8444239183469250963[0]
   //   Public signature debug description: provideDelegate(kotlin.Any?;kotlin.Any?){}

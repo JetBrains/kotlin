@@ -12,7 +12,7 @@ open class C1 : I {
   //   Mangled name: C1#bazString(){}kotlin.String
   //   Public signature: /C1.bazString|4745561783571976677[0]
   //   Public signature debug description: bazString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C1#bazString(){}
   //   Public signature: /C1.bazString|-4075144603640543449[0]
   //   Public signature debug description: bazString(){}
@@ -28,7 +28,7 @@ open class C1 : I {
   //   Mangled name: C1#barString(){}kotlin.String
   //   Public signature: /C1.barString|1448966844562545716[0]
   //   Public signature debug description: barString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C1#barString(){}
   //   Public signature: /C1.barString|-1504802894060354159[0]
   //   Public signature debug description: barString(){}
@@ -44,7 +44,7 @@ open class C1 : I {
   //   Mangled name: C1#fooString(){}kotlin.String
   //   Public signature: /C1.fooString|-3874429348411417233[0]
   //   Public signature debug description: fooString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C1#fooString(){}
   //   Public signature: /C1.fooString|-5005598722040110311[0]
   //   Public signature debug description: fooString(){}
@@ -72,7 +72,7 @@ class C2 : C1 {
   //   Mangled name: C2#barString(){}kotlin.String
   //   Public signature: /C2.barString|1448966844562545716[0]
   //   Public signature debug description: barString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C2#barString(){}
   //   Public signature: /C2.barString|-1504802894060354159[0]
   //   Public signature debug description: barString(){}
@@ -88,7 +88,7 @@ class C2 : C1 {
   //   Mangled name: C2#bazString(){}kotlin.String
   //   Public signature: /C2.bazString|4745561783571976677[0]
   //   Public signature debug description: bazString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C2#bazString(){}
   //   Public signature: /C2.bazString|-4075144603640543449[0]
   //   Public signature debug description: bazString(){}
@@ -104,7 +104,7 @@ class C2 : C1 {
   //   Mangled name: C2#fooString(){}kotlin.String
   //   Public signature: /C2.fooString|-3874429348411417233[0]
   //   Public signature debug description: fooString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C2#fooString(){}
   //   Public signature: /C2.fooString|-5005598722040110311[0]
   //   Public signature debug description: fooString(){}
@@ -125,7 +125,7 @@ private interface I {
   // CHECK JVM_IR:
   //   Mangled name: I#barString(){}kotlin.String
   //   Public signature: [ File '/privateInterface.kt' <- /I.barString|1448966844562545716[0] ]
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#barString(){}
   //   Public signature: [ File '/privateInterface.kt' <- /I.barString|-1504802894060354159[0] ]
   fun barString(): String
@@ -138,7 +138,7 @@ private interface I {
   // CHECK JVM_IR:
   //   Mangled name: I#bazString(){}kotlin.String
   //   Public signature: [ File '/privateInterface.kt' <- /I.bazString|4745561783571976677[0] ]
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#bazString(){}
   //   Public signature: [ File '/privateInterface.kt' <- /I.bazString|-4075144603640543449[0] ]
   fun bazString(): String
@@ -151,7 +151,7 @@ private interface I {
   // CHECK JVM_IR:
   //   Mangled name: I#fooString(){}kotlin.String
   //   Public signature: [ File '/privateInterface.kt' <- /I.fooString|-3874429348411417233[0] ]
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#fooString(){}
   //   Public signature: [ File '/privateInterface.kt' <- /I.fooString|-5005598722040110311[0] ]
   abstract fun fooString(): String

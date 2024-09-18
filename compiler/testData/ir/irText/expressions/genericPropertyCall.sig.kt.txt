@@ -7,7 +7,7 @@ val test: String
   //   Mangled name: #<get-test>(){}kotlin.String
   //   Public signature: /test.<get-test>|-8411936358597690329[0]
   //   Public signature debug description: <get-test>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test>(){}
   //   Public signature: /test.<get-test>|208282462577758837[0]
   //   Public signature debug description: <get-test>(){}
@@ -22,7 +22,7 @@ val <T : Any?> T.id: T
   //   Mangled name: #<get-id>@0:0(){0§<kotlin.Any?>}0:0
   //   Public signature: /id.<get-id>|4983271234253098452[0]
   //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-id>@0:0(){0§<kotlin.Any?>}
   //   Public signature: /id.<get-id>|-1537502770664138716[0]
   //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}

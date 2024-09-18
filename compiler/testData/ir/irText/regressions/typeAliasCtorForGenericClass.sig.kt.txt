@@ -11,7 +11,7 @@ class A<Q : Any?> {
     //   Mangled name: A#<get-q>(){}1:0
     //   Public signature: /A.q.<get-q>|-447041854451904985[0]
     //   Public signature debug description: <get-q>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-q>(){}
     //   Public signature: /A.q.<get-q>|-39243554116721919[0]
     //   Public signature debug description: <get-q>(){}

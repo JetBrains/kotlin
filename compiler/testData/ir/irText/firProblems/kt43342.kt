@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JS, JS_ES6
 // ^ Map has js specific methods
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS
 
 open class ControlFlowInfo<K, V>(val map: Map<K, V>): Map<K, V> by map
 

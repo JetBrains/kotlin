@@ -1,3 +1,3 @@
-// TARGET_BACKEND: JS_IR
-// IGNORE_BACKEND_K1: JS_IR
+// TARGET_BACKEND: JS
+// IGNORE_BACKEND_K1: JS
 fun test(d: dynamic) = d!!

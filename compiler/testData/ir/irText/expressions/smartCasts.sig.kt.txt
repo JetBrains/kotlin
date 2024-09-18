@@ -14,7 +14,7 @@ fun expectsString(s: String): Unit
 //   Mangled name: #overloaded(kotlin.String){}kotlin.String
 //   Public signature: /overloaded|-6751807575913949015[0]
 //   Public signature debug description: overloaded(kotlin.String){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #overloaded(kotlin.String){}
 //   Public signature: /overloaded|-6953470175034220057[0]
 //   Public signature debug description: overloaded(kotlin.String){}
@@ -24,7 +24,7 @@ fun overloaded(s: String): String
 //   Mangled name: #overloaded(kotlin.Any){}kotlin.Any
 //   Public signature: /overloaded|-9074611933282297931[0]
 //   Public signature debug description: overloaded(kotlin.Any){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #overloaded(kotlin.Any){}
 //   Public signature: /overloaded|7013236472054747107[0]
 //   Public signature debug description: overloaded(kotlin.Any){}
@@ -40,7 +40,7 @@ fun test1(x: Any): Unit
 //   Mangled name: #test2(kotlin.Any){}kotlin.String
 //   Public signature: /test2|1843573308398339018[0]
 //   Public signature debug description: test2(kotlin.Any){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test2(kotlin.Any){}
 //   Public signature: /test2|-8648451680149324146[0]
 //   Public signature debug description: test2(kotlin.Any){}
@@ -50,7 +50,7 @@ fun test2(x: Any): String
 //   Mangled name: #test3(kotlin.Any){}kotlin.String
 //   Public signature: /test3|-5895248493644150217[0]
 //   Public signature debug description: test3(kotlin.Any){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test3(kotlin.Any){}
 //   Public signature: /test3|165168275269731002[0]
 //   Public signature debug description: test3(kotlin.Any){}

@@ -21,7 +21,7 @@ inline fun foo(n: Int) {}
 // test.kt:4 box
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:4 box
 // test.kt:4 box
 // test.kt:4 box

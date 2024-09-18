@@ -26,7 +26,7 @@ fun box(): String {
 // test.kt:12 box: p:kotlin.Pair=kotlin.Pair, o:java.lang.String="O":java.lang.String
 // test.kt:17 box: p:kotlin.Pair=kotlin.Pair, o:java.lang.String="O":java.lang.String, k:java.lang.String="K":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:6 box:
 // test.kt:10 box: p=kotlin.Pair
 // test.kt:12 box: p=kotlin.Pair, o="O":kotlin.String

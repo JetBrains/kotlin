@@ -11,7 +11,7 @@ class Host {
     //   Mangled name: Host#<get-y>(){}kotlin.Int
     //   Public signature: /Host.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host#<get-y>(){}
     //   Public signature: /Host.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -27,7 +27,7 @@ class Host {
   //   Mangled name: Host#test@Outer(){}Outer.Inner
   //   Public signature: /Host.test|-982409629050476808[0]
   //   Public signature debug description: test@Outer(){}Outer.Inner
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Host#test@Outer(){}
   //   Public signature: /Host.test|-3179256530033214921[0]
   //   Public signature debug description: test@Outer(){}
@@ -52,7 +52,7 @@ class Outer {
       //   Mangled name: Outer.Inner#<get-x>(){}kotlin.Int
       //   Public signature: /Outer.Inner.x.<get-x>|4966956098150895696[0]
       //   Public signature debug description: <get-x>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Outer.Inner#<get-x>(){}
       //   Public signature: /Outer.Inner.x.<get-x>|1482705010654679335[0]
       //   Public signature debug description: <get-x>(){}

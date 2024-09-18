@@ -43,7 +43,7 @@ class A {
 // test.kt:32 bar
 // test.kt:8 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:6 box
 // test.kt:16 <init>
 // test.kt:6 box

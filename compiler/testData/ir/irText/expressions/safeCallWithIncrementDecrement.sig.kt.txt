@@ -16,7 +16,7 @@ class C {
 //   Mangled name: test#get@kotlin.Int?(kotlin.Int){}kotlin.Int
 //   Public signature: test/get|-6221002532708237996[0]
 //   Public signature debug description: get@kotlin.Int?(kotlin.Int){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: test#get@kotlin.Int?(kotlin.Int){}
 //   Public signature: test/get|2096149375626254616[0]
 //   Public signature debug description: get@kotlin.Int?(kotlin.Int){}
@@ -26,7 +26,7 @@ operator fun Int?.get(index: Int): Int
 //   Mangled name: test#inc@kotlin.Int?(){}kotlin.Int?
 //   Public signature: test/inc|-8688916183051881962[0]
 //   Public signature debug description: inc@kotlin.Int?(){}kotlin.Int?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: test#inc@kotlin.Int?(){}
 //   Public signature: test/inc|7389847627046551690[0]
 //   Public signature debug description: inc@kotlin.Int?(){}
@@ -59,7 +59,7 @@ var C?.p: Int
   //   Mangled name: test#<get-p>@test.C?(){}kotlin.Int
   //   Public signature: test/p.<get-p>|-8557468444569568699[0]
   //   Public signature debug description: <get-p>@test.C?(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: test#<get-p>@test.C?(){}
   //   Public signature: test/p.<get-p>|-8829073944247347395[0]
   //   Public signature debug description: <get-p>@test.C?(){}

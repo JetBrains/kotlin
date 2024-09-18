@@ -12,7 +12,7 @@ class B : A {
   //   Mangled name: B#f(kotlin.String){}kotlin.String
   //   Public signature: /B.f|-2199490409267413998[0]
   //   Public signature debug description: f(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: B#f(kotlin.String){}
   //   Public signature: /B.f|5157548403930815746[0]
   //   Public signature debug description: f(kotlin.String){}
@@ -33,7 +33,7 @@ class C : A {
     //   Mangled name: C#<get-x>(){}A
     //   Public signature: /C.x.<get-x>|-8084666749302497299[0]
     //   Public signature debug description: <get-x>(){}A
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -49,7 +49,7 @@ class C : A {
   //   Mangled name: C#f(kotlin.String){}kotlin.String
   //   Public signature: /C.f|-2199490409267413998[0]
   //   Public signature debug description: f(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#f(kotlin.String){}
   //   Public signature: /C.f|5157548403930815746[0]
   //   Public signature debug description: f(kotlin.String){}
@@ -65,7 +65,7 @@ interface A {
   //   Mangled name: A#f(kotlin.String){}kotlin.String
   //   Public signature: /A.f|-2199490409267413998[0]
   //   Public signature debug description: f(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#f(kotlin.String){}
   //   Public signature: /A.f|5157548403930815746[0]
   //   Public signature debug description: f(kotlin.String){}

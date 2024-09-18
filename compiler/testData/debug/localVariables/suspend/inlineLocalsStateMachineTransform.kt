@@ -46,7 +46,7 @@ suspend fun box() {
 // test.kt:5 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal:int=0:int, x$iv:int=41:int
 // test.kt:19 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:12 doResume:
 // test.kt:8 h: $completion=Coroutine
 // test.kt:4 doResume:

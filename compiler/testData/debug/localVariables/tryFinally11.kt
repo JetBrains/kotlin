@@ -36,7 +36,7 @@ fun box(): String {
 // test.kt:17 box: i:int=0:int
 // test.kt:21 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:8 box:
 // test.kt:8 box:
 // test.kt:8 box:

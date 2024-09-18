@@ -41,7 +41,7 @@ interface Inv<T : Any?> {
     //   Mangled name: Inv#<get-t>(){}1:0
     //   Public signature: /Inv.t.<get-t>|5296523675281381766[0]
     //   Public signature debug description: <get-t>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Inv#<get-t>(){}
     //   Public signature: /Inv.t.<get-t>|7061140872129253552[0]
     //   Public signature debug description: <get-t>(){}
@@ -57,7 +57,7 @@ interface Z {
   //   Mangled name: Z#create(In<0:0>;In<0:0>){0§<kotlin.Any?>}Inv<0:0>
   //   Public signature: /Z.create|7944253173603668399[0]
   //   Public signature debug description: create(In<0:0>;In<0:0>){0§<kotlin.Any?>}Inv<0:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#create(In<0:0>;In<0:0>){0§<kotlin.Any?>}
   //   Public signature: /Z.create|-4145351315131572749[0]
   //   Public signature debug description: create(In<0:0>;In<0:0>){0§<kotlin.Any?>}

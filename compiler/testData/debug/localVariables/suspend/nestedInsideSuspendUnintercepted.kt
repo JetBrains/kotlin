@@ -82,7 +82,7 @@ suspend fun box() {
 // test.kt:30 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:31 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:20 doResume:
 // test.kt:21 doResume: c=1:number
 // test.kt:7 id: obj=1:number

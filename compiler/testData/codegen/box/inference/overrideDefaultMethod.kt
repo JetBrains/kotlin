@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 
 // Don't test other backends because they don't support overriding and calling interface methods with default arguments
 

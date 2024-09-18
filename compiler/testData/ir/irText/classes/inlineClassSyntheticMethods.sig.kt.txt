@@ -11,7 +11,7 @@ class C<T : Any?> {
     //   Mangled name: C#<get-t>(){}1:0
     //   Public signature: /C.t.<get-t>|5296523675281381766[0]
     //   Public signature debug description: <get-t>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-t>(){}
     //   Public signature: /C.t.<get-t>|7061140872129253552[0]
     //   Public signature debug description: <get-t>(){}
@@ -27,7 +27,7 @@ class C<T : Any?> {
   //   Mangled name: C#hashCode(){}kotlin.Int
   //   Public signature: /C.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#hashCode(){}
   //   Public signature: /C.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -48,7 +48,7 @@ value class IC<TT : Any?> {
     //   Mangled name: IC#<get-c>(){}C<1:0>
     //   Public signature: /IC.c.<get-c>|-6707667902688835915[0]
     //   Public signature debug description: <get-c>(){}C<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IC#<get-c>(){}
     //   Public signature: /IC.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -64,7 +64,7 @@ value class IC<TT : Any?> {
   //   Mangled name: IC#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /IC.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC#equals(kotlin.Any?){}
   //   Public signature: /IC.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -74,7 +74,7 @@ value class IC<TT : Any?> {
   //   Mangled name: IC#hashCode(){}kotlin.Int
   //   Public signature: /IC.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC#hashCode(){}
   //   Public signature: /IC.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -84,7 +84,7 @@ value class IC<TT : Any?> {
   //   Mangled name: IC#toString(){}kotlin.String
   //   Public signature: /IC.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC#toString(){}
   //   Public signature: /IC.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -94,7 +94,7 @@ value class IC<TT : Any?> {
   //   Mangled name: IC#foo(){}kotlin.Int
   //   Public signature: /IC.foo|-1256155405684507276[0]
   //   Public signature debug description: foo(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IC#foo(){}
   //   Public signature: /IC.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}
@@ -106,7 +106,7 @@ value class IC<TT : Any?> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

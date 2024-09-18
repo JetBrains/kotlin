@@ -38,7 +38,7 @@ class Outer {
 //   Mangled name: #testConstructor(){}kotlin.Any
 //   Public signature: /testConstructor|-8265230471442733237[0]
 //   Public signature debug description: testConstructor(){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testConstructor(){}
 //   Public signature: /testConstructor|2230958656416821461[0]
 //   Public signature debug description: testConstructor(){}
@@ -48,7 +48,7 @@ fun testConstructor(): Any
 //   Mangled name: #testInnerClassConstructor(Outer){}kotlin.Any
 //   Public signature: /testInnerClassConstructor|7325530570703424818[0]
 //   Public signature debug description: testInnerClassConstructor(Outer){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testInnerClassConstructor(Outer){}
 //   Public signature: /testInnerClassConstructor|8390561746269240962[0]
 //   Public signature debug description: testInnerClassConstructor(Outer){}
@@ -58,7 +58,7 @@ fun testInnerClassConstructor(outer: Outer): Any
 //   Mangled name: #testInnerClassConstructorCapturingOuter(){}kotlin.Any
 //   Public signature: /testInnerClassConstructorCapturingOuter|-5884857333600375021[0]
 //   Public signature debug description: testInnerClassConstructorCapturingOuter(){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testInnerClassConstructorCapturingOuter(){}
 //   Public signature: /testInnerClassConstructorCapturingOuter|4579094401940051727[0]
 //   Public signature debug description: testInnerClassConstructorCapturingOuter(){}
@@ -68,7 +68,7 @@ fun testInnerClassConstructorCapturingOuter(): Any
 //   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}kotlin.Any
 //   Public signature: /use|1574437315632336940[0]
 //   Public signature debug description: use(kotlin.Function1<kotlin.Int,kotlin.Any>){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}
 //   Public signature: /use|-5469365388493164049[0]
 //   Public signature debug description: use(kotlin.Function1<kotlin.Int,kotlin.Any>){}

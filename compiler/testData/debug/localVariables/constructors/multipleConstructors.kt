@@ -32,7 +32,7 @@ fun box() {
 // test.kt:14 box:
 // test.kt:15 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:13 box:
 // test.kt:5 Derived_init_$Init$: p=3:number
 // test.kt:4 <init>:

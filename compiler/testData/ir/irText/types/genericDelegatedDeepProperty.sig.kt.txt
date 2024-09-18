@@ -7,7 +7,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}P<0:0,0:0>
   //   Public signature: /additionalText.<get-additionalText>|-2964788147301147474[0]
   //   Public signature debug description: <get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}P<0:0,0:0>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}
   //   Public signature: /additionalText.<get-additionalText>|7110754747328025719[0]
   //   Public signature debug description: <get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}
@@ -26,7 +26,7 @@ class CR<R : Any?> : IR<R> {
     //   Mangled name: CR#<get-r>(){}1:0
     //   Public signature: /CR.r.<get-r>|8828977917809363505[0]
     //   Public signature debug description: <get-r>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: CR#<get-r>(){}
     //   Public signature: /CR.r.<get-r>|-7424184448774736572[0]
     //   Public signature debug description: <get-r>(){}
@@ -42,7 +42,7 @@ class CR<R : Any?> : IR<R> {
   //   Mangled name: CR#foo(){}1:0
   //   Public signature: /CR.foo|-5478580208809996038[0]
   //   Public signature debug description: foo(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CR#foo(){}
   //   Public signature: /CR.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}
@@ -63,7 +63,7 @@ class P<P1 : Any?, P2 : Any?> {
     //   Mangled name: P#<get-p1>(){}1:0
     //   Public signature: /P.p1.<get-p1>|-4219781876451304030[0]
     //   Public signature debug description: <get-p1>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: P#<get-p1>(){}
     //   Public signature: /P.p1.<get-p1>|419663188770843259[0]
     //   Public signature debug description: <get-p1>(){}
@@ -78,7 +78,7 @@ class P<P1 : Any?, P2 : Any?> {
     //   Mangled name: P#<get-p2>(){}1:1
     //   Public signature: /P.p2.<get-p2>|6195993200459932152[0]
     //   Public signature debug description: <get-p2>(){}1:1
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: P#<get-p2>(){}
     //   Public signature: /P.p2.<get-p2>|3135798795606784082[0]
     //   Public signature debug description: <get-p2>(){}
@@ -105,7 +105,7 @@ class Value<T : Any?, IT : IR<T>> {
     //   Mangled name: Value#<get-value1>(){}1:0
     //   Public signature: /Value.value1.<get-value1>|6019421524321236052[0]
     //   Public signature debug description: <get-value1>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Value#<get-value1>(){}
     //   Public signature: /Value.value1.<get-value1>|6997002919469559625[0]
     //   Public signature debug description: <get-value1>(){}
@@ -125,7 +125,7 @@ class Value<T : Any?, IT : IR<T>> {
     //   Mangled name: Value#<get-value2>(){}1:1
     //   Public signature: /Value.value2.<get-value2>|3746012481463661565[0]
     //   Public signature debug description: <get-value2>(){}1:1
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Value#<get-value2>(){}
     //   Public signature: /Value.value2.<get-value2>|1776957621204807843[0]
     //   Public signature debug description: <get-value2>(){}
@@ -147,7 +147,7 @@ interface IDelegate1<T1 : Any?, R1 : Any?> {
   //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate1.getValue|-902248562118213940[0]
   //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}
   //   Public signature: /IDelegate1.getValue|-5099931934018608327[0]
   //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}
@@ -163,7 +163,7 @@ interface IDelegate2<T2 : Any?, R2 : Any?> {
   //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate2.getValue|-902248562118213940[0]
   //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}
   //   Public signature: /IDelegate2.getValue|-5099931934018608327[0]
   //   Public signature debug description: getValue(1:0;kotlin.reflect.KProperty<*>){}
@@ -179,7 +179,7 @@ interface IR<R : Any?> {
   //   Mangled name: IR#foo(){}1:0
   //   Public signature: /IR.foo|-5478580208809996038[0]
   //   Public signature debug description: foo(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IR#foo(){}
   //   Public signature: /IR.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}

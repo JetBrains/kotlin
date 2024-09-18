@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // ISSUE: KT-57682
 fun test_1(x: String) = x.length
 

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFirJsKlibSyntheticAccessorInPhase2Test {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
   public class OuterThis {
     @Test
     public void testAllFilesPresentInOuterThis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Nested
@@ -40,7 +40,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossFileLeak {
       @Test
       public void testAllFilesPresentInCrossFileLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -116,7 +116,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossModuleLeak {
       @Test
       public void testAllFilesPresentInCrossModuleLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -192,7 +192,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -269,7 +269,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
   public class PrivateMember {
     @Test
     public void testAllFilesPresentInPrivateMember() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Nested
@@ -278,7 +278,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -588,7 +588,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -898,7 +898,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -1071,7 +1071,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
     }
 
     @Nested
@@ -1080,7 +1080,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -1276,7 +1276,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test
@@ -1478,7 +1478,7 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
       }
 
       @Test

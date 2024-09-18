@@ -3,7 +3,7 @@
 // FIR_IDENTICAL
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
-// IGNORE_BACKEND: JS_IR, NATIVE
+// IGNORE_BACKEND: JS, NATIVE
 // ^ KT-65680: Class redeclaration leads to BackendException during IR fake override builder
 
 // MODULE: lib

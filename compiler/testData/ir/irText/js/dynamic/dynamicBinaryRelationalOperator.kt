@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // FIR_IDENTICAL
 fun testLess(d: dynamic) = d < 2
 fun testLessOrEqual(d: dynamic) = d <= 2

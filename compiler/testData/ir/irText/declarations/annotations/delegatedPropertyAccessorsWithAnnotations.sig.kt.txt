@@ -7,7 +7,7 @@ val test1: Int /* by */
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   //   Public signature debug description: <get-test1>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -23,7 +23,7 @@ var test2: Int /* by */
   //   Mangled name: #<get-test2>(){}kotlin.Int
   //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
   //   Public signature debug description: <get-test2>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   //   Public signature debug description: <get-test2>(){}
@@ -49,7 +49,7 @@ open annotation class A : Annotation {
     //   Mangled name: A#<get-x>(){}kotlin.String
     //   Public signature: /A.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -76,7 +76,7 @@ class Cell {
     //   Mangled name: Cell#<get-value>(){}kotlin.Int
     //   Public signature: /Cell.value.<get-value>|-5900028706170996[0]
     //   Public signature debug description: <get-value>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Cell#<get-value>(){}
     //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -97,7 +97,7 @@ class Cell {
   //   Mangled name: Cell#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
   //   Public signature: /Cell.getValue|-3377375928534350672[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Cell#getValue(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /Cell.getValue|-9077843357189755365[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}

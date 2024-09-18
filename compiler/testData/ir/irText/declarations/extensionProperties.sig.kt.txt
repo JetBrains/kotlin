@@ -17,7 +17,7 @@ class Host {
     //   Mangled name: Host#<get-test3>@kotlin.String(){}kotlin.Int
     //   Public signature: /Host.test3.<get-test3>|-8733015989987681805[0]
     //   Public signature debug description: <get-test3>@kotlin.String(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host#<get-test3>@kotlin.String(){}
     //   Public signature: /Host.test3.<get-test3>|8733981612854462725[0]
     //   Public signature debug description: <get-test3>@kotlin.String(){}
@@ -32,7 +32,7 @@ class Host {
     //   Mangled name: Host#<get-test4>@kotlin.String(){}kotlin.Int
     //   Public signature: /Host.test4.<get-test4>|5807409276278007610[0]
     //   Public signature debug description: <get-test4>@kotlin.String(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host#<get-test4>@kotlin.String(){}
     //   Public signature: /Host.test4.<get-test4>|-1587066497248455001[0]
     //   Public signature debug description: <get-test4>@kotlin.String(){}
@@ -54,7 +54,7 @@ val String.test1: Int
   //   Mangled name: #<get-test1>@kotlin.String(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|-5900273555540008657[0]
   //   Public signature debug description: <get-test1>@kotlin.String(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>@kotlin.String(){}
   //   Public signature: /test1.<get-test1>|-5601238586673262455[0]
   //   Public signature debug description: <get-test1>@kotlin.String(){}
@@ -69,7 +69,7 @@ var String.test2: Int
   //   Mangled name: #<get-test2>@kotlin.String(){}kotlin.Int
   //   Public signature: /test2.<get-test2>|3412895218642147211[0]
   //   Public signature debug description: <get-test2>@kotlin.String(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>@kotlin.String(){}
   //   Public signature: /test2.<get-test2>|1426339134726014217[0]
   //   Public signature debug description: <get-test2>@kotlin.String(){}

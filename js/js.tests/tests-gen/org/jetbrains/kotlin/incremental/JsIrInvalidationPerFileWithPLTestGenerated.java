@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class JsIrInvalidationPerFileWithPLTestGenerated extends AbstractJsIrInvalidationPerFileWithPLTest {
   @Test
   public void testAllFilesPresentInInvalidationWithPL() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS, false);
   }
 
   @Test

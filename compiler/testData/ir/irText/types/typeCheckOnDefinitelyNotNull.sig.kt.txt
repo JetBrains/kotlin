@@ -2,7 +2,7 @@
 //   Mangled name: #asFoo(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /asFoo|443034924888332617[0]
 //   Public signature debug description: asFoo(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #asFoo(0:0){0§<kotlin.Any?>}
 //   Public signature: /asFoo|4722089382470966383[0]
 //   Public signature debug description: asFoo(0:0){0§<kotlin.Any?>}
@@ -12,7 +12,7 @@ fun <T : Any?> asFoo(t: T): (T & Any)
 //   Mangled name: #implicitAsFoo(kotlin.Any){0§<kotlin.CharSequence?>}kotlin.Int
 //   Public signature: /implicitAsFoo|4739175697127707782[0]
 //   Public signature debug description: implicitAsFoo(kotlin.Any){0§<kotlin.CharSequence?>}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #implicitAsFoo(kotlin.Any){0§<kotlin.CharSequence?>}
 //   Public signature: /implicitAsFoo|3965996438260583195[0]
 //   Public signature debug description: implicitAsFoo(kotlin.Any){0§<kotlin.CharSequence?>}
@@ -22,7 +22,7 @@ inline fun <reified T : CharSequence?> implicitAsFoo(x: Any): Int
 //   Mangled name: #safeAsFoo(0:0){0§<kotlin.Any?>}0:0?
 //   Public signature: /safeAsFoo|8056934357621197545[0]
 //   Public signature debug description: safeAsFoo(0:0){0§<kotlin.Any?>}0:0?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #safeAsFoo(0:0){0§<kotlin.Any?>}
 //   Public signature: /safeAsFoo|5988285743365042743[0]
 //   Public signature debug description: safeAsFoo(0:0){0§<kotlin.Any?>}

@@ -3,7 +3,7 @@
 // The test infrastructure for Kotlin/Native doesn't allow files with same names.
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.
 

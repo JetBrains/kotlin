@@ -11,7 +11,7 @@ class DeepCopyIrTreeWithSymbols {
     //   Mangled name: DeepCopyIrTreeWithSymbols#<get-typeRemapper>(){}TypeRemapper
     //   Public signature: /DeepCopyIrTreeWithSymbols.typeRemapper.<get-typeRemapper>|5098073462906324888[0]
     //   Public signature debug description: <get-typeRemapper>(){}TypeRemapper
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DeepCopyIrTreeWithSymbols#<get-typeRemapper>(){}
     //   Public signature: /DeepCopyIrTreeWithSymbols.typeRemapper.<get-typeRemapper>|-798235115100843732[0]
     //   Public signature debug description: <get-typeRemapper>(){}
@@ -27,7 +27,7 @@ class DeepCopyIrTreeWithSymbols {
   //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParameter(IrTypeParameter){}IrTypeParameter
   //   Public signature: /DeepCopyIrTreeWithSymbols.copyTypeParameter|3854275171797584519[0]
   //   Public signature debug description: copyTypeParameter(IrTypeParameter){}IrTypeParameter
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParameter(IrTypeParameter){}
   //   Public signature: /DeepCopyIrTreeWithSymbols.copyTypeParameter|-4022519238744481010[0]
   //   Public signature debug description: copyTypeParameter(IrTypeParameter){}
@@ -72,7 +72,7 @@ interface IrTypeParameter : IrDeclaration {
     //   Mangled name: IrTypeParameter#<get-superTypes>(){}kotlin.collections.MutableList<IrType>
     //   Public signature: /IrTypeParameter.superTypes.<get-superTypes>|-6696770425648193325[0]
     //   Public signature debug description: <get-superTypes>(){}kotlin.collections.MutableList<IrType>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IrTypeParameter#<get-superTypes>(){}
     //   Public signature: /IrTypeParameter.superTypes.<get-superTypes>|3059481600436183874[0]
     //   Public signature debug description: <get-superTypes>(){}
@@ -93,7 +93,7 @@ interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
     //   Mangled name: IrTypeParametersContainer#<get-typeParameters>(){}kotlin.collections.List<IrTypeParameter>
     //   Public signature: /IrTypeParametersContainer.typeParameters.<get-typeParameters>|6508048225555086161[0]
     //   Public signature debug description: <get-typeParameters>(){}kotlin.collections.List<IrTypeParameter>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IrTypeParametersContainer#<get-typeParameters>(){}
     //   Public signature: /IrTypeParametersContainer.typeParameters.<get-typeParameters>|4309431784881504663[0]
     //   Public signature debug description: <get-typeParameters>(){}
@@ -126,7 +126,7 @@ interface TypeRemapper {
   //   Mangled name: TypeRemapper#remapType(IrType){}IrType
   //   Public signature: /TypeRemapper.remapType|-9004737899985615010[0]
   //   Public signature debug description: remapType(IrType){}IrType
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: TypeRemapper#remapType(IrType){}
   //   Public signature: /TypeRemapper.remapType|-1053291438258692872[0]
   //   Public signature debug description: remapType(IrType){}
@@ -138,7 +138,7 @@ interface TypeRemapper {
 //   Mangled name: #withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /withinScope|-8757375077287758446[0]
 //   Public signature debug description: withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}
 //   Public signature: /withinScope|6960001535933584538[0]
 //   Public signature debug description: withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}

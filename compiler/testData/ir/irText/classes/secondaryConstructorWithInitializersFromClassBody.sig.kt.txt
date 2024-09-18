@@ -23,7 +23,7 @@ class TestInitBlock : Base {
     //   Mangled name: TestInitBlock#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitBlock.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitBlock#<get-x>(){}
     //   Public signature: /TestInitBlock.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -62,7 +62,7 @@ class TestProperty : Base {
     //   Mangled name: TestProperty#<get-x>(){}kotlin.Int
     //   Public signature: /TestProperty.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestProperty#<get-x>(){}
     //   Public signature: /TestProperty.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

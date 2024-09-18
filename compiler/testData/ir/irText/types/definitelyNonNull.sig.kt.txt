@@ -2,7 +2,7 @@
 //   Mangled name: #elvisLike(0:0;0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /elvisLike|7044130161831229286[0]
 //   Public signature debug description: elvisLike(0:0;0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #elvisLike(0:0;0:0){0§<kotlin.Any?>}
 //   Public signature: /elvisLike|-2891753181650577145[0]
 //   Public signature debug description: elvisLike(0:0;0:0){0§<kotlin.Any?>}
@@ -12,7 +12,7 @@ fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any)
 //   Mangled name: #runMe(){}
 //   Public signature: /runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #runMe(){}
 //   Public signature: /runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}

@@ -1,6 +1,6 @@
 // ISSUE: KT-68975
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/lambdaWithoutNonLocalControlflow.kt
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // WITH_STDLIB
 import kotlin.test.*
 

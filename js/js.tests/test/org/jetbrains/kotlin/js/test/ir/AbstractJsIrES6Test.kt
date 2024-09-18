@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 abstract class AbstractJsIrES6Test(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractJsIrTest(pathToTestDir, testGroupOutputDirPrefix, TargetBackend.JS_IR_ES6) {
+) : AbstractJsIrTest(pathToTestDir, testGroupOutputDirPrefix, TargetBackend.JS_ES6) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

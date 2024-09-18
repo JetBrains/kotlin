@@ -11,7 +11,7 @@ data class MyContainer {
     //   Mangled name: MyContainer#<get-s>(){}kotlin.String
     //   Public signature: /MyContainer.s.<get-s>|4142379646177092803[0]
     //   Public signature debug description: <get-s>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: MyContainer#<get-s>(){}
     //   Public signature: /MyContainer.s.<get-s>|-1662172381559511151[0]
     //   Public signature debug description: <get-s>(){}
@@ -32,7 +32,7 @@ data class MyContainer {
   //   Mangled name: MyContainer#component1(){}kotlin.String
   //   Public signature: /MyContainer.component1|-7481405593404337796[0]
   //   Public signature debug description: component1(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: MyContainer#component1(){}
   //   Public signature: /MyContainer.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -42,7 +42,7 @@ data class MyContainer {
   //   Mangled name: MyContainer#copy(kotlin.String){}MyContainer
   //   Public signature: /MyContainer.copy|-9194766205182052641[0]
   //   Public signature debug description: copy(kotlin.String){}MyContainer
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: MyContainer#copy(kotlin.String){}
   //   Public signature: /MyContainer.copy|-8298725480798151031[0]
   //   Public signature debug description: copy(kotlin.String){}
@@ -52,7 +52,7 @@ data class MyContainer {
   //   Mangled name: MyContainer#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /MyContainer.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: MyContainer#equals(kotlin.Any?){}
   //   Public signature: /MyContainer.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -62,7 +62,7 @@ data class MyContainer {
   //   Mangled name: MyContainer#hashCode(){}kotlin.Int
   //   Public signature: /MyContainer.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: MyContainer#hashCode(){}
   //   Public signature: /MyContainer.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -72,7 +72,7 @@ data class MyContainer {
   //   Mangled name: MyContainer#toString(){}kotlin.String
   //   Public signature: /MyContainer.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: MyContainer#toString(){}
   //   Public signature: /MyContainer.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -84,7 +84,7 @@ data class MyContainer {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -94,7 +94,7 @@ fun box(): String
 //   Mangled name: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.String?
 //   Public signature: /get|-262764729710480185[0]
 //   Public signature debug description: get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.String?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #get!kotlin.Int@MyContainer(kotlin.Int){}
 //   Public signature: /get|1971890742879799630[0]
 //   Public signature debug description: get!kotlin.Int@MyContainer(kotlin.Int){}

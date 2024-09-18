@@ -14,7 +14,7 @@ class A {
 //   Mangled name: #get@A(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}kotlin.Int
 //   Public signature: /get|925888735041089268[0]
 //   Public signature debug description: get@A(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #get@A(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}
 //   Public signature: /get|7438066462482513130[0]
 //   Public signature debug description: get@A(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}
@@ -36,7 +36,7 @@ fun testCompoundAssignment(a: A): Unit
 //   Mangled name: #testPostfixIncrement(A){}kotlin.Int
 //   Public signature: /testPostfixIncrement|-2576964328021229709[0]
 //   Public signature debug description: testPostfixIncrement(A){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testPostfixIncrement(A){}
 //   Public signature: /testPostfixIncrement|1464365050989928678[0]
 //   Public signature debug description: testPostfixIncrement(A){}

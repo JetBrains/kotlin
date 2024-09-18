@@ -35,7 +35,7 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JsPlatforms.defaultJsPlatform
-            targetBackend = TargetBackend.JS_IR
+            targetBackend = TargetBackend.JS
             dependencyKind = DependencyKind.Source
         }
 

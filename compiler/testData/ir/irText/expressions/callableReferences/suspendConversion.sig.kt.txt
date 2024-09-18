@@ -38,7 +38,7 @@ fun foo2(vararg xs: Int): Unit
 //   Mangled name: #foo3(){}kotlin.Int
 //   Public signature: /foo3|8491530264469693037[0]
 //   Public signature debug description: foo3(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo3(){}
 //   Public signature: /foo3|-7010019271447432065[0]
 //   Public signature debug description: foo3(){}

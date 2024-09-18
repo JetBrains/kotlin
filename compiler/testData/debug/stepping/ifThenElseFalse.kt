@@ -36,13 +36,13 @@ fun box() {
 // test.kt:13 foo
 // test.kt:19 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:16 box
 // test.kt:9 foo
 // test.kt:6 cond
-// EXPECTATIONS FIR JS_IR
+// EXPECTATIONS FIR JS
 // test.kt:12 foo
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:13 foo
 // test.kt:17 box
 // test.kt:18 box
@@ -50,9 +50,9 @@ fun box() {
 // test.kt:6 cond
 // test.kt:10 foo
 // test.kt:6 cond
-// EXPECTATIONS FIR JS_IR
+// EXPECTATIONS FIR JS
 // test.kt:12 foo
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:13 foo
 // test.kt:19 box
 

@@ -20,7 +20,7 @@ class C {
   //   Mangled name: C#main(0:0){0§<kotlin.Any?>}0:0
   //   Public signature: /C.main|2157137022584307775[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#main(0:0){0§<kotlin.Any?>}
   //   Public signature: /C.main|-6008025846492417520[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}
@@ -48,7 +48,7 @@ object O {
   //   Mangled name: O#main(0:0){0§<kotlin.Any?>}0:0
   //   Public signature: /O.main|2157137022584307775[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: O#main(0:0){0§<kotlin.Any?>}
   //   Public signature: /O.main|-6008025846492417520[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}
@@ -64,7 +64,7 @@ object O {
 //   Public signature by IR debug description: main(){}
 //   Public signature by Frontend: /main|2314384220441172254[0]
 //   Public signature by Frontend debug description: main(){}%a.kt
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #main(){}
 //   Public signature: /main|-4284757841571462650[0]
 //   Public signature debug description: main(){}
@@ -74,7 +74,7 @@ fun main(): Unit
 //   Mangled name: #main(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /main|2157137022584307775[0]
 //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #main(0:0){0§<kotlin.Any?>}
 //   Public signature: /main|-6008025846492417520[0]
 //   Public signature debug description: main(0:0){0§<kotlin.Any?>}
@@ -103,7 +103,7 @@ class C {
   //   Mangled name: foo.C#main(0:0){0§<kotlin.Any?>}0:0
   //   Public signature: foo/C.main|2157137022584307775[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.C#main(0:0){0§<kotlin.Any?>}
   //   Public signature: foo/C.main|-6008025846492417520[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}
@@ -131,7 +131,7 @@ object O {
   //   Mangled name: foo.O#main(0:0){0§<kotlin.Any?>}0:0
   //   Public signature: foo/O.main|2157137022584307775[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.O#main(0:0){0§<kotlin.Any?>}
   //   Public signature: foo/O.main|-6008025846492417520[0]
   //   Public signature debug description: main(0:0){0§<kotlin.Any?>}
@@ -147,7 +147,7 @@ object O {
 //   Public signature by IR debug description: main(){}
 //   Public signature by Frontend: foo/main|8375568780578146760[0]
 //   Public signature by Frontend debug description: main(){}%b.kt
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#main(){}
 //   Public signature: foo/main|-4284757841571462650[0]
 //   Public signature debug description: main(){}
@@ -157,7 +157,7 @@ fun main(): Unit
 //   Mangled name: foo#main(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: foo/main|2157137022584307775[0]
 //   Public signature debug description: main(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#main(0:0){0§<kotlin.Any?>}
 //   Public signature: foo/main|-6008025846492417520[0]
 //   Public signature debug description: main(0:0){0§<kotlin.Any?>}

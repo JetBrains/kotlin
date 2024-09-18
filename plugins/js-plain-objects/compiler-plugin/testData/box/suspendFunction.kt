@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // ISSUE: KT-70078
 
 import kotlinx.js.JsPlainObject

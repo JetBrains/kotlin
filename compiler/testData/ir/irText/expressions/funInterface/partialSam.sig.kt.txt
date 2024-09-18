@@ -7,7 +7,7 @@ val fsi: Fn<String, Int>
   //   Mangled name: #<get-fsi>(){}Fn<kotlin.String,kotlin.Int>
   //   Public signature: /fsi.<get-fsi>|-2546794996796226350[0]
   //   Public signature debug description: <get-fsi>(){}Fn<kotlin.String,kotlin.Int>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-fsi>(){}
   //   Public signature: /fsi.<get-fsi>|211056100616532240[0]
   //   Public signature debug description: <get-fsi>(){}
@@ -22,7 +22,7 @@ val fis: Fn<Int, String>
   //   Mangled name: #<get-fis>(){}Fn<kotlin.Int,kotlin.String>
   //   Public signature: /fis.<get-fis>|5252092316637653538[0]
   //   Public signature debug description: <get-fis>(){}Fn<kotlin.Int,kotlin.String>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-fis>(){}
   //   Public signature: /fis.<get-fis>|-3144498278709673820[0]
   //   Public signature debug description: <get-fis>(){}
@@ -42,7 +42,7 @@ class J {
   //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
   //   Public signature: /J.runConversion|4347513371052535712[0]
   //   Public signature debug description: runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
   //   Public signature: /J.runConversion|-3250437629905581865[0]
   //   Public signature debug description: runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
@@ -58,7 +58,7 @@ fun interface Fn<T : Any?, R : Any?> {
   //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
   //   Public signature: /Fn.run|6229634511602909233[0]
   //   Public signature debug description: run(kotlin.String;kotlin.Int;1:0){}1:1
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}
   //   Public signature: /Fn.run|-3043809751901738692[0]
   //   Public signature debug description: run(kotlin.String;kotlin.Int;1:0){}

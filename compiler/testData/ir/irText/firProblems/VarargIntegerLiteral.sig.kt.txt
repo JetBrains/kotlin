@@ -26,7 +26,7 @@ fun arrayOfShortData(vararg values: Short, toArray: @ExtensionFunctionType Funct
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

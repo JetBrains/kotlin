@@ -27,7 +27,7 @@ suspend fun box() {
     val a = suspendBar()
 }
 
-// FIXME(JS_IR): KT-54657
+// FIXME(JS): KT-54657
 
 // EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
 // test.kt:26 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
@@ -63,7 +63,7 @@ suspend fun box() {
 // test.kt:27 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:28 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:20 doResume:
 // test.kt:11 <init properties test.kt>:
 // test.kt:9 atomic: i=0:number

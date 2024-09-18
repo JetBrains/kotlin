@@ -213,7 +213,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
                 testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
             )
-            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
+            TargetBackend.JS, TargetBackend.JS_ES6 -> dependencies + friends
             else -> error("Unsupported target backend: ${module.targetBackend}")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)

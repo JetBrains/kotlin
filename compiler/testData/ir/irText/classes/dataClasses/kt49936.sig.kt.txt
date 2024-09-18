@@ -11,7 +11,7 @@ data class A {
     //   Mangled name: A#<get-x>(){}kotlin.Int
     //   Public signature: /A.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-x>(){}
     //   Public signature: /A.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -27,7 +27,7 @@ data class A {
   //   Mangled name: A#component1(){}kotlin.Int
   //   Public signature: /A.component1|-8217597213800111288[0]
   //   Public signature debug description: component1(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#component1(){}
   //   Public signature: /A.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -37,7 +37,7 @@ data class A {
   //   Mangled name: A#copy(kotlin.Int){}A
   //   Public signature: /A.copy|6666966860941076951[0]
   //   Public signature debug description: copy(kotlin.Int){}A
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#copy(kotlin.Int){}
   //   Public signature: /A.copy|-6971662324481626298[0]
   //   Public signature debug description: copy(kotlin.Int){}
@@ -47,7 +47,7 @@ data class A {
   //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /A.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#equals(kotlin.Any?){}
   //   Public signature: /A.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -57,7 +57,7 @@ data class A {
   //   Mangled name: A#hashCode(){}kotlin.Int
   //   Public signature: /A.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#hashCode(){}
   //   Public signature: /A.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -67,7 +67,7 @@ data class A {
   //   Mangled name: A#toString(){}kotlin.String
   //   Public signature: /A.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#toString(){}
   //   Public signature: /A.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -82,7 +82,7 @@ data class A {
     //   Mangled name: A#<get-x>@kotlin.String(){}kotlin.String
     //   Public signature: /A.x.<get-x>|-8476749600808484511[0]
     //   Public signature debug description: <get-x>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-x>@kotlin.String(){}
     //   Public signature: /A.x.<get-x>|-862573950154384282[0]
     //   Public signature debug description: <get-x>@kotlin.String(){}

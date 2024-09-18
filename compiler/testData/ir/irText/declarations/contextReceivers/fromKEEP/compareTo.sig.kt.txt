@@ -11,7 +11,7 @@ data class Pair<A : Any?, B : Any?> {
     //   Mangled name: Pair#<get-first>(){}1:0
     //   Public signature: /Pair.first.<get-first>|-2355525345180386541[0]
     //   Public signature debug description: <get-first>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Pair#<get-first>(){}
     //   Public signature: /Pair.first.<get-first>|2605844787438953097[0]
     //   Public signature debug description: <get-first>(){}
@@ -26,7 +26,7 @@ data class Pair<A : Any?, B : Any?> {
     //   Mangled name: Pair#<get-second>(){}1:1
     //   Public signature: /Pair.second.<get-second>|-7108495346814383827[0]
     //   Public signature debug description: <get-second>(){}1:1
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Pair#<get-second>(){}
     //   Public signature: /Pair.second.<get-second>|-2939116233384777905[0]
     //   Public signature debug description: <get-second>(){}
@@ -42,7 +42,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#component1(){}1:0
   //   Public signature: /Pair.component1|2393470133763651536[0]
   //   Public signature debug description: component1(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#component1(){}
   //   Public signature: /Pair.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -52,7 +52,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#component2(){}1:1
   //   Public signature: /Pair.component2|319033347667924570[0]
   //   Public signature debug description: component2(){}1:1
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#component2(){}
   //   Public signature: /Pair.component2|3796717572321500973[0]
   //   Public signature debug description: component2(){}
@@ -62,7 +62,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#copy(1:0;1:1){}Pair<1:0,1:1>
   //   Public signature: /Pair.copy|7298985996422673194[0]
   //   Public signature debug description: copy(1:0;1:1){}Pair<1:0,1:1>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#copy(1:0;1:1){}
   //   Public signature: /Pair.copy|9164798229600019588[0]
   //   Public signature debug description: copy(1:0;1:1){}
@@ -72,7 +72,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Pair.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#equals(kotlin.Any?){}
   //   Public signature: /Pair.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -82,7 +82,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#hashCode(){}kotlin.Int
   //   Public signature: /Pair.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#hashCode(){}
   //   Public signature: /Pair.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -92,7 +92,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Mangled name: Pair#toString(){}kotlin.String
   //   Public signature: /Pair.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Pair#toString(){}
   //   Public signature: /Pair.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -104,7 +104,7 @@ data class Pair<A : Any?, B : Any?> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -114,7 +114,7 @@ fun box(): String
 //   Mangled name: #compareTo!java.util.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}kotlin.Int
 //   Public signature: /compareTo|-4091974102091923679[0]
 //   Public signature debug description: compareTo!java.util.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #compareTo!kotlin.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}
 //   Public signature: /compareTo|-7485670540277582765[0]
 //   Public signature debug description: compareTo!kotlin.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}
@@ -129,7 +129,7 @@ val <T : Any?> Pair<T, T>.min: T
   //   Mangled name: #<get-min>!java.util.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}0:0
   //   Public signature: /min.<get-min>|6404877126791863503[0]
   //   Public signature debug description: <get-min>!java.util.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-min>!kotlin.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}
   //   Public signature: /min.<get-min>|-660185634957956497[0]
   //   Public signature debug description: <get-min>!kotlin.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}

@@ -39,7 +39,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z.ENTRY#compareTo(Z){}kotlin.Int
     //   Public signature: /Z.ENTRY.<EEC>.compareTo|-7935111597565816011[0]
     //   Public signature debug description: compareTo(Z){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z.ENTRY#compareTo(Z){}
     //   Public signature: /Z.ENTRY.<EEC>.compareTo|7572315864006954503[0]
     //   Public signature debug description: compareTo(Z){}
@@ -49,7 +49,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z.ENTRY#equals(kotlin.Any?){}kotlin.Boolean
     //   Public signature: /Z.ENTRY.<EEC>.equals|722809408929142791[0]
     //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z.ENTRY#equals(kotlin.Any?){}
     //   Public signature: /Z.ENTRY.<EEC>.equals|4638265728071529943[0]
     //   Public signature debug description: equals(kotlin.Any?){}
@@ -59,7 +59,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z.ENTRY#hashCode(){}kotlin.Int
     //   Public signature: /Z.ENTRY.<EEC>.hashCode|-8048879360829830756[0]
     //   Public signature debug description: hashCode(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z.ENTRY#hashCode(){}
     //   Public signature: /Z.ENTRY.<EEC>.hashCode|3409210261493131192[0]
     //   Public signature debug description: hashCode(){}
@@ -69,7 +69,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z.ENTRY#toString(){}kotlin.String
     //   Public signature: /Z.ENTRY.<EEC>.toString|6958853723545266802[0]
     //   Public signature debug description: toString(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z.ENTRY#toString(){}
     //   Public signature: /Z.ENTRY.<EEC>.toString|-1522858123163872138[0]
     //   Public signature debug description: toString(){}
@@ -90,7 +90,7 @@ open enum class Z : Enum<Z> {
       //   Mangled name: Z.ENTRY#<get-name>(){}kotlin.String
       //   Public signature: /Z.ENTRY.<EEC>.name.<get-name>|-8006111524522882650[0]
       //   Public signature debug description: <get-name>(){}kotlin.String
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Z.ENTRY#<get-name>(){}
       //   Public signature: /Z.ENTRY.<EEC>.name.<get-name>|5879344792307730109[0]
       //   Public signature debug description: <get-name>(){}
@@ -105,7 +105,7 @@ open enum class Z : Enum<Z> {
       //   Mangled name: Z.ENTRY#<get-ordinal>(){}kotlin.Int
       //   Public signature: /Z.ENTRY.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
       //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Z.ENTRY#<get-ordinal>(){}
       //   Public signature: /Z.ENTRY.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
       //   Public signature debug description: <get-ordinal>(){}
@@ -123,7 +123,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#valueOf#static(kotlin.String){}Z
   //   Public signature: /Z.valueOf|6700955022581377295[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}Z
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#valueOf#static(kotlin.String){}
   //   Public signature: /Z.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
@@ -133,7 +133,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#values#static(){}kotlin.Array<Z>
   //   Public signature: /Z.values|-4467060086112669746[0]
   //   Public signature debug description: values#static(){}kotlin.Array<Z>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#values#static(){}
   //   Public signature: /Z.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
@@ -143,7 +143,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#compareTo(Z){}kotlin.Int
   //   Public signature: /Z.compareTo|-7935111597565816011[0]
   //   Public signature debug description: compareTo(Z){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#compareTo(Z){}
   //   Public signature: /Z.compareTo|7572315864006954503[0]
   //   Public signature debug description: compareTo(Z){}
@@ -153,7 +153,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Z.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#equals(kotlin.Any?){}
   //   Public signature: /Z.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -163,7 +163,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#hashCode(){}kotlin.Int
   //   Public signature: /Z.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#hashCode(){}
   //   Public signature: /Z.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -173,7 +173,7 @@ open enum class Z : Enum<Z> {
   //   Mangled name: Z#toString(){}kotlin.String
   //   Public signature: /Z.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Z#toString(){}
   //   Public signature: /Z.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -188,7 +188,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z#<get-entries>#static(){}kotlin.enums.EnumEntries<Z>
     //   Public signature: /Z.entries.<get-entries>|3224480899107517660[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<Z>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-entries>#static(){}
     //   Public signature: /Z.entries.<get-entries>|-6068527377476727729[0]
     //   Public signature debug description: <get-entries>#static(){}
@@ -203,7 +203,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z#<get-name>(){}kotlin.String
     //   Public signature: /Z.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-name>(){}
     //   Public signature: /Z.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -218,7 +218,7 @@ open enum class Z : Enum<Z> {
     //   Mangled name: Z#<get-ordinal>(){}kotlin.Int
     //   Public signature: /Z.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Z#<get-ordinal>(){}
     //   Public signature: /Z.ordinal.<get-ordinal>|8409904226035914023[0]
     //   Public signature debug description: <get-ordinal>(){}

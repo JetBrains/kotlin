@@ -11,7 +11,7 @@ open annotation class A1 : Annotation {
     //   Mangled name: A1#<get-xs>(){}kotlin.IntArray
     //   Public signature: /A1.xs.<get-xs>|5887559004820637749[0]
     //   Public signature debug description: <get-xs>(){}kotlin.IntArray
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A1#<get-xs>(){}
     //   Public signature: /A1.xs.<get-xs>|-6958094100501701183[0]
     //   Public signature debug description: <get-xs>(){}
@@ -38,7 +38,7 @@ open annotation class A2 : Annotation {
     //   Mangled name: A2#<get-xs>(){}kotlin.Array<out|kotlin.String>
     //   Public signature: /A2.xs.<get-xs>|9188548163055185324[0]
     //   Public signature debug description: <get-xs>(){}kotlin.Array<out|kotlin.String>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A2#<get-xs>(){}
     //   Public signature: /A2.xs.<get-xs>|-6958094100501701183[0]
     //   Public signature debug description: <get-xs>(){}
@@ -65,7 +65,7 @@ open annotation class AA : Annotation {
     //   Mangled name: AA#<get-xs>(){}kotlin.Array<out|A1>
     //   Public signature: /AA.xs.<get-xs>|-3667422235339963828[0]
     //   Public signature debug description: <get-xs>(){}kotlin.Array<out|A1>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AA#<get-xs>(){}
     //   Public signature: /AA.xs.<get-xs>|-6958094100501701183[0]
     //   Public signature debug description: <get-xs>(){}

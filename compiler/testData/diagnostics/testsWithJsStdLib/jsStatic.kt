@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsStatic
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JS, JS_ES6
 // DIAGNOSTICS: -UNUSED_VARIABLE
 class A {
     companion object {

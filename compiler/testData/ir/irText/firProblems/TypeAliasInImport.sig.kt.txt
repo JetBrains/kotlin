@@ -23,7 +23,7 @@ object Obj {
     //   Mangled name: b.Obj#<get-prop>(){}kotlin.Int
     //   Public signature: b/Obj.prop.<get-prop>|-2094203252476742575[0]
     //   Public signature debug description: <get-prop>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: b.Obj#<get-prop>(){}
     //   Public signature: b/Obj.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}

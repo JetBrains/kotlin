@@ -17,7 +17,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#valueOf#static(kotlin.String){}A
   //   Public signature: /A.valueOf|8636923007498802918[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}A
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#valueOf#static(kotlin.String){}
   //   Public signature: /A.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
@@ -27,7 +27,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#values#static(){}kotlin.Array<A>
   //   Public signature: /A.values|5753238680897834936[0]
   //   Public signature debug description: values#static(){}kotlin.Array<A>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#values#static(){}
   //   Public signature: /A.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
@@ -37,7 +37,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#compareTo(A){}kotlin.Int
   //   Public signature: /A.compareTo|-315052537630360750[0]
   //   Public signature debug description: compareTo(A){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#compareTo(A){}
   //   Public signature: /A.compareTo|5303387127644845713[0]
   //   Public signature debug description: compareTo(A){}
@@ -47,7 +47,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /A.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#equals(kotlin.Any?){}
   //   Public signature: /A.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -57,7 +57,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#hashCode(){}kotlin.Int
   //   Public signature: /A.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#hashCode(){}
   //   Public signature: /A.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -67,7 +67,7 @@ enum class A : Enum<A> {
   //   Mangled name: A#toString(){}kotlin.String
   //   Public signature: /A.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#toString(){}
   //   Public signature: /A.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -82,7 +82,7 @@ enum class A : Enum<A> {
     //   Mangled name: A#<get-entries>#static(){}kotlin.enums.EnumEntries<A>
     //   Public signature: /A.entries.<get-entries>|3279885591622842062[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<A>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-entries>#static(){}
     //   Public signature: /A.entries.<get-entries>|-6068527377476727729[0]
     //   Public signature debug description: <get-entries>#static(){}
@@ -97,7 +97,7 @@ enum class A : Enum<A> {
     //   Mangled name: A#<get-name>(){}kotlin.String
     //   Public signature: /A.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-name>(){}
     //   Public signature: /A.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -112,7 +112,7 @@ enum class A : Enum<A> {
     //   Mangled name: A#<get-ordinal>(){}kotlin.Int
     //   Public signature: /A.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-ordinal>(){}
     //   Public signature: /A.ordinal.<get-ordinal>|8409904226035914023[0]
     //   Public signature debug description: <get-ordinal>(){}
@@ -130,7 +130,7 @@ fun testAnnotated_throwsJvm(a: A): Unit
 //   Mangled name: #testExpression_throws(A){}kotlin.Int
 //   Public signature: /testExpression_throws|-3237050390749274330[0]
 //   Public signature debug description: testExpression_throws(A){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testExpression_throws(A){}
 //   Public signature: /testExpression_throws|-7500665949356885656[0]
 //   Public signature debug description: testExpression_throws(A){}

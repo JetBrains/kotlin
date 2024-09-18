@@ -12,7 +12,7 @@ open annotation class MySerializable : Annotation {
     //   Mangled name: MySerializable#<get-c>(){}kotlin.reflect.KClass<*>
     //   Public signature: /MySerializable.c.<get-c>|-6941111973387927723[0]
     //   Public signature debug description: <get-c>(){}kotlin.reflect.KClass<*>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: MySerializable#<get-c>(){}
     //   Public signature: /MySerializable.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -39,7 +39,7 @@ data class LoginSuccessPacket {
     //   Mangled name: LoginSuccessPacket#<get-id>(){}Uuid1
     //   Public signature: /LoginSuccessPacket.id.<get-id>|1939250508314525801[0]
     //   Public signature debug description: <get-id>(){}Uuid1
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: LoginSuccessPacket#<get-id>(){}
     //   Public signature: /LoginSuccessPacket.id.<get-id>|2571929917854535737[0]
     //   Public signature debug description: <get-id>(){}
@@ -55,7 +55,7 @@ data class LoginSuccessPacket {
   //   Mangled name: LoginSuccessPacket#component1(){}Uuid1
   //   Public signature: /LoginSuccessPacket.component1|-3428488995872773450[0]
   //   Public signature debug description: component1(){}Uuid1
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: LoginSuccessPacket#component1(){}
   //   Public signature: /LoginSuccessPacket.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -65,7 +65,7 @@ data class LoginSuccessPacket {
   //   Mangled name: LoginSuccessPacket#copy(Uuid1){}LoginSuccessPacket
   //   Public signature: /LoginSuccessPacket.copy|-7819973036324215638[0]
   //   Public signature debug description: copy(Uuid1){}LoginSuccessPacket
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: LoginSuccessPacket#copy(Uuid1){}
   //   Public signature: /LoginSuccessPacket.copy|9160330822770885462[0]
   //   Public signature debug description: copy(Uuid1){}
@@ -75,7 +75,7 @@ data class LoginSuccessPacket {
   //   Mangled name: LoginSuccessPacket#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /LoginSuccessPacket.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: LoginSuccessPacket#equals(kotlin.Any?){}
   //   Public signature: /LoginSuccessPacket.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -85,7 +85,7 @@ data class LoginSuccessPacket {
   //   Mangled name: LoginSuccessPacket#hashCode(){}kotlin.Int
   //   Public signature: /LoginSuccessPacket.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: LoginSuccessPacket#hashCode(){}
   //   Public signature: /LoginSuccessPacket.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -95,7 +95,7 @@ data class LoginSuccessPacket {
   //   Mangled name: LoginSuccessPacket#toString(){}kotlin.String
   //   Public signature: /LoginSuccessPacket.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: LoginSuccessPacket#toString(){}
   //   Public signature: /LoginSuccessPacket.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -137,7 +137,7 @@ object UuidSerializer : MySerializer<@MySerializable(c = UuidSerializer::class) 
 //   Mangled name: #bar(){}Uuid1
 //   Public signature: /bar|-6949225675121992296[0]
 //   Public signature debug description: bar(){}Uuid1
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar(){}
 //   Public signature: /bar|496682602797471549[0]
 //   Public signature debug description: bar(){}
@@ -147,7 +147,7 @@ fun bar(): @MySerializable(c = UuidSerializer::class) Uuid1
 //   Mangled name: #foo(){}Uuid1
 //   Public signature: /foo|-4975789094402571215[0]
 //   Public signature debug description: foo(){}Uuid1
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(){}
 //   Public signature: /foo|-1041209573719867811[0]
 //   Public signature debug description: foo(){}

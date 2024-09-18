@@ -22,7 +22,7 @@ fun g() {}
 // test.kt:10 f
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:5 g$ref

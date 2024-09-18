@@ -1,7 +1,7 @@
 
 // Super calls to Throwable properties are not supported
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 
 class MyThrowable(message: String? = null, cause: Throwable? = null) : Throwable(message, cause) {
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // TODO: fix in KT-61882
 // LANGUAGE: -RestrictRetentionForExpressionAnnotations
 // DIAGNOSTICS: -UNUSED_PARAMETER

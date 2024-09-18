@@ -11,7 +11,7 @@ object Host {
     //   Mangled name: Host#<get-plusK>@kotlin.String(){}kotlin.String
     //   Public signature: /Host.plusK.<get-plusK>|3745691594714867630[0]
     //   Public signature debug description: <get-plusK>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host#<get-plusK>@kotlin.String(){}
     //   Public signature: /Host.plusK.<get-plusK>|9025996815801643210[0]
     //   Public signature debug description: <get-plusK>@kotlin.String(){}
@@ -26,7 +26,7 @@ object Host {
     //   Mangled name: Host#<get-ok>(){}kotlin.String
     //   Public signature: /Host.ok.<get-ok>|-4000622060828023401[0]
     //   Public signature debug description: <get-ok>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host#<get-ok>(){}
     //   Public signature: /Host.ok.<get-ok>|6963158084917262476[0]
     //   Public signature debug description: <get-ok>(){}
@@ -45,7 +45,7 @@ object Host {
       //   Mangled name: Host.StringDelegate#<get-s>(){}kotlin.String
       //   Public signature: /Host.StringDelegate.s.<get-s>|4142379646177092803[0]
       //   Public signature debug description: <get-s>(){}kotlin.String
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Host.StringDelegate#<get-s>(){}
       //   Public signature: /Host.StringDelegate.s.<get-s>|-1662172381559511151[0]
       //   Public signature debug description: <get-s>(){}
@@ -61,7 +61,7 @@ object Host {
     //   Mangled name: Host.StringDelegate#getValue(kotlin.String;kotlin.Any){}kotlin.String
     //   Public signature: /Host.StringDelegate.getValue|-6458230510682528416[0]
     //   Public signature debug description: getValue(kotlin.String;kotlin.Any){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Host.StringDelegate#getValue(kotlin.String;kotlin.Any){}
     //   Public signature: /Host.StringDelegate.getValue|7907668248030418959[0]
     //   Public signature debug description: getValue(kotlin.String;kotlin.Any){}
@@ -79,7 +79,7 @@ object Host {
   //   Mangled name: Host#provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}Host.StringDelegate
   //   Public signature: /Host.provideDelegate|8603848002271829719[0]
   //   Public signature debug description: provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}Host.StringDelegate
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Host#provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}
   //   Public signature: /Host.provideDelegate|-84581881633703397[0]
   //   Public signature debug description: provideDelegate@kotlin.String(kotlin.Any?;kotlin.Any){}

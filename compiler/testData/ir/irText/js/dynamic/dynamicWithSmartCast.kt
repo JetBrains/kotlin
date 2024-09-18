@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // WITH_STDLIB
 fun test1(d: dynamic) = if (d is String) d.length else -1
 

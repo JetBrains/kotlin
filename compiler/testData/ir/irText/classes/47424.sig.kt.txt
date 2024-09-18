@@ -37,7 +37,7 @@ interface C : Ca, Cb {
     //   Mangled name: com.example.C#<get-b>(){}com.example.Bb<*>
     //   Public signature: com.example/C.b.<get-b>|8945515346267380674[0]
     //   Public signature debug description: <get-b>(){}com.example.Bb<*>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: com.example.C#<get-b>(){}
     //   Public signature: com.example/C.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -58,7 +58,7 @@ interface Ca {
     //   Mangled name: com.example.Ca#<get-b>(){}com.example.Ba
     //   Public signature: com.example/Ca.b.<get-b>|-5371331002991031414[0]
     //   Public signature debug description: <get-b>(){}com.example.Ba
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: com.example.Ca#<get-b>(){}
     //   Public signature: com.example/Ca.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}
@@ -79,7 +79,7 @@ interface Cb {
     //   Mangled name: com.example.Cb#<get-b>(){}com.example.Bb<*>
     //   Public signature: com.example/Cb.b.<get-b>|8945515346267380674[0]
     //   Public signature debug description: <get-b>(){}com.example.Bb<*>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: com.example.Cb#<get-b>(){}
     //   Public signature: com.example/Cb.b.<get-b>|812004636995167743[0]
     //   Public signature debug description: <get-b>(){}

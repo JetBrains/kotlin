@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 private inline fun typeOf(x: dynamic): String = js("typeof x").unsafeCast<String>()
 
 fun box(): String {

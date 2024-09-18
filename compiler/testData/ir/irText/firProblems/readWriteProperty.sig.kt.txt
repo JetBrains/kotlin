@@ -11,7 +11,7 @@ class IdeWizard {
     //   Mangled name: IdeWizard#<get-projectTemplate>(){}kotlin.Int?
     //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-8817473698570649998[0]
     //   Public signature debug description: <get-projectTemplate>(){}kotlin.Int?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IdeWizard#<get-projectTemplate>(){}
     //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-3125600217184137732[0]
     //   Public signature debug description: <get-projectTemplate>(){}
@@ -32,7 +32,7 @@ class IdeWizard {
   //   Mangled name: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}IdeWizard#setting.<no name provided><0:0,0:1>
   //   Public signature: /IdeWizard.setting|-3504445808823548764[0]
   //   Public signature debug description: setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}IdeWizard#setting.<no name provided><0:0,0:1>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}
   //   Public signature: /IdeWizard.setting|2630265268614068431[0]
   //   Public signature debug description: setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}
@@ -53,7 +53,7 @@ class SettingReference<V : Any, T : SettingType<V>> {
     //   Mangled name: SettingReference#<get-t>(){}1:1
     //   Public signature: /SettingReference.t.<get-t>|3876475218778608787[0]
     //   Public signature debug description: <get-t>(){}1:1
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: SettingReference#<get-t>(){}
     //   Public signature: /SettingReference.t.<get-t>|7061140872129253552[0]
     //   Public signature debug description: <get-t>(){}
@@ -73,7 +73,7 @@ class SettingReference<V : Any, T : SettingType<V>> {
     //   Mangled name: SettingReference#<get-v>(){}1:0
     //   Public signature: /SettingReference.v.<get-v>|-6358452650346304910[0]
     //   Public signature debug description: <get-v>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: SettingReference#<get-v>(){}
     //   Public signature: /SettingReference.v.<get-v>|4964732996156868941[0]
     //   Public signature debug description: <get-v>(){}
@@ -105,7 +105,7 @@ class SettingType<out V : Any> {
     //   Mangled name: SettingType#<get-type>(){}kotlin.reflect.KClass<out|1:0>
     //   Public signature: /SettingType.type.<get-type>|-782685829818054763[0]
     //   Public signature debug description: <get-type>(){}kotlin.reflect.KClass<out|1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: SettingType#<get-type>(){}
     //   Public signature: /SettingType.type.<get-type>|5958014174245684635[0]
     //   Public signature debug description: <get-type>(){}

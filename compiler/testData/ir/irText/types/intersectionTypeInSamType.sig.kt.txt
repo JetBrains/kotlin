@@ -110,7 +110,7 @@ interface Z {
 //   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /sel|-3127722538163724092[0]
 //   Public signature debug description: sel(0:0;0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}
 //   Public signature: /sel|-259814768749576946[0]
 //   Public signature debug description: sel(0:0;0:0){0§<kotlin.Any?>}

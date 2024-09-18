@@ -12,7 +12,7 @@ open class A {
   //   Mangled name: A#foo(kotlin.IntArray...){}kotlin.Int
   //   Public signature: /A.foo|-3529930544137592433[0]
   //   Public signature debug description: foo(kotlin.IntArray...){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#foo(kotlin.IntArray...){}
   //   Public signature: /A.foo|112986931506401688[0]
   //   Public signature debug description: foo(kotlin.IntArray...){}
@@ -34,7 +34,7 @@ object Obj : A {
   //   Mangled name: Obj#foo(kotlin.IntArray...){}kotlin.Int
   //   Public signature: /Obj.foo|-3529930544137592433[0]
   //   Public signature debug description: foo(kotlin.IntArray...){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Obj#foo(kotlin.IntArray...){}
   //   Public signature: /Obj.foo|112986931506401688[0]
   //   Public signature debug description: foo(kotlin.IntArray...){}

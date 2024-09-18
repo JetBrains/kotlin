@@ -73,7 +73,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     }
 
     // For now, while there is no common backend, we generate Klib using
-    // the JS_IR compiler.
+    // the JS compiler.
     private fun compileToKlib(files: List<TestFile>) {
         val sourceFiles = loadMultiFilesReal(files)
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(

@@ -7,7 +7,7 @@ var p: Int
   //   Mangled name: #<get-p>(){}kotlin.Int
   //   Public signature: /p.<get-p>|5329635969197638839[0]
   //   Public signature debug description: <get-p>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
   //   Public signature debug description: <get-p>(){}
@@ -27,7 +27,7 @@ val arr: IntArray
   //   Mangled name: #<get-arr>(){}kotlin.IntArray
   //   Public signature: /arr.<get-arr>|-3280308842233711836[0]
   //   Public signature debug description: <get-arr>(){}kotlin.IntArray
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-arr>(){}
   //   Public signature: /arr.<get-arr>|-3478894267993371734[0]
   //   Public signature debug description: <get-arr>(){}
@@ -46,7 +46,7 @@ class C {
     //   Mangled name: C#<get-p>(){}kotlin.Int
     //   Public signature: /C.p.<get-p>|5329635969197638839[0]
     //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-p>(){}
     //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
     //   Public signature debug description: <get-p>(){}
@@ -67,7 +67,7 @@ class C {
   //   Mangled name: C#get(kotlin.Int){}kotlin.Int
   //   Public signature: /C.get|3217555545696752959[0]
   //   Public signature debug description: get(kotlin.Int){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#get(kotlin.Int){}
   //   Public signature: /C.get|-1406503945102116889[0]
   //   Public signature debug description: get(kotlin.Int){}
@@ -94,7 +94,7 @@ object O {
     //   Mangled name: O#<get-p>(){}kotlin.Int
     //   Public signature: /O.p.<get-p>|5329635969197638839[0]
     //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: O#<get-p>(){}
     //   Public signature: /O.p.<get-p>|-1162552463316289847[0]
     //   Public signature debug description: <get-p>(){}
@@ -115,7 +115,7 @@ object O {
   //   Mangled name: O#get(kotlin.Int){}kotlin.Int
   //   Public signature: /O.get|3217555545696752959[0]
   //   Public signature debug description: get(kotlin.Int){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: O#get(kotlin.Int){}
   //   Public signature: /O.get|-1406503945102116889[0]
   //   Public signature debug description: get(kotlin.Int){}

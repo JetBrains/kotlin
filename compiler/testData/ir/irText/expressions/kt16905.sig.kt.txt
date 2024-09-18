@@ -50,7 +50,7 @@ class Outer {
 //   Mangled name: #test(){}Outer.Inner
 //   Public signature: /test|8585667894850483787[0]
 //   Public signature debug description: test(){}Outer.Inner
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #test(){}
 //   Public signature: /test|6620506149988718649[0]
 //   Public signature debug description: test(){}

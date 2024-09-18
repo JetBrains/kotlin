@@ -11,7 +11,7 @@ class Cell<T : Any?> {
     //   Mangled name: Cell#<get-value>(){}1:0
     //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
     //   Public signature debug description: <get-value>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Cell#<get-value>(){}
     //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}

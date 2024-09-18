@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS_ES6
 // CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension
 // CHECK_CONTAINS_NO_CALLS: callLocal
 // CHECK_CONTAINS_NO_CALLS: callLocalExtension

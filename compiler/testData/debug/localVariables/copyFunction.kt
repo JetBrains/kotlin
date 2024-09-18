@@ -17,7 +17,7 @@ fun box() {
 // test.kt:7 box: a:someClass=someClass
 // test.kt:8 box: a:someClass=someClass, b:someClass=someClass
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:6 box:
 // test.kt:3 <init>: a=1:number, b=2:number
 // test.kt:3 <init>: a=1:number, b=2:number

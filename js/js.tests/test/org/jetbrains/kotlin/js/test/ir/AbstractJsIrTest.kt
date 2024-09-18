@@ -32,7 +32,7 @@ import java.lang.Boolean.getBoolean
 abstract class AbstractJsIrTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    targetBackend: TargetBackend = TargetBackend.JS_IR,
+    targetBackend: TargetBackend = TargetBackend.JS,
 ) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix
 ) {
@@ -166,7 +166,7 @@ open class AbstractWebDemoExamplesTest : AbstractJsIrTest(
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with("JS_IR")
+                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with("JS")
             }
 
             configureJsArtifactsHandlersStep {

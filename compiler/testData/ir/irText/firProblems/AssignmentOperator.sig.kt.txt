@@ -9,7 +9,7 @@ val array: Array<Int>
   //   Mangled name: foo#<get-array>(){}kotlin.Array<kotlin.Int>
   //   Public signature: foo/array.<get-array>|7467926770652597701[0]
   //   Public signature debug description: <get-array>(){}kotlin.Array<kotlin.Int>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo#<get-array>(){}
   //   Public signature: foo/array.<get-array>|-7741494344808015919[0]
   //   Public signature debug description: <get-array>(){}
@@ -28,7 +28,7 @@ class A {
     //   Mangled name: foo.A#<get-prop>(){}kotlin.Int
     //   Public signature: foo/A.prop.<get-prop>|-2094203252476742575[0]
     //   Public signature debug description: <get-prop>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: foo.A#<get-prop>(){}
     //   Public signature: foo/A.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -60,7 +60,7 @@ object B {
     //   Mangled name: foo.B#<get-prop>(){}kotlin.Int
     //   Public signature: foo/B.prop.<get-prop>|-2094203252476742575[0]
     //   Public signature debug description: <get-prop>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: foo.B#<get-prop>(){}
     //   Public signature: foo/B.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -83,7 +83,7 @@ object B {
 //   Mangled name: foo#id(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: foo/id|-6791396263062521506[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#id(0:0){0§<kotlin.Any?>}
 //   Public signature: foo/id|9187295668833355463[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}
@@ -93,7 +93,7 @@ fun <T : Any?> id(t: T): T
 //   Mangled name: foo#runMe(){}
 //   Public signature: foo/runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#runMe(){}
 //   Public signature: foo/runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}

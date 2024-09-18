@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 fun testMemberAssignment(d: dynamic) {
     d.m = 1
 }

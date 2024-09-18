@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-y>(){}kotlin.Int
     //   Public signature: /C.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-y>(){}
     //   Public signature: /C.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}
@@ -26,7 +26,7 @@ class C {
     //   Mangled name: C#<get-z>(){}kotlin.Int
     //   Public signature: /C.z.<get-z>|373477940260174794[0]
     //   Public signature debug description: <get-z>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-z>(){}
     //   Public signature: /C.z.<get-z>|4925813204745917177[0]
     //   Public signature debug description: <get-z>(){}
@@ -46,7 +46,7 @@ class C {
     //   Mangled name: C#<get-property>(){}kotlin.Int
     //   Public signature: /C.property.<get-property>|2853131919076574313[0]
     //   Public signature debug description: <get-property>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-property>(){}
     //   Public signature: /C.property.<get-property>|4838831487146901942[0]
     //   Public signature debug description: <get-property>(){}
@@ -139,7 +139,7 @@ class C {
     //   Mangled name: C#<get-propertyWithGet>(){}kotlin.Int
     //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|-1283372725192636165[0]
     //   Public signature debug description: <get-propertyWithGet>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-propertyWithGet>(){}
     //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|5182559010864477179[0]
     //   Public signature debug description: <get-propertyWithGet>(){}
@@ -154,7 +154,7 @@ class C {
     //   Mangled name: C#<get-propertyWithGetAndSet>(){}kotlin.Int
     //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|2703109318737687323[0]
     //   Public signature debug description: <get-propertyWithGetAndSet>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-propertyWithGetAndSet>(){}
     //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|6534309127249044994[0]
     //   Public signature debug description: <get-propertyWithGetAndSet>(){}

@@ -11,7 +11,7 @@ interface C {
     //   Mangled name: C#<get-test1>(){}kotlin.Int
     //   Public signature: /C.test1.<get-test1>|3978508226793108919[0]
     //   Public signature debug description: <get-test1>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test1>(){}
     //   Public signature: /C.test1.<get-test1>|-5735092642142423279[0]
     //   Public signature debug description: <get-test1>(){}
@@ -26,7 +26,7 @@ interface C {
     //   Mangled name: C#<get-test2>(){}kotlin.Int
     //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
     //   Public signature debug description: <get-test2>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test2>(){}
     //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
     //   Public signature debug description: <get-test2>(){}
@@ -41,7 +41,7 @@ interface C {
     //   Mangled name: C#<get-test3>(){}kotlin.Int
     //   Public signature: /C.test3.<get-test3>|6145294165644146033[0]
     //   Public signature debug description: <get-test3>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test3>(){}
     //   Public signature: /C.test3.<get-test3>|-7333791615083236686[0]
     //   Public signature debug description: <get-test3>(){}
@@ -61,7 +61,7 @@ interface C {
     //   Mangled name: C#<get-test4>(){}kotlin.Int
     //   Public signature: /C.test4.<get-test4>|-8911174941514444072[0]
     //   Public signature debug description: <get-test4>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-test4>(){}
     //   Public signature: /C.test4.<get-test4>|4166854324968284003[0]
     //   Public signature debug description: <get-test4>(){}

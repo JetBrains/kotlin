@@ -90,7 +90,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
 abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractLibraryAbiReaderTest<FrontendOutput>(
         JsPlatforms.defaultJsPlatform,
-        TargetBackend.JS_IR,
+        TargetBackend.JS,
     ) {
 
     override fun TestConfigurationBuilder.applyConfigurators() {

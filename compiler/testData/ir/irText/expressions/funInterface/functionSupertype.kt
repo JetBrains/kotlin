@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS
 
 fun interface Foo : () -> Int
 

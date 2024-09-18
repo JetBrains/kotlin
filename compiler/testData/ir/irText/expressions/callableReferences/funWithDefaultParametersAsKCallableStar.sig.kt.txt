@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-x>(){}kotlin.String
     //   Public signature: /C.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -29,7 +29,7 @@ class C {
 //   Mangled name: #defaultsOnly(kotlin.String){}kotlin.Int
 //   Public signature: /defaultsOnly|4494765395390675935[0]
 //   Public signature debug description: defaultsOnly(kotlin.String){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #defaultsOnly(kotlin.String){}
 //   Public signature: /defaultsOnly|-7244666068765377321[0]
 //   Public signature debug description: defaultsOnly(kotlin.String){}
@@ -39,7 +39,7 @@ fun defaultsOnly(x: String): Int
 //   Mangled name: #regularAndDefaults(kotlin.String;kotlin.String){}kotlin.Int
 //   Public signature: /regularAndDefaults|5576798369123640728[0]
 //   Public signature debug description: regularAndDefaults(kotlin.String;kotlin.String){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #regularAndDefaults(kotlin.String;kotlin.String){}
 //   Public signature: /regularAndDefaults|-7839345972361254384[0]
 //   Public signature debug description: regularAndDefaults(kotlin.String;kotlin.String){}
@@ -79,7 +79,7 @@ fun useKCallableStar(fn: KCallable<*>): Unit
 //   Mangled name: #varargs(kotlin.Array<out|kotlin.String>...){}kotlin.Int
 //   Public signature: /varargs|-1029748167171123081[0]
 //   Public signature debug description: varargs(kotlin.Array<out|kotlin.String>...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #varargs(kotlin.Array<out|kotlin.String>...){}
 //   Public signature: /varargs|1577881396515650516[0]
 //   Public signature debug description: varargs(kotlin.Array<out|kotlin.String>...){}

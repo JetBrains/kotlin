@@ -11,7 +11,7 @@ class C<TT : Any?> : I<(TT & Any)> {
     //   Mangled name: C#<get-t>(){}1:0
     //   Public signature: /C.t.<get-t>|5296523675281381766[0]
     //   Public signature debug description: <get-t>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-t>(){}
     //   Public signature: /C.t.<get-t>|7061140872129253552[0]
     //   Public signature debug description: <get-t>(){}
@@ -33,7 +33,7 @@ class C<TT : Any?> : I<(TT & Any)> {
   //   Mangled name: C#output(){}1:0
   //   Public signature: /C.output|2948120958996440939[0]
   //   Public signature debug description: output(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#output(){}
   //   Public signature: /C.output|-7727065428490554292[0]
   //   Public signature debug description: output(){}
@@ -55,7 +55,7 @@ interface I<T : Any?> {
   //   Mangled name: I#output(){}1:0
   //   Public signature: /I.output|2948120958996440939[0]
   //   Public signature debug description: output(){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#output(){}
   //   Public signature: /I.output|-7727065428490554292[0]
   //   Public signature debug description: output(){}
@@ -67,7 +67,7 @@ interface I<T : Any?> {
 //   Mangled name: #bar(I<out|0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /bar|-698012471907349043[0]
 //   Public signature debug description: bar(I<out|0:0>){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar(I<out|0:0>){0§<kotlin.Any?>}
 //   Public signature: /bar|8057913304781866209[0]
 //   Public signature debug description: bar(I<out|0:0>){0§<kotlin.Any?>}

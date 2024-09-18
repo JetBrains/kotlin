@@ -29,7 +29,7 @@ fun box() {
 // test.kt:16 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, z:java.lang.String="z":java.lang.String
 // test.kt:19 box: result:java.lang.String="yz":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:7 box:
 // test.kt:8 box: result="":kotlin.String
 // test.kt:8 box: result="":kotlin.String

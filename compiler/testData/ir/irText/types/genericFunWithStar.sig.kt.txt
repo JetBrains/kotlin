@@ -12,7 +12,7 @@ abstract class Box<T> : IBar, IFoo where T : IBar, T : IFoo {
   //   Mangled name: Box#bar(kotlin.Array<out|I<*>>...){}I<*>
   //   Public signature: /Box.bar|-1391226342944074333[0]
   //   Public signature debug description: bar(kotlin.Array<out|I<*>>...){}I<*>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Box#bar(kotlin.Array<out|I<*>>...){}
   //   Public signature: /Box.bar|8084001391747740010[0]
   //   Public signature debug description: bar(kotlin.Array<out|I<*>>...){}
@@ -22,7 +22,7 @@ abstract class Box<T> : IBar, IFoo where T : IBar, T : IFoo {
   //   Mangled name: Box#foo(I<0:0>){0§<IFoo&IBar>}I<Box<0:0>>
   //   Public signature: /Box.foo|-2974216352759527693[0]
   //   Public signature debug description: foo(I<0:0>){0§<IFoo&IBar>}I<Box<0:0>>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Box#foo(I<0:0>){0§<IFoo&IBar>}
   //   Public signature: /Box.foo|4625415251535989427[0]
   //   Public signature debug description: foo(I<0:0>){0§<IFoo&IBar>}

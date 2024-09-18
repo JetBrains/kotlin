@@ -33,7 +33,7 @@ fun test(b: B) {
 // test.kt:18 test
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:5 box
 // test.kt:8 <init>
 // test.kt:5 box

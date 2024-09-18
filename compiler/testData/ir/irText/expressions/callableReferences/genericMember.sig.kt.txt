@@ -7,7 +7,7 @@ val test1: KFunction1<A<String>, Unit>
   //   Mangled name: #<get-test1>(){}kotlin.reflect.KFunction1<A<kotlin.String>,kotlin.Unit>
   //   Public signature: /test1.<get-test1>|-8244328064209217442[0]
   //   Public signature debug description: <get-test1>(){}kotlin.reflect.KFunction1<A<kotlin.String>,kotlin.Unit>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -22,7 +22,7 @@ val test2: KProperty1<A<String>, Int>
   //   Mangled name: #<get-test2>(){}kotlin.reflect.KProperty1<A<kotlin.String>,kotlin.Int>
   //   Public signature: /test2.<get-test2>|7010452964682738138[0]
   //   Public signature debug description: <get-test2>(){}kotlin.reflect.KProperty1<A<kotlin.String>,kotlin.Int>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   //   Public signature debug description: <get-test2>(){}
@@ -41,7 +41,7 @@ class A<T : Any?> {
     //   Mangled name: A#<get-bar>(){}kotlin.Int
     //   Public signature: /A.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-bar>(){}
     //   Public signature: /A.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}

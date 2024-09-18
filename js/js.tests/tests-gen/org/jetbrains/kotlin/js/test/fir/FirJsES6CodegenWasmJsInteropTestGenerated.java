@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirJsES6CodegenWasmJsInteropTestGenerated extends AbstractFirJsES6CodegenWasmJsInteropTest {
   @Test
   public void testAllFilesPresentInBoxWasmJsInterop() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_ES6, true);
   }
 
   @Test

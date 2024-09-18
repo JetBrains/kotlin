@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // Implementing a function interface is prohibited in JavaScript
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 // WITH_STDLIB
 
 import kotlin.test.*

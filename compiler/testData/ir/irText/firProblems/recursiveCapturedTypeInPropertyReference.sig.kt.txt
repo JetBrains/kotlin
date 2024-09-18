@@ -29,7 +29,7 @@ interface Recursive<R> where R : Recursive<R>, R : Something {
     //   Mangled name: Recursive#<get-symbol>(){}AbstractSymbol<1:0>
     //   Public signature: /Recursive.symbol.<get-symbol>|6872691415411276539[0]
     //   Public signature debug description: <get-symbol>(){}AbstractSymbol<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Recursive#<get-symbol>(){}
     //   Public signature: /Recursive.symbol.<get-symbol>|-1453516714111318019[0]
     //   Public signature debug description: <get-symbol>(){}

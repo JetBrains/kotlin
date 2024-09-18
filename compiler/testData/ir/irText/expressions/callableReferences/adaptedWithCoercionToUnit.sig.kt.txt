@@ -2,7 +2,7 @@
 //   Mangled name: #fn0(){}kotlin.Int
 //   Public signature: /fn0|-3364598877649792431[0]
 //   Public signature debug description: fn0(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #fn0(){}
 //   Public signature: /fn0|-2043665824144278007[0]
 //   Public signature debug description: fn0(){}
@@ -12,7 +12,7 @@ fun fn0(): Int
 //   Mangled name: #fn1(kotlin.Int){}kotlin.Int
 //   Public signature: /fn1|-2634385227090463147[0]
 //   Public signature debug description: fn1(kotlin.Int){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #fn1(kotlin.Int){}
 //   Public signature: /fn1|-2712608382334902272[0]
 //   Public signature debug description: fn1(kotlin.Int){}
@@ -22,7 +22,7 @@ fun fn1(x: Int): Int
 //   Mangled name: #fnv(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /fnv|7629192376934713891[0]
 //   Public signature debug description: fnv(kotlin.IntArray...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #fnv(kotlin.IntArray...){}
 //   Public signature: /fnv|2422608309256790418[0]
 //   Public signature debug description: fnv(kotlin.IntArray...){}

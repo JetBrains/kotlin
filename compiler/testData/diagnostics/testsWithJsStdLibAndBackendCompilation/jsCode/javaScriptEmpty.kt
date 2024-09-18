@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// IGNORE_BACKEND_K1: JS_IR
+// IGNORE_BACKEND_K1: JS
 
 fun testEmptyString() {
     js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>""<!>)

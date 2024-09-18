@@ -7,7 +7,7 @@ val test1: Function1<Int, C>
   //   Mangled name: #<get-test1>(){}kotlin.Function1<kotlin.Int,C>
   //   Public signature: /test1.<get-test1>|3885954913991504024[0]
   //   Public signature debug description: <get-test1>(){}kotlin.Function1<kotlin.Int,C>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -22,7 +22,7 @@ val test2: Function1<Int, Nested>
   //   Mangled name: #<get-test2>(){}kotlin.Function1<kotlin.Int,Host.Nested>
   //   Public signature: /test2.<get-test2>|7753417540311277623[0]
   //   Public signature debug description: <get-test2>(){}kotlin.Function1<kotlin.Int,Host.Nested>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   //   Public signature debug description: <get-test2>(){}

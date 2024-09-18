@@ -7,7 +7,7 @@ val <T : Any?> Value<T>.additionalText: Int /* by */
   //   Mangled name: #<get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
   //   Public signature: /additionalText.<get-additionalText>|-1100553327198583886[0]
   //   Public signature debug description: <get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}
   //   Public signature: /additionalText.<get-additionalText>|-5973216610316851494[0]
   //   Public signature debug description: <get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}
@@ -22,7 +22,7 @@ val <T : Any?> Value<T>.additionalValue: Int /* by */
   //   Mangled name: #<get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
   //   Public signature: /additionalValue.<get-additionalValue>|-6473236166172047985[0]
   //   Public signature debug description: <get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}
   //   Public signature: /additionalValue.<get-additionalValue>|2814172998464653518[0]
   //   Public signature debug description: <get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}
@@ -37,7 +37,7 @@ var recivier: Any?
   //   Mangled name: #<get-recivier>(){}kotlin.Any?
   //   Public signature: /recivier.<get-recivier>|-76909196192166129[0]
   //   Public signature debug description: <get-recivier>(){}kotlin.Any?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-recivier>(){}
   //   Public signature: /recivier.<get-recivier>|4125249954356201901[0]
   //   Public signature debug description: <get-recivier>(){}
@@ -57,7 +57,7 @@ var value2: Any?
   //   Mangled name: #<get-value2>(){}kotlin.Any?
   //   Public signature: /value2.<get-value2>|8693017805210729038[0]
   //   Public signature debug description: <get-value2>(){}kotlin.Any?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-value2>(){}
   //   Public signature: /value2.<get-value2>|1776957621204807843[0]
   //   Public signature debug description: <get-value2>(){}
@@ -77,7 +77,7 @@ val barRef: KMutableProperty1<String?, String?>
   //   Mangled name: #<get-barRef>(){}kotlin.reflect.KMutableProperty1<kotlin.String?,kotlin.String?>
   //   Public signature: /barRef.<get-barRef>|-5465997532673085658[0]
   //   Public signature debug description: <get-barRef>(){}kotlin.reflect.KMutableProperty1<kotlin.String?,kotlin.String?>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-barRef>(){}
   //   Public signature: /barRef.<get-barRef>|1175959013941245768[0]
   //   Public signature debug description: <get-barRef>(){}
@@ -96,7 +96,7 @@ class DVal {
     //   Mangled name: DVal#<get-kmember>(){}kotlin.Any
     //   Public signature: /DVal.kmember.<get-kmember>|-7207078138930224715[0]
     //   Public signature debug description: <get-kmember>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DVal#<get-kmember>(){}
     //   Public signature: /DVal.kmember.<get-kmember>|-3711067038955963135[0]
     //   Public signature debug description: <get-kmember>(){}
@@ -112,7 +112,7 @@ class DVal {
   //   Mangled name: DVal#getValue(kotlin.Any?;kotlin.Any){}kotlin.Int
   //   Public signature: /DVal.getValue|-4563103632143148557[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: DVal#getValue(kotlin.Any?;kotlin.Any){}
   //   Public signature: /DVal.getValue|317500257957269026[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any){}
@@ -133,7 +133,7 @@ class Value<T : Any?> {
     //   Mangled name: Value#<get-value>(){}1:0
     //   Public signature: /Value.value.<get-value>|3167862337988859752[0]
     //   Public signature debug description: <get-value>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Value#<get-value>(){}
     //   Public signature: /Value.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -153,7 +153,7 @@ class Value<T : Any?> {
     //   Mangled name: Value#<get-text>(){}kotlin.String?
     //   Public signature: /Value.text.<get-text>|-7147571129451640862[0]
     //   Public signature debug description: <get-text>(){}kotlin.String?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Value#<get-text>(){}
     //   Public signature: /Value.text.<get-text>|8349765969627210272[0]
     //   Public signature debug description: <get-text>(){}
@@ -181,7 +181,7 @@ var <T : Any?> T.bar: T
   //   Mangled name: #<get-bar>@0:0(){0§<kotlin.Any?>}0:0
   //   Public signature: /bar.<get-bar>|-1733273639849676739[0]
   //   Public signature debug description: <get-bar>@0:0(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-bar>@0:0(){0§<kotlin.Any?>}
   //   Public signature: /bar.<get-bar>|-3183755745889883279[0]
   //   Public signature debug description: <get-bar>@0:0(){0§<kotlin.Any?>}

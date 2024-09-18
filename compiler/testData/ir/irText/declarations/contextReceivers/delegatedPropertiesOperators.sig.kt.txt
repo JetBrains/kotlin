@@ -7,7 +7,7 @@ var operationScore: Int
   //   Mangled name: #<get-operationScore>(){}kotlin.Int
   //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
   //   Public signature debug description: <get-operationScore>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-operationScore>(){}
   //   Public signature: /operationScore.<get-operationScore>|6765204501149451629[0]
   //   Public signature debug description: <get-operationScore>(){}
@@ -31,7 +31,7 @@ class Delegate {
     //   Mangled name: Delegate#<get-delegateValue>(){}kotlin.String
     //   Public signature: /Delegate.delegateValue.<get-delegateValue>|-8802990183041924458[0]
     //   Public signature debug description: <get-delegateValue>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegate#<get-delegateValue>(){}
     //   Public signature: /Delegate.delegateValue.<get-delegateValue>|442512873020605275[0]
     //   Public signature debug description: <get-delegateValue>(){}
@@ -52,7 +52,7 @@ class Delegate {
   //   Mangled name: Delegate#getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
   //   Public signature: /Delegate.getValue|-7764345795816801347[0]
   //   Public signature debug description: getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Delegate#getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}
   //   Public signature: /Delegate.getValue|-415138418502969483[0]
   //   Public signature debug description: getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}
@@ -79,7 +79,7 @@ class Result {
     //   Mangled name: Result#<get-s>(){}kotlin.String
     //   Public signature: /Result.s.<get-s>|4142379646177092803[0]
     //   Public signature debug description: <get-s>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Result#<get-s>(){}
     //   Public signature: /Result.s.<get-s>|-1662172381559511151[0]
     //   Public signature debug description: <get-s>(){}
@@ -102,7 +102,7 @@ class Result {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

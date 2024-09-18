@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM, NATIVE
+// IGNORE_BACKEND_K1: JS, JS_ES6, WASM, NATIVE
 // ISSUE: KT-62806
 
 fun <T: Number> foo(x: Number) = x as? T ?: TODO()

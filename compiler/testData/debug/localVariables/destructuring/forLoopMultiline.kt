@@ -31,7 +31,7 @@ fun box() {
 // test.kt:15 box: map:java.util.Map=java.util.Collections$SingletonMap
 // test.kt:20 box: map:java.util.Map=java.util.Collections$SingletonMap
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:5 box:
 // test.kt:5 box:
 // test.kt:15 box: map=kotlin.collections.HashMap

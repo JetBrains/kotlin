@@ -7,7 +7,7 @@ val spentTime: Column
   //   Mangled name: #<get-spentTime>(){}Column
   //   Public signature: /spentTime.<get-spentTime>|3550920958732313011[0]
   //   Public signature debug description: <get-spentTime>(){}Column
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-spentTime>(){}
   //   Public signature: /spentTime.<get-spentTime>|4978928361098048101[0]
   //   Public signature debug description: <get-spentTime>(){}
@@ -26,7 +26,7 @@ class ArgumentsBuilder {
     //   Mangled name: ArgumentsBuilder#<get-arguments>(){}kotlin.collections.MutableList<Expression>
     //   Public signature: /ArgumentsBuilder.arguments.<get-arguments>|7867094825942376438[0]
     //   Public signature debug description: <get-arguments>(){}kotlin.collections.MutableList<Expression>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ArgumentsBuilder#<get-arguments>(){}
     //   Public signature: /ArgumentsBuilder.arguments.<get-arguments>|-1703265137246288058[0]
     //   Public signature debug description: <get-arguments>(){}
@@ -79,7 +79,7 @@ private fun countIssues(restrictionsBuilder: @ExtensionFunctionType Function1<Ar
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
 //   Public signature: /id|-6791396263062521506[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #id(0:0){0§<kotlin.Any?>}
 //   Public signature: /id|9187295668833355463[0]
 //   Public signature debug description: id(0:0){0§<kotlin.Any?>}
@@ -89,7 +89,7 @@ fun <I : Any?> id(arg: I): I
 //   Mangled name: #integer(kotlin.String){}Column
 //   Public signature: /integer|-7515290819735707124[0]
 //   Public signature debug description: integer(kotlin.String){}Column
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #integer(kotlin.String){}
 //   Public signature: /integer|262583755062252780[0]
 //   Public signature debug description: integer(kotlin.String){}
@@ -99,7 +99,7 @@ fun integer(name: String): Column
 //   Mangled name: #lessEq@Column(0:0){0§<kotlin.Comparable<0:0>>}Expression
 //   Public signature: /lessEq|144930027420774562[0]
 //   Public signature debug description: lessEq@Column(0:0){0§<kotlin.Comparable<0:0>>}Expression
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #lessEq@Column(0:0){0§<kotlin.Comparable<0:0>>}
 //   Public signature: /lessEq|-511538213983026615[0]
 //   Public signature debug description: lessEq@Column(0:0){0§<kotlin.Comparable<0:0>>}
@@ -109,7 +109,7 @@ infix fun <T : Comparable<T>> Column.lessEq(t: T): Expression
 //   Mangled name: #select@Column(0:0;0:0){0§<kotlin.Comparable<0:0>>}Expression
 //   Public signature: /select|-7119975056707584867[0]
 //   Public signature debug description: select@Column(0:0;0:0){0§<kotlin.Comparable<0:0>>}Expression
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #select@Column(0:0;0:0){0§<kotlin.Comparable<0:0>>}
 //   Public signature: /select|-2152906716157697979[0]
 //   Public signature debug description: select@Column(0:0;0:0){0§<kotlin.Comparable<0:0>>}

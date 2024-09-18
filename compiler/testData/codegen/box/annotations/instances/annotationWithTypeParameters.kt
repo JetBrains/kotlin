@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: WASM
 // WASM ticket: KT-59032
 
-// supported: JVM_IR, JS_IR(_ES6), NATIVE
+// supported: JVM_IR, JS(_ES6), NATIVE
 
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses

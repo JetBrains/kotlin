@@ -11,7 +11,7 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrClassifierStorage#<get-components>(){}Fir2IrComponents
     //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|-8289335322148381223[0]
     //   Public signature debug description: <get-components>(){}Fir2IrComponents
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-components>(){}
     //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|7539133630823831154[0]
     //   Public signature debug description: <get-components>(){}
@@ -26,7 +26,7 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrClassifierStorage#<get-name>(){}kotlin.String
     //   Public signature: /Fir2IrClassifierStorage.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-name>(){}
     //   Public signature: /Fir2IrClassifierStorage.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -47,7 +47,7 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrClassifierStorage#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrClassifierStorage.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
     //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrClassifierStorage.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
     //   Public signature debug description: <get-classifierStorage>(){}
@@ -62,7 +62,7 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrClassifierStorage#<get-session>(){}FirSession
     //   Public signature: /Fir2IrClassifierStorage.session.<get-session>|-987114078791317060[0]
     //   Public signature debug description: <get-session>(){}FirSession
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrClassifierStorage#<get-session>(){}
     //   Public signature: /Fir2IrClassifierStorage.session.<get-session>|-846408160347892823[0]
     //   Public signature debug description: <get-session>(){}
@@ -83,7 +83,7 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrComponentsStorage#<get-session>(){}FirSession
     //   Public signature: /Fir2IrComponentsStorage.session.<get-session>|-987114078791317060[0]
     //   Public signature debug description: <get-session>(){}FirSession
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrComponentsStorage#<get-session>(){}
     //   Public signature: /Fir2IrComponentsStorage.session.<get-session>|-846408160347892823[0]
     //   Public signature debug description: <get-session>(){}
@@ -98,7 +98,7 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
     //   Mangled name: Fir2IrComponentsStorage#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrComponentsStorage.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
     //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrComponentsStorage#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrComponentsStorage.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
     //   Public signature debug description: <get-classifierStorage>(){}
@@ -130,7 +130,7 @@ class FirSession {
     //   Mangled name: FirSession#<get-name>(){}kotlin.String
     //   Public signature: /FirSession.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: FirSession#<get-name>(){}
     //   Public signature: /FirSession.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}
@@ -157,7 +157,7 @@ interface Fir2IrComponents {
     //   Mangled name: Fir2IrComponents#<get-classifierStorage>(){}Fir2IrClassifierStorage
     //   Public signature: /Fir2IrComponents.classifierStorage.<get-classifierStorage>|3872686339912673063[0]
     //   Public signature debug description: <get-classifierStorage>(){}Fir2IrClassifierStorage
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrComponents#<get-classifierStorage>(){}
     //   Public signature: /Fir2IrComponents.classifierStorage.<get-classifierStorage>|-7373157649530412207[0]
     //   Public signature debug description: <get-classifierStorage>(){}
@@ -172,7 +172,7 @@ interface Fir2IrComponents {
     //   Mangled name: Fir2IrComponents#<get-session>(){}FirSession
     //   Public signature: /Fir2IrComponents.session.<get-session>|-987114078791317060[0]
     //   Public signature debug description: <get-session>(){}FirSession
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Fir2IrComponents#<get-session>(){}
     //   Public signature: /Fir2IrComponents.session.<get-session>|-846408160347892823[0]
     //   Public signature debug description: <get-session>(){}

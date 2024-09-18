@@ -12,7 +12,7 @@ class Circle : Shape {
   //   Mangled name: Circle#draw!Canvas(){}kotlin.String
   //   Public signature: /Circle.draw|-6733499063990640842[0]
   //   Public signature debug description: draw!Canvas(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Circle#draw!Canvas(){}
   //   Public signature: /Circle.draw|4876755509620013985[0]
   //   Public signature debug description: draw!Canvas(){}
@@ -33,7 +33,7 @@ interface Canvas {
     //   Mangled name: Canvas#<get-suffix>(){}kotlin.String
     //   Public signature: /Canvas.suffix.<get-suffix>|8958072538558116778[0]
     //   Public signature debug description: <get-suffix>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Canvas#<get-suffix>(){}
     //   Public signature: /Canvas.suffix.<get-suffix>|-7634976832113083262[0]
     //   Public signature debug description: <get-suffix>(){}
@@ -49,7 +49,7 @@ interface Shape {
   //   Mangled name: Shape#draw!Canvas(){}kotlin.String
   //   Public signature: /Shape.draw|-6733499063990640842[0]
   //   Public signature debug description: draw!Canvas(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Shape#draw!Canvas(){}
   //   Public signature: /Shape.draw|4876755509620013985[0]
   //   Public signature debug description: draw!Canvas(){}
@@ -70,7 +70,7 @@ object MyCanvas : Canvas {
     //   Mangled name: MyCanvas#<get-suffix>(){}kotlin.String
     //   Public signature: /MyCanvas.suffix.<get-suffix>|8958072538558116778[0]
     //   Public signature debug description: <get-suffix>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: MyCanvas#<get-suffix>(){}
     //   Public signature: /MyCanvas.suffix.<get-suffix>|-7634976832113083262[0]
     //   Public signature debug description: <get-suffix>(){}
@@ -88,7 +88,7 @@ object MyCanvas : Canvas {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

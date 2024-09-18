@@ -18,7 +18,7 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
   //   Mangled name: ImplicitReceiverStack#iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   //   Public signature: /ImplicitReceiverStack.iterator|-837055222250609728[0]
   //   Public signature debug description: iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ImplicitReceiverStack#get(kotlin.String?){}
   //   Public signature: /ImplicitReceiverStack.get|-2385095576760729731[0]
   //   Public signature debug description: get(kotlin.String?){}
@@ -28,7 +28,7 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
   //   Mangled name: ImplicitReceiverStack#spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   //   Public signature: /ImplicitReceiverStack.spliterator|-1087522279462133212[0]
   //   Public signature debug description: spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ImplicitReceiverValue
   //   Public signature: /ImplicitReceiverValue|null[0]
   /* fake */ override fun spliterator(): @EnhancedNullability Spliterator<@EnhancedNullability ImplicitReceiverValue<*>>
@@ -37,7 +37,7 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
   //   Mangled name: ImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
   //   Public signature: /ImplicitReceiverStack.get|-8207298175036627063[0]
   //   Public signature debug description: get(kotlin.String?){}ImplicitReceiverValue<*>?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ImplicitReceiverValue{}boundSymbol
   //   Public signature: /ImplicitReceiverValue.boundSymbol|7940914052046792092[0]
   //   Public signature debug description: {}boundSymbol
@@ -58,7 +58,7 @@ class ImplicitReceiverValue<S : Symbol<*>> : ReceiverValue {
     //   Mangled name: ImplicitReceiverValue#<get-boundSymbol>(){}1:0?
     //   Public signature: /ImplicitReceiverValue.boundSymbol.<get-boundSymbol>|4571442115658707994[0]
     //   Public signature debug description: <get-boundSymbol>(){}1:0?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ImplicitReceiverValue#<get-type>(){}
     //   Public signature: /ImplicitReceiverValue.type.<get-type>|5958014174245684635[0]
     //   Public signature debug description: <get-type>(){}
@@ -73,7 +73,7 @@ class ImplicitReceiverValue<S : Symbol<*>> : ReceiverValue {
     //   Mangled name: ImplicitReceiverValue#<get-type>(){}kotlin.String
     //   Public signature: /ImplicitReceiverValue.type.<get-type>|9160771839252493702[0]
     //   Public signature debug description: <get-type>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: PersistentImplicitReceiverStack
     //   Public signature: /PersistentImplicitReceiverStack|null[0]
     override get
@@ -99,7 +99,7 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
     //   Mangled name: PersistentImplicitReceiverStack#<get-stack>(){}kotlin.collections.List<ImplicitReceiverValue<*>>
     //   Public signature: /PersistentImplicitReceiverStack.stack.<get-stack>|2790934809164034447[0]
     //   Public signature debug description: <get-stack>(){}kotlin.collections.List<ImplicitReceiverValue<*>>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: PersistentImplicitReceiverStack#get(kotlin.String?){}
     //   Public signature: /PersistentImplicitReceiverStack.get|-2385095576760729731[0]
     //   Public signature debug description: get(kotlin.String?){}
@@ -121,7 +121,7 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
   //   Mangled name: PersistentImplicitReceiverStack#spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
   //   Public signature: /PersistentImplicitReceiverStack.spliterator|-1087522279462133212[0]
   //   Public signature debug description: spliterator(){}java.util.Spliterator<ImplicitReceiverValue<*>{EnhancedNullability}>{EnhancedNullability}
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ReceiverValue{}type
   //   Public signature: /ReceiverValue.type|-6051055617123801408[0]
   //   Public signature debug description: {}type
@@ -131,7 +131,7 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
   //   Mangled name: PersistentImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
   //   Public signature: /PersistentImplicitReceiverStack.get|-8207298175036627063[0]
   //   Public signature debug description: get(kotlin.String?){}ImplicitReceiverValue<*>?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ReceiverValue#<get-type>(){}
   //   Public signature: /ReceiverValue.type.<get-type>|5958014174245684635[0]
   //   Public signature debug description: <get-type>(){}
@@ -141,7 +141,7 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
   //   Mangled name: PersistentImplicitReceiverStack#iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
   //   Public signature: /PersistentImplicitReceiverStack.iterator|-837055222250609728[0]
   //   Public signature debug description: iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Symbol
   //   Public signature: /Symbol|null[0]
   override operator fun iterator(): Iterator<ImplicitReceiverValue<*>>
@@ -161,7 +161,7 @@ interface ReceiverValue {
     //   Mangled name: ReceiverValue#<get-type>(){}kotlin.String
     //   Public signature: /ReceiverValue.type.<get-type>|9160771839252493702[0]
     //   Public signature debug description: <get-type>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: #box(){}
     //   Public signature: /box|2173511048851971368[0]
     //   Public signature debug description: box(){}

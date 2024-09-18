@@ -2,7 +2,7 @@
 //   Mangled name: #convert@kotlin.Number(){0§<kotlin.Number>}0:0
 //   Public signature: /convert|-8929373318028206908[0]
 //   Public signature debug description: convert@kotlin.Number(){0§<kotlin.Number>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #convert@kotlin.Number(){0§<kotlin.Number>}
 //   Public signature: /convert|1202542150258287198[0]
 //   Public signature debug description: convert@kotlin.Number(){0§<kotlin.Number>}
@@ -18,7 +18,7 @@ fun foo(arg: Number): Unit
 //   Mangled name: #runMe(kotlin.Array<kotlin.String>){}
 //   Public signature: /runMe|-242509563910791110[0]
 //   Public signature debug description: runMe(kotlin.Array<kotlin.String>){}
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #runMe(kotlin.Array<kotlin.String>){}
 //   Public signature: /runMe|-242509563910791110[0]
 //   Public signature debug description: runMe(kotlin.Array<kotlin.String>){}

@@ -83,7 +83,7 @@ fun box() {
 // test.kt:43 box: result:java.lang.String="b":java.lang.String
 // test.kt:44 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:42 box:
 // test.kt:28 compute:
 // test.kt:28 compute:

@@ -73,7 +73,7 @@ class Foo {
   @PropertyOnly
   @PropertyOnly2
   var param: Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Foo#<get-param>(){}
     //   Public signature: /Foo.param.<get-param>|-2254761560948865399[0]
     //   Public signature debug description: <get-param>(){}

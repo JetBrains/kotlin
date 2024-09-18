@@ -17,7 +17,7 @@ class DefaultImpl : IFoo {
     //   Mangled name: DefaultImpl#<get-extProp>@kotlin.String(){}kotlin.String
     //   Public signature: /DefaultImpl.extProp.<get-extProp>|-8732758648969586151[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DefaultImpl#<get-extProp>@kotlin.String(){}
     //   Public signature: /DefaultImpl.extProp.<get-extProp>|-2957953481772901234[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}
@@ -32,7 +32,7 @@ class DefaultImpl : IFoo {
     //   Mangled name: DefaultImpl#<get-prop>(){}kotlin.String
     //   Public signature: /DefaultImpl.prop.<get-prop>|-4077144726618700772[0]
     //   Public signature debug description: <get-prop>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DefaultImpl#<get-prop>(){}
     //   Public signature: /DefaultImpl.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -59,7 +59,7 @@ class Delegated : IFoo {
     //   Mangled name: Delegated#<get-extProp>@kotlin.String(){}kotlin.String
     //   Public signature: /Delegated.extProp.<get-extProp>|-8732758648969586151[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegated#<get-extProp>@kotlin.String(){}
     //   Public signature: /Delegated.extProp.<get-extProp>|-2957953481772901234[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}
@@ -74,7 +74,7 @@ class Delegated : IFoo {
     //   Mangled name: Delegated#<get-prop>(){}kotlin.String
     //   Public signature: /Delegated.prop.<get-prop>|-4077144726618700772[0]
     //   Public signature debug description: <get-prop>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegated#<get-prop>(){}
     //   Public signature: /Delegated.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -101,7 +101,7 @@ class ExplicitOverride : IFoo {
     //   Mangled name: ExplicitOverride#<get-extProp>@kotlin.String(){}kotlin.String
     //   Public signature: /ExplicitOverride.extProp.<get-extProp>|-8732758648969586151[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ExplicitOverride#<get-extProp>@kotlin.String(){}
     //   Public signature: /ExplicitOverride.extProp.<get-extProp>|-2957953481772901234[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}
@@ -116,7 +116,7 @@ class ExplicitOverride : IFoo {
     //   Mangled name: ExplicitOverride#<get-prop>(){}kotlin.String
     //   Public signature: /ExplicitOverride.prop.<get-prop>|-4077144726618700772[0]
     //   Public signature debug description: <get-prop>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ExplicitOverride#<get-prop>(){}
     //   Public signature: /ExplicitOverride.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -137,7 +137,7 @@ interface IFoo {
     //   Mangled name: IFoo#<get-extProp>@kotlin.String(){}kotlin.String
     //   Public signature: /IFoo.extProp.<get-extProp>|-8732758648969586151[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IFoo#<get-extProp>@kotlin.String(){}
     //   Public signature: /IFoo.extProp.<get-extProp>|-2957953481772901234[0]
     //   Public signature debug description: <get-extProp>@kotlin.String(){}
@@ -152,7 +152,7 @@ interface IFoo {
     //   Mangled name: IFoo#<get-prop>(){}kotlin.String
     //   Public signature: /IFoo.prop.<get-prop>|-4077144726618700772[0]
     //   Public signature debug description: <get-prop>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IFoo#<get-prop>(){}
     //   Public signature: /IFoo.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}

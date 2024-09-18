@@ -17,7 +17,7 @@ fun box(): String {
 // test.kt:4 ifoo$default (synthetic)
 // test.kt:9 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:9 box
 
 // EXPECTATIONS WASM

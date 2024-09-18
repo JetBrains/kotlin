@@ -11,7 +11,7 @@ open data class ValidatedProperties {
     //   Mangled name: ValidatedProperties#<get-test1>(){}kotlin.String
     //   Public signature: /ValidatedProperties.test1.<get-test1>|-7403750508378492770[0]
     //   Public signature debug description: <get-test1>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ValidatedProperties#<get-test1>(){}
     //   Public signature: /ValidatedProperties.test1.<get-test1>|-5735092642142423279[0]
     //   Public signature debug description: <get-test1>(){}
@@ -26,7 +26,7 @@ open data class ValidatedProperties {
     //   Mangled name: ValidatedProperties#<get-test2>(){}kotlin.String
     //   Public signature: /ValidatedProperties.test2.<get-test2>|-8062412501290172814[0]
     //   Public signature debug description: <get-test2>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ValidatedProperties#<get-test2>(){}
     //   Public signature: /ValidatedProperties.test2.<get-test2>|-5218942532816206869[0]
     //   Public signature debug description: <get-test2>(){}
@@ -42,7 +42,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#component1(){}kotlin.String
   //   Public signature: /ValidatedProperties.component1|-7481405593404337796[0]
   //   Public signature debug description: component1(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#component1(){}
   //   Public signature: /ValidatedProperties.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -52,7 +52,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#component2(){}kotlin.String
   //   Public signature: /ValidatedProperties.component2|1228864375093914597[0]
   //   Public signature debug description: component2(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#component2(){}
   //   Public signature: /ValidatedProperties.component2|3796717572321500973[0]
   //   Public signature debug description: component2(){}
@@ -62,7 +62,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#copy(kotlin.String;kotlin.String){}ValidatedProperties
   //   Public signature: /ValidatedProperties.copy|3682871900302910646[0]
   //   Public signature debug description: copy(kotlin.String;kotlin.String){}ValidatedProperties
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#copy(kotlin.String;kotlin.String){}
   //   Public signature: /ValidatedProperties.copy|-7088139716016046259[0]
   //   Public signature debug description: copy(kotlin.String;kotlin.String){}
@@ -72,7 +72,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /ValidatedProperties.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#equals(kotlin.Any?){}
   //   Public signature: /ValidatedProperties.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -82,7 +82,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#hashCode(){}kotlin.Int
   //   Public signature: /ValidatedProperties.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#hashCode(){}
   //   Public signature: /ValidatedProperties.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -92,7 +92,7 @@ open data class ValidatedProperties {
   //   Mangled name: ValidatedProperties#toString(){}kotlin.String
   //   Public signature: /ValidatedProperties.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: ValidatedProperties#toString(){}
   //   Public signature: /ValidatedProperties.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}

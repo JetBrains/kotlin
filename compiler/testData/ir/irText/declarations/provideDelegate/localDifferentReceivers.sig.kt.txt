@@ -11,7 +11,7 @@ class MyClass {
     //   Mangled name: MyClass#<get-value>(){}kotlin.String
     //   Public signature: /MyClass.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: MyClass#<get-value>(){}
     //   Public signature: /MyClass.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -29,7 +29,7 @@ class MyClass {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -39,7 +39,7 @@ fun box(): String
 //   Mangled name: #getValue@kotlin.String(kotlin.Any?;kotlin.Any){}kotlin.String
 //   Public signature: /getValue|-3094640188751663439[0]
 //   Public signature debug description: getValue@kotlin.String(kotlin.Any?;kotlin.Any){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #getValue@kotlin.String(kotlin.Any?;kotlin.Any){}
 //   Public signature: /getValue|3042257834970167256[0]
 //   Public signature debug description: getValue@kotlin.String(kotlin.Any?;kotlin.Any){}
@@ -49,7 +49,7 @@ operator fun String.getValue(receiver: Any?, p: Any): String
 //   Mangled name: #provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}kotlin.String
 //   Public signature: /provideDelegate|1258517683836483629[0]
 //   Public signature debug description: provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}
 //   Public signature: /provideDelegate|-3220946013837035345[0]
 //   Public signature debug description: provideDelegate@MyClass(kotlin.Any?;kotlin.Any){}

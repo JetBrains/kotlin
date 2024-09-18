@@ -61,7 +61,7 @@ fun box() {
 // test.kt:31 box: result:java.lang.String="b":java.lang.String
 // test.kt:32 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:30 box:
 // test.kt:7 compute:
 // test.kt:19 compute: gLocal="gLocal":kotlin.String

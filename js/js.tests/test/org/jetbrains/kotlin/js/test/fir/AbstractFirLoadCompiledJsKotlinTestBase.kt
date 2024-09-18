@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
 abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.FrontendOutput<F>> :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR)
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS)
 {
     protected abstract val frontendKind: FrontendKind<F>
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>

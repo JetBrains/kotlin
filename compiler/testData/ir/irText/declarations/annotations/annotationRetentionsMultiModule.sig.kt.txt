@@ -43,7 +43,7 @@ open annotation class Source : Annotation {
 
 }
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #binary(kotlin.Short){}
 //   Public signature: /binary|5277060220079691354[0]
 //   Public signature debug description: binary(kotlin.Short){}
@@ -53,7 +53,7 @@ open annotation class Source : Annotation {
 //   Public signature debug description: binary(kotlin.Short){}kotlin.Short
 fun binary(@Binary x: @Binary Short): @Binary Short
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #runtime(kotlin.Short){}
 //   Public signature: /runtime|3585133020944593394[0]
 //   Public signature debug description: runtime(kotlin.Short){}
@@ -63,7 +63,7 @@ fun binary(@Binary x: @Binary Short): @Binary Short
 //   Public signature debug description: runtime(kotlin.Short){}kotlin.Short
 fun runtime(@Runtime x: @Runtime Short): @Runtime Short
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #source(kotlin.Short){}
 //   Public signature: /source|4536131730791831220[0]
 //   Public signature debug description: source(kotlin.Short){}
@@ -76,7 +76,7 @@ fun source(@Source x: @Source Short): @Source Short
 // MODULE: main
 // FILE: main.kt
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

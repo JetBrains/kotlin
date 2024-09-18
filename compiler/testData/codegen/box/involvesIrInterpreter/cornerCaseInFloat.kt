@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 
 // This test can be dropped when we will make a proper design how to evaluate constants on different platforms.
 

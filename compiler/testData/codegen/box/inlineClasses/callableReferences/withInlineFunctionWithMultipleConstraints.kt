@@ -1,8 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_ES6
 
 interface Foo {
     fun foo(): String

@@ -12,7 +12,7 @@ class Context {
   //   Mangled name: Context#foo(){}kotlin.Int
   //   Public signature: /Context.foo|-1256155405684507276[0]
   //   Public signature debug description: foo(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Context#foo(){}
   //   Public signature: /Context.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}
@@ -40,7 +40,7 @@ class Test {
   //   Mangled name: Test#foo(){}kotlin.Int
   //   Public signature: /Test.foo|-1256155405684507276[0]
   //   Public signature debug description: foo(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Test#foo(){}
   //   Public signature: /Test.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}

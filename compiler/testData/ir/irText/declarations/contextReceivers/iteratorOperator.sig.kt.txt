@@ -11,7 +11,7 @@ data class Counter {
     //   Mangled name: Counter#<get-i>(){}kotlin.Int
     //   Public signature: /Counter.i.<get-i>|-8784396159001927527[0]
     //   Public signature debug description: <get-i>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Counter#<get-i>(){}
     //   Public signature: /Counter.i.<get-i>|6945482638966853621[0]
     //   Public signature debug description: <get-i>(){}
@@ -32,7 +32,7 @@ data class Counter {
   //   Mangled name: Counter#component1(){}kotlin.Int
   //   Public signature: /Counter.component1|-8217597213800111288[0]
   //   Public signature debug description: component1(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Counter#component1(){}
   //   Public signature: /Counter.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -42,7 +42,7 @@ data class Counter {
   //   Mangled name: Counter#copy(kotlin.Int){}Counter
   //   Public signature: /Counter.copy|2961790952651150110[0]
   //   Public signature debug description: copy(kotlin.Int){}Counter
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Counter#copy(kotlin.Int){}
   //   Public signature: /Counter.copy|-6971662324481626298[0]
   //   Public signature debug description: copy(kotlin.Int){}
@@ -52,7 +52,7 @@ data class Counter {
   //   Mangled name: Counter#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Counter.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Counter#equals(kotlin.Any?){}
   //   Public signature: /Counter.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -62,7 +62,7 @@ data class Counter {
   //   Mangled name: Counter#hashCode(){}kotlin.Int
   //   Public signature: /Counter.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Counter#hashCode(){}
   //   Public signature: /Counter.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -72,7 +72,7 @@ data class Counter {
   //   Mangled name: Counter#toString(){}kotlin.String
   //   Public signature: /Counter.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Counter#toString(){}
   //   Public signature: /Counter.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -93,7 +93,7 @@ data class CounterConfig {
     //   Mangled name: CounterConfig#<get-max>(){}kotlin.Int
     //   Public signature: /CounterConfig.max.<get-max>|3083068406880796820[0]
     //   Public signature debug description: <get-max>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: CounterConfig#<get-max>(){}
     //   Public signature: /CounterConfig.max.<get-max>|-2092975001266666827[0]
     //   Public signature debug description: <get-max>(){}
@@ -109,7 +109,7 @@ data class CounterConfig {
   //   Mangled name: CounterConfig#component1(){}kotlin.Int
   //   Public signature: /CounterConfig.component1|-8217597213800111288[0]
   //   Public signature debug description: component1(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterConfig#component1(){}
   //   Public signature: /CounterConfig.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -119,7 +119,7 @@ data class CounterConfig {
   //   Mangled name: CounterConfig#copy(kotlin.Int){}CounterConfig
   //   Public signature: /CounterConfig.copy|-6936688204078599579[0]
   //   Public signature debug description: copy(kotlin.Int){}CounterConfig
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterConfig#copy(kotlin.Int){}
   //   Public signature: /CounterConfig.copy|-6971662324481626298[0]
   //   Public signature debug description: copy(kotlin.Int){}
@@ -129,7 +129,7 @@ data class CounterConfig {
   //   Mangled name: CounterConfig#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /CounterConfig.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterConfig#equals(kotlin.Any?){}
   //   Public signature: /CounterConfig.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -139,7 +139,7 @@ data class CounterConfig {
   //   Mangled name: CounterConfig#hashCode(){}kotlin.Int
   //   Public signature: /CounterConfig.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterConfig#hashCode(){}
   //   Public signature: /CounterConfig.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -149,7 +149,7 @@ data class CounterConfig {
   //   Mangled name: CounterConfig#toString(){}kotlin.String
   //   Public signature: /CounterConfig.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterConfig#toString(){}
   //   Public signature: /CounterConfig.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -170,7 +170,7 @@ class CounterIterator : Iterator<Int> {
     //   Mangled name: CounterIterator#<get-counter>(){}Counter
     //   Public signature: /CounterIterator.counter.<get-counter>|-1972897806384113317[0]
     //   Public signature debug description: <get-counter>(){}Counter
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: CounterIterator#<get-counter>(){}
     //   Public signature: /CounterIterator.counter.<get-counter>|6903507550118978958[0]
     //   Public signature debug description: <get-counter>(){}
@@ -186,7 +186,7 @@ class CounterIterator : Iterator<Int> {
   //   Mangled name: CounterIterator#hasNext(){}kotlin.Boolean
   //   Public signature: /CounterIterator.hasNext|-8822308834813776763[0]
   //   Public signature debug description: hasNext(){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterIterator#hasNext(){}
   //   Public signature: /CounterIterator.hasNext|-3649021657867765832[0]
   //   Public signature debug description: hasNext(){}
@@ -196,7 +196,7 @@ class CounterIterator : Iterator<Int> {
   //   Mangled name: CounterIterator#next(){}kotlin.Int
   //   Public signature: /CounterIterator.next|-2200495694769701977[0]
   //   Public signature debug description: next(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: CounterIterator#next(){}
   //   Public signature: /CounterIterator.next|4628025478201224268[0]
   //   Public signature debug description: next(){}
@@ -208,7 +208,7 @@ class CounterIterator : Iterator<Int> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -218,7 +218,7 @@ fun box(): String
 //   Mangled name: #iterator!CounterConfig@Counter(){}CounterIterator
 //   Public signature: /iterator|3723033021471264185[0]
 //   Public signature debug description: iterator!CounterConfig@Counter(){}CounterIterator
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #iterator!CounterConfig@Counter(){}
 //   Public signature: /iterator|-4428923153638402647[0]
 //   Public signature debug description: iterator!CounterConfig@Counter(){}

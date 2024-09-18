@@ -11,7 +11,7 @@ open class Base {
     //   Mangled name: Base#<get-bar>(){}kotlin.String
     //   Public signature: /Base.bar.<get-bar>|3423724227669014303[0]
     //   Public signature debug description: <get-bar>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-bar>(){}
     //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -56,7 +56,7 @@ class Derived : Base, BaseI {
     //   Mangled name: Derived#<get-bar>(){}kotlin.String
     //   Public signature: /Derived.bar.<get-bar>|3423724227669014303[0]
     //   Public signature debug description: <get-bar>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Derived#<get-bar>(){}
     //   Public signature: /Derived.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -83,7 +83,7 @@ interface BaseI {
     //   Mangled name: BaseI#<get-bar>(){}kotlin.String
     //   Public signature: /BaseI.bar.<get-bar>|3423724227669014303[0]
     //   Public signature debug description: <get-bar>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: BaseI#<get-bar>(){}
     //   Public signature: /BaseI.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}

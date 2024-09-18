@@ -12,7 +12,7 @@ open class Base {
   //   Mangled name: Base#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Base.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Base#equals(kotlin.Any?){}
   //   Public signature: /Base.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -34,7 +34,7 @@ class Child1 : Base, I {
   //   Mangled name: Child1#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Child1.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Child1#equals(kotlin.Any?){}
   //   Public signature: /Child1.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -56,7 +56,7 @@ class Child2 : Base, I {
   //   Mangled name: Child2#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Child2.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Child2#equals(kotlin.Any?){}
   //   Public signature: /Child2.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}

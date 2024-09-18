@@ -6,7 +6,7 @@ interface Monoid<T : Any?> : Semigroup<T> {
   //   Mangled name: Monoid#combine@1:0(1:0){}1:0
   //   Public signature: /Monoid.combine|-3517256775590682507[0]
   //   Public signature debug description: combine@1:0(1:0){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Monoid#combine@1:0(1:0){}
   //   Public signature: /Monoid.combine|8412967464389689937[0]
   //   Public signature debug description: combine@1:0(1:0){}
@@ -21,7 +21,7 @@ interface Monoid<T : Any?> : Semigroup<T> {
     //   Mangled name: Monoid#<get-unit>(){}1:0
     //   Public signature: /Monoid.unit.<get-unit>|-2842189358620964971[0]
     //   Public signature debug description: <get-unit>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Monoid#<get-unit>(){}
     //   Public signature: /Monoid.unit.<get-unit>|1530864625432111105[0]
     //   Public signature debug description: <get-unit>(){}
@@ -37,7 +37,7 @@ interface Semigroup<T : Any?> {
   //   Mangled name: Semigroup#combine@1:0(1:0){}1:0
   //   Public signature: /Semigroup.combine|-3517256775590682507[0]
   //   Public signature debug description: combine@1:0(1:0){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Semigroup#combine@1:0(1:0){}
   //   Public signature: /Semigroup.combine|8412967464389689937[0]
   //   Public signature debug description: combine@1:0(1:0){}
@@ -58,7 +58,7 @@ object IntMonoid : Monoid<Int> {
     //   Mangled name: IntMonoid#<get-unit>(){}kotlin.Int
     //   Public signature: /IntMonoid.unit.<get-unit>|3772729924213749256[0]
     //   Public signature debug description: <get-unit>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IntMonoid#<get-unit>(){}
     //   Public signature: /IntMonoid.unit.<get-unit>|1530864625432111105[0]
     //   Public signature debug description: <get-unit>(){}
@@ -74,7 +74,7 @@ object IntMonoid : Monoid<Int> {
   //   Mangled name: IntMonoid#combine@kotlin.Int(kotlin.Int){}kotlin.Int
   //   Public signature: /IntMonoid.combine|4765448259581317405[0]
   //   Public signature debug description: combine@kotlin.Int(kotlin.Int){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IntMonoid#combine@kotlin.Int(kotlin.Int){}
   //   Public signature: /IntMonoid.combine|4429091503069708823[0]
   //   Public signature debug description: combine@kotlin.Int(kotlin.Int){}
@@ -95,7 +95,7 @@ object StringMonoid : Monoid<String> {
     //   Mangled name: StringMonoid#<get-unit>(){}kotlin.String
     //   Public signature: /StringMonoid.unit.<get-unit>|4504480110251605077[0]
     //   Public signature debug description: <get-unit>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: StringMonoid#<get-unit>(){}
     //   Public signature: /StringMonoid.unit.<get-unit>|1530864625432111105[0]
     //   Public signature debug description: <get-unit>(){}
@@ -111,7 +111,7 @@ object StringMonoid : Monoid<String> {
   //   Mangled name: StringMonoid#combine@kotlin.String(kotlin.String){}kotlin.String
   //   Public signature: /StringMonoid.combine|-5815259829474546918[0]
   //   Public signature debug description: combine@kotlin.String(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: StringMonoid#combine@kotlin.String(kotlin.String){}
   //   Public signature: /StringMonoid.combine|-2748332935123183663[0]
   //   Public signature debug description: combine@kotlin.String(kotlin.String){}
@@ -123,7 +123,7 @@ object StringMonoid : Monoid<String> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -133,7 +133,7 @@ fun box(): String
 //   Mangled name: #sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0
 //   Public signature: /sum|7635142307973834922[0]
 //   Public signature debug description: sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
 //   Public signature: /sum|6490726678726957775[0]
 //   Public signature debug description: sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}

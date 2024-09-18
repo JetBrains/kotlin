@@ -12,7 +12,7 @@ class A : Cloneable {
   //   Mangled name: A#clone(){}kotlin.Any
   //   Public signature: /A.clone|-6903128697527593263[0]
   //   Public signature debug description: clone(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#clone(){}
   //   Public signature: /A.clone|-2406852056970293187[0]
   protected /* fake */ override fun clone(): Any
@@ -33,7 +33,7 @@ class C : I {
   //   Mangled name: C#clone(){}kotlin.Any
   //   Public signature: /C.clone|-6903128697527593263[0]
   //   Public signature debug description: clone(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#clone(){}
   //   Public signature: /C.clone|-2406852056970293187[0]
   protected /* fake */ override fun clone(): Any
@@ -54,7 +54,7 @@ class OC : I {
   //   Mangled name: OC#clone(){}OC
   //   Public signature: /OC.clone|8389954697594281582[0]
   //   Public signature debug description: clone(){}OC
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: OC#clone(){}
   //   Public signature: /OC.clone|-2406852056970293187[0]
   protected override fun clone(): OC
@@ -69,7 +69,7 @@ interface I : Cloneable {
   //   Mangled name: I#clone(){}kotlin.Any
   //   Public signature: /I.clone|-6903128697527593263[0]
   //   Public signature debug description: clone(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#clone(){}
   //   Public signature: /I.clone|-2406852056970293187[0]
   protected /* fake */ override fun clone(): Any

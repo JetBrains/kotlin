@@ -38,7 +38,7 @@ fun useVararg(vararg foos: IFoo): Unit
 //   Mangled name: #withVarargOfInt(kotlin.IntArray...){}kotlin.String
 //   Public signature: /withVarargOfInt|-4664776409518571139[0]
 //   Public signature debug description: withVarargOfInt(kotlin.IntArray...){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #withVarargOfInt(kotlin.IntArray...){}
 //   Public signature: /withVarargOfInt|-232972314185863621[0]
 //   Public signature debug description: withVarargOfInt(kotlin.IntArray...){}

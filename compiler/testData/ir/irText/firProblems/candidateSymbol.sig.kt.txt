@@ -11,7 +11,7 @@ abstract class AbstractFirBasedSymbol<E> where E : FirDeclaration, E : FirSymbol
     //   Mangled name: AbstractFirBasedSymbol#<get-fir>(){}1:0
     //   Public signature: /AbstractFirBasedSymbol.fir.<get-fir>|-6624502324313406460[0]
     //   Public signature debug description: <get-fir>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: AbstractFirBasedSymbol#<get-fir>(){}
     //   Public signature: /AbstractFirBasedSymbol.fir.<get-fir>|1707733779722107125[0]
     //   Public signature debug description: <get-fir>(){}
@@ -43,7 +43,7 @@ class Candidate {
     //   Mangled name: Candidate#<get-symbol>(){}AbstractFirBasedSymbol<*>
     //   Public signature: /Candidate.symbol.<get-symbol>|-1417251974778824167[0]
     //   Public signature debug description: <get-symbol>(){}AbstractFirBasedSymbol<*>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Candidate#<get-symbol>(){}
     //   Public signature: /Candidate.symbol.<get-symbol>|-1453516714111318019[0]
     //   Public signature debug description: <get-symbol>(){}
@@ -70,7 +70,7 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
     //   Mangled name: FirCallableMemberDeclaration#<get-symbol>(){}AbstractFirBasedSymbol<1:0>
     //   Public signature: /FirCallableMemberDeclaration.symbol.<get-symbol>|-2189475889945454446[0]
     //   Public signature debug description: <get-symbol>(){}AbstractFirBasedSymbol<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: FirCallableMemberDeclaration#<get-symbol>(){}
     //   Public signature: /FirCallableMemberDeclaration.symbol.<get-symbol>|-1453516714111318019[0]
     //   Public signature debug description: <get-symbol>(){}
@@ -97,7 +97,7 @@ interface FirSymbolOwner<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
     //   Mangled name: FirSymbolOwner#<get-symbol>(){}AbstractFirBasedSymbol<1:0>
     //   Public signature: /FirSymbolOwner.symbol.<get-symbol>|-2189475889945454446[0]
     //   Public signature debug description: <get-symbol>(){}AbstractFirBasedSymbol<1:0>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: FirSymbolOwner#<get-symbol>(){}
     //   Public signature: /FirSymbolOwner.symbol.<get-symbol>|-1453516714111318019[0]
     //   Public signature debug description: <get-symbol>(){}

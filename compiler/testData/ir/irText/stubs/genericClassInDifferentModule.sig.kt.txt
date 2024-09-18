@@ -14,7 +14,7 @@ abstract class Base<T : Any?> {
     //   Mangled name: Base#<get-x>(){}1:0
     //   Public signature: /Base.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-x>(){}
     //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -30,7 +30,7 @@ abstract class Base<T : Any?> {
   //   Mangled name: Base#foo(0:0){0§<kotlin.Any?>}1:0
   //   Public signature: /Base.foo|8673945311830780726[0]
   //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Base#foo(0:0){0§<kotlin.Any?>}
   //   Public signature: /Base.foo|-6838606926256314363[0]
   //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
@@ -45,7 +45,7 @@ abstract class Base<T : Any?> {
     //   Mangled name: Base#<get-bar>(){}1:0
     //   Public signature: /Base.bar.<get-bar>|7899956589744407340[0]
     //   Public signature debug description: <get-bar>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-bar>(){}
     //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -65,7 +65,7 @@ abstract class Base<T : Any?> {
     //   Mangled name: Base#<get-exn>@0:0(){0§<kotlin.Any?>}1:0
     //   Public signature: /Base.exn.<get-exn>|6217753676739394662[0]
     //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-exn>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Base.exn.<get-exn>|-202876889853335253[0]
     //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}
@@ -94,7 +94,7 @@ class Derived1<T : Any?> : Base<T> {
     //   Mangled name: Derived1#<get-bar>(){}1:0
     //   Public signature: /Derived1.bar.<get-bar>|7899956589744407340[0]
     //   Public signature debug description: <get-bar>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Derived1#<get-bar>(){}
     //   Public signature: /Derived1.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -115,7 +115,7 @@ class Derived1<T : Any?> : Base<T> {
   //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}1:0
   //   Public signature: /Derived1.foo|8673945311830780726[0]
   //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}
   //   Public signature: /Derived1.foo|-6838606926256314363[0]
   //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
@@ -130,7 +130,7 @@ class Derived1<T : Any?> : Base<T> {
     //   Mangled name: Derived1#<get-x>(){}1:0
     //   Public signature: /Derived1.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Derived1#<get-x>(){}
     //   Public signature: /Derived1.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -145,7 +145,7 @@ class Derived1<T : Any?> : Base<T> {
     //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}1:0
     //   Public signature: /Derived1.exn.<get-exn>|6217753676739394662[0]
     //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Derived1.exn.<get-exn>|-202876889853335253[0]
     //   Public signature debug description: <get-exn>@0:0(){0§<kotlin.Any?>}

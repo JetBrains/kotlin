@@ -50,7 +50,7 @@ object B {
 //   Mangled name: #get@A(IFoo){}kotlin.Int
 //   Public signature: /get|-3861638864893341854[0]
 //   Public signature debug description: get@A(IFoo){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #get@A(IFoo){}
 //   Public signature: /get|-2254127918202281135[0]
 //   Public signature debug description: get@A(IFoo){}
@@ -60,7 +60,7 @@ operator fun A.get(i: IFoo): Int
 //   Mangled name: #get@B(IFoo){}kotlin.Int
 //   Public signature: /get|-7877609025632018899[0]
 //   Public signature debug description: get@B(IFoo){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #get@B(IFoo){}
 //   Public signature: /get|4390292684640882975[0]
 //   Public signature debug description: get@B(IFoo){}
@@ -118,7 +118,7 @@ fun test6(a: Any): Unit
 //   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /withVararg|2262699225692856772[0]
 //   Public signature debug description: withVararg(kotlin.IntArray...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #withVararg(kotlin.IntArray...){}
 //   Public signature: /withVararg|2511032413940817176[0]
 //   Public signature debug description: withVararg(kotlin.IntArray...){}

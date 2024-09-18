@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagnosticWithBackendTest {
   @Test
   public void testAllFilesPresentInKlibSerializationTests() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS, true);
   }
 
   @Test

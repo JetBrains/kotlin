@@ -47,7 +47,7 @@ class TestWithDelegatingConstructor : Base {
     //   Mangled name: TestWithDelegatingConstructor#<get-x>(){}kotlin.Int
     //   Public signature: /TestWithDelegatingConstructor.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestWithDelegatingConstructor#<get-x>(){}
     //   Public signature: /TestWithDelegatingConstructor.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -62,7 +62,7 @@ class TestWithDelegatingConstructor : Base {
     //   Mangled name: TestWithDelegatingConstructor#<get-y>(){}kotlin.Int
     //   Public signature: /TestWithDelegatingConstructor.y.<get-y>|-6745575372101973707[0]
     //   Public signature debug description: <get-y>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestWithDelegatingConstructor#<get-y>(){}
     //   Public signature: /TestWithDelegatingConstructor.y.<get-y>|-7902422373892128922[0]
     //   Public signature debug description: <get-y>(){}

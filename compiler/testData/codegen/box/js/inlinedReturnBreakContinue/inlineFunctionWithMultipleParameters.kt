@@ -2,8 +2,8 @@
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
-// TARGET_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// TARGET_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
 import kotlin.test.assertEquals

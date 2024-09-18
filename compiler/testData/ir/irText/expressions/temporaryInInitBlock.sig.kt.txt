@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-s>(){}kotlin.String?
     //   Public signature: /C.s.<get-s>|-8914674600070030279[0]
     //   Public signature debug description: <get-s>(){}kotlin.String?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-s>(){}
     //   Public signature: /C.s.<get-s>|-1662172381559511151[0]
     //   Public signature debug description: <get-s>(){}

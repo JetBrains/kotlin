@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS, JS_ES6, WASM
 //  JS IR & Wasm: https://youtrack.jetbrains.com/issue/KT-51225
 // IGNORE_BACKEND_K2: JVM_IR, NATIVE
 // FIR status: expect/actual in the same module

@@ -11,7 +11,7 @@ class TestInitValFromParameter {
     //   Mangled name: TestInitValFromParameter#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitValFromParameter.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitValFromParameter#<get-x>(){}
     //   Public signature: /TestInitValFromParameter.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -38,7 +38,7 @@ class TestInitValInClass {
     //   Mangled name: TestInitValInClass#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitValInClass.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitValInClass#<get-x>(){}
     //   Public signature: /TestInitValInClass.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -65,7 +65,7 @@ class TestInitValInInitBlock {
     //   Mangled name: TestInitValInInitBlock#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitValInInitBlock.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitValInInitBlock#<get-x>(){}
     //   Public signature: /TestInitValInInitBlock.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

@@ -28,7 +28,7 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:15 throwIfLess
 // test.kt:16 throwIfLess
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:7 box

@@ -1,5 +1,5 @@
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS, JS_ES6, WASM
 // WITH_STDLIB
 
 class Data(val x: Int)

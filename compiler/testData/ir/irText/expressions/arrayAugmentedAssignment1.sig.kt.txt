@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-x>(){}kotlin.IntArray
     //   Public signature: /C.x.<get-x>|-5699461780158713262[0]
     //   Public signature debug description: <get-x>(){}kotlin.IntArray
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-x>(){}
     //   Public signature: /C.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -29,7 +29,7 @@ class C {
 //   Mangled name: #bar(){}kotlin.Int
 //   Public signature: /bar|-6436649210114349217[0]
 //   Public signature debug description: bar(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #bar(){}
 //   Public signature: /bar|496682602797471549[0]
 //   Public signature debug description: bar(){}
@@ -39,7 +39,7 @@ fun bar(): Int
 //   Mangled name: #foo(){}kotlin.IntArray
 //   Public signature: /foo|-7128217666146299316[0]
 //   Public signature debug description: foo(){}kotlin.IntArray
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(){}
 //   Public signature: /foo|-1041209573719867811[0]
 //   Public signature debug description: foo(){}

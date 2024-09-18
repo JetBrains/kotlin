@@ -42,7 +42,7 @@ class Host {
   //   Mangled name: Host#withVararg(kotlin.IntArray...){}kotlin.String
   //   Public signature: /Host.withVararg|3343284378880347768[0]
   //   Public signature debug description: withVararg(kotlin.IntArray...){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Host#withVararg(kotlin.IntArray...){}
   //   Public signature: /Host.withVararg|2511032413940817176[0]
   //   Public signature debug description: withVararg(kotlin.IntArray...){}

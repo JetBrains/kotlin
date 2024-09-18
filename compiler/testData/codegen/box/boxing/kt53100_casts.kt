@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // KT-54635: expected:<[OK]> but was:<[FAIL 1: 0]>
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 // WITH_STDLIB
 
 import kotlin.test.*

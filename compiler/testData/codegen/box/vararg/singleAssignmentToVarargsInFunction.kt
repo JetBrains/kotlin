@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K2: JVM_IR, JS, JS_ES6, WASM
 // LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // IGNORE_BACKEND: NATIVE
 // FIR status: don't support legacy feature

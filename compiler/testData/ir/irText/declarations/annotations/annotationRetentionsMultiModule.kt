@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-69965
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // REASON: KT-69965 missing @[Source] annotation on return type of IrCall to `fun source()`
 
 // MODULE: lib

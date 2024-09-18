@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // TARGET_BACKEND: WASM
 fun <T> T.id() = this
 

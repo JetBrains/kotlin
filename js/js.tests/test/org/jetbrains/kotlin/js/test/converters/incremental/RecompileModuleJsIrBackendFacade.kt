@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.*
 @Suppress("warnings")
 class RecompileModuleJsIrBackendFacade(
     testServices: TestServices
-) : CommonRecompileModuleJsBackendFacade<ClassicFrontendOutputArtifact, IrBackendInput>(testServices, TargetBackend.JS_IR) {
+) : CommonRecompileModuleJsBackendFacade<ClassicFrontendOutputArtifact, IrBackendInput>(testServices, TargetBackend.JS) {
     override fun TestConfigurationBuilder.configure(module: TestModule) {
         startingArtifactFactory = {
             testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend).also {

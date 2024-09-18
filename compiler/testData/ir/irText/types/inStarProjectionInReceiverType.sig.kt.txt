@@ -17,7 +17,7 @@ interface Foo<in T : Any?> {
     //   Mangled name: Foo#<get-x>(){}kotlin.Int
     //   Public signature: /Foo.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Foo#<get-x>(){}
     //   Public signature: /Foo.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -29,7 +29,7 @@ interface Foo<in T : Any?> {
 //   Mangled name: #testReceiver@Foo<*>(){}kotlin.Int
 //   Public signature: /testReceiver|-6773216258466639837[0]
 //   Public signature debug description: testReceiver@Foo<*>(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testReceiver@Foo<*>(){}
 //   Public signature: /testReceiver|-7894732961780427626[0]
 //   Public signature debug description: testReceiver@Foo<*>(){}
@@ -45,7 +45,7 @@ fun Foo<*>.testSmartCastOnExtensionReceiver(): Unit
 //   Mangled name: #testValueParameter(Foo<*>){}kotlin.Int
 //   Public signature: /testValueParameter|6369528729009014404[0]
 //   Public signature debug description: testValueParameter(Foo<*>){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testValueParameter(Foo<*>){}
 //   Public signature: /testValueParameter|-1072740451270393632[0]
 //   Public signature debug description: testValueParameter(Foo<*>){}

@@ -70,7 +70,7 @@ fun box() {
 // test.kt:17 box: $i$f$bar:int=0:int
 // test.kt:27 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:7 box:
 // test.kt:3 <init>:
 // test.kt:7 box:

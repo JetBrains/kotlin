@@ -1,4 +1,4 @@
-// The test checks an optimization which is implemented only for JS_IR backend
+// The test checks an optimization which is implemented only for JS backend
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
@@ -208,7 +208,7 @@ fun testNullableUnderlyingType() {
     caseJsEq()
 }
 
-// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4 TARGET_BACKENDS=JS_IR
+// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4 TARGET_BACKENDS=JS
 // CHECK_CALLED_IN_SCOPE: scope=testUnderlyingWithEqualsOverride function=equals
 fun testUnderlyingWithEqualsOverride() {
     val x0 = ClassUnderlayingWithEquals(MyClass(0))

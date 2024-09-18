@@ -11,7 +11,7 @@ interface IFoo {
     //   Mangled name: IFoo#<get-foo>@A(){}B
     //   Public signature: /IFoo.foo.<get-foo>|8070848468738985847[0]
     //   Public signature debug description: <get-foo>@A(){}B
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IFoo#<get-foo>@A(){}
     //   Public signature: /IFoo.foo.<get-foo>|-1820743651074494698[0]
     //   Public signature debug description: <get-foo>@A(){}
@@ -27,7 +27,7 @@ interface IInvoke {
   //   Mangled name: IInvoke#invoke@B(){}kotlin.Int
   //   Public signature: /IInvoke.invoke|7560171197904259096[0]
   //   Public signature debug description: invoke@B(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: IInvoke#invoke@B(){}
   //   Public signature: /IInvoke.invoke|-8763880178141053779[0]
   //   Public signature debug description: invoke@B(){}

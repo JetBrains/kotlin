@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // ONLY_IR_DCE
 
 import kotlin.coroutines.*

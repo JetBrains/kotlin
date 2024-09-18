@@ -1,10 +1,10 @@
 // https://youtrack.jetbrains.com/issue/KT-42020/Psi2ir-IllegalStateException-IrSimpleFunctionPublicSymbolImpl-for-public-...-is-already-bound-on-generic-function-whose
 // IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND_K1: NATIVE, JS_IR
+// IGNORE_BACKEND: JS_ES6
+// IGNORE_BACKEND_K1: NATIVE, JS
 
 // https://youtrack.jetbrains.com/issue/KT-59279/Psi2Ir-FIR2IR-Signature-clash-leads-to-wrong-method-resolve
-// IGNORE_BACKEND_K2: NATIVE, JS_IR
+// IGNORE_BACKEND_K2: NATIVE, JS
 
 // MODULE: lib
 // FILE: lib.kt

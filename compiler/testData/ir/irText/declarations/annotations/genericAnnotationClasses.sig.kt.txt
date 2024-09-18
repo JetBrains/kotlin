@@ -13,7 +13,7 @@ open annotation class Test1<T : Any?> : Annotation {
     //   Mangled name: ann.Test1#<get-x>(){}kotlin.Int
     //   Public signature: ann/Test1.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ann.Test1#<get-x>(){}
     //   Public signature: ann/Test1.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -40,7 +40,7 @@ open annotation class Test2<T1 : Any, T2 : Any?> : Annotation {
     //   Mangled name: ann.Test2#<get-x>(){}kotlin.Int
     //   Public signature: ann/Test2.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ann.Test2#<get-x>(){}
     //   Public signature: ann/Test2.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -67,7 +67,7 @@ open annotation class Test3<T1 : Any?, T2 : I<T1>> : Annotation {
     //   Mangled name: ann.Test3#<get-x>(){}ann.Test1<ann.I<1:1>>
     //   Public signature: ann/Test3.x.<get-x>|-476605448158023096[0]
     //   Public signature debug description: <get-x>(){}ann.Test1<ann.I<1:1>>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ann.Test3#<get-x>(){}
     //   Public signature: ann/Test3.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -94,7 +94,7 @@ open annotation class Test4 : Annotation {
     //   Mangled name: ann.Test4#<get-x>(){}kotlin.Array<ann.Test3<kotlin.Int,ann.C<kotlin.Int>>>
     //   Public signature: ann/Test4.x.<get-x>|-4754126975303916738[0]
     //   Public signature debug description: <get-x>(){}kotlin.Array<ann.Test3<kotlin.Int,ann.C<kotlin.Int>>>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ann.Test4#<get-x>(){}
     //   Public signature: ann/Test4.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -121,7 +121,7 @@ open annotation class Test5<T : Any?> : Annotation {
     //   Mangled name: ann.Test5#<get-xs>(){}kotlin.Array<out|ann.Test3<1:0,ann.C<1:0>>>
     //   Public signature: ann/Test5.xs.<get-xs>|-4480240150602494549[0]
     //   Public signature debug description: <get-xs>(){}kotlin.Array<out|ann.Test3<1:0,ann.C<1:0>>>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: ann.Test5#<get-xs>(){}
     //   Public signature: ann/Test5.xs.<get-xs>|-6958094100501701183[0]
     //   Public signature debug description: <get-xs>(){}

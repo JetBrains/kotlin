@@ -15,7 +15,7 @@ class A {
       //   Mangled name: A.B#<get-s>(){}kotlin.Any
       //   Public signature: /A.B.s.<get-s>|-6355491283316321221[0]
       //   Public signature debug description: <get-s>(){}kotlin.Any
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: A.B#<get-s>(){}
       //   Public signature: /A.B.s.<get-s>|-1662172381559511151[0]
       //   Public signature debug description: <get-s>(){}
@@ -48,7 +48,7 @@ class A {
       //   Mangled name: A.C#<get-s>(){}kotlin.Any
       //   Public signature: /A.C.s.<get-s>|-6355491283316321221[0]
       //   Public signature debug description: <get-s>(){}kotlin.Any
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: A.C#<get-s>(){}
       //   Public signature: /A.C.s.<get-s>|-1662172381559511151[0]
       //   Public signature debug description: <get-s>(){}

@@ -2,7 +2,7 @@
 //   Mangled name: #produceFun(){}kotlin.Function0<kotlin.Unit>
 //   Public signature: /produceFun|4804189546570931998[0]
 //   Public signature debug description: produceFun(){}kotlin.Function0<kotlin.Unit>
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #produceFun(){}
 //   Public signature: /produceFun|6933842891382874270[0]
 //   Public signature debug description: produceFun(){}

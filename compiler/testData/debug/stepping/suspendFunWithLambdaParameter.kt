@@ -23,7 +23,7 @@ suspend fun box() {
 // test.kt:9 box
 // test.kt:12 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:9 doResume
 // test.kt:5 foo
 // test.kt:5 foo

@@ -29,7 +29,7 @@ class Test<TT : Any?> : IBase<TT> {
     //   Mangled name: Test#<get-bar>(){}kotlin.Int
     //   Public signature: /Test.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test#<get-bar>(){}
     //   Public signature: /Test.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}
@@ -62,7 +62,7 @@ interface IBase<T : Any?> {
     //   Mangled name: IBase#<get-bar>(){}kotlin.Int
     //   Public signature: /IBase.bar.<get-bar>|-7403724005139201014[0]
     //   Public signature debug description: <get-bar>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IBase#<get-bar>(){}
     //   Public signature: /IBase.bar.<get-bar>|6880642144337645699[0]
     //   Public signature debug description: <get-bar>(){}

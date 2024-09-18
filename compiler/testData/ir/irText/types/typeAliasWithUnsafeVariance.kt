@@ -1,5 +1,5 @@
 // KT-42036
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 
 // KT-61141: getTag() throws kotlin.Exception instead of java.lang.Exception
 // IGNORE_BACKEND: NATIVE

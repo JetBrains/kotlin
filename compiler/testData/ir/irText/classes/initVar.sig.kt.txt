@@ -11,7 +11,7 @@ class TestInitVarFromParameter {
     //   Mangled name: TestInitVarFromParameter#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitVarFromParameter.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitVarFromParameter#<get-x>(){}
     //   Public signature: /TestInitVarFromParameter.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -43,7 +43,7 @@ class TestInitVarInClass {
     //   Mangled name: TestInitVarInClass#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitVarInClass.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitVarInClass#<get-x>(){}
     //   Public signature: /TestInitVarInClass.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -75,7 +75,7 @@ class TestInitVarInInitBlock {
     //   Mangled name: TestInitVarInInitBlock#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitVarInInitBlock.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitVarInInitBlock#<get-x>(){}
     //   Public signature: /TestInitVarInInitBlock.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -107,7 +107,7 @@ class TestInitVarWithCustomSetter {
     //   Mangled name: TestInitVarWithCustomSetter#<get-x>(){}kotlin.Int
     //   Public signature: /TestInitVarWithCustomSetter.x.<get-x>|4966956098150895696[0]
     //   Public signature debug description: <get-x>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestInitVarWithCustomSetter#<get-x>(){}
     //   Public signature: /TestInitVarWithCustomSetter.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}

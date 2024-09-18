@@ -17,7 +17,7 @@ class C1 : Cell<String> {
     //   Mangled name: C1#<get-value>(){}kotlin.String
     //   Public signature: /C1.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C1#<get-value>(){}
     //   Public signature: /C1.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -44,7 +44,7 @@ class C2 : Cell<String> {
     //   Mangled name: C2#<get-value>(){}kotlin.String
     //   Public signature: /C2.value.<get-value>|-7202092821145242726[0]
     //   Public signature debug description: <get-value>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C2#<get-value>(){}
     //   Public signature: /C2.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}
@@ -65,7 +65,7 @@ open class Cell<T : Any?> {
     //   Mangled name: Cell#<get-value>(){}1:0
     //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
     //   Public signature debug description: <get-value>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Cell#<get-value>(){}
     //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
     //   Public signature debug description: <get-value>(){}

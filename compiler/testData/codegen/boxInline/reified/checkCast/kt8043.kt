@@ -1,8 +1,8 @@
 // IGNORE_BACKEND: WASM
 // WITH_STDLIB
 // TODO: Reified generics required some design to unify behavior across all backends
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_ES6
 // FILE: 1.kt
 package test
 

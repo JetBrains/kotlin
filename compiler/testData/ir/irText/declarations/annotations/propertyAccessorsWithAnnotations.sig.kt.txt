@@ -7,7 +7,7 @@ val test3: String
   //   Mangled name: #<get-test3>(){}kotlin.String
   //   Public signature: /test3.<get-test3>|-2084248125648281731[0]
   //   Public signature debug description: <get-test3>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test3>(){}
   //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
   //   Public signature debug description: <get-test3>(){}
@@ -23,7 +23,7 @@ var test4: String
   //   Mangled name: #<get-test4>(){}kotlin.String
   //   Public signature: /test4.<get-test4>|5046196083583551233[0]
   //   Public signature debug description: <get-test4>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test4>(){}
   //   Public signature: /test4.<get-test4>|4166854324968284003[0]
   //   Public signature debug description: <get-test4>(){}
@@ -49,7 +49,7 @@ open annotation class TestAnn : Annotation {
     //   Mangled name: TestAnn#<get-x>(){}kotlin.String
     //   Public signature: /TestAnn.x.<get-x>|316111172223894646[0]
     //   Public signature debug description: <get-x>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TestAnn#<get-x>(){}
     //   Public signature: /TestAnn.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -72,7 +72,7 @@ val test1: String
   //   Mangled name: #<get-test1>(){}kotlin.String
   //   Public signature: /test1.<get-test1>|-7403750508378492770[0]
   //   Public signature debug description: <get-test1>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test1>(){}
   //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   //   Public signature debug description: <get-test1>(){}
@@ -88,7 +88,7 @@ var test2: String
   //   Mangled name: #<get-test2>(){}kotlin.String
   //   Public signature: /test2.<get-test2>|-8062412501290172814[0]
   //   Public signature debug description: <get-test2>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-test2>(){}
   //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   //   Public signature debug description: <get-test2>(){}

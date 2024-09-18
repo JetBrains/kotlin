@@ -43,7 +43,7 @@ class DFoo : IFoo {
     //   Mangled name: DFoo#<get-testExtVal>@kotlin.String(){}kotlin.String
     //   Public signature: /DFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
     //   Public signature debug description: <get-testExtVal>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DFoo#<get-testExtVal>@kotlin.String(){}
     //   Public signature: /DFoo.testExtVal.<get-testExtVal>|8692242155954463066[0]
     //   Public signature debug description: <get-testExtVal>@kotlin.String(){}
@@ -58,7 +58,7 @@ class DFoo : IFoo {
     //   Mangled name: DFoo#<get-testVal>(){}kotlin.String
     //   Public signature: /DFoo.testVal.<get-testVal>|-8940261368877498423[0]
     //   Public signature debug description: <get-testVal>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: DFoo#<get-testVal>(){}
     //   Public signature: /DFoo.testVal.<get-testVal>|-3119877793352707332[0]
     //   Public signature debug description: <get-testVal>(){}
@@ -94,7 +94,7 @@ interface IFoo {
     //   Mangled name: IFoo#<get-testExtVal>@kotlin.String(){}kotlin.String
     //   Public signature: /IFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
     //   Public signature debug description: <get-testExtVal>@kotlin.String(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IFoo#<get-testExtVal>@kotlin.String(){}
     //   Public signature: /IFoo.testExtVal.<get-testExtVal>|8692242155954463066[0]
     //   Public signature debug description: <get-testExtVal>@kotlin.String(){}
@@ -110,7 +110,7 @@ interface IFoo {
     //   Mangled name: IFoo#<get-testVal>(){}kotlin.String
     //   Public signature: /IFoo.testVal.<get-testVal>|-8940261368877498423[0]
     //   Public signature debug description: <get-testVal>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IFoo#<get-testVal>(){}
     //   Public signature: /IFoo.testVal.<get-testVal>|-3119877793352707332[0]
     //   Public signature debug description: <get-testVal>(){}

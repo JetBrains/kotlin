@@ -11,7 +11,7 @@ open class Base {
     //   Mangled name: Base#<get-x>(){}kotlin.Any
     //   Public signature: /Base.x.<get-x>|98409022523676208[0]
     //   Public signature debug description: <get-x>(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-x>(){}
     //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -48,7 +48,7 @@ object Host {
       //   Mangled name: Host.Derived1#<get-x>(){}kotlin.Any
       //   Public signature: /Host.Derived1.x.<get-x>|98409022523676208[0]
       //   Public signature debug description: <get-x>(){}kotlin.Any
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Host.Derived1#<get-x>(){}
       //   Public signature: /Host.Derived1.x.<get-x>|1482705010654679335[0]
       //   Public signature debug description: <get-x>(){}
@@ -75,7 +75,7 @@ object Host {
       //   Mangled name: Host.Derived2#<get-x>(){}kotlin.Any
       //   Public signature: /Host.Derived2.x.<get-x>|98409022523676208[0]
       //   Public signature debug description: <get-x>(){}kotlin.Any
-      // CHECK JS_IR NATIVE:
+      // CHECK JS NATIVE:
       //   Mangled name: Host.Derived2#<get-x>(){}
       //   Public signature: /Host.Derived2.x.<get-x>|1482705010654679335[0]
       //   Public signature debug description: <get-x>(){}

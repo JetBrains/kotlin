@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
 
-// (supported: JVM_IR, JS_IR(_E6))
+// (supported: JVM_IR, JS(_E6))
 
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses

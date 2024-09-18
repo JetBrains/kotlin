@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_ES6
 
 // JS vs JVM difference is that we are not able to understand that we have a default value in other module (KT-62523)
 

@@ -2,7 +2,7 @@
 //   Mangled name: #foo(){}kotlin.Int
 //   Public signature: /foo|-1256155405684507276[0]
 //   Public signature debug description: foo(){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(){}
 //   Public signature: /foo|-1041209573719867811[0]
 //   Public signature debug description: foo(){}

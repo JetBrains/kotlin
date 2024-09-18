@@ -11,7 +11,7 @@ open class MessageBusImpl {
     //   Mangled name: MessageBusImpl#<get-parentBus>(){}kotlin.Any?
     //   Public signature: /MessageBusImpl.parentBus.<get-parentBus>|-5686140196600425134[0]
     //   Public signature debug description: <get-parentBus>(){}kotlin.Any?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: MessageBusImpl#<get-parentBus>(){}
     //   Public signature: /MessageBusImpl.parentBus.<get-parentBus>|-4473545730438591287[0]
     //   Public signature debug description: <get-parentBus>(){}
@@ -44,7 +44,7 @@ class RootBus : MessageBusImpl {
     //   Mangled name: RootBus#<get-parentBus>(){}kotlin.Any?
     //   Public signature: /RootBus.parentBus.<get-parentBus>|-5686140196600425134[0]
     //   Public signature debug description: <get-parentBus>(){}kotlin.Any?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: RootBus#<get-parentBus>(){}
     //   Public signature: /RootBus.parentBus.<get-parentBus>|-4473545730438591287[0]
     //   Public signature debug description: <get-parentBus>(){}

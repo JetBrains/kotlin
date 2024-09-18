@@ -10,7 +10,7 @@ inline fun foo(x: Function0<Unit>): Unit
 //   Mangled name: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
 //   Public signature: test/id|-8103162913932729860[0]
 //   Public signature debug description: id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}
 //   Public signature: test/id|58840929144244075[0]
 //   Public signature debug description: id@kotlin.String(kotlin.String;kotlin.IntArray...){}

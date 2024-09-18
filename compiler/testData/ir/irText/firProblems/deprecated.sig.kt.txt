@@ -2,7 +2,7 @@
 //   Mangled name: #create(){}kotlin.String
 //   Public signature: /create|-1557561735696060682[0]
 //   Public signature debug description: create(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #create(){}
 //   Public signature: /create|9033430362705119523[0]
 //   Public signature debug description: create(){}
@@ -12,7 +12,7 @@ fun create(): String
 //   Mangled name: #create(kotlin.Boolean){}kotlin.String
 //   Public signature: /create|-3400482347981983007[0]
 //   Public signature debug description: create(kotlin.Boolean){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #create(kotlin.Boolean){}
 //   Public signature: /create|-2263398152642299020[0]
 //   Public signature debug description: create(kotlin.Boolean){}
@@ -22,7 +22,7 @@ fun create(b: Boolean): String
 //   Mangled name: #create(kotlin.String){}kotlin.String
 //   Public signature: /create|-6120250208000719461[0]
 //   Public signature debug description: create(kotlin.String){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #create(kotlin.String){}
 //   Public signature: /create|-5890518877103900297[0]
 //   Public signature debug description: create(kotlin.String){}

@@ -11,7 +11,7 @@ class C {
     //   Mangled name: C#<get-c>(){}kotlin.Int
     //   Public signature: /C.c.<get-c>|-2440337234483931882[0]
     //   Public signature debug description: <get-c>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-c>(){}
     //   Public signature: /C.c.<get-c>|2368736057102379596[0]
     //   Public signature debug description: <get-c>(){}
@@ -50,7 +50,7 @@ class R {
     //   Mangled name: R#<get-r>(){}kotlin.Int
     //   Public signature: /R.r.<get-r>|4210912234201800356[0]
     //   Public signature debug description: <get-r>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: R#<get-r>(){}
     //   Public signature: /R.r.<get-r>|-7424184448774736572[0]
     //   Public signature debug description: <get-r>(){}

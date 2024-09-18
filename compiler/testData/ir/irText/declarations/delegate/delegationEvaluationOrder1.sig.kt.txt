@@ -9,7 +9,7 @@ var global: String
   //   Mangled name: foo#<get-global>(){}kotlin.String
   //   Public signature: foo/global.<get-global>|-6997244913903542523[0]
   //   Public signature debug description: <get-global>(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo#<get-global>(){}
   //   Public signature: foo/global.<get-global>|7627852862574367240[0]
   //   Public signature debug description: <get-global>(){}
@@ -33,7 +33,7 @@ class BaseImpl : Base {
     //   Mangled name: foo.BaseImpl#<get-s>(){}kotlin.String
     //   Public signature: foo/BaseImpl.s.<get-s>|4142379646177092803[0]
     //   Public signature debug description: <get-s>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: foo.BaseImpl#<get-s>(){}
     //   Public signature: foo/BaseImpl.s.<get-s>|-1662172381559511151[0]
     //   Public signature debug description: <get-s>(){}
@@ -49,7 +49,7 @@ class BaseImpl : Base {
   //   Mangled name: foo.BaseImpl#foo(kotlin.String){}kotlin.String
   //   Public signature: foo/BaseImpl.foo|-5534735991146511619[0]
   //   Public signature debug description: foo(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.BaseImpl#foo(kotlin.String){}
   //   Public signature: foo/BaseImpl.foo|1351044947738582195[0]
   //   Public signature debug description: foo(kotlin.String){}
@@ -71,7 +71,7 @@ class Derived : DerivedBase, Base {
   //   Mangled name: foo.Derived#foo(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived.foo|-5534735991146511619[0]
   //   Public signature debug description: foo(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.Derived#foo(kotlin.String){}
   //   Public signature: foo/Derived.foo|1351044947738582195[0]
   //   Public signature debug description: foo(kotlin.String){}
@@ -93,7 +93,7 @@ class Derived1 : DerivedBase, Base {
   //   Mangled name: foo.Derived1#foo(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived1.foo|-5534735991146511619[0]
   //   Public signature debug description: foo(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.Derived1#foo(kotlin.String){}
   //   Public signature: foo/Derived1.foo|1351044947738582195[0]
   //   Public signature debug description: foo(kotlin.String){}
@@ -121,7 +121,7 @@ interface Base {
   //   Mangled name: foo.Base#foo(kotlin.String){}kotlin.String
   //   Public signature: foo/Base.foo|-5534735991146511619[0]
   //   Public signature debug description: foo(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: foo.Base#foo(kotlin.String){}
   //   Public signature: foo/Base.foo|1351044947738582195[0]
   //   Public signature debug description: foo(kotlin.String){}
@@ -133,7 +133,7 @@ interface Base {
 //   Mangled name: foo#box(){}kotlin.String
 //   Public signature: foo/box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#box(){}
 //   Public signature: foo/box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -143,7 +143,7 @@ fun box(): String
 //   Mangled name: foo#newBase(){}foo.Base
 //   Public signature: foo/newBase|4074800280318487147[0]
 //   Public signature debug description: newBase(){}foo.Base
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: foo#newBase(){}
 //   Public signature: foo/newBase|-6094796879594303932[0]
 //   Public signature debug description: newBase(){}

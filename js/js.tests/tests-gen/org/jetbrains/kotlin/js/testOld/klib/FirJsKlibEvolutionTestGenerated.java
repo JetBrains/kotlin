@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirJsKlibEvolutionTestGenerated extends AbstractFirJsKlibEvolutionTest {
   private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
   }
 
   @TestMetadata("addAbstractMemberBody.kt")
@@ -92,7 +92,7 @@ public class FirJsKlibEvolutionTestGenerated extends AbstractFirJsKlibEvolutionT
   }
 
   public void testAllFilesPresentInEvolution() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/evolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/evolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
   }
 
   @TestMetadata("changeBaseClassOrder.kt")

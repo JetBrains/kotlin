@@ -1,7 +1,7 @@
 // KT-68395: [K/JS] RangeError is thrown instead of kotlin.ConcurrentModificationException
 // RangeError: Invalid array length
 //    at Array.push (<anonymous>)
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs

@@ -1,5 +1,5 @@
 // EXCLUDED_CLASSES: /dynamic
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 // MODULE: specific_types_library
 
 @Suppress("ClassName") class dynamic

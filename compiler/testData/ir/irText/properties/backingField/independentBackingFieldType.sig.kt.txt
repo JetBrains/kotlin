@@ -11,7 +11,7 @@ class A {
     //   Mangled name: A#<get-it>(){}kotlin.Int
     //   Public signature: /A.it.<get-it>|6190054477763999448[0]
     //   Public signature debug description: <get-it>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-it>(){}
     //   Public signature: /A.it.<get-it>|1332554369542649775[0]
     //   Public signature debug description: <get-it>(){}

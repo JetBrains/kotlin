@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
 // TODO: Move here all the contents of compiler/testData/diagnostics/testsWithJsStdLib/name/illegalNameIR.kt, after KT-67057 is fixed
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 

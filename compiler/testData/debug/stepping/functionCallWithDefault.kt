@@ -23,7 +23,7 @@ inline fun bar(i: Int = 1) {
 // test.kt:13 box
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:5 box
 // test.kt:10 foo
 // test.kt:7 box

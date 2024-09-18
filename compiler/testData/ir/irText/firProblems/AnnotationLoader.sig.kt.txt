@@ -12,7 +12,7 @@ class AnnotationLoader {
   //   Mangled name: AnnotationLoader#loadAnnotation(){}Visitor?
   //   Public signature: /AnnotationLoader.loadAnnotation|-7081476927485882760[0]
   //   Public signature debug description: loadAnnotation(){}Visitor?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: AnnotationLoader#loadAnnotation(){}
   //   Public signature: /AnnotationLoader.loadAnnotation|-6649617337478670271[0]
   //   Public signature debug description: loadAnnotation(){}
@@ -34,7 +34,7 @@ interface Visitor {
   //   Mangled name: Visitor#visitAnnotation(){}Visitor?
   //   Public signature: /Visitor.visitAnnotation|-8142708510940079695[0]
   //   Public signature debug description: visitAnnotation(){}Visitor?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Visitor#visitAnnotation(){}
   //   Public signature: /Visitor.visitAnnotation|4794980067153158180[0]
   //   Public signature debug description: visitAnnotation(){}
@@ -44,7 +44,7 @@ interface Visitor {
   //   Mangled name: Visitor#visitArray(){}Visitor?
   //   Public signature: /Visitor.visitArray|-7483008353702058436[0]
   //   Public signature debug description: visitArray(){}Visitor?
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Visitor#visitArray(){}
   //   Public signature: /Visitor.visitArray|-4548341020158450010[0]
   //   Public signature debug description: visitArray(){}

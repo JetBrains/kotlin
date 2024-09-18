@@ -71,7 +71,7 @@ fun box() {
 // test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:36 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:34 box:
 // test.kt:21 compute:
 // test.kt:22 compute: y=42:number

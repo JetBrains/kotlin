@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -23,25 +22,25 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 abstract class AbstractJsIrInvalidationPerFileTest : IrAbstractInvalidationTest(
-    targetBackend = TargetBackend.JS_IR,
+    targetBackend = TargetBackend.JS,
     granularity = JsGenerationGranularity.PER_FILE,
     workingDirPath = "incrementalOut/invalidation/perFile"
 )
 
 abstract class AbstractJsIrInvalidationPerModuleTest : IrAbstractInvalidationTest(
-    targetBackend = TargetBackend.JS_IR,
+    targetBackend = TargetBackend.JS,
     granularity = JsGenerationGranularity.PER_MODULE,
     workingDirPath = "incrementalOut/invalidation/perModule"
 )
 
 abstract class AbstractJsIrES6InvalidationPerFileTest : IrAbstractInvalidationTest(
-    targetBackend = TargetBackend.JS_IR_ES6,
+    targetBackend = TargetBackend.JS_ES6,
     granularity = JsGenerationGranularity.PER_FILE,
     workingDirPath = "incrementalOut/invalidationES6/perFile"
 )
 
 abstract class AbstractJsIrES6InvalidationPerModuleTest : IrAbstractInvalidationTest(
-    targetBackend = TargetBackend.JS_IR_ES6,
+    targetBackend = TargetBackend.JS_ES6,
     granularity = JsGenerationGranularity.PER_MODULE,
     workingDirPath = "incrementalOut/invalidationES6/perModule"
 )
@@ -57,9 +56,9 @@ abstract class AbstractJsIrInvalidationPerModuleWithPLTest : AbstractJsIrInvalid
 )
 
 abstract class AbstractJsIrInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) : IrAbstractInvalidationTest(
-        TargetBackend.JS_IR,
-        granularity,
-        workingDirPath
+    TargetBackend.JS,
+    granularity,
+    workingDirPath
     ) {
     override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val config = super.createConfiguration(moduleName, language, moduleKind)

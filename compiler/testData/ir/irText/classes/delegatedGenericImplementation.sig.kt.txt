@@ -23,7 +23,7 @@ class Test1<E : Any?> : IBase<E> {
     //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
     //   Public signature: /Test1.id.<get-id>|-1161899104741266586[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Test1.id.<get-id>|-1537502770664138716[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
@@ -38,7 +38,7 @@ class Test1<E : Any?> : IBase<E> {
     //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
     //   Public signature: /Test1.x.<get-x>|1915131689713400313[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
     //   Public signature: /Test1.x.<get-x>|-7897041295469127828[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
@@ -64,7 +64,7 @@ class Test2 : IBase<String> {
     //   Mangled name: Test2#<get-j>(){}IBase<kotlin.String>
     //   Public signature: /Test2.j.<get-j>|-6883763672420899739[0]
     //   Public signature debug description: <get-j>(){}IBase<kotlin.String>
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-j>(){}
     //   Public signature: /Test2.j.<get-j>|5087577794943671660[0]
     //   Public signature debug description: <get-j>(){}
@@ -96,7 +96,7 @@ class Test2 : IBase<String> {
     //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<kotlin.String,0:0>?
     //   Public signature: /Test2.id.<get-id>|5038832815964071118[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<kotlin.String,0:0>?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /Test2.id.<get-id>|-1537502770664138716[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
@@ -111,7 +111,7 @@ class Test2 : IBase<String> {
     //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
     //   Public signature: /Test2.x.<get-x>|1915131689713400313[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
     //   Public signature: /Test2.x.<get-x>|-7897041295469127828[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
@@ -143,7 +143,7 @@ interface IBase<A : Any?> {
     //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
     //   Public signature: /IBase.id.<get-id>|-1161899104741266586[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /IBase.id.<get-id>|-1537502770664138716[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
@@ -158,7 +158,7 @@ interface IBase<A : Any?> {
     //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
     //   Public signature: /IBase.x.<get-x>|1915131689713400313[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
     //   Public signature: /IBase.x.<get-x>|-7897041295469127828[0]
     //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}

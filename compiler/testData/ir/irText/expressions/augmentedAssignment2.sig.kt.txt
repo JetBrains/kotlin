@@ -7,7 +7,7 @@ val p: A
   //   Mangled name: #<get-p>(){}A
   //   Public signature: /p.<get-p>|2133879666814551157[0]
   //   Public signature debug description: <get-p>(){}A
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-p>(){}
   //   Public signature: /p.<get-p>|-1162552463316289847[0]
   //   Public signature debug description: <get-p>(){}

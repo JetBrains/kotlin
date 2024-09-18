@@ -17,7 +17,7 @@ class A : I {
     //   Mangled name: A#<get-id>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /A.id.<get-id>|4983271234253098452[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}0:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: A#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /A.id.<get-id>|-1537502770664138716[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
@@ -38,7 +38,7 @@ interface I {
     //   Mangled name: I#<get-id>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /I.id.<get-id>|4983271234253098452[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}0:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: I#<get-id>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /I.id.<get-id>|-1537502770664138716[0]
     //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}

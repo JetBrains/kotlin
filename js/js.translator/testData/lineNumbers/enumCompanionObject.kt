@@ -6,4 +6,4 @@ enum class Foo {
     }
 }
 
-// LINES(JS_IR): 4 4 * 5 5 5 5 5 * 1 * 1 1 * 1 * 1 1
+// LINES(JS): 4 4 * 5 5 5 5 5 * 1 * 1 1 * 1 * 1 1

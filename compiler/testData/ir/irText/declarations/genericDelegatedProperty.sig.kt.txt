@@ -7,7 +7,7 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   //   Mangled name: #<get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}kotlin.Int
   //   Public signature: /genericDelegatedProperty.<get-genericDelegatedProperty>|6889694694135857174[0]
   //   Public signature debug description: <get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}
   //   Public signature: /genericDelegatedProperty.<get-genericDelegatedProperty>|5217762966964391406[0]
   //   Public signature debug description: <get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}
@@ -44,7 +44,7 @@ object Delegate {
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
   //   Public signature: /Delegate.getValue|-3377375928534350672[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}
   //   Public signature: /Delegate.getValue|-9077843357189755365[0]
   //   Public signature debug description: getValue(kotlin.Any?;kotlin.Any?){}

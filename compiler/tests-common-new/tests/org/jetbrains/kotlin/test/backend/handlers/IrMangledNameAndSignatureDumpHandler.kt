@@ -72,7 +72,7 @@ private const val CHECK_MARKER = "// CHECK"
  * //   Mangled name: #test(){}kotlin.Int
  * //   Public signature: /test|4216975235718029399[0]
  * //   Public signature debug description: test(){}kotlin.Int
- * // CHECK JS_IR NATIVE:
+ * // CHECK JS NATIVE:
  * //   Mangled name: #test(){}
  * //   Public signature: /test|6620506149988718649[0]
  * //   Public signature debug description: test(){}
@@ -226,7 +226,7 @@ class IrMangledNameAndSignatureDumpHandler(
             printlnCheckMarker(
                 when (targetBackend) {
                     // In most cases the mangled names and signatures generated for JS are the same as for Native.
-                    TargetBackend.JS_IR, TargetBackend.NATIVE -> listOf(TargetBackend.JS_IR, TargetBackend.NATIVE)
+                    TargetBackend.JS, TargetBackend.NATIVE -> listOf(TargetBackend.JS, TargetBackend.NATIVE)
                     else -> listOf(targetBackend)
                 }
             )
@@ -618,7 +618,7 @@ private val whitespaceRegex = "\\s+".toRegex()
  *
  * For example, this text
  * ```kotlin
- * // CHECK JS_IR NATIVE:
+ * // CHECK JS NATIVE:
  * //   Mangled name: #test(){}
  * //   Public signature: /test|6620506149988718649[0]
  * //   Public signature debug description: test(){}
@@ -627,7 +627,7 @@ private val whitespaceRegex = "\\s+".toRegex()
  * will be parsed into:
  * ```kotlin
  * CheckBlock(
- *   backends = listOf(TargetBackend.JS_IR, TargetBackend.NATIVE),
+ *   backends = listOf(TargetBackend.JS, TargetBackend.NATIVE),
  *   expectations = listOf(
  *     "//   Mangled name: #test(){}",
  *     "//   Public signature: /test|6620506149988718649[0]",

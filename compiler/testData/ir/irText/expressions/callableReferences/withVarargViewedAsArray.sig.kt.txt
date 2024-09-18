@@ -2,7 +2,7 @@
 //   Mangled name: #nsum(kotlin.Array<out|kotlin.Number>...){}kotlin.Int
 //   Public signature: /nsum|849274247512080219[0]
 //   Public signature debug description: nsum(kotlin.Array<out|kotlin.Number>...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #nsum(kotlin.Array<out|kotlin.Number>...){}
 //   Public signature: /nsum|1669670680890244180[0]
 //   Public signature debug description: nsum(kotlin.Array<out|kotlin.Number>...){}
@@ -12,7 +12,7 @@ fun nsum(vararg args: Number): Int
 //   Mangled name: #sum(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /sum|7786429240262788644[0]
 //   Public signature debug description: sum(kotlin.IntArray...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #sum(kotlin.IntArray...){}
 //   Public signature: /sum|2467160042393820864[0]
 //   Public signature debug description: sum(kotlin.IntArray...){}

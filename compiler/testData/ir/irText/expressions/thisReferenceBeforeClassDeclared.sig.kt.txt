@@ -16,7 +16,7 @@ open class WithCompanion {
     //   Mangled name: WithCompanion.Companion#foo(){}WithCompanion.Companion
     //   Public signature: /WithCompanion.Companion.foo|3115869173477949534[0]
     //   Public signature debug description: foo(){}WithCompanion.Companion
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: WithCompanion.Companion#foo(){}
     //   Public signature: /WithCompanion.Companion.foo|-1041209573719867811[0]
     //   Public signature debug description: foo(){}

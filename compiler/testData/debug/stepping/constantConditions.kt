@@ -23,7 +23,7 @@ fun test(): Long {
 // test.kt:6 box
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:6 box
 // test.kt:10 test
 // test.kt:12 test

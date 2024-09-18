@@ -37,7 +37,7 @@ open annotation class Source : Annotation {
 
 }
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #binary(){}
 //   Public signature: /binary|3138115587891576778[0]
 //   Public signature debug description: binary(){}
@@ -48,7 +48,7 @@ open annotation class Source : Annotation {
 @Binary
 fun binary(): Unit
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #runtime(){}
 //   Public signature: /runtime|-5081402553506548901[0]
 //   Public signature debug description: runtime(){}
@@ -59,7 +59,7 @@ fun binary(): Unit
 @Runtime
 fun runtime(): Unit
 
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #source(){}
 //   Public signature: /source|5801313071320040615[0]
 //   Public signature debug description: source(){}

@@ -8,7 +8,7 @@ abstract class C : A {
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#m(B<out|kotlin.collections.List<kotlin.Number>>){}
   //   Public signature: /C.m|5571098196978377519[0]
   //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}
@@ -24,7 +24,7 @@ abstract class C : A {
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: A#m(B<out|kotlin.collections.List<kotlin.Number>>){}
   //   Public signature: /A.m|5571098196978377519[0]
   //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}

@@ -12,7 +12,7 @@ open annotation class TypeAnn : Annotation {
     //   Mangled name: TypeAnn#<get-name>(){}kotlin.String
     //   Public signature: /TypeAnn.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: TypeAnn#<get-name>(){}
     //   Public signature: /TypeAnn.name.<get-name>|5879344792307730109[0]
     //   Public signature debug description: <get-name>(){}

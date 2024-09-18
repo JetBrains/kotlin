@@ -11,7 +11,7 @@ class Foo<T : Any?> {
     //   Mangled name: Foo#<get-x>(){}1:0
     //   Public signature: /Foo.x.<get-x>|-8893883356128097563[0]
     //   Public signature debug description: <get-x>(){}1:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Foo#<get-x>(){}
     //   Public signature: /Foo.x.<get-x>|1482705010654679335[0]
     //   Public signature debug description: <get-x>(){}
@@ -34,7 +34,7 @@ class Foo<T : Any?> {
 //   Mangled name: #foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}Foo<0:0>
 //   Public signature: /foo|1536530770177772929[0]
 //   Public signature debug description: foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}Foo<0:0>
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}
 //   Public signature: /foo|5998809843393521079[0]
 //   Public signature debug description: foo(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}
@@ -44,7 +44,7 @@ fun <K : Any?> foo(x: MutableList<K>): Foo<K>
 //   Mangled name: #runMe(){}
 //   Public signature: /runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #runMe(){}
 //   Public signature: /runMe|1754039929145531074[0]
 //   Public signature debug description: runMe(){}

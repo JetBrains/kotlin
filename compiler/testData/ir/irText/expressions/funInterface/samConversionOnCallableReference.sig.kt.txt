@@ -20,7 +20,7 @@ fun foo0(): Unit
 //   Mangled name: #foo1(kotlin.IntArray...){}kotlin.Int
 //   Public signature: /foo1|7470134185704818303[0]
 //   Public signature debug description: foo1(kotlin.IntArray...){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo1(kotlin.IntArray...){}
 //   Public signature: /foo1|-6748328364529290172[0]
 //   Public signature debug description: foo1(kotlin.IntArray...){}
@@ -30,7 +30,7 @@ fun foo1(vararg xs: Int): Int
 //   Mangled name: #testSamConstructor(){}KRunnable
 //   Public signature: /testSamConstructor|-5482155559435579976[0]
 //   Public signature debug description: testSamConstructor(){}KRunnable
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testSamConstructor(){}
 //   Public signature: /testSamConstructor|-7853436018033066699[0]
 //   Public signature debug description: testSamConstructor(){}
@@ -52,7 +52,7 @@ fun testSamConversionOnAdapted(): Unit
 //   Mangled name: #testSamCosntructorOnAdapted(){}KRunnable
 //   Public signature: /testSamCosntructorOnAdapted|655519272240812814[0]
 //   Public signature debug description: testSamCosntructorOnAdapted(){}KRunnable
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #testSamCosntructorOnAdapted(){}
 //   Public signature: /testSamCosntructorOnAdapted|-7927635342265674772[0]
 //   Public signature debug description: testSamCosntructorOnAdapted(){}

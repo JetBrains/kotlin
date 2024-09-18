@@ -72,7 +72,7 @@ open class AbstractSerializationIrJsBoxTest : AbstractJsIrTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
+        builder.configureForKotlinxSerialization(target = TargetBackend.JS)
     }
 }
 
@@ -82,6 +82,6 @@ open class AbstractSerializationFirJsBoxTest : AbstractFirJsTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
+        builder.configureForKotlinxSerialization(target = TargetBackend.JS)
     }
 }

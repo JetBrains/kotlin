@@ -32,7 +32,7 @@ fun fail() : String {
 // test.kt:8 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:13 box
 // test.kt:17 fail
 // test.kt:8 box

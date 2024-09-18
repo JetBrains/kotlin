@@ -17,7 +17,7 @@ open class BaseClass {
     //   Mangled name: BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /BaseClass.fromClass.<get-fromClass>|1075975932794232667[0]
     //   Public signature debug description: <get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /BaseClass.fromClass.<get-fromClass>|8463340725421946486[0]
     //   Public signature debug description: <get-fromClass>@0:0(){0§<kotlin.Any?>}
@@ -33,7 +33,7 @@ interface I<G : Any?> {
   //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}0:0
   //   Public signature: /I.fromInterface|-4942486396992795009[0]
   //   Public signature debug description: fromInterface@0:0(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}
   //   Public signature: /I.fromInterface|5511198429410705347[0]
   //   Public signature debug description: fromInterface@0:0(){0§<kotlin.Any?>}
@@ -43,7 +43,7 @@ interface I<G : Any?> {
   //   Mangled name: I#genericFromSuper(1:0){}1:0
   //   Public signature: /I.genericFromSuper|8776773144406187108[0]
   //   Public signature debug description: genericFromSuper(1:0){}1:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: I#genericFromSuper(1:0){}
   //   Public signature: /I.genericFromSuper|-1644691372973676049[0]
   //   Public signature debug description: genericFromSuper(1:0){}
@@ -64,7 +64,7 @@ object C : BaseClass, I<String> {
     //   Mangled name: C#<get-p>(){}kotlin.Int
     //   Public signature: /C.p.<get-p>|5329635969197638839[0]
     //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-p>(){}
     //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
     //   Public signature debug description: <get-p>(){}
@@ -85,7 +85,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#fromInterface@0:0(){0§<kotlin.Any?>}0:0
   //   Public signature: /C.fromInterface|-4942486396992795009[0]
   //   Public signature debug description: fromInterface@0:0(){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#fromInterface@0:0(){0§<kotlin.Any?>}
   //   Public signature: /C.fromInterface|5511198429410705347[0]
   //   Public signature debug description: fromInterface@0:0(){0§<kotlin.Any?>}
@@ -95,7 +95,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#genericFromSuper(kotlin.String){}kotlin.String
   //   Public signature: /C.genericFromSuper|-3774933388415552430[0]
   //   Public signature debug description: genericFromSuper(kotlin.String){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#genericFromSuper(kotlin.String){}
   //   Public signature: /C.genericFromSuper|-3764809794745363336[0]
   //   Public signature debug description: genericFromSuper(kotlin.String){}
@@ -105,7 +105,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#f@kotlin.Boolean(){}kotlin.Int
   //   Public signature: /C.f|-2085546679212506947[0]
   //   Public signature debug description: f@kotlin.Boolean(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#f@kotlin.Boolean(){}
   //   Public signature: /C.f|-7209860956633916761[0]
   //   Public signature debug description: f@kotlin.Boolean(){}
@@ -115,7 +115,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#f(kotlin.Int){}kotlin.Int
   //   Public signature: /C.f|-3963816453364174180[0]
   //   Public signature debug description: f(kotlin.Int){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#f(kotlin.Int){}
   //   Public signature: /C.f|-3170307087267241726[0]
   //   Public signature debug description: f(kotlin.Int){}
@@ -125,7 +125,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#f(kotlin.String){}kotlin.Int
   //   Public signature: /C.f|-4014058920923284658[0]
   //   Public signature debug description: f(kotlin.String){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#f(kotlin.String){}
   //   Public signature: /C.f|5157548403930815746[0]
   //   Public signature debug description: f(kotlin.String){}
@@ -135,7 +135,7 @@ object C : BaseClass, I<String> {
   //   Mangled name: C#g1(0:0){0§<kotlin.Any?>}0:0
   //   Public signature: /C.g1|600972423589629792[0]
   //   Public signature debug description: g1(0:0){0§<kotlin.Any?>}0:0
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: C#g1(0:0){0§<kotlin.Any?>}
   //   Public signature: /C.g1|-2502969624600571326[0]
   //   Public signature debug description: g1(0:0){0§<kotlin.Any?>}
@@ -150,7 +150,7 @@ object C : BaseClass, I<String> {
     //   Mangled name: C#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /C.fromClass.<get-fromClass>|1075975932794232667[0]
     //   Public signature debug description: <get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-fromClass>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /C.fromClass.<get-fromClass>|8463340725421946486[0]
     //   Public signature debug description: <get-fromClass>@0:0(){0§<kotlin.Any?>}
@@ -165,7 +165,7 @@ object C : BaseClass, I<String> {
     //   Mangled name: C#<get-ext>@kotlin.Int(){}kotlin.Int
     //   Public signature: /C.ext.<get-ext>|6877487399042398312[0]
     //   Public signature debug description: <get-ext>@kotlin.Int(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-ext>@kotlin.Int(){}
     //   Public signature: /C.ext.<get-ext>|4181680515445802017[0]
     //   Public signature debug description: <get-ext>@kotlin.Int(){}
@@ -180,7 +180,7 @@ object C : BaseClass, I<String> {
     //   Mangled name: C#<get-g2>@0:0(){0§<kotlin.Any?>}0:0
     //   Public signature: /C.g2.<get-g2>|6685580240509732107[0]
     //   Public signature debug description: <get-g2>@0:0(){0§<kotlin.Any?>}0:0
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: C#<get-g2>@0:0(){0§<kotlin.Any?>}
     //   Public signature: /C.g2.<get-g2>|-386868283857669113[0]
     //   Public signature debug description: <get-g2>@0:0(){0§<kotlin.Any?>}
@@ -192,7 +192,7 @@ object C : BaseClass, I<String> {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}

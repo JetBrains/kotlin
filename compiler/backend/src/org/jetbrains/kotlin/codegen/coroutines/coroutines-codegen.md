@@ -280,7 +280,7 @@ points by checking these markers, and then it generates the state-machine.
 FIXME: I should rename `CoroutineTransformerMethodVisitor` to `StateMachineBuilder` already.
 
 #### JS & Native: Suspend Markers
-The difference between JVM_IR and JS_IR/Native regarding coroutine codegen non-JVM back-ends do not generate suspending markers in the
+The difference between JVM_IR and JS/Native regarding coroutine codegen non-JVM back-ends do not generate suspending markers in the
 resulting code.
 That is because they assume the closed-world model; in other words, they do not generate libraries in their target languages, which could
 contain suspending inline functions. Thus, the back-ends run the inliner before all lowerings, and they generate state machine during a

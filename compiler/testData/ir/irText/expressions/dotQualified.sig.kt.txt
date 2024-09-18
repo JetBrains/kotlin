@@ -2,7 +2,7 @@
 //   Mangled name: #length(kotlin.String){}kotlin.Int
 //   Public signature: /length|-1740595923541354280[0]
 //   Public signature debug description: length(kotlin.String){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #length(kotlin.String){}
 //   Public signature: /length|-4601517635690082987[0]
 //   Public signature debug description: length(kotlin.String){}
@@ -12,7 +12,7 @@ fun length(s: String): Int
 //   Mangled name: #lengthN(kotlin.String?){}kotlin.Int?
 //   Public signature: /lengthN|-8193665080783092535[0]
 //   Public signature debug description: lengthN(kotlin.String?){}kotlin.Int?
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #lengthN(kotlin.String?){}
 //   Public signature: /lengthN|-6892154630635195903[0]
 //   Public signature debug description: lengthN(kotlin.String?){}

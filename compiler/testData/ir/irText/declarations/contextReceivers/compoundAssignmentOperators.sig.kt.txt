@@ -7,7 +7,7 @@ var operationScore: Int
   //   Mangled name: #<get-operationScore>(){}kotlin.Int
   //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
   //   Public signature debug description: <get-operationScore>(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: #<get-operationScore>(){}
   //   Public signature: /operationScore.<get-operationScore>|6765204501149451629[0]
   //   Public signature debug description: <get-operationScore>(){}
@@ -31,7 +31,7 @@ data class Result {
     //   Mangled name: Result#<get-i>(){}kotlin.Int
     //   Public signature: /Result.i.<get-i>|-8784396159001927527[0]
     //   Public signature debug description: <get-i>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Result#<get-i>(){}
     //   Public signature: /Result.i.<get-i>|6945482638966853621[0]
     //   Public signature debug description: <get-i>(){}
@@ -52,7 +52,7 @@ data class Result {
   //   Mangled name: Result#component1(){}kotlin.Int
   //   Public signature: /Result.component1|-8217597213800111288[0]
   //   Public signature debug description: component1(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Result#component1(){}
   //   Public signature: /Result.component1|162597135895221648[0]
   //   Public signature debug description: component1(){}
@@ -62,7 +62,7 @@ data class Result {
   //   Mangled name: Result#copy(kotlin.Int){}Result
   //   Public signature: /Result.copy|5439238034196076859[0]
   //   Public signature debug description: copy(kotlin.Int){}Result
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Result#copy(kotlin.Int){}
   //   Public signature: /Result.copy|-6971662324481626298[0]
   //   Public signature debug description: copy(kotlin.Int){}
@@ -72,7 +72,7 @@ data class Result {
   //   Mangled name: Result#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Result.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Result#equals(kotlin.Any?){}
   //   Public signature: /Result.equals|4638265728071529943[0]
   //   Public signature debug description: equals(kotlin.Any?){}
@@ -82,7 +82,7 @@ data class Result {
   //   Mangled name: Result#hashCode(){}kotlin.Int
   //   Public signature: /Result.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Result#hashCode(){}
   //   Public signature: /Result.hashCode|3409210261493131192[0]
   //   Public signature debug description: hashCode(){}
@@ -92,7 +92,7 @@ data class Result {
   //   Mangled name: Result#toString(){}kotlin.String
   //   Public signature: /Result.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
-  // CHECK JS_IR NATIVE:
+  // CHECK JS NATIVE:
   //   Mangled name: Result#toString(){}
   //   Public signature: /Result.toString|-1522858123163872138[0]
   //   Public signature debug description: toString(){}
@@ -104,7 +104,7 @@ data class Result {
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
 //   Public signature debug description: box(){}kotlin.String
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #box(){}
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
@@ -114,7 +114,7 @@ fun box(): String
 //   Mangled name: #div!kotlin.Int@Result(Result){}Result
 //   Public signature: /div|4720798164978030724[0]
 //   Public signature debug description: div!kotlin.Int@Result(Result){}Result
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #div!kotlin.Int@Result(Result){}
 //   Public signature: /div|-6612286148996821840[0]
 //   Public signature debug description: div!kotlin.Int@Result(Result){}
@@ -130,7 +130,7 @@ operator fun Result.divAssign($context_receiver_0: Int, other: Result): Unit
 //   Mangled name: #minus!kotlin.Int@Result(Result){}Result
 //   Public signature: /minus|3968749932240310139[0]
 //   Public signature debug description: minus!kotlin.Int@Result(Result){}Result
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #minus!kotlin.Int@Result(Result){}
 //   Public signature: /minus|7405496643337842736[0]
 //   Public signature debug description: minus!kotlin.Int@Result(Result){}
@@ -146,7 +146,7 @@ operator fun Result.minusAssign($context_receiver_0: Int, other: Result): Unit
 //   Mangled name: #plus!kotlin.Int@Result(Result){}Result
 //   Public signature: /plus|4903222358721452198[0]
 //   Public signature debug description: plus!kotlin.Int@Result(Result){}Result
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #plus!kotlin.Int@Result(Result){}
 //   Public signature: /plus|-114755674860389360[0]
 //   Public signature debug description: plus!kotlin.Int@Result(Result){}
@@ -162,7 +162,7 @@ operator fun Result.plusAssign($context_receiver_0: Int, other: Result): Unit
 //   Mangled name: #times!kotlin.Int@Result(Result){}Result
 //   Public signature: /times|3621876074874527655[0]
 //   Public signature debug description: times!kotlin.Int@Result(Result){}Result
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #times!kotlin.Int@Result(Result){}
 //   Public signature: /times|690380606170453948[0]
 //   Public signature debug description: times!kotlin.Int@Result(Result){}

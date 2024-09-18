@@ -38,7 +38,7 @@ interface Foo {
 //   Mangled name: #foo(){}kotlin.Any
 //   Public signature: /foo|-9059697968601777418[0]
 //   Public signature debug description: foo(){}kotlin.Any
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #foo(){}
 //   Public signature: /foo|-1041209573719867811[0]
 //   Public signature debug description: foo(){}
@@ -48,7 +48,7 @@ fun foo(): Any
 //   Mangled name: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /run|3503148828372491191[0]
 //   Public signature debug description: run(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}
 //   Public signature: /run|8432521068183421057[0]
 //   Public signature debug description: run(kotlin.Function0<0:0>){0§<kotlin.Any?>}

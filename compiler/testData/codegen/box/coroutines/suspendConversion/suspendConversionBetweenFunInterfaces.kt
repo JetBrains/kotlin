@@ -3,7 +3,7 @@
 // ISSUE: KT-67933
 // IGNORE_BACKEND_K1: JVM
 // ^K1 with old backend reports FUN_INTERFACE_WITH_SUSPEND_FUNCTION
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS, JS_ES6
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // JVM_ABI_K1_K2_DIFF: KT-62855
 

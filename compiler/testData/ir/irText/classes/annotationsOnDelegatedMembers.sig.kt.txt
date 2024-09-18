@@ -36,7 +36,7 @@ class Delegated : Base {
     //   Mangled name: Delegated#<get-prop>(){}kotlin.Int
     //   Public signature: /Delegated.prop.<get-prop>|-2094203252476742575[0]
     //   Public signature debug description: <get-prop>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegated#<get-prop>(){}
     //   Public signature: /Delegated.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -51,7 +51,7 @@ class Delegated : Base {
     //   Mangled name: Delegated#<get-propWithAccessors>(){}kotlin.Int
     //   Public signature: /Delegated.propWithAccessors.<get-propWithAccessors>|1392907778891534138[0]
     //   Public signature debug description: <get-propWithAccessors>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Delegated#<get-propWithAccessors>(){}
     //   Public signature: /Delegated.propWithAccessors.<get-propWithAccessors>|5253508570158188209[0]
     //   Public signature debug description: <get-propWithAccessors>(){}
@@ -87,7 +87,7 @@ interface Base {
     //   Mangled name: Base#<get-prop>(){}kotlin.Int
     //   Public signature: /Base.prop.<get-prop>|-2094203252476742575[0]
     //   Public signature debug description: <get-prop>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-prop>(){}
     //   Public signature: /Base.prop.<get-prop>|-5734736374948136327[0]
     //   Public signature debug description: <get-prop>(){}
@@ -102,7 +102,7 @@ interface Base {
     //   Mangled name: Base#<get-propWithAccessors>(){}kotlin.Int
     //   Public signature: /Base.propWithAccessors.<get-propWithAccessors>|1392907778891534138[0]
     //   Public signature debug description: <get-propWithAccessors>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
+    // CHECK JS NATIVE:
     //   Mangled name: Base#<get-propWithAccessors>(){}
     //   Public signature: /Base.propWithAccessors.<get-propWithAccessors>|5253508570158188209[0]
     //   Public signature debug description: <get-propWithAccessors>(){}

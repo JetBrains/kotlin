@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // KT-66091: AssertionError: Illegal value: <T>.
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS, JS_ES6, WASM
 
 // WITH_STDLIB
 // WITH_REFLECT

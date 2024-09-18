@@ -58,7 +58,7 @@ fun box() {
 // test.kt:17 box:
 // test.kt:27 box:
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS
 // test.kt:17 box:
 // test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
 // test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String

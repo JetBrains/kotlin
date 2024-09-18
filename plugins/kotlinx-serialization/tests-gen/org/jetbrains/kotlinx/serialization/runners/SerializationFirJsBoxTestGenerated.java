@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFirJsBoxTest {
   @Test
   public void testAllFilesPresentInBoxIr() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
   }
 
   @Test
@@ -97,18 +97,6 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   }
 
   @Test
-  @TestMetadata("excludedFromExport.kt")
-  public void testExcludedFromExport() {
-    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromExport.kt");
-  }
-
-  @Test
-  @TestMetadata("excludedFromFileExport.kt")
-  public void testExcludedFromFileExport() {
-    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromFileExport.kt");
-  }
-
-  @Test
   @TestMetadata("genericBaseClassMultiple.kt")
   public void testGenericBaseClassMultiple() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
@@ -142,18 +130,6 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   @TestMetadata("metaSerializable.kt")
   public void testMetaSerializable() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
-  }
-
-  @Test
-  @TestMetadata("multimoduleInheritanceJs.kt")
-  public void testMultimoduleInheritanceJs() {
-    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
-  }
-
-  @Test
-  @TestMetadata("multimoduleInheritanceJsGeneric.kt")
-  public void testMultimoduleInheritanceJsGeneric() {
-    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
   }
 
   @Test

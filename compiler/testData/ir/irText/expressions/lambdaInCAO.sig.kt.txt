@@ -2,7 +2,7 @@
 //   Mangled name: #get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}kotlin.Int
 //   Public signature: /get|-8047211373454001717[0]
 //   Public signature debug description: get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}kotlin.Int
-// CHECK JS_IR NATIVE:
+// CHECK JS NATIVE:
 //   Mangled name: #get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}
 //   Public signature: /get|-138406221196188690[0]
 //   Public signature debug description: get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}

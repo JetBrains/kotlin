@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS
 fun testArrayAssignment(d: dynamic) {
     d["KEY"] = 1
 }
