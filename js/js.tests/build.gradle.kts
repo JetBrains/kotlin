@@ -56,7 +56,6 @@ dependencies {
     testApi(project(":compiler:backend.js"))
     testApi(project(":js:js.translator"))
     testApi(project(":js:js.serializer"))
-    testApi(project(":js:js.dce"))
     testApi(project(":js:js.engines"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
