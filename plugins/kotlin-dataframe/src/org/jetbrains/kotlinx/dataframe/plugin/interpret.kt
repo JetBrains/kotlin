@@ -148,7 +148,7 @@ fun <T> KotlinTypeFacade.interpret(
                         val interpreter = expression.loadInterpreter()
                         if (interpreter == null) {
                             // if the plugin already transformed call, its original form is the last expression of .let { }
-                            val argument = expression.arguments[0]
+                            val argument = expression.arguments.getOrNull(0)
                             val last = (argument as? FirAnonymousFunctionExpression)?.anonymousFunction?.body?.statements?.lastOrNull()
                             val call = (last as? FirReturnExpression)?.result as? FirFunctionCall
                             call?.loadInterpreter()?.let {
