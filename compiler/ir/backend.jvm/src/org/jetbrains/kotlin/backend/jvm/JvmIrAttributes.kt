@@ -41,3 +41,5 @@ var IrClass.classNameOverride: JvmClassName? by irAttribute(followAttributeOwner
 var IrFunction.viewOfOriginalSuspendFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 var IrSimpleFunction.staticDefaultStub: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+var IrAttributeContainer.isEnclosedInConstructor: Boolean by irFlag(followAttributeOwner = true)

@@ -58,7 +58,7 @@ fun makeFirMetadataSerializerForIrClass(
         localDelegatedProperties,
         approximator,
         components,
-        FirJvmElementAwareStringTable(context.defaultTypeMapper, components, context.isEnclosedInConstructor.toList())
+        FirJvmElementAwareStringTable(context.defaultTypeMapper, components)
     )
     return FirMetadataSerializer(
         context.state.globalSerializationBindings,

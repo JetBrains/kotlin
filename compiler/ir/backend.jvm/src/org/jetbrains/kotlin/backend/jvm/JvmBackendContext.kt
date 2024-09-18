@@ -95,8 +95,6 @@ class JvmBackendContext(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
     ).isNotEmpty()
 
-    val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
-
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
 
     val collectionStubComputer = CollectionStubComputer(this)

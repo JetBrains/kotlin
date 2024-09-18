@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.isEnclosedInConstructor
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class FirJvmElementAwareStringTable(
     private val typeMapper: IrTypeMapper,
     private val components: Fir2IrComponents,
-    private val localPoppedUpClasses: List<IrAttributeContainer>,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), FirElementAwareStringTable {
     override fun getLocalClassIdReplacement(firClass: FirClass): ClassId {
@@ -40,7 +39,7 @@ class FirJvmElementAwareStringTable(
         // But we still need to preserve it to establish compatibility with K2-produced metadata.
 
         val thisClassName = typeMapper.classInternalName(this).replace('/', '.')
-        if (attributeOwnerId in localPoppedUpClasses) {
+        if (this.isEnclosedInConstructor) {
             // For those classes, whose original parent has been changed on the lowering stage.
             // In K1, the `containingDeclaration` of such class descriptor would be the original declaration: constructor or property.
             // Thus, this case corresponds to the `else` branch of JvmCodegenStringTable::getLocalClassIdReplacement.

@@ -479,7 +479,7 @@ class ClassCodegen private constructor(
         // or constructor, the name and type of the function is recorded as well.
         if (parentClassCodegen != null) {
             // In case there's no primary constructor, it's unclear which constructor should be the enclosing one, so we select the first.
-            val enclosingFunction = if (irClass.attributeOwnerId in context.isEnclosedInConstructor) {
+            val enclosingFunction = if (irClass.isEnclosedInConstructor) {
                 val containerClass = parentClassCodegen!!.irClass
                 containerClass.primaryConstructor
                     ?: containerClass.declarations.firstIsInstanceOrNull<IrConstructor>()
@@ -495,7 +495,7 @@ class ClassCodegen private constructor(
             val innerJavaClassId = klass.mapToJava()
             val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
             val outerClass =
-                if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.attributeOwnerId in context.isEnclosedInConstructor)
+                if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.isEnclosedInConstructor)
                     null
                 else {
                     when (val parent = klass.parent) {
