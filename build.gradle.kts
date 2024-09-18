@@ -241,7 +241,6 @@ val fe10CompilerModules = arrayOf(
     ":js:js.parser",
     ":js:js.frontend",
     ":js:js.translator",
-    ":js:js.dce",
     ":native:frontend.native",
     ":wasm:wasm.frontend",
     ":compiler:backend.common.jvm",

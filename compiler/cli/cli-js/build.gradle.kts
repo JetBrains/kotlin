@@ -19,7 +19,6 @@ dependencies {
     api(project(":compiler:backend.wasm"))
     api(project(":js:js.translator"))
     api(project(":js:js.serializer"))
-    api(project(":js:js.dce"))
     api(project(":js:js.sourcemap"))
     api(project(":wasm:wasm.frontend"))
     api(project(":wasm:wasm.config"))
