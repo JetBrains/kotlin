@@ -656,7 +656,8 @@ class KonanHook:
             stop_reason = execution_context.frame.thread.GetStopDescription(MAX_SIZE_FOR_STOP_REASON)
             plan = PLAN_FROM_STOP_REASON.get(stop_reason)
             if plan is not None:
-                execution_context.thread.StepUsingScriptedThreadPlan('{}.{}'.format(__name__, plan))
+                execution_context.thread.StepUsingScriptedThreadPlan('{}.{}'.format(__name__, plan), False)
+                return False
         return True
 
 
