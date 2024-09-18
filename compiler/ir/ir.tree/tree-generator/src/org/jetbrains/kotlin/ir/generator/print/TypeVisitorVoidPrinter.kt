@@ -35,6 +35,7 @@ internal class TypeVisitorVoidPrinter(
     override fun visitMethodReturnType(element: Element): TypeRef = StandardTypes.unit
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printVisitTypeKDoc()
         printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = Modality.ABSTRACT, override = false)
         println()
         println()
@@ -43,6 +44,7 @@ internal class TypeVisitorVoidPrinter(
             println("visitType(container, type)")
         }
         println()
+        printVisitTypeRecursivelyKDoc()
         printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = false, modality = Modality.OPEN, override = false)
         printBlock {
             printlnMultiLine(
