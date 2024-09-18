@@ -255,22 +255,14 @@ class WasmSymbols(
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
     // KProperty implementations
-    val kLocalDelegatedPropertyImpl: IrClassSymbol =
-        getInternalClassOrNull("KLocalDelegatedPropertyImpl2") ?: getInternalClass("KLocalDelegatedPropertyImpl")
-    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol =
-        getInternalClassOrNull("KLocalDelegatedMutablePropertyImpl2") ?: getInternalClass("KLocalDelegatedMutablePropertyImpl")
-    val kProperty0Impl: IrClassSymbol =
-        getInternalClassOrNull("KProperty0Impl2") ?: getInternalClass("KProperty0Impl")
-    val kProperty1Impl: IrClassSymbol =
-        getInternalClassOrNull("KProperty1Impl2") ?: getInternalClass("KProperty1Impl")
-    val kProperty2Impl: IrClassSymbol =
-        getInternalClassOrNull("KProperty2Impl2") ?: getInternalClass("KProperty2Impl")
-    val kMutableProperty0Impl: IrClassSymbol =
-        getInternalClassOrNull("KMutableProperty0Impl2") ?: getInternalClass("KMutableProperty0Impl")
-    val kMutableProperty1Impl: IrClassSymbol =
-        getInternalClassOrNull("KMutableProperty1Impl2") ?: getInternalClass("KMutableProperty1Impl")
-    val kMutableProperty2Impl: IrClassSymbol =
-        getInternalClassOrNull("KMutableProperty2Impl2") ?: getInternalClass("KMutableProperty2Impl")
+    val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalClass("KLocalDelegatedPropertyImpl")
+    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = getInternalClass("KLocalDelegatedMutablePropertyImpl")
+    val kProperty0Impl: IrClassSymbol = getInternalClass("KProperty0Impl")
+    val kProperty1Impl: IrClassSymbol = getInternalClass("KProperty1Impl")
+    val kProperty2Impl: IrClassSymbol = getInternalClass("KProperty2Impl")
+    val kMutableProperty0Impl: IrClassSymbol = getInternalClass("KMutableProperty0Impl")
+    val kMutableProperty1Impl: IrClassSymbol = getInternalClass("KMutableProperty1Impl")
+    val kMutableProperty2Impl: IrClassSymbol = getInternalClass("KMutableProperty2Impl")
 
     val kMutableProperty0: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty0"))
     val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
