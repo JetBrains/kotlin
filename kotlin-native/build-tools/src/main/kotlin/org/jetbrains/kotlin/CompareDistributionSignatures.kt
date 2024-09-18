@@ -111,13 +111,13 @@ open class CompareDistributionSignatures @Inject constructor(
 
     @TaskAction
     fun run() {
-        check(looksLikeKotlinNativeDistribution(oldDistribution.get())) {
+        check(looksLikeKotlinNativeDistribution(oldDistribution.get(), libraries)) {
             """
             `${oldDistribution.get().root.asFile}` doesn't look like Kotlin/Native distribution. 
             Make sure to provide an absolute path to it.
             """.trimIndent()
         }
-        check(looksLikeKotlinNativeDistribution(newDistribution.get())) {
+        check(looksLikeKotlinNativeDistribution(newDistribution.get(), libraries)) {
             """
                 `${newDistribution.get().root.asFile}` doesn't look like Kotlin/Native distribution.
                 Check that $name has all required task dependencies.
@@ -193,9 +193,14 @@ open class CompareDistributionSignatures @Inject constructor(
         }
     }
 
-    private fun looksLikeKotlinNativeDistribution(distribution: NativeDistribution): Boolean {
-        val distributionComponents = distribution.run {
-            setOf(bin.asFile, stdlib.asFile, konanProperties.asFile)
+    private fun looksLikeKotlinNativeDistribution(distribution: NativeDistribution, libraries: Libraries): Boolean {
+        val distributionComponents = buildSet {
+            add(distribution.bin.asFile)
+            add(distribution.konanProperties.asFile)
+            when (libraries) {
+                Libraries.Standard -> add(distribution.stdlib.asFile)
+                is Libraries.Platform -> add(distribution.platformLibs(libraries.target).asFile)
+            }
         }
         return distributionComponents.all { Files.exists(it.toPath(), LinkOption.NOFOLLOW_LINKS) }
     }
