@@ -11,7 +11,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -86,7 +85,6 @@ abstract class KonanInteropTask @Inject constructor(
         objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
         private val layout: ProjectLayout,
-        private val fileOperations: FileOperations,
 ): DefaultTask() {
     @get:Input
     abstract val konanTarget: Property<KonanTarget>
@@ -150,12 +148,9 @@ abstract class KonanInteropTask @Inject constructor(
 
         if (allowRunningCInteropInProcess) {
             val interopRunner = KonanCliRunner(
-                    "cinterop",
-                    fileOperations,
-                    logger,
-                    isolatedClassLoadersService.get(),
-                    compilerDistributionPath.get(),
+                    isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files),
                     useArgFile = false,
+                    toolName = "cinterop",
             )
 
             interchangeBox[this.path] = interopRunner

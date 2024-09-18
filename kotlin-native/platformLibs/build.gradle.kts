@@ -113,6 +113,7 @@ enabledTargets(platformManager).forEach { target ->
                 klibUniqName = artifactName
                 cacheRoot = nativeDistribution.get().cachesRoot.asFile.absolutePath
 
+                this.compilerDistribution.set(nativeDistribution)
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
 
                 // Make it depend on platform libraries defined in def files and their caches
