@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.JsFlexibleTypeFactory
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
@@ -119,7 +120,10 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         val kLibs = moduleData.getLibraryKLibs()
 
         return listOf(
-            KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs)
+            KlibBasedSymbolProvider(
+                session, moduleDataProvider, kotlinScopeProvider, kLibs,
+                flexibleTypeFactory = JsFlexibleTypeFactory(session),
+            )
         )
     }
 

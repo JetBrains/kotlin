@@ -9,20 +9,10 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
-import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -31,12 +21,14 @@ class KlibBasedSymbolProvider(
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val resolvedLibraries: Collection<KotlinLibrary>,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory = FirTypeDeserializer.FlexibleTypeFactory.Default,
 ) : MetadataLibraryBasedSymbolProvider<KotlinLibrary>(
     session,
     moduleDataProvider,
     kotlinScopeProvider,
-    defaultDeserializationOrigin
+    flexibleTypeFactory,
+    defaultDeserializationOrigin,
 ) {
     private val moduleHeaders by lazy {
         resolvedLibraries.associate { it to parseModuleHeader(it.moduleHeaderData) }

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
@@ -21,12 +22,14 @@ class KlibIcCacheBasedSymbolProvider(
     moduleDataProvider: SingleModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val icData: KlibIcData,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Precompiled
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Precompiled,
+    flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory = FirTypeDeserializer.FlexibleTypeFactory.Default,
 ) : MetadataLibraryBasedSymbolProvider<KlibIcData>(
     session,
     moduleDataProvider,
     kotlinScopeProvider,
-    defaultDeserializationOrigin
+    flexibleTypeFactory,
+    defaultDeserializationOrigin,
 ) {
     override fun moduleData(library: KlibIcData): FirModuleData {
         return moduleDataProvider.allModuleData.single()

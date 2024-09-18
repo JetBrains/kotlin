@@ -319,6 +319,10 @@ class ConeCyclicTypeBound(val symbol: FirTypeParameterSymbol, val bounds: Immuta
     override val reason: String get() = "Type parameter ${symbol.fir.name} has cyclic bounds"
 }
 
+object ConeDynamicUnsupported : ConeDiagnostic {
+    override val reason: String get() = "`dynamic` type is not allowed on this platform."
+}
+
 class ConeImportFromSingleton(val name: Name) : ConeDiagnostic {
     override val reason: String get() = "Import from singleton $name is not allowed"
 }

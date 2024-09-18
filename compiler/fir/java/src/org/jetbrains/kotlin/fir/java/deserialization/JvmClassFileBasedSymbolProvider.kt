@@ -19,15 +19,15 @@ import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDynamicUnsupported
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeRawType
-import org.jetbrains.kotlin.fir.types.ConeRigidType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -118,8 +118,14 @@ class JvmClassFileBasedSymbolProvider(
             upperBound: ConeRigidType,
         ): ConeFlexibleType = when (proto.hasExtension(JvmProtoBuf.isRaw)) {
             true -> ConeRawType.create(lowerBound, upperBound)
-            false -> ConeFlexibleType(lowerBound, upperBound)
+            false -> FirTypeDeserializer.FlexibleTypeFactory.Default.createFlexibleType(proto, lowerBound, upperBound)
         }
+
+        override fun createDynamicType(
+            proto: Type,
+            lowerBound: ConeRigidType,
+            upperBound: ConeRigidType,
+        ): ConeKotlinType = FirTypeDeserializer.FlexibleTypeFactory.Default.createDynamicType(proto, lowerBound, upperBound)
     }
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = packagePartProvider.computePackageSetWithNonClassDeclarations()

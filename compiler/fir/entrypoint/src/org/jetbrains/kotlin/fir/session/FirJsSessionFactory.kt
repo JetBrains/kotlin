@@ -58,7 +58,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
             extensionRegistrars,
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 listOfNotNull(
-                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                    KlibBasedSymbolProvider(
+                        session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries,
+                        flexibleTypeFactory = JsFlexibleTypeFactory(session),
+                    ),
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider
                 )
@@ -106,6 +109,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
                             SingleModuleDataProvider(moduleData),
                             kotlinScopeProvider,
                             it,
+                            flexibleTypeFactory = JsFlexibleTypeFactory(session),
                         )
                     },
                     *dependencies.toTypedArray(),
