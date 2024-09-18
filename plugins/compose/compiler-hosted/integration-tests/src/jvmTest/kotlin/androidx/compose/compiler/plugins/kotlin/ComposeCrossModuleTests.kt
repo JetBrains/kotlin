@@ -1319,6 +1319,33 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Test
+    fun inlineClassWithComposableLambda() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "Base.kt" to """
+                        import androidx.compose.runtime.*
+                        import kotlin.jvm.JvmInline
+                        
+                        @JvmInline
+                        value class ComposableContent(val content: @Composable () -> Unit)
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                        import androidx.compose.runtime.*
+
+                        @Composable fun Test(content: ComposableContent) {
+                            content.content.invoke()
+                        }
+                    """
+                )
+            ),
+            validate = {}
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,

@@ -62,7 +62,7 @@ internal fun IrType?.containsComposableAnnotation(): Boolean {
 
 internal class ComposableTypeTransformer(
     private val context: IrPluginContext,
-    private val typeRemapper: TypeRemapper,
+    private val typeRemapper: ComposableTypeRemapper,
 ) : IrElementTransformerVoid() {
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         declaration.returnType = declaration.returnType.remapType()
@@ -231,6 +231,9 @@ internal class ComposableTypeTransformer(
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.superTypes = declaration.superTypes.memoryOptimizedMap { it.remapType() }
+        declaration.valueClassRepresentation?.run {
+            declaration.valueClassRepresentation = mapUnderlyingType { it.remapType() as IrSimpleType }
+        }
         return super.visitClass(declaration)
     }
 
@@ -297,7 +300,7 @@ internal class ComposableTypeTransformer(
     private fun IrType.remapType() = typeRemapper.remapType(this)
 }
 
-class ComposerTypeRemapper(
+class ComposableTypeRemapper(
     private val context: IrPluginContext,
     private val composerType: IrType,
 ) : TypeRemapper {

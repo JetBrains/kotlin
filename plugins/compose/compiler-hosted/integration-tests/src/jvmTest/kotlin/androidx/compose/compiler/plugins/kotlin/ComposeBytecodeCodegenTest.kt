@@ -712,4 +712,17 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         """
     )
+
+    @Test
+    fun inlineClassWithComposableLambda() {
+        testCompile(
+            """
+                import androidx.compose.runtime.*
+                import kotlin.jvm.JvmInline
+                
+                @JvmInline
+                value class ComposableContent(val content: @Composable () -> Unit)
+            """
+        )
+    }
 }
