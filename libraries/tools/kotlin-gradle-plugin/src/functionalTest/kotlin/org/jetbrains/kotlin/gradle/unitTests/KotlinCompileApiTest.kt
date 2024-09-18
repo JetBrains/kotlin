@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
@@ -27,6 +28,7 @@ class KotlinCompileApiTest {
 
     private lateinit var project: ProjectInternal
     private lateinit var plugin: KotlinApiPlugin
+    private lateinit var topLevelCompilerOptions: KotlinJvmCompilerOptions
     private lateinit var taskApi: KotlinJvmCompile
     private lateinit var taskImpl: KotlinCompile
 
@@ -39,7 +41,9 @@ class KotlinCompileApiTest {
     fun setUpProject() {
         project = buildProject {}
         plugin = project.plugins.apply(KotlinApiPlugin::class.java)
-        plugin.registerKotlinJvmCompileTask(TASK_NAME, MODULE_NAME).configure { task ->
+        topLevelCompilerOptions = plugin.createCompilerJvmOptions()
+        topLevelCompilerOptions.moduleName.convention(MODULE_NAME)
+        plugin.registerKotlinJvmCompileTask(TASK_NAME, topLevelCompilerOptions).configure { task ->
             taskApi = task
         }
         taskImpl = project.tasks.getByName(TASK_NAME) as KotlinCompile
@@ -140,9 +144,29 @@ class KotlinCompileApiTest {
 
     @Test
     fun testTopLevelExtension() {
+        @Suppress("DEPRECATION") val task = plugin.registerKotlinJvmCompileTask("customCompileKotlin", "some-module")
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
-        assertEquals(ExplicitApiMode.Strict, taskImpl.explicitApiMode.orNull)
+        assertEquals(ExplicitApiMode.Strict, (task.get() as KotlinCompile).explicitApiMode.orNull)
+    }
+
+    @Test
+    fun testCustomExplicitApiMode() {
+        val task = plugin.registerKotlinJvmCompileTask(
+            "customKotlinCompile",
+            topLevelCompilerOptions,
+            project.provider { ExplicitApiMode.Strict }
+        )
+
+        assertEquals((task.get() as KotlinCompile).explicitApiMode.get(), ExplicitApiMode.Strict)
+    }
+
+    @Test
+    fun testTopLevelCompilerOptionsCouldBeOverriden() {
+        taskApi.compilerOptions.progressiveMode.set(false)
+        topLevelCompilerOptions.progressiveMode.set(true)
+
+        assertEquals(false, taskApi.compilerOptions.progressiveMode.get())
     }
 
     @Test

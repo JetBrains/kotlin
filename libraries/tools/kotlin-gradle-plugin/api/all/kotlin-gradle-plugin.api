@@ -761,10 +761,12 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBaseApiPlugin : o
 	public fun getKaptExtension ()Lorg/jetbrains/kotlin/gradle/plugin/KaptExtension;
 	public fun getKotlinExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension;
 	public synthetic fun getKotlinExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig;
+	public fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public fun registerKaptGenerateStubsTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKaptTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
+	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper : org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin {

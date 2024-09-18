@@ -79,9 +79,10 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
                 apply<KotlinBaseApiPlugin>()
 
-                val myCustomTask = plugins
-                    .findPlugin(KotlinBaseApiPlugin::class)!!
-                    .registerKotlinJvmCompileTask("$customTaskName", moduleName = "$customModuleName")
+                val kotlinApiPlugin = plugins.getPlugin(KotlinBaseApiPlugin::class)
+                val kotlinJvmOptions = kotlinApiPlugin.createCompilerJvmOptions()
+                kotlinJvmOptions.moduleName.set("$customModuleName")
+                val myCustomTask = kotlinApiPlugin.registerKotlinJvmCompileTask("$customTaskName", kotlinJvmOptions)
                     
                 myCustomTask {
                     source("src/jvmMain", "src/commonMain")

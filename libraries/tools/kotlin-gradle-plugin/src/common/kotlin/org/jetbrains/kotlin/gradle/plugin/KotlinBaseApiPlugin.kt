@@ -29,7 +29,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     private val taskCreator = KotlinTasksProvider()
 
     @get:Inject
-    internal open val providerFactory: ProviderFactory
+    override val providerFactory: ProviderFactory
         get() = injected
 
     override fun apply(project: Project) {
@@ -71,35 +71,51 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
 
     @Deprecated(
         message = "Replaced by registerKotlinJvmCompileTask with module name",
-        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName: String, moduleName: String)")
+        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
     )
     override fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
-        return taskCreator.registerKotlinJVMTask(
-            myProject,
+        val extension = kotlinExtension
+        return registerKotlinJvmCompileTask(
             taskName,
             createCompilerJvmOptions(),
-            KotlinCompileConfig(
-                myProject,
-                providerFactory.provider { kotlinExtension.explicitApi },
-            )
+            providerFactory.provider { extension.explicitApi }
         )
     }
 
+    @Deprecated(
+        "Replaced by registerKotlinJvmCompileTask with compiler options and explicit API mode",
+        replaceWith = ReplaceWith("registerKotlinJvmCompileTask(taskName, TODO(), TODO())")
+    )
     override fun registerKotlinJvmCompileTask(taskName: String, moduleName: String): TaskProvider<out KotlinJvmCompile> {
         val compilerOptions = createCompilerJvmOptions()
-        compilerOptions.moduleName.set(moduleName)
+        compilerOptions.moduleName.convention(moduleName)
+        val extension = kotlinExtension
+        return registerKotlinJvmCompileTask(
+            taskName,
+            compilerOptions,
+            providerFactory.provider { extension.explicitApi }
+        )
+    }
+
+    override fun registerKotlinJvmCompileTask(
+        taskName: String,
+        compilerOptions: KotlinJvmCompilerOptions,
+        explicitApiMode: Provider<ExplicitApiMode>,
+    ): TaskProvider<out KotlinJvmCompile> {
+        val taskCompilerOptions = createCompilerJvmOptions()
+        KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(compilerOptions, taskCompilerOptions)
         val registeredKotlinJvmCompileTask = taskCreator.registerKotlinJVMTask(
             myProject,
             taskName,
-            compilerOptions,
+            taskCompilerOptions,
             KotlinCompileConfig(
                 myProject,
-                providerFactory.provider { kotlinExtension.explicitApi },
+                explicitApiMode,
             )
         )
         registeredKotlinJvmCompileTask.configure {
             @Suppress("DEPRECATION")
-            it.moduleName.set(compilerOptions.moduleName)
+            it.moduleName.set(taskCompilerOptions.moduleName)
         }
         return registeredKotlinJvmCompileTask
     }
