@@ -51,7 +51,6 @@ class JvmFir2IrExtensions(
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
         get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
 
-    override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
     override val cachedFields: CachedFieldsForObjectInstances =
         CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 

@@ -49,8 +49,6 @@ open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
-    override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
-
     override val irDeserializationEnabled: Boolean = configuration.get(JVMConfigurationKeys.SERIALIZE_IR) != JvmSerializeIrMode.NONE
 
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
@@ -95,7 +93,7 @@ open class JvmGeneratorExtensionsImpl(
             deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent) }
         ).also {
             it.createParameterDeclarations()
-            classNameOverride[it] = facadeName
+            it.classNameOverride = facadeName
         }
     }
 

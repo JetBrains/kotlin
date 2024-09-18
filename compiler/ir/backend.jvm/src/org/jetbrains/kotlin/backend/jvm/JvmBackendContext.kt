@@ -65,11 +65,6 @@ class JvmBackendContext(
     // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
     var evaluatorData: JvmEvaluatorData? = null
 
-    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
-    // annotated with @JvmPackageName, the correct name is recorded here.
-    val classNameOverride: MutableMap<IrClass, JvmClassName>
-        get() = generatorExtensions.classNameOverride
-
     override val irFactory: IrFactory = IrFactoryImpl
 
     override val scriptMode: Boolean = false

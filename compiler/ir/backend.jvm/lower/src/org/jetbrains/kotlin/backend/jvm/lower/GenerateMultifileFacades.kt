@@ -80,7 +80,7 @@ private fun generateMultifileFacades(
             throw UnsupportedOperationException(
                 "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
                         partClasses.joinToString("\n  ") { klass ->
-                            "Class ${klass.fqNameWhenAvailable}, JVM name ${context.classNameOverride[klass]}"
+                            "Class ${klass.fqNameWhenAvailable}, JVM name ${klass.classNameOverride}"
                         }
             )
         }
@@ -99,7 +99,7 @@ private fun generateMultifileFacades(
             createImplicitParameterDeclarationWithWrappedDescriptor()
             origin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
-                context.classNameOverride[this] = jvmClassName
+                this.classNameOverride = jvmClassName
             }
             if (shouldGeneratePartHierarchy) {
                 val superClass = modifyMultifilePartsForHierarchy(context, partClasses)

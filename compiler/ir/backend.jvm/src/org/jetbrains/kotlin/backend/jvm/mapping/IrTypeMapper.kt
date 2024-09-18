@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
@@ -104,7 +105,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
 
     fun classInternalName(irClass: IrClass): String {
         irClass.localClassType?.internalName?.let { return it }
-        context.classNameOverride[irClass]?.let { return it.internalName }
+        irClass.classNameOverride?.let { return it.internalName }
 
         return JvmCodegenUtil.sanitizeNameIfNeeded(
             computeClassInternalNameAsString(irClass),

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -59,7 +60,7 @@ internal class ExternalPackageParentPatcherLowering(val context: JvmBackendConte
                 deserializeIr = { irClass -> deserializeTopLevelClass(irClass) }
             ).also {
                 it.createParameterDeclarations()
-                context.classNameOverride[it] = facadeName
+                it.classNameOverride = facadeName
             }
         }
 

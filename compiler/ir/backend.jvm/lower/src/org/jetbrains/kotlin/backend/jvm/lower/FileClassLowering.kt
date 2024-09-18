@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -137,7 +138,7 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
             context.state.factory.packagePartRegistry.addPart(irFile.packageFqName, partClassType.internalName, facadeClassType?.internalName)
 
             if (fileClassInfo.fileClassFqName != fqNameWhenAvailable) {
-                context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
+                this.classNameOverride = JvmClassName.byInternalName(partClassType.internalName)
             }
 
             if (facadeClassType != null) {
