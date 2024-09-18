@@ -442,6 +442,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     runTest("testData/box/update.kt");
   }
 
+  @Test
+  @TestMetadata("wrongReceiver.kt")
+  public void testWrongReceiver() {
+    runTest("testData/box/wrongReceiver.kt");
+  }
+
   @Nested
   @TestMetadata("testData/box/colKinds")
   @TestDataPath("$PROJECT_ROOT")
