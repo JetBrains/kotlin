@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -22,8 +23,6 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.attributes.PUBLISH_COORDINATES_TYPE_ATTRIBUTE
-import org.jetbrains.kotlin.gradle.internal.attributes.WITH_PUBLISH_COORDINATES
 import org.jetbrains.kotlin.gradle.internal.publishing.ExportKotlinPublishCoordinatesTask
 import org.jetbrains.kotlin.gradle.internal.publishing.PublicationCoordinatesProperty
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -188,7 +187,7 @@ private fun Configuration.addGavSecondaryVariant(
 ) {
 
     outgoing.variants.create("gavSecondaryVariant") { variant ->
-        variant.attributes.setAttribute(PUBLISH_COORDINATES_TYPE_ATTRIBUTE, WITH_PUBLISH_COORDINATES)
+        // variant.attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "")
         task.configure {
             it.data.set(
                 PublicationCoordinatesProperty(
