@@ -1056,17 +1056,15 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
         val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, FunctionEnhancementContext> =
-            cachesFactory.createCacheWithPostCompute(
-                createValue = { original, context ->
-                    context.enhancement.enhance(original, context.name, context.precomputedOverridden) to context.enhancement
-                },
-                postCompute = { _, enhancedVersion, enhancement ->
+            cachesFactory.createCache { original, context ->
+                context.enhancement.enhance(original, context.name, context.precomputedOverridden).also { enhancedVersion ->
                     val enhancedVersionFir = enhancedVersion.fir
-                    (enhancedVersionFir.initialSignatureAttr)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name)
+                    enhancedVersionFir.initialSignatureAttr?.let {
+                        enhancedVersionFir.initialSignatureAttr =
+                            context.enhancement.enhancedFunction(it, it.name)
                     }
                 }
-            )
+            }
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =
