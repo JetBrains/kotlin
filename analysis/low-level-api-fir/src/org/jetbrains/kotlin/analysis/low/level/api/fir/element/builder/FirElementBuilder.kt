@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
@@ -107,21 +106,27 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             return null
         }
 
-        getFirForElementInsideAnnotations(element)?.let { return it }
-        getFirForElementInsideTypes(element)?.let { return it }
-        getFirForElementInsideFileHeader(element)?.let { return it }
+        val nonLocalContainer = element.getNonLocalContainingOrThisDeclaration()
+        getFirForElementInsideAnnotations(element, nonLocalContainer)?.let { return it }
+
+        if (nonLocalContainer != null) {
+            getFirForElementInsideTypes(element, nonLocalContainer)?.let { return it }
+        } else {
+            getFirForElementInsideFileHeader(element)?.let { return it }
+        }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
         val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
 
-        val structureElement = fileStructure.getStructureElementFor(element)
+        val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
         return mappings.getFir(psi)
     }
 
     private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
         element: KtElement,
+        nonLocalDeclaration: KtDeclaration?,
         anchorElementProvider: (KtElement) -> T?,
         elementOwnerProvider: (T) -> E?,
         resolveAndFindFirForAnchor: (FirElementWithResolveState, T) -> FirElement?,
@@ -132,7 +137,6 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         val firElementContainer = if (elementOwner is KtFile) {
             moduleComponents.firFileBuilder.buildRawFirFileWithCaching(elementOwner)
         } else {
-            val nonLocalDeclaration = elementOwner.getNonLocalContainingOrThisDeclaration()
             if (elementOwner != nonLocalDeclaration) return null
 
             nonLocalDeclaration.findSourceNonLocalFirDeclaration(
@@ -161,16 +165,22 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
     private fun getFirForElementInsideAnnotations(
         element: KtElement,
+        nonLocalDeclaration: KtDeclaration?,
     ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
         element = element,
-        anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
+        nonLocalDeclaration = nonLocalDeclaration,
+        anchorElementProvider = { it.parentsOfType<KtAnnotationEntry>(nonLocalDeclaration).firstOrNull() },
         elementOwnerProvider = { it.annotationOwner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
-    private fun getFirForElementInsideTypes(element: KtElement): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
+    private fun getFirForElementInsideTypes(
+        element: KtElement,
+        nonLocalDeclaration: KtDeclaration,
+    ): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
         element = element,
-        anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
+        nonLocalDeclaration = nonLocalDeclaration,
+        anchorElementProvider = { it.parentsOfType<KtTypeReference>(nonLocalDeclaration).lastOrNull() },
         elementOwnerProvider = {
             when (val parent = it.parent) {
                 is KtDeclaration -> parent
@@ -187,10 +197,9 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         }
     }
 
-    private fun getFirForElementInsideFileHeader(
-        element: KtElement,
-    ): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
+    private fun getFirForElementInsideFileHeader(element: KtElement): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
         element = element,
+        nonLocalDeclaration = null,
         anchorElementProvider = { it.fileHeaderAnchorElement() },
         elementOwnerProvider = { it.containingKtFile },
         resolveAndFindFirForAnchor = { declaration, anchor ->
@@ -380,4 +389,8 @@ internal fun getNonLocalContainingDeclaration(
     }
 
     return candidate
+}
+
+private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {
+    return parentsWithSelf.takeWhile { it !== stopDeclaration }.filterIsInstance<T>()
 }
