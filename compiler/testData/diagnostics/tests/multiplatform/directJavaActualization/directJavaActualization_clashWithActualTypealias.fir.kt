@@ -10,5 +10,5 @@ expect class Foo
 public class Foo {}
 
 // FILE: test.kt
-actual typealias Foo = Bar
+actual typealias <!CLASSIFIER_REDECLARATION!>Foo<!> = Bar
 class Bar
