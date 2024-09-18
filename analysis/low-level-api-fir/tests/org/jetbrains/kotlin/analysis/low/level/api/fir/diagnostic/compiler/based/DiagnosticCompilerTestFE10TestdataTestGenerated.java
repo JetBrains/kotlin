@@ -28090,6 +28090,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("directJavaActualization_clashWithActualTypealias.kt")
+        public void testDirectJavaActualization_clashWithActualTypealias() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_clashWithActualTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("directJavaActualization_classifierIncompatibilities.kt")
         public void testDirectJavaActualization_classifierIncompatibilities() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_classifierIncompatibilities.kt");
