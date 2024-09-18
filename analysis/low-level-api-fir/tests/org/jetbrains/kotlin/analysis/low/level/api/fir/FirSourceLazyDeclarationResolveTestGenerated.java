@@ -904,6 +904,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("deprecatedSinceKotlin.kt")
+    public void testDeprecatedSinceKotlin() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/deprecatedSinceKotlin.kt");
+    }
+
+    @Test
     @TestMetadata("emptyClassWithSuper.kt")
     public void testEmptyClassWithSuper() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyClassWithSuper.kt");
@@ -997,6 +1003,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("simpleLoopInOverride2.kt")
     public void testSimpleLoopInOverride2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride2.kt");
+    }
+
+    @Test
+    @TestMetadata("sinceKotlin.kt")
+    public void testSinceKotlin() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/sinceKotlin.kt");
     }
 
     @Test
