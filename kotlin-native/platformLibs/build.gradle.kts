@@ -70,7 +70,7 @@ enabledTargets(platformManager).forEach { target ->
             group = BasePlugin.BUILD_GROUP
             description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
-            this.compilerDistributionPath.set(nativeDistribution.map { it.root.asFile.absolutePath })
+            this.compilerDistribution.set(nativeDistribution)
             dependsOn(":kotlin-native:${targetName}CrossDist")
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
@@ -89,9 +89,12 @@ enabledTargets(platformManager).forEach { target ->
                     "-no-default-libs",
                     "-no-endorsed-libs",
             )
-            this.compilerOpts.addAll(
-                    "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
-            )
+            if (target.family.isAppleFamily) {
+                // Platform Libraries for Apple targets use modules. Use shared cache for them.
+                this.compilerOpts.addAll(
+                        "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
+                )
+            }
 
             usesService(compilePlatformLibsSemaphore)
         }

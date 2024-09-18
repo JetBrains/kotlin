@@ -37,25 +37,12 @@ internal class KonanCliInteropRunner(
         fileOperations: FileOperations,
         execOperations: ExecOperations,
         logger: Logger,
-        private val projectLayout: ProjectLayout,
         isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         konanHome: String,
         target: KonanTarget,
-        private val allowRunningCinteropInProcess: Boolean,
 ) : KonanCliRunner("cinterop", fileOperations, execOperations, logger, isolatedClassLoadersService, konanHome) {
     init {
         CliToolConfig(konanHome, target.visibleName).prepare()
-    }
-
-    override val mustRunViaExec: Boolean
-        get() = if (allowRunningCinteropInProcess) {
-            super.mustRunViaExec
-        } else {
-            true
-        }
-
-    override fun transformArgs(args: List<String>): List<String> {
-        return super.transformArgs(args) + listOf("-Xproject-dir", projectLayout.projectDirectory.asFile.absolutePath)
     }
 
     override val execEnvironment by lazy {

@@ -12,23 +12,49 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+
+private abstract class KonanInteropOutOfProcessAction @Inject constructor(
+        private val execOperations: ExecOperations,
+) : WorkAction<KonanInteropOutOfProcessAction.Parameters> {
+    interface Parameters : WorkParameters {
+        val compilerDistribution: NativeDistributionProperty
+        val args: ListProperty<String>
+    }
+
+    override fun execute() {
+        val cinterop = parameters.compilerDistribution.get().cinterop
+        execOperations.exec {
+            if (PlatformInfo.isWindows()) {
+                commandLine("cmd.exe", "/d", "/c", cinterop, *parameters.args.get().toTypedArray())
+            } else {
+                commandLine(cinterop, *parameters.args.get().toTypedArray())
+            }
+        }.assertNormalExitValue()
+    }
+}
 
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
 abstract class KonanInteropTask @Inject constructor(
+        objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
         private val layout: ProjectLayout,
         private val fileOperations: FileOperations,
@@ -53,8 +79,11 @@ abstract class KonanInteropTask @Inject constructor(
     @get:Input
     abstract val compilerOpts: ListProperty<String>
 
+    @get:Internal
+    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+
     @get:Input
-    abstract val compilerDistributionPath: Property<String>
+    val compilerDistributionPath: Provider<String> = compilerDistribution.map { it.root.asFile.absolutePath }
 
     internal interface RunToolParameters: WorkParameters {
         var taskName: String
@@ -75,17 +104,6 @@ abstract class KonanInteropTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        val interopRunner = KonanCliInteropRunner(
-                fileOperations,
-                execOperations,
-                logger,
-                layout,
-                isolatedClassLoadersService.get(),
-                compilerDistributionPath.get(),
-                konanTarget.get(),
-                allowRunningCInteropInProcess
-        )
-
         outputDirectory.get().asFile.prepareAsOutput()
 
         val args = buildList {
@@ -108,12 +126,32 @@ abstract class KonanInteropTask @Inject constructor(
             }
 
             addAll(extraOpts.get())
+
+            add("-Xproject-dir")
+            add(layout.projectDirectory.asFile.absolutePath)
         }
         val workQueue = workerExecutor.noIsolation()
-        interchangeBox[this.path] = interopRunner
-        workQueue.submit(RunTool::class.java) {
-            taskName = path
-            this.args = args
+
+        if (allowRunningCInteropInProcess) {
+            val interopRunner = KonanCliInteropRunner(
+                    fileOperations,
+                    execOperations,
+                    logger,
+                    isolatedClassLoadersService.get(),
+                    compilerDistributionPath.get(),
+                    konanTarget.get(),
+            )
+
+            interchangeBox[this.path] = interopRunner
+            workQueue.submit(RunTool::class.java) {
+                taskName = path
+                this.args = args
+            }
+        } else {
+            workQueue.submit(KonanInteropOutOfProcessAction::class.java) {
+                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.args.addAll(args)
+            }
         }
     }
 }
