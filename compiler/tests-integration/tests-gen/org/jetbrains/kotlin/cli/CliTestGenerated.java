@@ -1023,6 +1023,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
     }
 
+    @TestMetadata("kmpMissingActual.args")
+    public void testKmpMissingActual() {
+      runTest("compiler/testData/cli/jvm/kmpMissingActual.args");
+    }
+
     @TestMetadata("kotlinHomeWithoutStdlib.args")
     public void testKotlinHomeWithoutStdlib() {
       runTest("compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
