@@ -11,30 +11,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.ThreadSafe
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -337,27 +325,28 @@ internal val KtDeclaration.isAutonomousDeclaration: Boolean
     }
 
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
-    return getNonLocalContainingDeclaration(parentsWithSelf, predicate)
+    return getNonLocalContainingDeclaration(this, predicate = predicate)
 }
 
 /**
- * Returns the first non-local declaration from [elementsToCheck] that contains the given elements,
- * based on the specified predicate.
+ * Returns the first non-local declaration from [parentsWithSelf] or [parentsWithSelfCodeFragmentAware]
+ * (depends on [codeFragmentAware] flag) that contains the given elements, based on the specified predicate.
  *
  * The resulting declaration can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
  */
 internal fun getNonLocalContainingDeclaration(
-    elementsToCheck: Sequence<PsiElement>,
+    element: PsiElement,
+    codeFragmentAware: Boolean = false,
     predicate: (KtDeclaration) -> Boolean = { true },
 ): KtDeclaration? {
     var candidate: KtDeclaration? = null
 
-    fun propose(declaration: KtDeclaration) {
-        if (candidate == null) {
-            candidate = declaration
-        }
+    val elementsToCheck = if (codeFragmentAware) {
+        element.parentsWithSelfCodeFragmentAware
+    } else {
+        element.parentsWithSelf
     }
 
     for (parent in elementsToCheck) {
@@ -377,38 +366,15 @@ internal fun getNonLocalContainingDeclaration(
         }
 
         // A new candidate only needs to be proposed when `candidate` is null.
-        if (candidate == null) {
-            when (parent) {
-                is KtScript -> propose(parent)
-                is KtDestructuringDeclaration -> propose(parent)
-                is KtDestructuringDeclarationEntry -> propose(parent)
-                is KtScriptInitializer -> propose(parent)
-                is KtClassInitializer -> {
-                    val container = parent.containingDeclaration
-                    if (!container.isObjectLiteral() &&
-                        declarationCanBeLazilyResolved(container) &&
-                        predicate(parent)
-                    ) {
-                        propose(parent)
-                    }
-                }
-                is KtDeclaration -> {
-                    if (!parent.isAutonomousDeclaration) {
-                        if (predicate(parent)) {
-                            propose(parent)
-                        }
-                    }
-
-                    val isKindApplicable = when (parent) {
-                        is KtClassOrObject -> !parent.isObjectLiteral()
-                        is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true
-                        else -> false
-                    }
-
-                    if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
-                        propose(parent)
-                    }
-                }
+        if (candidate == null &&
+            parent is KtDeclaration &&
+            declarationCanBeLazilyResolved(parent, codeFragmentAware) &&
+            predicate(parent)
+        ) {
+            if (codeFragmentAware && element.containingFile is KtCodeFragment) {
+                candidate = parent
+            } else {
+                return parent
             }
         }
     }
