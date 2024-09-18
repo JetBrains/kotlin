@@ -657,7 +657,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
  * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
  * and then that string was appended to this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 @SinceKotlin("1.9")
 public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value)
 
@@ -667,7 +667,7 @@ public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this
  * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
  * and then that string was appended to this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 @SinceKotlin("1.9")
 public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value)
 
@@ -679,7 +679,7 @@ public actual inline fun StringBuilder.append(value: Short): StringBuilder = thi
  *
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 @SinceKotlin("1.9")
 public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value)
 
@@ -691,7 +691,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBu
  *
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 @SinceKotlin("1.9")
 public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value)
 
@@ -701,7 +701,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Short): StringB
  * @sample samples.text.Strings.clearStringBuilder
  */
 @SinceKotlin("1.3")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.clear(): StringBuilder = this.clear()
 
 /**
@@ -710,7 +710,7 @@ public actual inline fun StringBuilder.clear(): StringBuilder = this.clear()
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.set(index, value)
 
 /**
@@ -723,7 +723,7 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
     this.setRange(startIndex, endIndex, value)
 
@@ -737,7 +737,7 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteAt(index)
 
 /**
@@ -749,7 +749,7 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.deleteRange(startIndex, endIndex)
 
 /**
@@ -765,7 +765,7 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE", "ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@Suppress("NOTHING_TO_INLINE", "ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length): Unit =
     this.toCharArray(destination, destinationOffset, startIndex, endIndex)
 
@@ -781,7 +781,7 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.appendRange(value, startIndex, endIndex)
 
@@ -795,7 +795,7 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.appendRange(value, startIndex, endIndex)
 
@@ -813,7 +813,7 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.insertRange(index, value, startIndex, endIndex)
 
@@ -831,7 +831,7 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.insertRange(index, value, startIndex, endIndex)
 

@@ -14,7 +14,6 @@ package kotlin.text
  * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
  * and then that string was appended to this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value.toInt())
@@ -25,7 +24,6 @@ public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this
  * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
  * and then that string was appended to this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value.toInt())
@@ -38,7 +36,6 @@ public actual inline fun StringBuilder.append(value: Short): StringBuilder = thi
  *
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value.toInt())
@@ -51,7 +48,6 @@ public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBu
  *
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value.toInt())

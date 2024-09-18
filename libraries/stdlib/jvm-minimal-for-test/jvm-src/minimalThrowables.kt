@@ -14,7 +14,6 @@ import java.io.StringWriter
 /**
  * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard error output.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public actual inline fun Throwable.printStackTrace(): Unit = (this as java.lang.Throwable).printStackTrace()
 
