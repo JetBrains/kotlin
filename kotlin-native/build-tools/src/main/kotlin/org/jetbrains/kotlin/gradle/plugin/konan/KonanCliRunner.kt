@@ -11,15 +11,17 @@ import org.gradle.api.logging.Logger
 import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
 import java.lang.reflect.InvocationTargetException
+import java.nio.file.Files
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
-internal abstract class KonanCliRunner(
-        protected val toolName: String,
+internal class KonanCliRunner(
+        private val toolName: String,
         private val fileOperations: FileOperations,
         private val logger: Logger,
         private val isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         private val konanHome: String,
+        private val useArgFile: Boolean,
 ) {
     private val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
     private val daemonEntryPoint get() = "daemonMain"
@@ -31,7 +33,23 @@ internal abstract class KonanCliRunner(
         }.files
     }
 
-    protected open fun transformArgs(args: List<String>) = listOf(toolName) + args
+    private fun transformArgs(args: List<String>): List<String> {
+        if (useArgFile) {
+            val argFile = Files.createTempFile(/* prefix = */ "konancArgs", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
+            argFile.printWriter().use { w ->
+                for (arg in args) {
+                    val escapedArg = arg
+                            .replace("\\", "\\\\")
+                            .replace("\"", "\\\"")
+                    w.println("\"$escapedArg\"")
+                }
+            }
+
+            return listOf(toolName, "@${argFile.absolutePath}")
+        } else {
+            return listOf(toolName) + args
+        }
+    }
 
     fun run(args: List<String>) {
         check(classpath.isNotEmpty()) {

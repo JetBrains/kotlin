@@ -15,7 +15,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -58,7 +58,7 @@ abstract class KonanCompileTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        val toolRunner = KonanCliCompilerRunner(fileOperations, logger, isolatedClassLoadersService.get(), compilerDistributionPath.get())
+        val toolRunner = KonanCliRunner("konanc", fileOperations, logger, isolatedClassLoadersService.get(), compilerDistributionPath.get(), useArgFile = true)
 
         outputDirectory.get().asFile.prepareAsOutput()
 

@@ -11,7 +11,7 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
@@ -87,6 +87,6 @@ abstract class KonanCacheTask @Inject constructor(
             args += "-Xmake-per-file-cache"
         args += additionalCacheFlags
         args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-        KonanCliCompilerRunner(fileOperations, logger, isolatedClassLoadersService.get(), konanHome).run(args)
+        KonanCliRunner("konanc", fileOperations, logger, isolatedClassLoadersService.get(), konanHome, useArgFile = true).run(args)
     }
 }

@@ -24,11 +24,40 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.gradle.plugin.konan.*
+import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+
+private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
+    it.isAccessible = true
+}
+
+private abstract class KonanInteropInProcessAction @Inject constructor() : WorkAction<KonanInteropInProcessAction.Parameters> {
+    interface Parameters : WorkParameters {
+        var taskName: String
+        val compilerDistribution: NativeDistributionProperty
+        val target: Property<String>
+        val args: ListProperty<String>
+    }
+
+    override fun execute() {
+        val dist = parameters.compilerDistribution.get()
+        object : AbstractToolConfig(dist.root.asFile.absolutePath, parameters.target.get(), emptyMap()) {
+            override fun loadLibclang() {
+                // Load libclang into the system class loader. This is needed to allow developers to make changes
+                // in the tooling infrastructure without having to stop the daemon (otherwise libclang might end up
+                // loaded in two different class loaders which is not allowed by the JVM).
+                load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
+            }
+        }.prepare()
+        val toolRunner = interchangeBox.remove(parameters.taskName) ?: error(":(")
+        toolRunner.run(parameters.args.get())
+    }
+}
+
 
 private abstract class KonanInteropOutOfProcessAction @Inject constructor(
         private val execOperations: ExecOperations,
@@ -84,18 +113,6 @@ abstract class KonanInteropTask @Inject constructor(
     @get:Input
     val compilerDistributionPath: Provider<String> = compilerDistribution.map { it.root.asFile.absolutePath }
 
-    internal interface RunToolParameters: WorkParameters {
-        var taskName: String
-        var args: List<String>
-    }
-
-    internal abstract class RunTool @Inject constructor() : WorkAction<RunToolParameters> {
-        override fun execute() {
-            val toolRunner = interchangeBox.remove(parameters.taskName) ?: error(":(")
-            toolRunner.run(parameters.args)
-        }
-    }
-
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
 
@@ -132,18 +149,21 @@ abstract class KonanInteropTask @Inject constructor(
         val workQueue = workerExecutor.noIsolation()
 
         if (allowRunningCInteropInProcess) {
-            val interopRunner = KonanCliInteropRunner(
+            val interopRunner = KonanCliRunner(
+                    "cinterop",
                     fileOperations,
                     logger,
                     isolatedClassLoadersService.get(),
                     compilerDistributionPath.get(),
-                    konanTarget.get(),
+                    useArgFile = false,
             )
 
             interchangeBox[this.path] = interopRunner
-            workQueue.submit(RunTool::class.java) {
+            workQueue.submit(KonanInteropInProcessAction::class.java) {
                 taskName = path
-                this.args = args
+                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.target.set(konanTarget.map { it.visibleName })
+                this.args.addAll(args)
             }
         } else {
             workQueue.submit(KonanInteropOutOfProcessAction::class.java) {
@@ -154,4 +174,4 @@ abstract class KonanInteropTask @Inject constructor(
     }
 }
 
-internal val interchangeBox = ConcurrentHashMap<String, KonanCliInteropRunner>()
+internal val interchangeBox = ConcurrentHashMap<String, KonanCliRunner>()
