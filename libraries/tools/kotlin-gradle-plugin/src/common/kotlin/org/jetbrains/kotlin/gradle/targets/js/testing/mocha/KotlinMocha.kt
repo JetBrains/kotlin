@@ -11,26 +11,24 @@ import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
-import java.nio.file.Path
 
 class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, private val basePath: String) :
     KotlinJsTestFramework {
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
-    private val versions = project.rootProject.kotlinNodeJsExtension.versions
+    private val versions = project.rootProject.kotlinNodeJsRootExtension.versions
     private val npmProjectDir by project.provider { npmProject.dir }
 
     override val workingDir: Provider<Directory>

@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -24,26 +29,39 @@ open class YarnPlugin : Plugin<Project> {
             "YarnPlugin can be applied only to root project"
         }
 
-        val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         NodeJsRootPlugin.apply(project)
-        val nodeJs = this.kotlinNodeJsExtension
-        val nodeJsTaskProviders = this.kotlinNodeJsExtension
+        val nodeJsRoot = this.kotlinNodeJsRootExtension
+        val nodeJs = this.kotlinNodeJsEnvSpec
+
+        val yarnSpec = project.extensions.createYarnEnvSpec()
+
+        val yarnRootExtension = this.extensions.create(
+            YarnRootExtension.YARN,
+            YarnRootExtension::class.java,
+            this,
+            nodeJsRoot,
+            yarnSpec
+        )
+
+        yarnSpec.initializeYarnEnvSpec(objects, yarnRootExtension)
 
         yarnRootExtension.platform.value(nodeJs.platform)
             .disallowChanges()
 
-        nodeJs.packageManagerExtension.set(
+        nodeJsRoot.packageManagerExtension.set(
             yarnRootExtension
         )
 
-        val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
-            it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+        val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME, listOf(yarnSpec)) {
+            with(nodeJs) {
+                it.dependsOn(project.nodeJsSetupTaskProvider)
+            }
 
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Download and install a local yarn version"
 
-            it.configuration = provider {
-                this.project.configurations.detachedResolvable(this.project.dependencies.create(it.ivyDependency))
+            it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
+                this.project.configurations.detachedResolvable(this.project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }
             }
         }
@@ -55,9 +73,7 @@ open class YarnPlugin : Plugin<Project> {
         }
 
         yarnRootExtension.nodeJsEnvironment.value(
-            project.provider {
-                nodeJs.requireConfigured()
-            }
+            nodeJs.produceEnv(project.providers)
         ).disallowChanges()
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
@@ -67,7 +83,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
 
@@ -84,7 +100,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(UPGRADE_YARN_LOCK, YarnLockCopyTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
         }
@@ -92,7 +108,7 @@ open class YarnPlugin : Plugin<Project> {
         tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
-            it.outputDirectory.set(nodeJs.rootPackageDirectory)
+            it.outputDirectory.set(nodeJsRoot.rootPackageDirectory)
             it.fileName.set(LockCopyTask.YARN_LOCK)
             it.onlyIf {
                 lockFile.exists()
@@ -106,6 +122,36 @@ open class YarnPlugin : Plugin<Project> {
         yarnRootExtension.postInstallTasks.value(
             listOf(yarnRootExtension.storeYarnLockTaskProvider)
         ).disallowChanges()
+    }
+
+    private fun ExtensionContainer.createYarnEnvSpec(): YarnRootEnvSpec {
+        return create(
+            YarnRootEnvSpec.YARN,
+            YarnRootEnvSpec::class.java
+        )
+    }
+
+    private fun YarnRootEnvSpec.initializeYarnEnvSpec(
+        objectFactory: ObjectFactory,
+        yarnRootExtension: YarnRootExtension,
+    ) {
+        download.convention(yarnRootExtension.downloadProperty)
+        downloadBaseUrl.convention(yarnRootExtension.downloadBaseUrlProperty)
+        installationDirectory.convention(yarnRootExtension.installationDirectory)
+        version.convention(yarnRootExtension.versionProperty)
+        command.convention(yarnRootExtension.commandProperty)
+        platform.convention(yarnRootExtension.platform)
+        ignoreScripts.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.ignoreScripts })
+        yarnLockMismatchReport.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockMismatchReport })
+        reportNewYarnLock.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.reportNewYarnLock })
+        yarnLockAutoReplace.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockAutoReplace })
+        resolutions.convention(
+            objectFactory.listProperty<YarnResolution>().value(
+                objectFactory.providerWithLazyConvention {
+                    yarnRootExtension.resolutions
+                }
+            )
+        )
     }
 
     companion object {

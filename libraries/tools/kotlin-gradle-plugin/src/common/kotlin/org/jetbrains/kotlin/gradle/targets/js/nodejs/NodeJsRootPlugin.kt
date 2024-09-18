@@ -34,49 +34,40 @@ open class NodeJsRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 
-        project.plugins.apply(BasePlugin::class.java)
-
         check(project == project.rootProject) {
             "NodeJsRootPlugin can be applied only to root project"
         }
 
-        val nodeJs = project.extensions.create(
+        project.plugins.apply(BasePlugin::class.java)
+
+        val nodeJsRoot = project.extensions.create(
             NodeJsRootExtension.EXTENSION_NAME,
             NodeJsRootExtension::class.java,
-            project
+            project,
+            { NodeJsPlugin.apply(project) }
         )
 
         val npm = project.extensions.create(
             NpmExtension.EXTENSION_NAME,
             NpmExtension::class.java,
-            project
+            project,
+            nodeJsRoot
         )
 
-        addPlatform(project, nodeJs)
+        val nodeJs = NodeJsPlugin.apply(project)
 
         npm.nodeJsEnvironment.value(
-            project.provider {
-                nodeJs.requireConfigured()
-            }
+            nodeJs.produceEnv(project.providers)
         ).disallowChanges()
 
-        nodeJs.packageManagerExtension.convention(
+        nodeJsRoot.packageManagerExtension.convention(
             npm
         )
-
-        val setupTask = project.registerTask<NodeJsSetupTask>(NodeJsSetupTask.NAME) {
-            it.group = TASKS_GROUP_NAME
-            it.description = "Download and install a local node/npm version"
-            it.configuration = project.provider {
-                project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
-                    .also { conf -> conf.isTransitive = false }
-            }
-        }
 
         val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> = GradleNodeModulesCache.registerIfAbsent(
             project,
             project.projectDir,
-            nodeJs.nodeModulesGradleCacheDirectory
+            nodeJsRoot.nodeModulesGradleCacheDirectory
         )
 
         val setupFileHasherTask = project.registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
@@ -86,7 +77,9 @@ open class NodeJsRootPlugin : Plugin<Project> {
         }
 
         val npmInstall = project.registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) { npmInstall ->
-            npmInstall.dependsOn(setupTask)
+            with(nodeJs) {
+                npmInstall.dependsOn(project.nodeJsSetupTaskProvider)
+            }
             npmInstall.dependsOn(setupFileHasherTask)
             npmInstall.group = TASKS_GROUP_NAME
             npmInstall.description = "Find, download and link NPM dependencies and projects"
@@ -105,13 +98,13 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         project.registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
-        nodeJs.resolver = KotlinRootNpmResolver(
+        nodeJsRoot.resolver = KotlinRootNpmResolver(
             project.name,
             project.version.toString(),
             TasksRequirements(),
-            nodeJs.versions,
-            nodeJs.projectPackagesDirectory,
-            nodeJs.rootProjectDir,
+            nodeJsRoot.versions,
+            nodeJsRoot.projectPackagesDirectory,
+            nodeJsRoot.rootProjectDir,
         )
 
         val objectFactory = project.objects
@@ -119,14 +112,14 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val npmResolutionManager: Provider<KotlinNpmResolutionManager> = KotlinNpmResolutionManager.registerIfAbsent(
             project,
             objectFactory.providerWithLazyConvention {
-                nodeJs.resolver.close()
+                nodeJsRoot.resolver.close()
             },
             gradleNodeModulesProvider,
-            nodeJs.projectPackagesDirectory
+            nodeJsRoot.projectPackagesDirectory
         )
 
         val rootPackageJson = project.tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
-            task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
+            task.dependsOn(nodeJsRoot.npmCachesSetupTaskProvider)
             task.group = TASKS_GROUP_NAME
             task.description = "Create root package.json"
 
@@ -141,10 +134,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         configureRequiresNpmDependencies(project, rootPackageJson)
 
-        val packageJsonUmbrella = nodeJs
+        val packageJsonUmbrella = nodeJsRoot
             .packageJsonUmbrellaTaskProvider
 
-        nodeJs.rootPackageJsonTaskProvider.configure {
+        nodeJsRoot.rootPackageJsonTaskProvider.configure {
             it.dependsOn(packageJsonUmbrella)
         }
 
@@ -155,10 +148,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         project.tasks.register(LockCopyTask.STORE_PACKAGE_LOCK_NAME, LockStoreTask::class.java) { task ->
             task.dependsOn(npmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
 
             task.additionalInputFiles.from(
-                nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
             task.additionalInputFiles.from(
                 task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
@@ -180,12 +173,12 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         project.tasks.register(LockCopyTask.UPGRADE_PACKAGE_LOCK, LockStoreTask::class.java) { task ->
             task.dependsOn(npmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
             task.outputDirectory.set(npm.lockFileDirectory)
             task.fileName.set(npm.lockFileName)
 
             task.additionalInputFiles.from(
-                nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
             task.additionalInputFiles.from(
                 task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
@@ -211,7 +204,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             task.additionalInputFiles.from(
                 npm.lockFileDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
-            task.outputDirectory.set(nodeJs.rootPackageDirectory)
+            task.outputDirectory.set(nodeJsRoot.rootPackageDirectory)
             task.fileName.set(LockCopyTask.PACKAGE_LOCK)
             task.onlyIf {
                 val inputFileExists = task.inputFile.getOrNull()?.asFile?.exists() == true
@@ -233,7 +226,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
         ).disallowChanges()
 
         npmInstall.configure {
-            it.dependsOn(nodeJs.packageManagerExtension.map { it.preInstallTasks })
+            it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.preInstallTasks })
         }
 
         npmInstall.configure {
@@ -241,7 +234,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
         }
 
         project.tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
-            it.cleanableStoreProvider = project.provider { nodeJs.requireConfigured().cleanableStore }
+            it.cleanableStoreProvider = nodeJs.produceEnv(project.providers).map { it.cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }
@@ -249,22 +242,8 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val propertiesProvider = PropertiesProvider(project)
 
         if (propertiesProvider.yarn) {
-            YarnPlugin.apply(project)
+            project.plugins.apply(YarnPlugin::class.java)
         }
-    }
-
-    // from https://github.com/node-gradle/gradle-node-plugin
-    private fun addPlatform(project: Project, extension: NodeJsRootExtension) {
-        val uname = project.providers.unameExecResult
-
-        extension.platform.value(
-            project.providers.systemProperty("os.name")
-                .zip(
-                    project.providers.systemProperty("os.arch")
-                ) { name, arch ->
-                    parsePlatform(name, arch, uname)
-                }
-        ).disallowChanges()
     }
 
     // Yes, we need to break Task Configuration Avoidance here
@@ -312,7 +291,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             return rootProject.extensions.getByName(NodeJsRootExtension.EXTENSION_NAME) as NodeJsRootExtension
         }
 
-        val Project.kotlinNodeJsExtension: NodeJsRootExtension
+        val Project.kotlinNodeJsRootExtension: NodeJsRootExtension
             get() = extensions.getByName(NodeJsRootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>

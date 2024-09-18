@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
@@ -28,6 +29,7 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
     }
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 interface KotlinWasmD8Dsl : KotlinJsSubTargetDsl {
     fun runTask(body: D8Exec.() -> Unit)
 }

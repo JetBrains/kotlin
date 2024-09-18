@@ -17,7 +17,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
@@ -36,7 +36,7 @@ abstract class KotlinPackageJsonTask :
     // Not part of configuration caching
 
     private val nodeJs: NodeJsRootExtension
-        get() = project.rootProject.kotlinNodeJsExtension
+        get() = project.rootProject.kotlinNodeJsRootExtension
 
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
@@ -131,7 +131,7 @@ abstract class KotlinPackageJsonTask :
             val target = compilation.target
             val project = target.project
             val npmProject = compilation.npmProject
-            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
+            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
 
             val npmCachesSetupTask = nodeJsTaskProviders.npmCachesSetupTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName

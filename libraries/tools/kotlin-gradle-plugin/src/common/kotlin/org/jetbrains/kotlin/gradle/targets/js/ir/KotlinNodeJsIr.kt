@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgume
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -24,8 +25,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "node"),
     KotlinJsNodeDsl {
 
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
-    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
+    private val nodeJs = project.kotlinNodeJsEnvSpec
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
@@ -66,22 +66,26 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+        with(nodeJs) {
+            test.dependsOn(project.nodeJsSetupTaskProvider)
+        }
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
             test.dependsOn(
-                nodeJsTaskProviders.npmInstallTaskProvider,
+                nodeJsRoot.npmInstallTaskProvider,
             )
-            test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
+            test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
         }
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
         if (target.platformType != KotlinPlatformType.wasm) {
+            val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
             if (test.testFramework == null) {
                 test.useMocha { }
             }
             if (test.enabled) {
-                nodeJs.taskRequirements.addTaskRequirements(test)
+                nodeJsRoot.taskRequirements.addTaskRequirements(test)
             }
         } else {
             test.testFramework = KotlinWasmNode(test)

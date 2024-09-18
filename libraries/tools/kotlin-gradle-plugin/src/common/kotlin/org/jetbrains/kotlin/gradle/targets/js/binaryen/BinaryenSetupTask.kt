@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin.Companion.kotlinBinaryenExtension
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import javax.inject.Inject
 
+@OptIn(ExperimentalWasmDsl::class)
 @DisableCachingByDefault
-abstract class BinaryenSetupTask : AbstractSetupTask<BinaryenEnv, BinaryenRootExtension>() {
-    @Transient
-    @Internal
-    override val settings = project.kotlinBinaryenExtension
+abstract class BinaryenSetupTask
+@Inject
+@InternalKotlinGradlePluginApi
+constructor(
+    settings: BinaryenRootEnvSpec,
+) : AbstractSetupTask<BinaryenEnv, BinaryenRootEnvSpec>(settings) {
 
     @get:Internal
     override val artifactPattern: String
@@ -29,14 +35,18 @@ abstract class BinaryenSetupTask : AbstractSetupTask<BinaryenEnv, BinaryenRootEx
     override val artifactName: String
         get() = "binaryen"
 
+    private val isWindows = env.map { it.isWindows }
+
+    private val executable = env.map { it.executable }
+
     override fun extract(archive: File) {
         fs.copy {
             it.from(archiveOperations.tarTree(archive))
-            it.into(destination.parentFile)
+            it.into(destinationProvider.getFile().parentFile)
         }
 
-        if (!env.isWindows) {
-            File(env.executable).setExecutable(true)
+        if (!isWindows.get()) {
+            File(executable.get()).setExecutable(true)
         }
     }
 

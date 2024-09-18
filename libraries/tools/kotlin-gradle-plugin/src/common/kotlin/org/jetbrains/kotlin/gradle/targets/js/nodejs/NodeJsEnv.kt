@@ -8,7 +8,6 @@ import java.io.File
 data class NodeJsEnv(
     override val download: Boolean,
     override val cleanableStore: CleanableStore,
-    val rootPackageDir: File,
     override val dir: File,
     val nodeBinDir: File,
     override val executable: String,
@@ -16,8 +15,6 @@ data class NodeJsEnv(
     val architectureName: String,
     override val ivyDependency: String,
     override val downloadBaseUrl: String?,
-
-    val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"

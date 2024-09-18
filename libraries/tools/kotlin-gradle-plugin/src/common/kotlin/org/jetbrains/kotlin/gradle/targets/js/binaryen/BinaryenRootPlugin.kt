@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.ExtensionContainer
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenPlatform.Companion.parseBinaryenPlatform
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+@OptIn(ExperimentalWasmDsl::class)
 open class BinaryenRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
@@ -27,15 +30,24 @@ open class BinaryenRootPlugin : Plugin<Project> {
             "BinaryenRootPlugin can be applied only to root project"
         }
 
-        val settings = project.extensions.create(EXTENSION_NAME, BinaryenRootExtension::class.java, project)
+        val spec = project.extensions.createBinaryenRootEnvSpec()
+
+        val settings = project.extensions.create(
+            EXTENSION_NAME,
+            BinaryenRootExtension::class.java,
+            project,
+            spec
+        )
+
+        spec.initializeBinaryenRootEnvSpec(settings)
 
         addPlatform(project, settings)
 
-        project.registerTask<BinaryenSetupTask>(BinaryenSetupTask.NAME) {
+        project.registerTask<BinaryenSetupTask>(BinaryenSetupTask.NAME, listOf(spec)) {
             it.group = TASKS_GROUP_NAME
             it.description = "Download and install a binaryen"
-            it.configuration = project.provider {
-                project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
+            it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
+                project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }
             }
         }
@@ -45,6 +57,24 @@ open class BinaryenRootPlugin : Plugin<Project> {
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local binaryen version"
         }
+    }
+
+    private fun ExtensionContainer.createBinaryenRootEnvSpec(): BinaryenRootEnvSpec {
+        return create(
+            BinaryenRootEnvSpec.EXTENSION_NAME,
+            BinaryenRootEnvSpec::class.java
+        )
+    }
+
+    private fun BinaryenRootEnvSpec.initializeBinaryenRootEnvSpec(
+        rootBinaryen: BinaryenRootExtension,
+    ) {
+        download.convention(rootBinaryen.downloadProperty)
+        downloadBaseUrl.convention(rootBinaryen.downloadBaseUrlProperty)
+        installationDirectory.convention(rootBinaryen.installationDirectory)
+        version.convention(rootBinaryen.versionProperty)
+        command.convention(rootBinaryen.commandProperty)
+        platform.convention(rootBinaryen.platform)
     }
 
     private fun addPlatform(project: Project, extension: BinaryenRootExtension) {

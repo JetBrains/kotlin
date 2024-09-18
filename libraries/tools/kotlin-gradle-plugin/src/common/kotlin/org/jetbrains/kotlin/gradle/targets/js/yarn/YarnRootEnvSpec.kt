@@ -1,0 +1,106 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.targets.js.yarn
+
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
+import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.utils.getFile
+
+/**
+ * Spec for Yarn - package manager to install NPM dependencies
+ */
+abstract class YarnRootEnvSpec : EnvSpec<YarnEnv>() {
+
+    /**
+     * Specify a platform information with name and architecture
+     */
+    internal abstract val platform: Property<Platform>
+
+    /**
+     * Specify whether to not run install without custom package scripts.
+     * It is useful for security
+     *
+     * Default: true
+     */
+    abstract val ignoreScripts: Property<Boolean>
+
+    /**
+     * Specify a behaviour if yarn.lock file was changed
+     *
+     * Default: FAIL
+     */
+    abstract val yarnLockMismatchReport: Property<YarnLockMismatchReport>
+
+    /**
+     * Specify whether to fail a build if new yarn.lock file was generated during the build
+     *
+     * Default: false
+     */
+    abstract val reportNewYarnLock: Property<Boolean>
+
+    /**
+     * Specify whether to replace already existing yarn.lock file with newly generated yarn.lock file
+     *
+     * Default: false
+     */
+    abstract val yarnLockAutoReplace: Property<Boolean>
+
+    /**
+     * Specify replacements of versions of installed NPM dependencies
+     *
+     * Details: https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/
+     */
+    abstract val resolutions: ListProperty<YarnResolution>
+
+    override fun produceEnv(providerFactory: ProviderFactory): Provider<YarnEnv> {
+        return providerFactory.provider {
+            val cleanableStore = CleanableStore[installationDirectory.getFile().path]
+
+            val isWindows = platform.get().isWindows()
+
+            val home = cleanableStore["yarn-v${version.get()}"].use()
+
+            val downloadValue = download.get()
+            fun getExecutable(
+                command: String,
+                customCommand: String,
+                windowsExtension: String,
+            ): String {
+                val finalCommand =
+                    if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
+                return if (downloadValue)
+                    home
+                        .resolve("bin/yarn.js").absolutePath
+                else
+                    finalCommand
+            }
+
+            YarnEnv(
+                download = downloadValue,
+                downloadBaseUrl = downloadBaseUrl.orNull,
+                cleanableStore = cleanableStore,
+                dir = home,
+                executable = getExecutable("yarn", command.get(), "cmd"),
+                ivyDependency = "com.yarnpkg:yarn:${version.get()}@tar.gz",
+                ignoreScripts = ignoreScripts.get(),
+                yarnLockMismatchReport = yarnLockMismatchReport.get(),
+                reportNewYarnLock = reportNewYarnLock.get(),
+                yarnLockAutoReplace = yarnLockAutoReplace.get(),
+                yarnResolutions = resolutions.get()
+            )
+        }
+    }
+
+    companion object {
+        const val YARN: String = "kotlinYarnSpec"
+    }
+
+}

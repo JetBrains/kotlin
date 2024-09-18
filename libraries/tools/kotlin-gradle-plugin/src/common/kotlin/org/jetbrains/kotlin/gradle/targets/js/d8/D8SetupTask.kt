@@ -3,19 +3,22 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.Companion.kotlinD8Extension
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class D8SetupTask : AbstractSetupTask<D8Env, D8RootExtension>() {
-    @Transient
-    @Internal
-    override val settings = project.kotlinD8Extension
+abstract class D8SetupTask @Inject constructor(
+    settings: D8EnvSpec,
+) : AbstractSetupTask<D8Env, D8EnvSpec>(settings) {
 
     @get:Internal
     override val artifactPattern: String
@@ -29,14 +32,18 @@ abstract class D8SetupTask : AbstractSetupTask<D8Env, D8RootExtension>() {
     override val artifactName: String
         get() = "v8"
 
+    private val isWindows = env.map { it.isWindows }
+
+    private val executable = env.map { it.executable }
+
     override fun extract(archive: File) {
         fs.copy {
             it.from(archiveOperations.zipTree(archive))
-            it.into(destination)
+            it.into(destinationProvider.getFile())
         }
 
-        if (!env.isWindows) {
-            File(env.executable).setExecutable(true)
+        if (!isWindows.get()) {
+            File(executable.get()).setExecutable(true)
         }
     }
 

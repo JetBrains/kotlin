@@ -18,6 +18,7 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         return listOf(
             nodeJs
                 .rootPackageDir
+                .getFile()
                 .resolve(NpmProject.PACKAGE_JSON)
         )
     }
@@ -64,7 +65,7 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         packageManagerEnvironment: NpmEnvironment,
         cliArgs: List<String>,
     ) {
-        val nodeJsWorldDir = nodeJs.rootPackageDir
+        val nodeJsWorldDir = nodeJs.rootPackageDir.getFile()
 
         npmExec(
             services,

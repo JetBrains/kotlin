@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectKt
+
 plugins {
     id("org.jetbrains.kotlin.js")
 }
@@ -16,6 +18,28 @@ kotlin {
     js {
         binaries.executable()
         browser()
+
+        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin) {
+//            def kotlinNodeJs = rootProject.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension)
+
+            def mainCompilation = compilations["main"]
+
+            tasks.register("runWebpack", Exec) {
+                dependsOn(tasks.named('browserProductionWebpack'))
+
+                workingDir = "${rootProject.buildDir}/js/packages/kotlin-js-dce-mainProject"
+
+                def npmProject = NpmProjectKt.getNpmProject(mainCompilation)
+
+                doFirst {
+                    npmProject.useTool(it, "webpack/bin/webpack", [], [])
+                }
+            }
+
+            tasks.named("assemble") {
+                dependsOn("runWebpack")
+            }
+        }
     }
 }
 
@@ -32,23 +56,6 @@ kotlin {
 //    keep("exampleapp.exampleapp.status")
 //    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
 //}
-
-rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin) {
-    def kotlinNodeJs = rootProject.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension)
-
-    tasks.register("runWebpack", Exec) {
-        dependsOn(tasks.named('browserProductionWebpack'))
-
-        executable(kotlinNodeJs.requireConfigured().executable)
-
-        workingDir = "${rootProject.buildDir}/js/packages/kotlin-js-dce-mainProject"
-        args = ["../../node_modules/webpack/bin/webpack.js"]
-    }
-
-    tasks.named("assemble") {
-        dependsOn("runWebpack")
-    }
-}
 
 
 

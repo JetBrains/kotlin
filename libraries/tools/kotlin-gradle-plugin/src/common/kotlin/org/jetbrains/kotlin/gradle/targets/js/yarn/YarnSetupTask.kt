@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
-    @Transient
-    @Internal
-    override val settings = project.yarn
+abstract class YarnSetupTask @Inject constructor(
+    settings: YarnRootEnvSpec
+) : AbstractSetupTask<YarnEnv, YarnRootEnvSpec>(settings) {
 
     @get:Internal
     override val artifactPattern: String
@@ -31,7 +32,7 @@ abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
     override fun extract(archive: File) {
         fs.copy {
             it.from(archiveOperations.tarTree(archive))
-            it.into(destination.parentFile)
+            it.into(destinationProvider.getFile().parentFile)
             it.includeEmptyDirs = false
         }
     }
