@@ -37,8 +37,6 @@ class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
-    private val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    private val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
     val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
 
     private fun IrValueParameter.grouped(
@@ -199,7 +197,6 @@ class MemoizedMultiFieldValueClassReplacements(
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            originalFunctionForStaticReplacement[this] = function
             typeParameters = listOf()
             copyTypeParametersFrom(function.parentAsClass)
             val substitutionMap = function.parentAsClass.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
@@ -211,7 +208,6 @@ class MemoizedMultiFieldValueClassReplacements(
         }
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction = buildReplacement(function, function.origin) {
-        originalFunctionForMethodReplacement[this] = function
         val remappedParameters = makeMethodLikeRemappedParameters(function)
         bindingOldFunctionToParameterTemplateStructure[function] = remappedParameters
         bindingNewFunctionToParameterTemplateStructure[this] = remappedParameters
