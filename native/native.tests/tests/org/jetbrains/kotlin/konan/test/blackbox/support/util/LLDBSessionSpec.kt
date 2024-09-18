@@ -37,6 +37,8 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
             this += "-o"
             this += step.command
         }
+        // Don't pickup ~/.lldbinit
+        this += "--no-lldbinit"
     }
 
     fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean {

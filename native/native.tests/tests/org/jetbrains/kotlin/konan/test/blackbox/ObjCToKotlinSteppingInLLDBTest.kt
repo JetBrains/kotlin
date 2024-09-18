@@ -35,7 +35,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
     fun stepInFromObjCToKotlin___WithDisabledStopHook___StopsAtABridgingRoutine() {
         testSteppingFromObjcToKotlin(
             """
-            > b ${CLANG_FILE_NAME}:3
+            > b ${CLANG_FILE_NAME}:4
             > env KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS=1
             > run
             > thread step-in
@@ -96,12 +96,13 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             > run
             > thread step-out
             [..] stop reason = Python thread plan implemented by class konan_lldb.KonanStepOut.
-            [..]`main at main.m:3:5
-               1   	@import Kotlin;
-               2   	int main() {
-            -> 3   	    [KotlinLibKt bar];
+            [..]`main at main.m:5:5
+               2   	void landing() {}
+               3   	int main() {
+               4   	    [KotlinLibKt bar];
+            -> 5   	    landing();
                         ^
-               4   	}
+               6   	}
             > c
             """.trimIndent(),
             CLANG_FILE_NAME,
@@ -136,12 +137,13 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             > run
             > thread step-over
             [..] stop reason = Python thread plan implemented by class konan_lldb.KonanStepOver.
-            [..]`main at main.m:3:5
-               1   	@import Kotlin;
-               2   	int main() {
-            -> 3   	    [KotlinLibKt bar];
+            [..]`main at main.m:5:5
+               2   	void landing() {}
+               3   	int main() {
+               4   	    [KotlinLibKt bar];
+            -> 5   	    landing();
                         ^
-               4   	}
+               6   	}
             > c
             """.trimIndent(),
             CLANG_FILE_NAME,
@@ -162,8 +164,10 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         val kotlinFrameworkName = "Kotlin"
         val clangMainSources = """
             @import ${kotlinFrameworkName};
+            void landing() {}
             int main() {
                 [${kotlinFrameworkName}LibKt bar];
+                landing();
             }
         """.trimIndent()
 
