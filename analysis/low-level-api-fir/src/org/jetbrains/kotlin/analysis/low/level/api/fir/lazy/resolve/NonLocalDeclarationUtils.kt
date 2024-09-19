@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal fun declarationCanBeLazilyResolved(element: KtElement?, codeFragmentAware: Boolean): Boolean = when (element) {
+    null -> false
     is KtFunctionLiteral -> false
     is KtTypeParameter -> declarationCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false), codeFragmentAware)
     is KtScript -> declarationCanBeLazilyResolved(element.parent as? KtFile, codeFragmentAware)
