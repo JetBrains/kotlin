@@ -946,13 +946,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             p.printWithNoIndent(" ")
         }
 
-        p.printWithNoIndent(
-            when {
-                declaration.correspondingPropertySymbol != null -> "field "
-                declaration.isFinal -> "val "
-                else -> "var "
-            }
-        )
+        p.printWithNoIndent(if (declaration.isFinal) "val " else "var ")
         p.printWithNoIndent(declaration.name.asString() + ": ")
         declaration.type.printTypeWithNoIndent()
 

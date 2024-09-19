@@ -10,14 +10,14 @@ internal inline fun initializeAndReadLateinitProperties(): String
     /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
     /* ACCESSOR use-site */ access$<get-o>$tOKKt()
 private lateinit var o: String?
-    /* TARGET declaration */ private /* static field */ field o: String?
+    /* TARGET declaration */ private /* static field */ var o: String?
     /* TARGET declaration */ private fun <get-o>(): String
         val tmp: String? = #o
             /* TARGET use-site */ #o
     /* TARGET declaration */ private fun <set-o>(<set-?>: String)
         /* TARGET use-site */ #o = <set-?>
 public lateinit var k: String?
-    /* TARGET declaration */ public /* static field */ field k: String?
+    /* TARGET declaration */ public /* static field */ var k: String?
     public fun <get-k>(): String
         val tmp: String? = #k
             /* TARGET use-site */ #k
