@@ -223,6 +223,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testSplitCompilationPipeline() {
+
         val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
         val libFile = buildDir.resolve("lib.klib")
         runProcess(
@@ -293,6 +294,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             timeout = konancTimeout
         }
         val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
+        Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
         KotlinTestUtils.assertEqualsToFile(rootDir.resolve("main.out"), output)
     }
 }
