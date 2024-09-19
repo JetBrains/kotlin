@@ -31,6 +31,7 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
  * It doesn't check whether the resulting klib is same across all hosts or even valid
  * (i.e. compiler can emit empty klib and the test will still pass)
  */
+@Tag("klib")
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
     @Test

@@ -41,6 +41,7 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
  * The main idea is that the test is launched on all hosts (Linux, Macos, Win) and therefore
  * indirectly asserts that the generated klib is "identical" across these hosts
  */
+@Tag("klib")
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
     @Test

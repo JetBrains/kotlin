@@ -37,6 +37,7 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
  * [doManifestTest] runs compiler with designated arguments on a stub-file and asserts that
  * the generated manifest and compiler output correspond to the respective golden files in test data.
  */
+@Tag("klib")
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
