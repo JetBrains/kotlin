@@ -16,14 +16,7 @@ public lateinit var k: String?
             /* TARGET use-site */ #k
     public fun <set-k>(<set-?>: String)
         /* TARGET use-site */ #k = <set-?>
-private inline fun doInitializeAndReadOK(): String
-    /* TARGET use-site */ #o
-    /* TARGET use-site */ <set-o>(<set-?> = "O")
-    /* TARGET use-site */ #o
-    /* TARGET use-site */ #k
-    /* TARGET use-site */ #k
-    /* TARGET use-site */ <get-o>()
-internal inline fun initializeAndReadOK(): String
+internal inline fun initializeAndReadLateinitProperties(): String
     /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
     /* ACCESSOR use-site */ access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?> = "O")
     /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
