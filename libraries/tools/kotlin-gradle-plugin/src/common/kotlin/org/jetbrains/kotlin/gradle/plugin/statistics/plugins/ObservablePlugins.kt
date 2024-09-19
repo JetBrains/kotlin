@@ -20,6 +20,7 @@ enum class ObservablePlugins(
     val metric: BooleanMetrics,
 ) {
     DOKKA_PLUGIN("org.jetbrains.dokka", BooleanMetrics.ENABLED_DOKKA),
+    DOKKA_JAVADOC_PLUGIN("org.jetbrains.dokka-javadoc", BooleanMetrics.ENABLED_DOKKA_JAVADOC),
     KOTLIN_JS_PLUGIN("org.jetbrains.kotlin.js", BooleanMetrics.KOTLIN_JS_PLUGIN_ENABLED),
     COCOAPODS_PLUGIN("org.jetbrains.kotlin.native.cocoapods", BooleanMetrics.COCOAPODS_PLUGIN_ENABLED),
     KOVER_PLUGIN("org.jetbrains.kotlinx.kover", BooleanMetrics.KOTLINX_KOVER_GRADLE_PLUGIN_ENABLED),

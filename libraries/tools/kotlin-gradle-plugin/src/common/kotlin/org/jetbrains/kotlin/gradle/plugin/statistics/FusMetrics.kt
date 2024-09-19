@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 internal sealed interface FusMetrics
 internal object ExecutedTaskMetrics : FusMetrics {
     private fun getMetricToReport(task: String) = when (task.substringAfterLast(":")) {
-        "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML
+        //tasks from DGPv1
+        "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML_TASK
         "dokkaGfm" -> BooleanMetrics.ENABLED_DOKKA_GFM
-        "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC
+        "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_TASK
         "dokkaJekyll" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL
         "dokkaHtmlMultiModule" -> BooleanMetrics.ENABLED_DOKKA_HTML_MULTI_MODULE
         "dokkaGfmMultiModule" -> BooleanMetrics.ENABLED_DOKKA_GFM_MULTI_MODULE
@@ -42,6 +43,18 @@ internal object ExecutedTaskMetrics : FusMetrics {
         "dokkaGfmCollector" -> BooleanMetrics.ENABLED_DOKKA_GFM_COLLECTOR
         "dokkaJavadocCollector" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_COLLECTOR
         "dokkaJekyllCollector" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_COLLECTOR
+
+        //tasks from DGPv2
+        "dokkaGenerate" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_TASK
+        "dokkaGenerateHtml" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_HTML_TASK
+        "dokkaGenerateJavadoc" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_JAVADOC_TASK
+        "dokkaGeneratePublication" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_PUBLICATION_TASK
+        "dokkaGeneratePublicationHtml" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_PUBLICATION_HTML_TASK
+        "dokkaGeneratePublicationJavadoc" -> BooleanMetrics.ENABLE_DOKKA_GENERATE_PUBLICATION_JAVADOC_TASK
+        "dokkaGenerateModule" -> BooleanMetrics.ENABLE_DOKKA_MODULE_TASK
+        "dokkaGenerateModuleHtml" -> BooleanMetrics.ENABLE_DOKKA_MODULE_HTML_TASK
+        "dokkaGenerateModuleJavadoc" -> BooleanMetrics.ENABLE_DOKKA_MODULE_JAVADOC_TASK
+        "logLinkDokkaGeneratePublicationHtml" -> BooleanMetrics.ENABLE_LINK_DOKKA_GENERATE_TASK
         else -> null
     }
 
@@ -78,7 +91,10 @@ internal object CompilerArgumentMetrics : FusMetrics {
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_KOVER, "kover-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_SERIALIZATION, "serialization-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_DOKKA, "dokka-.*jar"),
-                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_BINARY_COMPATIBILITY_VALIDATOR, "binary-compatibility-validator-.*jar"),
+                    Pair(
+                        BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_BINARY_COMPATIBILITY_VALIDATOR,
+                        "binary-compatibility-validator-.*jar"
+                    ),
                 )
                 val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
                 if (pluginJars != null) {
