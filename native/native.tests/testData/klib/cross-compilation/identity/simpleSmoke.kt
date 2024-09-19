@@ -1,3 +1,6 @@
+// MODULE: simpleSmoke
+// FILE: simpleSmoke.kt
+
 package simple
 
 interface I {

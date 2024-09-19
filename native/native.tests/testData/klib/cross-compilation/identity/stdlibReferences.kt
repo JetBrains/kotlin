@@ -1,3 +1,6 @@
+// MODULE: stdlibReferences
+// FILE: stdlibReferences.kt
+
 package test
 
 import kotlin.experimental.*

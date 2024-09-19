@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
+import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
@@ -206,6 +207,17 @@ fun main() {
                 )
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
+        // KLIB cross-compilation tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
+            testClass<AbstractFirKlibCrossCompilationIdentityTest>(
+                annotations = listOf(
+                    *frontendFir(),
+                )
+            ) {
+                model()
             }
         }
 

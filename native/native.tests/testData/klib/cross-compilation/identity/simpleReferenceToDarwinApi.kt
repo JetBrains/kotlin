@@ -1,3 +1,6 @@
+// MODULE: simpleReferenceToDarwinApi
+// FILE: simpleReferenceToDarwinApi.kt
+
 package simple
 
 import platform.Foundation.NSString
