@@ -19,6 +19,8 @@
 namespace kotlin {
 namespace mm {
 
+void waitGlobalDataInitialized() noexcept;
+
 // Global (de)initialization is undefined in C++. Use single global singleton to define it for simplicity.
 class GlobalData : private Pinned {
 public:
@@ -26,7 +28,6 @@ public:
 
     // init() can only be called once.
     static void init() noexcept;
-    static void waitInitialized() noexcept;
 
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }

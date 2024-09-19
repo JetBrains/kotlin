@@ -12,7 +12,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "concurrent/ScopedThread.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -30,7 +30,7 @@ public:
     // Starts the worker thread immediately.
     template <typename ContextFactory>
     explicit SingleThreadExecutor(ContextFactory&& contextFactory) noexcept :
-        thread_(&SingleThreadExecutor::runLoop<ContextFactory>, this, std::forward<ContextFactory>(contextFactory)) {}
+        thread_(std::string_view("Single thread executor"), &SingleThreadExecutor::runLoop<ContextFactory>, this, std::forward<ContextFactory>(contextFactory)) {}
 
     // Starts the worker thread immediately.
     SingleThreadExecutor() noexcept : SingleThreadExecutor([] { return Context(); }) {}
@@ -104,7 +104,7 @@ private:
     std::deque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
-    ScopedThread thread_;
+    UtilityThread thread_;
 };
 
 } // namespace kotlin

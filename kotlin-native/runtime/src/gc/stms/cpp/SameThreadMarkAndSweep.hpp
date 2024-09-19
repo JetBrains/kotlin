@@ -9,6 +9,7 @@
 #include <cstddef>
 
 #include "AllocatorImpl.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
@@ -61,7 +62,7 @@ private:
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
-    ScopedThread gcThread_;
+    UtilityThread gcThread_;
     FinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
     alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 

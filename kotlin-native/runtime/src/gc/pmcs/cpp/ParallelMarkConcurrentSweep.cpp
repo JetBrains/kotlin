@@ -6,6 +6,7 @@
 #include "ParallelMarkConcurrentSweep.hpp"
 
 #include <optional>
+#include <string_view>
 
 #include "AllocatorImpl.hpp"
 #include "CallsChecker.hpp"
@@ -23,8 +24,8 @@ using namespace kotlin;
 namespace {
 
 template<typename Body>
-ScopedThread createGCThread(const char* name, Body&& body) {
-    return ScopedThread(ScopedThread::attributes().name(name), [name, body] {
+UtilityThread createGCThread(const char* name, Body&& body) {
+    return UtilityThread(std::string_view(name), [name, body] {
         RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " starts execution", name, konan::currentThreadId());
         body();
         RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " finishes execution", name, konan::currentThreadId());

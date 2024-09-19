@@ -12,6 +12,7 @@
 
 #include "AllocatorImpl.hpp"
 #include "Barriers.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
@@ -21,7 +22,6 @@
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
 #include "ConcurrentMark.hpp"
-#include "concurrent/ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
@@ -91,8 +91,8 @@ private:
     alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 
     mark::ConcurrentMark markDispatcher_;
-    ScopedThread mainThread_;
-    std::vector<ScopedThread> auxThreads_;
+    UtilityThread mainThread_;
+    std::vector<UtilityThread> auxThreads_;
 };
 
 } // namespace gc

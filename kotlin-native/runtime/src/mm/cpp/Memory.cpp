@@ -80,7 +80,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
 }
 
 extern "C" MemoryState* InitMemory() {
-    mm::GlobalData::waitInitialized();
+    mm::waitGlobalDataInitialized();
     return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
 }
 
