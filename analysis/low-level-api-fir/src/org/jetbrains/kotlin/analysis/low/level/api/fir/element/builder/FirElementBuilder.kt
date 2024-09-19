@@ -243,24 +243,30 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
-        if (this is FirCallableDeclaration) {
-            returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
-            receiverParameter?.takeIf { it.typeRef.psi == typeReference }?.let { return it }
+        when (this) {
+            is FirCallableDeclaration -> {
+                returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
+                receiverParameter?.takeIf { it.typeRef.psi == typeReference }?.let { return it }
 
-            for (typeParameterRef in typeParameters) {
-                typeParameterRef.findTypeRefAnchor(typeReference)?.let { return it }
-            }
-        }
-
-        if (this is FirTypeParameter) {
-            findTypeRefAnchor(typeReference)?.let { return it }
-        }
-
-        if (this is FirClass) {
-            for (typeRef in superTypeRefs) {
-                if (typeRef.psi == typeReference) {
-                    return typeRef
+                for (typeParameterRef in typeParameters) {
+                    typeParameterRef.findTypeRefAnchor(typeReference)?.let { return it }
                 }
+            }
+
+            is FirTypeParameter -> {
+                findTypeRefAnchor(typeReference)?.let { return it }
+            }
+
+            is FirClass -> {
+                for (typeRef in superTypeRefs) {
+                    if (typeRef.psi == typeReference) {
+                        return typeRef
+                    }
+                }
+            }
+
+            is FirTypeAlias -> {
+                expandedTypeRef.takeIf { it.psi == typeReference }?.let { return it }
             }
         }
 
