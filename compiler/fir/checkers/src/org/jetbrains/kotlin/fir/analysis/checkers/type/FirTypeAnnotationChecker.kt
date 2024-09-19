@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.fir.types.typeArguments
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {

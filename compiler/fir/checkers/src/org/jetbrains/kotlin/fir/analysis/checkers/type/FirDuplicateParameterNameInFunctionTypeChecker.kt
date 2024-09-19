@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArguments
 
 object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.types.captureArguments
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeApproximator
-import org.jetbrains.kotlin.fir.types.typeArguments
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullabilityOf
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration

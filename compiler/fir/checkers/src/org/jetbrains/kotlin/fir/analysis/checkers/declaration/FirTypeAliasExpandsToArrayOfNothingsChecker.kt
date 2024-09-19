@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArguments
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAliasExpandsToArrayOfNothingsChecker : FirTypeAliasChecker(MppCheckerKind.Common) {

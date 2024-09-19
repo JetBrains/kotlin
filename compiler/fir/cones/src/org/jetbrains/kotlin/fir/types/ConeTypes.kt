@@ -18,6 +18,8 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
+    abstract val typeArguments: Array<out ConeTypeProjection>
+
     @Deprecated("Useless call. Receiver is already a ConeKotlinType.", level = DeprecationLevel.ERROR)
     final override val type: ConeKotlinType
         get() = this
@@ -74,7 +76,6 @@ abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
 }
 
 abstract class ConeClassLikeType : ConeLookupTagBasedType() {
-    abstract val typeArguments: Array<out ConeTypeProjection>
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
@@ -85,6 +86,8 @@ open class ConeFlexibleType(
     val lowerBound: ConeRigidType,
     val upperBound: ConeRigidType
 ) : ConeKotlinType(), FlexibleTypeMarker {
+    final override val typeArguments: Array<out ConeTypeProjection>
+        get() = lowerBound.typeArguments
 
     final override val attributes: ConeAttributes
         get() = lowerBound.attributes
@@ -158,6 +161,9 @@ data class ConeCapturedType(
         )
     )
 
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -190,6 +196,9 @@ data class ConeCapturedType(
 data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType
 ) : ConeRigidType(), DefinitelyNotNullTypeMarker {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = original.typeArguments
+
     override val attributes: ConeAttributes
         get() = original.attributes
 
@@ -246,6 +255,8 @@ class ConeIntersectionType(
     val upperBoundForApproximation: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker, ConeTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
 
     override val attributes: ConeAttributes = intersectedTypes.foldMap(
         { it.attributes },

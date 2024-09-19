@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.ConeAttributes
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 
 class ConeTypeParameterTypeImpl(
@@ -14,6 +15,8 @@ class ConeTypeParameterTypeImpl(
     override val isMarkedNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeTypeParameterType() {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
