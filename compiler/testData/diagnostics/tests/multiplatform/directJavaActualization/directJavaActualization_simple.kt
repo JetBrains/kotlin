@@ -10,8 +10,8 @@ expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() : Base {
     fun foo()
     open fun fakeOverrideInActual()
 
-    class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Nested<!>
-    inner class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Inner<!>
+    class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Nested<!>()
+    inner class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Inner<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -25,8 +25,12 @@ expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() : Base {
 
     public void additionalMember() {}
 
-    @kotlin.annotations.jvm.KotlinActual public static class Nested {}
-    @kotlin.annotations.jvm.KotlinActual public class Inner {}
+    @kotlin.annotations.jvm.KotlinActual public static class Nested {
+        @kotlin.annotations.jvm.KotlinActual public Nested() {}
+    }
+    @kotlin.annotations.jvm.KotlinActual public class Inner {
+        @kotlin.annotations.jvm.KotlinActual public Inner() {}
+    }
 }
 
 // FILE: JavaBase.java
