@@ -21,3 +21,5 @@ excludedFunctions = NPN_Construct NPN_ConvertPoint NPN_CreateObject NPN_DestroyS
                     NPP_GetJavaClass NPP_GetSitesWithData NPP_GetValue NPP_GotFocus NPP_HandleEvent NPP_Initialize \
                     NPP_LostFocus NPP_New NPP_NewStream NPP_Print NPP_SetValue NPP_SetWindow NPP_Shutdown \
                     NPP_StreamAsFile NPP_URLNotify NPP_URLRedirectNotify NPP_Write NPP_WriteReady
+
+objcClassesIncludingCategories = DOMElement
