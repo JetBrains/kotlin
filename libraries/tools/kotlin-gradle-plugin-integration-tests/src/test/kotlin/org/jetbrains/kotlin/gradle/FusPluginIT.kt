@@ -9,11 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.pathString
 import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
 @JvmGradlePluginTests
@@ -45,7 +45,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 
@@ -100,7 +100,7 @@ class FusPluginIT : KGPBaseTest() {
 
             val firstBuildId = checkBuildReportIdInFusReportAndReturn()
 
-            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
             build("clean")
 
             build(
@@ -121,13 +121,13 @@ class FusPluginIT : KGPBaseTest() {
 
             assertNotEquals(firstBuildId, secondBuildId, "Build is should be unique for every build")
 
-            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 
     private fun TestProject.checkBuildReportIdInFusReportAndReturn(): String {
         val fusReports = projectPath.resolve(reportRelativePath).toFile().resolve("kotlin-profile").listFiles()
-        val buildIds = fusReports?.map { it.readLines()[0] }?.distinct() //the first line is build id
+        val buildIds = fusReports?.map { it.readText().lines()[0] }?.distinct() //the first line is build id
         assertEquals(1, buildIds?.size, "Build is in all FUS files should be the same.")
         return buildIds?.get(0)!! //all checks were made on the assertion above
     }
@@ -161,7 +161,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 
@@ -219,7 +219,7 @@ class FusPluginIT : KGPBaseTest() {
                 )
             }
 
-            assertTrue {  projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
 
             build(
                 "assemble",
@@ -232,7 +232,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
+            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 

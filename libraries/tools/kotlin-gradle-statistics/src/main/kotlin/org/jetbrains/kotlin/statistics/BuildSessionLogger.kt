@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.statistics.metrics.*
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.util.UUID
 
 class BuildSessionLogger(
     rootPath: File,
@@ -65,7 +66,7 @@ class BuildSessionLogger(
     private fun storeMetricsIntoFile(buildId: String) {
         try {
             statisticsFolder.mkdirs()
-            val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
+            val file = File(statisticsFolder, UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
 
             file.outputStream().bufferedWriter().use { writer ->
                 writer.write("Build: $buildId")
