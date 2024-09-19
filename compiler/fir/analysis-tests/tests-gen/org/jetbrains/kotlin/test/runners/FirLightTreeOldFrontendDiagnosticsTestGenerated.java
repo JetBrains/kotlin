@@ -12223,6 +12223,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("giantEnumWithConstructor.kt")
+      public void testGiantEnumWithConstructor() {
+        runTest("compiler/testData/diagnostics/tests/enum/giantEnumWithConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("ifEnumEntry.kt")
       public void testIfEnumEntry() {
         runTest("compiler/testData/diagnostics/tests/enum/ifEnumEntry.kt");
