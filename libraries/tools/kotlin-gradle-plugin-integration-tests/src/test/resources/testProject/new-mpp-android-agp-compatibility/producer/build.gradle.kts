@@ -28,5 +28,5 @@ android {
 
 kotlin {
     jvm()
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
 }

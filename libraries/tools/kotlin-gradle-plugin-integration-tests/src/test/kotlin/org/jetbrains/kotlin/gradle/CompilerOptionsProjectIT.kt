@@ -403,7 +403,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 """
                 |
                 |kotlin {
-                |    android {
+                |    androidTarget {
                 |        compilations.all {
                 |            compilerOptions.options.moduleName.set("last-chance")
                 |        }

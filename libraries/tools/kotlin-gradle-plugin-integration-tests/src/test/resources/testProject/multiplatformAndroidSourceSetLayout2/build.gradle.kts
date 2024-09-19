@@ -34,7 +34,7 @@ repositories {
 }
 
 kotlin {
-    android()
+    androidTarget()
     jvm()
 
     val commonMain by sourceSets.getting

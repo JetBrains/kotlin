@@ -59,7 +59,7 @@ android {
 }
 
 kotlin {
-    android()
+    androidTarget()
     macosX64("macos")
 
     sourceSets {

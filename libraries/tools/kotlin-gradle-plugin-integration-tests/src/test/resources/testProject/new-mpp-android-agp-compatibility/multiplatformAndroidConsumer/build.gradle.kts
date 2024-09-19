@@ -18,7 +18,7 @@ android {
 }
 
 kotlin {
-    android()
+    androidTarget()
 
     sourceSets.commonMain.get().dependencies {
         implementation("com.example:producer:1.0.0-SNAPSHOT")

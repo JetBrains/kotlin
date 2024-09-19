@@ -13,7 +13,7 @@ repositories {
 kotlin {
     jvmToolchain(17)
 
-    android {}
+    androidTarget()
     
     sourceSets {
         val androidMain by getting {

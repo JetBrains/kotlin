@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -949,11 +950,17 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("tasks") {
-                val warnings = output.lines().filter { it.startsWith("w:") }.toSet()
+            val assertions: BuildResult.() -> Unit = {
+                val errors = output.lines().filter { it.startsWith("e:") }.toSet()
                 assert(
-                    warnings.any { warning -> warning.contains("androidTarget") }
+                    errors.any { error -> error.contains("androidTarget") }
                 )
+            }
+
+            if (buildGradleKts.exists()) {
+                buildAndFail("tasks", assertions = assertions)
+            } else {
+                build("tasks", assertions = assertions)
             }
         }
     }

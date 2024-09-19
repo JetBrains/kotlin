@@ -54,7 +54,7 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun androidTarget(configure: Action<KotlinAndroidTarget>) = androidTarget { configure.execute(this) }
 
 
-    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.ERROR)
     fun android(
         name: String = "android",
         configure: KotlinAndroidTarget.() -> Unit = { }
@@ -65,29 +65,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
             presets.getByName("android") as KotlinAndroidTargetPreset,
             configure
         ).also {
-            it.project.logger.warn(
+            it.project.logger.error(
                 """
-                    w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
+                    e: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
                     See the details here: https://kotl.in/android-target-dsl
                 """.trimIndent()
             )
         }
 
 
-    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("androidTarget()"))
-    @Suppress("DEPRECATION")
+    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("androidTarget()"))
+    @Suppress("DEPRECATION_ERROR")
     fun android() = android("android") { }
 
-    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("androidTarget(name)"))
-    @Suppress("DEPRECATION")
+    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("androidTarget(name)"))
+    @Suppress("DEPRECATION_ERROR")
     fun android(name: String) = android(name) { }
 
-    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun android(name: String, configure: Action<KotlinAndroidTarget>) = android(name) { configure.execute(this) }
 
-    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    @Deprecated(ANDROID_TARGET_MIGRATION_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     fun android(configure: Action<KotlinAndroidTarget>) = android { configure.execute(this) }
 
     fun androidNativeX64(

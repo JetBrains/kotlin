@@ -19,7 +19,7 @@ android {
 }
 
 kotlin {
-    android()
+    androidTarget()
     linuxX64()
 
     sourceSets {

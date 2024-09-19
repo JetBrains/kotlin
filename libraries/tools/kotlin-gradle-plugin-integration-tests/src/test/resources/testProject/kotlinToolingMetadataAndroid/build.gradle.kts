@@ -20,5 +20,5 @@ android {
 }
 
 kotlin {
-    android()
+    androidTarget()
 }
