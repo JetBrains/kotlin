@@ -63,8 +63,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 .map { jvm ->
                     jvm.javaVersion
                         ?: throw GradleException(
-                            "Kotlin could not get java version for the JDK installation: " +
-                                    jvm.javaHome?.let { "'$it' " }.orEmpty()
+                            "Kotlin could not get java version for the JDK installation: '${jvm.javaHome}'"
                         )
                 }
         )
@@ -79,8 +78,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                     objects.property<File>(
                         jvm.javaExecutable
                             ?: throw GradleException(
-                                "Kotlin could not find 'java' executable in the JDK installation: " +
-                                        jvm.javaHome?.let { "'$it' " }.orEmpty()
+                                "Kotlin could not find 'java' executable in the JDK installation: '${jvm.javaHome}'"
                             )
                     )
                 )
@@ -159,13 +157,14 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 objects.providerWithLazyConvention {
                     if (GradleVersion.current() < GradleVersion.version("8.8")) {
                         // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
-                        @Suppress("DEPRECATION")
+                        @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                         Jvm.discovered(
                             jdkHomeLocation,
                             null,
                             jdkVersion
                         )
                     } else {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                         Jvm.discovered(
                             jdkHomeLocation,
                             null,
@@ -274,7 +273,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
             val metadata = javaLauncher.metadata
             return if (GradleVersion.current() < GradleVersion.version("8.8")) {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                 // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
                 Jvm.discovered(
                     metadata.installationPath.asFile,
@@ -282,6 +281,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                     JavaVersion.toVersion(metadata.languageVersion.asInt())
                 )
             } else {
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                 Jvm.discovered(
                     metadata.installationPath.asFile,
                     null,

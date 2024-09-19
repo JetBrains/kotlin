@@ -142,7 +142,7 @@ private val testPlugins = internalPlugins + setOf(
 
 /**
  * Common sources for all variants.
- * Should contain classes that are independent of Gradle API version or using minimal supported Gradle api.
+ * Should contain classes that are independent of the Gradle API version or using the maximum supported Gradle API.
  */
 fun Project.createGradleCommonSourceSet(): SourceSet {
     val commonSourceSet = sourceSets.create(commonSourceSetName) {
@@ -158,7 +158,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            "commonGradleApiCompileOnly"(gradleApi())
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:8.10")
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
