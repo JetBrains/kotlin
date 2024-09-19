@@ -830,7 +830,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     }
 
-    private fun FlowContent.generateTypeArguments(type: ConeClassLikeType) {
+    private fun FlowContent.generateTypeArguments(type: ConeKotlinType) {
         if (type.typeArguments.isNotEmpty()) {
             +"<"
             generateList(type.typeArguments.toList()) {
@@ -843,10 +843,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(type: ConeKotlinType) {
         when (type) {
             is ConeErrorType -> error { +type.diagnostic.reason }
-            is ConeClassLikeType -> {
-                generate(type)
-                generateTypeArguments(type)
-            }
+            is ConeClassLikeType -> return generate(type)
             is ConeTypeParameterType -> resolved {
                 symbolRef(type.lookupTag.symbol) {
                     simpleName(type.lookupTag.name)
@@ -864,6 +861,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeLookupTagBasedType,
             is ConeStubType -> {}
         }
+        generateTypeArguments(type)
         if (type.isMarkedNullable) {
             +"?"
         }

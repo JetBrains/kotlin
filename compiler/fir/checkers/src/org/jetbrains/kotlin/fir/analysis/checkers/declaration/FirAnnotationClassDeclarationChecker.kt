@@ -105,7 +105,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                         classId == StandardClassIds.Array -> {
                             if (!isAllowedArray(coneType, context.session)) {
                                 reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
-                            } else if (!parameter.isVararg && coneType.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.variance != Variance.INVARIANT) {
+                            } else if (!parameter.isVararg && coneType.typeArguments.firstOrNull()?.variance != Variance.INVARIANT) {
                                 reporter.reportOn(typeRef.source, FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER, context)
                             }
                         }
@@ -142,7 +142,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
     }
 
     private fun isAllowedArray(type: ConeKotlinType, session: FirSession): Boolean {
-        val typeArguments = type.typeArgumentsOfLowerBoundIfFlexible
+        val typeArguments = type.typeArguments
 
         if (typeArguments.size != 1) return false
 
@@ -197,9 +197,9 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             val returnType = parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session)
             return when {
                 parameter.isVararg || returnType.isNonPrimitiveArray -> false
-                returnType.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty() -> {
+                returnType.typeArguments.isNotEmpty() -> {
                     if (returnType.classId == StandardClassIds.KClass) return false
-                    for (argument in returnType.typeArgumentsOfLowerBoundIfFlexible) {
+                    for (argument in returnType.typeArguments) {
                         if (typeHasCycle(ownedAnnotation, argument.type ?: continue)) return true
                     }
                     false

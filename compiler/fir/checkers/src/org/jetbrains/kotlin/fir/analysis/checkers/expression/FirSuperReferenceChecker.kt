@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
-import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.typeArguments
 
 object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -28,7 +28,7 @@ object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppChecker
 
         if (superType !is ConeErrorType &&
             typeArgumentList.typeArguments.isNotEmpty() &&
-            superType.typeArgumentsOfLowerBoundIfFlexible.all { it !is ConeErrorType }
+            superType.typeArguments.all { it !is ConeErrorType }
         ) {
             reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, context)
         }

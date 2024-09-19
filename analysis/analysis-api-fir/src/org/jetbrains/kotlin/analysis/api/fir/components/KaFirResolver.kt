@@ -1079,7 +1079,7 @@ internal class KaFirResolver(
 
     private fun FirDelegatedConstructorCall.toFirTypeArgumentsMapping(symbol: FirCallableSymbol<*>): Map<FirTypeParameterSymbol, ConeKotlinType> {
         val typeParameters = symbol.typeParameterSymbols.ifEmpty { return emptyMap() }
-        val typeArguments = constructedTypeRef.coneType.typeArgumentsOfLowerBoundIfFlexible
+        val typeArguments = constructedTypeRef.coneType.typeArguments
         // In all cases, the size of arguments and parameters is the same,
         // so this check exists just to be sure
         if (typeArguments.size != typeParameters.size) return emptyMap()

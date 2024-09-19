@@ -168,7 +168,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         val fullyExpandedType = value?.resolvedReturnTypeRef?.coneType?.fullyExpandedType(context.session)
         if (fullyExpandedType == null ||
             !fullyExpandedType.isArrayType ||
-            fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible.single().type != annotationClass.defaultType()
+            fullyExpandedType.typeArguments.single().type != annotationClass.defaultType()
         ) {
             reporter.reportOn(
                 annotationSource,

@@ -43,7 +43,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
                 ?: return null
         val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toClassSymbol(context.session) ?: return null
         val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
-        for (it in typeArgumentsOfLowerBoundIfFlexible) {
+        for (it in typeArguments) {
             val theType = it.type ?: continue
             val argumentAsTypeParameterSymbol = theType.toTypeParameterSymbol(context.session)
 

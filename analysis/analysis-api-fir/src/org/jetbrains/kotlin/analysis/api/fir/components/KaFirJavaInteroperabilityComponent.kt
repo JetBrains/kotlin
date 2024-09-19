@@ -198,7 +198,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
-            if (expandedType.typeArgumentsOfLowerBoundIfFlexible.isEmpty())
+            if (expandedType.typeArguments.isEmpty())
                 typeMappingMode
             else
                 typeMappingMode.updateArgumentModeFromAnnotations(expandedType, jvmTypeMapper.typeContext, suppressWildcards)
@@ -440,7 +440,7 @@ private fun ConeKotlinType.simplifyType(
             ?: currentType
 
     } while (oldType !== currentType)
-    if (typeArgumentsOfLowerBoundIfFlexible.isNotEmpty()) {
+    if (typeArguments.isNotEmpty()) {
         currentType = currentType.withArguments { typeProjection ->
             typeProjection.replaceType(
                 typeProjection.type?.simplifyType(session, useSitePosition, visited)
@@ -458,7 +458,7 @@ private fun ConeKotlinType.needLocalTypeApproximation(
 ): Boolean {
     if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
     val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
-        typeArgumentsOfLowerBoundIfFlexible.mapNotNull {
+        typeArguments.mapNotNull {
             if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {
                 it.type
             } else null
@@ -556,9 +556,9 @@ private class AnonymousTypesSubstitutor(
     private fun ConeKotlinType.hasRecursiveTypeArgument(
         visited: MutableSet<ConeKotlinType> = mutableSetOf(),
     ): Boolean {
-        if (typeArgumentsOfLowerBoundIfFlexible.isEmpty()) return false
+        if (typeArguments.isEmpty()) return false
         if (!visited.add(this)) return true
-        for (projection in typeArgumentsOfLowerBoundIfFlexible) {
+        for (projection in typeArguments) {
             // E.g., Test : Comparable<Test>
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: continue
             // E.g., Comparable<Test>

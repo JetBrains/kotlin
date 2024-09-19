@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -20,12 +22,14 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
+import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
+import org.jetbrains.kotlin.psi.KtParameter
 
 object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
@@ -115,7 +119,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
     private val FirValueParameter.varargElementType
         get() = when {
             !isVararg -> null
-            else -> returnTypeRef.coneType.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.type
+            else -> returnTypeRef.coneType.typeArguments.firstOrNull()?.type
         }
 
     private fun FirDeclaration.checkEnumEntry(context: CheckerContext, reporter: DiagnosticReporter) {

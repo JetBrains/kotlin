@@ -988,7 +988,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 source = this@withTypeArgumentsForBareType.source
                 diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
             }
-        return if (newType.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) this else withReplacedConeType(newType)
+        return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
     }
 
     override fun transformTypeOperatorCall(

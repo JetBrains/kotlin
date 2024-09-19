@@ -312,7 +312,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             return Triple(
                 null,
                 argumentList.arguments.getOrNull(0),
-                variableForInvokeType.typeArgumentsOfLowerBoundIfFlexible.getOrNull(0) as? ConeKotlinType
+                variableForInvokeType.typeArguments.getOrNull(0) as? ConeKotlinType
             )
         }
 

@@ -89,7 +89,7 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
 
         override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
             if (type !is ConeKotlinType) return
-            if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) {
+            if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {
                 writeAsmType(asmType)
                 return
             }
@@ -125,7 +125,7 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
 
         private fun ConeKotlinType.buildPossiblyInnerType(): PossiblyInnerConeType {
             fun createForError(): PossiblyInnerConeType {
-                return PossiblyInnerConeType(classifier = null, typeArgumentsOfLowerBoundIfFlexible.toList(), outerType = null)
+                return PossiblyInnerConeType(classifier = null, typeArguments.toList(), outerType = null)
             }
 
             if (this !is ConeClassLikeType) return createForError()

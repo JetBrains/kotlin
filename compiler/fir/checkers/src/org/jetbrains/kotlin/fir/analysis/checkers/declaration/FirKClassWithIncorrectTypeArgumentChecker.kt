@@ -35,7 +35,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         val returnType = declaration.returnTypeRef.coneType
         if (returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) typeArgumentsWithWrongType.add(returnType)
 
-        returnType.typeArgumentsOfLowerBoundIfFlexible.forEach {
+        returnType.typeArguments.forEach {
             val type = it.type ?: return@forEach
             if (type.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext))
                 typeArgumentsWithWrongType.add(type)
@@ -43,14 +43,14 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
 
         if (typeArgumentsWithWrongType.isEmpty()) return
         typeArgumentsWithWrongType.forEach {
-            val typeParameterFromError = (it.typeArgumentsOfLowerBoundIfFlexible[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
+            val typeParameterFromError = (it.typeArguments[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
             reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError, context)
         }
     }
 
     private fun ConeKotlinType.isKClassTypeWithErrorOrNullableArgument(context: ConeInferenceContext): Boolean {
         if (!this.isKClassType()) return false
-        val argumentType = typeArgumentsOfLowerBoundIfFlexible.toList().singleOrNull()?.let {
+        val argumentType = typeArguments.toList().singleOrNull()?.let {
             when (it) {
                 is ConeStarProjection -> null
                 is ConeKotlinTypeProjection -> it.type

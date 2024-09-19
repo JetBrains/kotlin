@@ -95,13 +95,13 @@ private fun buildDeepSubstitutionMultimap(
 
             val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
             if (!fullyExpandedType.isEnum && superClassSymbol != null) {
-                fillInDeepSubstitutor(fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible, superClassSymbol, context)
+                fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol, context)
             }
         }
     }
 
     for ((typeRef, regularClassSymbol) in firTypeRefClasses) {
-        fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType(session)?.typeArgumentsOfLowerBoundIfFlexible, regularClassSymbol, context)
+        fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType(session)?.typeArguments, regularClassSymbol, context)
     }
     return result
 }

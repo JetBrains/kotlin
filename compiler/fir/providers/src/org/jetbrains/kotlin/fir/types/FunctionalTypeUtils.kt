@@ -141,8 +141,8 @@ fun ConeKotlinType.createFunctionTypeWithNewKind(
     updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
 ): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
-    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArgumentsOfLowerBoundIfFlexible.size - 1))
-    val typeArguments = expandedType.typeArgumentsOfLowerBoundIfFlexible
+    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
+    val typeArguments = expandedType.typeArguments
     return functionTypeId.toLookupTag().constructClassType(
         updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
         isMarkedNullable = expandedType.isMarkedOrFlexiblyNullable,
@@ -277,7 +277,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
 fun ConeKotlinType.contextReceiversTypes(session: FirSession): List<ConeKotlinType> {
     if (!isSomeFunctionType(session)) return emptyList()
     return fullyExpandedType(session).let { expanded ->
-        val contextReceivers = expanded.typeArgumentsOfLowerBoundIfFlexible.take(expanded.contextReceiversNumberForFunctionType)
+        val contextReceivers = expanded.typeArguments.take(expanded.contextReceiversNumberForFunctionType)
         contextReceivers.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
     }
 }
@@ -285,7 +285,7 @@ fun ConeKotlinType.contextReceiversTypes(session: FirSession): List<ConeKotlinTy
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (!isSomeFunctionType(session) || !isExtensionFunctionType(session)) return null
     return fullyExpandedType(session).let { expanded ->
-        expanded.typeArgumentsOfLowerBoundIfFlexible[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
+        expanded.typeArguments[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
     }
 }
 

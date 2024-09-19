@@ -138,8 +138,8 @@ fun FirFunctionSymbol<*>.isMain(session: FirSession): Boolean {
         }
         1 -> {
             val type = parameterTypes.single()
-            if (!type.isArrayType || type.typeArgumentsOfLowerBoundIfFlexible.size != 1) return false
-            val elementType = type.typeArgumentsOfLowerBoundIfFlexible[0].takeIf { it.kind != ProjectionKind.IN }?.type
+            if (!type.isArrayType || type.typeArguments.size != 1) return false
+            val elementType = type.typeArguments[0].takeIf { it.kind != ProjectionKind.IN }?.type
                 ?: return false
             if (!elementType.isString) return false
         }

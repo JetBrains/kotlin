@@ -271,7 +271,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
                 val singleParameterReturnTypeRef = typedEquals.valueParameters.single().returnTypeRef
-                if (singleParameterReturnTypeRef.coneType.typeArgumentsOfLowerBoundIfFlexible.any { !it.isStarProjection }) {
+                if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
                     reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
                 }
             }
@@ -302,7 +302,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
-        if (this.typeArgumentsOfLowerBoundIfFlexible.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
+        if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
             return false
 
         val arrayElementType = arrayElementType() ?: return false

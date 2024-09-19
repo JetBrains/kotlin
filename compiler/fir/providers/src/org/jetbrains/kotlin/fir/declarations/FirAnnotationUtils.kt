@@ -175,7 +175,7 @@ fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlin
 }
 
 fun FirGetClassCall.getTargetType(): ConeKotlinType? {
-    return resolvedType.typeArgumentsOfLowerBoundIfFlexible.getOrNull(0)?.type
+    return resolvedType.typeArguments.getOrNull(0)?.type
 }
 
 data class EnumValueArgumentInfo(val enumClassId: ClassId?, val enumEntryName: Name)

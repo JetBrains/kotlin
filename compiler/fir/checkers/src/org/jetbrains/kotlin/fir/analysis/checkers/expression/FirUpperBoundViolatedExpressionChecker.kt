@@ -45,7 +45,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
             // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
             // seems like the type is already expended.
-            typeArguments = constructedType.typeArgumentsOfLowerBoundIfFlexible.map {
+            typeArguments = constructedType.typeArguments.map {
                 it.withSourceRecursive(expression)
             }
 

@@ -27,7 +27,7 @@ class DataFrameLikeReturnTypeInjector(session: FirSession) : FirExpressionResolu
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.resolvedType
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-        val rootMarker = callReturnType.typeArgumentsOfLowerBoundIfFlexible[0]
+        val rootMarker = callReturnType.typeArguments[0]
         if (rootMarker !is ConeClassLikeType) {
             return emptyList()
         }

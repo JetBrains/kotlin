@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -244,7 +245,7 @@ private class FirConstCheckVisitor(
             return ConstantArgumentKind.NOT_CONST
 
         while (coneType.classId == StandardClassIds.Array)
-            coneType = (coneType.lowerBoundIfFlexible().typeArgumentsOfLowerBoundIfFlexible.first() as? ConeKotlinTypeProjection)?.type ?: break
+            coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
 
         val argument = getClassCall.argument
         return when {

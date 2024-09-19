@@ -270,7 +270,7 @@ class ErrorTypeCorrector(
 
         typeParameters.forEachIndexed { index, typeParameter ->
             val name = typeParameter.name ?: return@forEachIndexed
-            substitutionMap[name] = Triple(typeParameter, arguments[index], coneType?.typeArgumentsOfLowerBoundIfFlexible?.getOrNull(index))
+            substitutionMap[name] = Triple(typeParameter, arguments[index], coneType?.typeArguments?.getOrNull(index))
         }
 
         return substitutionMap

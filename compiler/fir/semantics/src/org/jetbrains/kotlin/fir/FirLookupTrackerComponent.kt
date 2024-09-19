@@ -101,7 +101,7 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
     type.classId?.let { classId ->
         recordClassLikeLookup(classId, source, fileSource)
     }
-    type.typeArgumentsOfLowerBoundIfFlexible.forEach {
+    type.typeArguments.forEach {
         if (it is ConeKotlinType) recordTypeResolveAsLookup(it, source, fileSource)
     }
 }

@@ -1258,7 +1258,7 @@ open class FirDeclarationsResolveTransformer(
     ): List<FirValueParameter> {
         if (expectedType == null) return lambda.valueParameters
         if (!expectedType.isNonReflectFunctionType(session)) return lambda.valueParameters
-        val parameterTypes = expectedType.typeArgumentsOfLowerBoundIfFlexible
+        val parameterTypes = expectedType.typeArguments
             .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.coneType }
             .also { it.removeLastOrNull() }
         if (expectedType.isExtensionFunctionType) {

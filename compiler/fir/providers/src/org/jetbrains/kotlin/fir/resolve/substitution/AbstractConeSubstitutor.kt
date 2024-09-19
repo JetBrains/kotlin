@@ -121,7 +121,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return null
     }
 
-    private fun ConeClassLikeType.substituteArguments(): ConeKotlinType? {
+    private fun ConeSimpleKotlinType.substituteArguments(): ConeKotlinType? {
         val newArguments by lazy { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 

@@ -46,7 +46,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
             symbol, context.session,
             unwrapExplicitTypeArgumentForMadeFlexibleSynthetically = true,
         )
-        val expectedReturnType = parameterFunctionType.typeArgumentsOfLowerBoundIfFlexible.lastOrNull()?.type?.let(substitutor::substituteOrSelf) ?: return
+        val expectedReturnType = parameterFunctionType.typeArguments.lastOrNull()?.type?.let(substitutor::substituteOrSelf) ?: return
 
         for (returnedExpression in lambda.anonymousFunction.getReturnedExpressions()) {
             val returnedExpressionType = returnedExpression.resolvedType

@@ -137,7 +137,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
-    if (this.typeArgumentsOfLowerBoundIfFlexible === arguments) {
+    if (this.typeArguments === arguments) {
         /**
          * This early return allows to handle [ConeIntersectionType], [ConeTypeVariableType], [ConeStubType],
          * [ConeIntegerLiteralType], [ConeCapturedType], [ConeTypeParameterType], [ConeDynamicType]
@@ -169,7 +169,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
 }
 
 inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T {
-    val typeArguments = typeArgumentsOfLowerBoundIfFlexible
+    val typeArguments = typeArguments
     return withArguments(Array(typeArguments.size) { replacement(typeArguments[it]) })
 }
 
@@ -387,16 +387,16 @@ fun ConeTypeContext.captureFromArgumentsInternal(type: ConeRigidType, status: Ca
 }
 
 fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus): Array<ConeKotlinType>? {
-    val argumentsCount = type.typeArgumentsOfLowerBoundIfFlexible.size
+    val argumentsCount = type.typeArguments.size
     if (argumentsCount == 0) return null
 
     val typeConstructor = type.typeConstructor()
     if (argumentsCount != typeConstructor.parametersCount()) return null
 
-    if (type.typeArgumentsOfLowerBoundIfFlexible.all { it.kind == ProjectionKind.INVARIANT }) return null
+    if (type.typeArguments.all { it.kind == ProjectionKind.INVARIANT }) return null
 
     val newArguments: Array<ConeKotlinType> = Array(argumentsCount) { index ->
-        val argument = type.typeArgumentsOfLowerBoundIfFlexible[index]
+        val argument = type.typeArguments[index]
         if (argument.kind == ProjectionKind.INVARIANT) return@Array argument.type!!
 
         val lowerType = if (argument.kind == ProjectionKind.IN) {
@@ -414,7 +414,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
     val substitutor = substitutorByMap(substitution, session)
 
     for (index in 0 until argumentsCount) {
-        val oldArgument = type.typeArgumentsOfLowerBoundIfFlexible[index]
+        val oldArgument = type.typeArguments[index]
         val newArgument = newArguments[index]
 
         if (oldArgument.kind == ProjectionKind.INVARIANT) continue
@@ -530,7 +530,7 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
             is ConeFlexibleType -> {
                 val typesToCapture = getTypesToCapture(type.lowerBound) + getTypesToCapture(type.upperBound)
                 typesToCapture.distinctBy {
-                    (ConeFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(it) ?: it.typeConstructor(this)) to it.typeArgumentsOfLowerBoundIfFlexible
+                    (ConeFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(it) ?: it.typeConstructor(this)) to it.typeArguments
                 }
             }
 
@@ -554,8 +554,8 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
 
 private class CapturedArguments(val capturedArguments: Array<out ConeTypeProjection>, private val originalType: ConeKotlinType) {
     fun isSuitableForType(type: ConeKotlinType, context: ConeTypeContext): Boolean {
-        val areArgumentsMatched = type.typeArgumentsOfLowerBoundIfFlexible.withIndex().all { (i, typeArgumentsType) ->
-            originalType.typeArgumentsOfLowerBoundIfFlexible.size > i && typeArgumentsType == originalType.typeArgumentsOfLowerBoundIfFlexible[i]
+        val areArgumentsMatched = type.typeArguments.withIndex().all { (i, typeArgumentsType) ->
+            originalType.typeArguments.size > i && typeArgumentsType == originalType.typeArguments[i]
         }
 
         if (!areArgumentsMatched) return false
@@ -604,7 +604,7 @@ private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSess
     }
 
     classSymbol.typeParameterSymbols.forEachIndexed { idx, typeParameterSymbol ->
-        val typeProjection = expandedType.typeArgumentsOfLowerBoundIfFlexible[idx]
+        val typeProjection = expandedType.typeArguments[idx]
 
         if (typeProjection.isStarProjection) {
             return true

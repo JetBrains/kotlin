@@ -74,7 +74,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
             // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
-            fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible.forEach {
+            fullyExpandedType.typeArguments.forEach {
                 if (it is ConeKotlinType) checkArgumentAndReport(it, typeParameter, source, isExplicit, isArray = true, context, reporter)
             }
             return

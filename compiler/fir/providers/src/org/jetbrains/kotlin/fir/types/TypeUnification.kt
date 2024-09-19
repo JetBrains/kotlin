@@ -106,17 +106,17 @@ fun FirSession.doUnify(
     if (originalType == null || typeWithParameters == null) return true
 
     // Foo<A> ~ Foo<B, C>
-    if (originalType.typeArgumentsOfLowerBoundIfFlexible.size != typeWithParameters.typeArgumentsOfLowerBoundIfFlexible.size) {
+    if (originalType.typeArguments.size != typeWithParameters.typeArguments.size) {
         return true
     }
 
     // Foo ~ Foo
-    if (originalType.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) {
+    if (originalType.typeArguments.isEmpty()) {
         return true
     }
 
     // Foo<...> ~ Foo<...>
-    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArgumentsOfLowerBoundIfFlexible.zip(typeWithParameters.typeArgumentsOfLowerBoundIfFlexible)) {
+    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
         if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result)) return false
     }
 

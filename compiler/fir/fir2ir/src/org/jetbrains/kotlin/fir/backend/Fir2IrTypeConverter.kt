@@ -177,7 +177,7 @@ class Fir2IrTypeConverter(
                 IrSimpleTypeImpl(
                     irSymbol,
                     hasQuestionMark = approximatedType.isMarkedNullable,
-                    arguments = approximatedType.typeArgumentsOfLowerBoundIfFlexible.map { it.toIrTypeArgument(typeOrigin) },
+                    arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeOrigin) },
                     annotations = typeAnnotations
                 )
             }
@@ -258,10 +258,13 @@ class Fir2IrTypeConverter(
     }
 
     private fun ConeFlexibleType.hasFlexibleArrayElementVariance(): Boolean =
-        lowerBound.classId == StandardClassIds.Array &&
-                lowerBound.typeArgumentsOfLowerBoundIfFlexible.single().kind == ProjectionKind.INVARIANT &&
-                upperBound.classId == StandardClassIds.Array &&
-                upperBound.typeArgumentsOfLowerBoundIfFlexible.single().kind == ProjectionKind.OUT
+        lowerBound.let { lowerBound ->
+            lowerBound.classLikeLookupTagIfAny?.classId == StandardClassIds.Array &&
+                    lowerBound.typeArguments.single().kind == ProjectionKind.INVARIANT
+        } && upperBound.let { upperBound ->
+            upperBound.classLikeLookupTagIfAny?.classId == StandardClassIds.Array &&
+                    upperBound.typeArguments.single().kind == ProjectionKind.OUT
+        }
 
     private fun approximateUpperBounds(resolvedBounds: List<FirResolvedTypeRef>): IrType {
         val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.coneType })!!
@@ -306,7 +309,7 @@ class Fir2IrTypeConverter(
     private fun ConeKotlinType.isRecursive(visited: MutableSet<ConeCapturedType>): Boolean =
         when (this) {
             is ConeLookupTagBasedType -> {
-                typeArgumentsOfLowerBoundIfFlexible.any {
+                typeArguments.any {
                     when (it) {
                         is ConeKotlinType -> it.isRecursive(visited)
                         is ConeKotlinTypeProjectionIn -> it.type.isRecursive(visited)

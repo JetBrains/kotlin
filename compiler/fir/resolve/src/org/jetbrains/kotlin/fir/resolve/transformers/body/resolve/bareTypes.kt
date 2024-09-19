@@ -23,7 +23,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
 
     if (originalType is ConeIntersectionType) {
         val candidatesFromIntersectedTypes = originalType.intersectedTypes.mapNotNull { computeRepresentativeTypeForBareType(type, it) }
-        candidatesFromIntersectedTypes.firstOrNull { it.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty() }?.let { return it }
+        candidatesFromIntersectedTypes.firstOrNull { it.typeArguments.isNotEmpty() }?.let { return it }
         return candidatesFromIntersectedTypes.firstOrNull()
     }
 

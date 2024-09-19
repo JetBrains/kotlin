@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.typeArguments
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
@@ -24,7 +24,7 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
         val usedTypes = HashSet<ConeKotlinType>()
         fun collectAllTypes(type: ConeKotlinType) {
             if (usedTypes.add(type)) {
-                type.typeArgumentsOfLowerBoundIfFlexible.forEach { it.type?.let(::collectAllTypes) }
+                type.typeArguments.forEach { it.type?.let(::collectAllTypes) }
                 if (type is ConeTypeParameterType) {
                     boundsByName[type.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
                 }

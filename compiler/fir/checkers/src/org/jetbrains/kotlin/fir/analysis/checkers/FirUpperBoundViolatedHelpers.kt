@@ -113,7 +113,7 @@ fun checkUpperBoundViolated(
         val argumentSource = sourceAttribute?.source
 
         if (argumentType != null && isExplicitTypeArgumentSource(argumentSource)) {
-            if (!isIgnoreTypeParameters || (argumentType.typeArgumentsOfLowerBoundIfFlexible.isEmpty() && argumentType !is ConeTypeParameterType)) {
+            if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =
                     typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })
                 val upperBound = substitutor.substituteOrSelf(intersection)
