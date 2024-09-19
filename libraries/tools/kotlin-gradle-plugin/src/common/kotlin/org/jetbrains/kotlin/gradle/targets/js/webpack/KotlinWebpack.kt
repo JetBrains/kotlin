@@ -38,10 +38,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.archivesName
-import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 import javax.inject.Inject
 
@@ -98,18 +94,19 @@ constructor(
     @get:NormalizeLineEndings
     val inputFiles: FileTree
         get() = objects.fileTree()
-            // in webpack.config.js there is path relative to npmProjectDir (kotlin/<module>.js).
-            // And we need have relative path in build cache
-            // That's why we use npmProjectDir with filter instead of just inputFilesDirectory,
-            // if we would use inputFilesDirectory, we will get in cache just file names,
-            // and if directory is changed to kotlin2, webpack config will be invalid.
-            .from(npmProjectDir)
-            .matching {
-                it.include { element: FileTreeElement ->
-                    val inputFilesDirectory = inputFilesDirectory.get().asFile
-                    element.file == inputFilesDirectory ||
-                            element.file.parentFile == inputFilesDirectory
-                }
+            .let { fileTree ->
+                val inputFilesDirectory = inputFilesDirectory.get().asFile
+                // in webpack.config.js there is path relative to npmProjectDir (kotlin/<module>.js).
+                // And we need have relative path in build cache
+                // That's why we use npmProjectDir with filter instead of just inputFilesDirectory,
+                // if we would use inputFilesDirectory, we will get in cache just file names,
+                // and if directory is changed to kotlin2, webpack config will be invalid.
+                fileTree.from(npmProjectDir)
+                    .matching {
+                        it.include { element: FileTreeElement ->
+                            inputFilesDirectory.isParentOf(element.file)
+                        }
+                    }
             }
 
     @get:Input

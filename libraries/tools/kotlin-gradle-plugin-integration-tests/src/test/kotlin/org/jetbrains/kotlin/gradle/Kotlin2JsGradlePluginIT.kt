@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -1696,6 +1697,23 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     sourceMapConfig,
                     actual
                 )
+            }
+        }
+    }
+
+    @DisplayName("Check webpack update with per-file")
+    @GradleTest
+    @TestMetadata("js-per-file")
+    fun testWebpackUpdatePerFile(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":jsBrowserProductionWebpack")
+            }
+
+            projectPath.resolve("src/jsMain/kotlin/Main.kt").replaceText("CUSTOM TEXT", "CUSTOM TEXT 2")
+
+            build("assemble") {
+                assertTasksExecuted(":jsBrowserProductionWebpack")
             }
         }
     }
