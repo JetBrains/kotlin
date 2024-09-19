@@ -116,7 +116,10 @@ private class KtObjCExportHeaderGenerator(
     }
 
     private fun ObjCExportContext.translateExtensionsFacades(files: List<KtObjCExportFile>) {
-        translateToObjCExtensionFacades(files).forEach { facade ->
+        translateToObjCExtensionFacades(files).forEach { symbolToFacade ->
+            val symbol = symbolToFacade.key
+            val facade = symbolToFacade.value
+            translateClassOrObjectSymbol(symbol)
             addObjCStubIfNotTranslated(facade)
             enqueueDependencyClasses(facade)
             objCClassForwardDeclarations += facade.name
@@ -125,7 +128,6 @@ private class KtObjCExportHeaderGenerator(
 
     private fun ObjCExportContext.translateTopLevelFacade(file: KtObjCExportFile) {
         val resolvedFile = with(file) { analysisSession.resolve() }
-
         translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
             addObjCStubIfNotTranslated(topLevelFacade)
             enqueueDependencyClasses(topLevelFacade)

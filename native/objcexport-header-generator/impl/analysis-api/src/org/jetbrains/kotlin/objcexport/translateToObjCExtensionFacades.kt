@@ -9,14 +9,38 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 
 private const val extensionsCategoryName = "Extensions"
 
-internal val ObjCInterface.isExtensionsFacade: Boolean
-    get() = this.categoryName == extensionsCategoryName
+/**
+ * We iterate over all files to collect all extensions and group them by type symbol [KaClassSymbol]
+ * And finally merge extensions into facades
+ *
+ * File `Foo.kt`:
+ * ```kotlin
+ * fun String.foo()
+ * ```
+ * File `Bar.kt`
+ * ```kotlin
+ * fun String.bar()
+ * ```
+ * Result facade
+ * ```kotlin
+ * interface StringExtensions {
+ *  fun String.foo()
+ *  fun String.bar()
+ * }
+ * ```
+ */
+internal fun ObjCExportContext.translateToObjCExtensionFacades(files: List<KtObjCExportFile>): Map<KaClassSymbol, ObjCClass> {
+    return files
+        .flatMap { file -> translateToObjCExtensionFacades(with(file) { analysisSession.resolve() }).entries }
+        .groupBy({ it.key }, { it.value })
+        .mapValues { (_, facades) ->
+            mergeExtensionFacades(facades.first().name, facades) //all facades has the same name, so just pick first one
+        }
+}
 
 /**
  * Translates extension functions/properties inside the given [this] file as a single [ObjCInterface]
  * with category [extensionsCategoryName]
- *
- * Later interface should be forwarded using [isExtensionsFacade]
  *
  * ## example:
  * given a file "Foo.kt"
@@ -54,7 +78,7 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  *
  * See related [translateToObjCTopLevelFacade]
  */
-internal fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): List<ObjCClass> {
+private fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): Map<KaClassSymbol, ObjCClass> {
     val extensions = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
         .sortedWith(StableCallableOrder)
@@ -74,60 +98,12 @@ internal fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedO
             }
         }.mapNotNull { (name, symbols) -> if (name == null) null else name to symbols }
 
-    return extensions.flatMap { (objCName, extensionSymbols) ->
-        val extensionTypes = extensionSymbols
-            .map { it.receiverParameter?.returnType }
-            .mapNotNull { it?.symbol as? KaClassSymbol }
-            .mapNotNull { translateToObjCClass(it) }
-
+    return extensions.mapNotNull { (objCName, extensionSymbols) ->
+        val extensionType = extensionSymbols.map { it.receiverParameter?.returnType }.firstNotNullOf { it?.symbol as? KaClassSymbol }
         val translatedMembers = extensionSymbols.flatMap { ext -> translateToObjCExportStub(ext) }
-
-        if (translatedMembers.isEmpty()) {
-            extensionTypes
-        } else {
-            extensionTypes + buildExtensionFacade(objCName, translatedMembers)
-        }
-    }
-}
-
-/**
- * We iterate over all files to collect all extensions and group them by type name.
- * And finally merge extensions into facades
- *
- * File `Foo.kt`:
- * ```kotlin
- * fun String.foo()
- * ```
- * File `Bar.kt`
- * ```kotlin
- * fun String.bar()
- * ```
- * Result facade
- * ```kotlin
- * interface StringExtensions {
- *  fun String.foo()
- *  fun String.bar()
- * }
- * ```
- */
-internal fun ObjCExportContext.translateToObjCExtensionFacades(files: List<KtObjCExportFile>): List<ObjCClass> {
-
-    val result = mutableListOf<ObjCClass>()
-
-    val facadesMap = files.flatMap { file ->
-        val resolvedFile = with(file) { analysisSession.resolve() }
-        translateToObjCExtensionFacades(resolvedFile)
-    }.groupBy { it.name }
-
-    facadesMap.forEach {
-        val name = it.key
-        val facades = it.value
-        val (extensions, extendedTypes) = facades.partition { f -> f.isExtensionFacade }
-
-        result.add(mergeExtensionFacades(name, extensions))
-        result.addAll(extendedTypes)
-    }
-    return result
+        if (translatedMembers.isEmpty()) return@mapNotNull null
+        extensionType to buildExtensionFacade(objCName, translatedMembers)
+    }.toMap()
 }
 
 private fun buildExtensionFacade(objCName: String, members: List<ObjCExportStub>): ObjCClass {
@@ -144,9 +120,6 @@ private fun buildExtensionFacade(objCName: String, members: List<ObjCExportStub>
         superClassGenerics = emptyList()
     )
 }
-
-private val ObjCClass.isExtensionFacade: Boolean
-    get() = this is ObjCInterface && this.categoryName == extensionsCategoryName
 
 private fun mergeExtensionFacades(name: String, facades: List<ObjCClass>): ObjCClass {
     return buildExtensionFacade(name, facades.flatMap { f -> f.members })
