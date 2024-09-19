@@ -43,6 +43,29 @@ class SourceRootChecker {
         )
     )
 
+    val dokkaSampleConfiguration = DokkaConfigurationImpl(
+        sourceSets = listOf(
+            DokkaSourceSetImpl(
+                analysisPlatform = Platform.jvm,
+                displayName = "KotlinJvmSourceSet",
+                sourceSetID = KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID,
+                samples = setOf(File("/src/d1/d2")),
+            ),
+            DokkaSourceSetImpl(
+                analysisPlatform = Platform.jvm,
+                displayName = "KotlinJvmSourceSet2",
+                sourceSetID = KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID,
+                samples = setOf(File("/src/d1"), File("/src/d1/d2/d3/../d4")),
+            ),
+            DokkaSourceSetImpl(
+                analysisPlatform = Platform.jvm,
+                displayName = "KotlinJvmSourceSet3",
+                sourceSetID = KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID,
+                samples = setOf(File("/src/c")),
+            ),
+        )
+    )
+
     @Test
     @OnlySymbols("K1 supports all source roots including intersected ones")
     fun `pre-generation check should failed if source roots are intersected`() {
@@ -58,7 +81,31 @@ class SourceRootChecker {
             Pair(true, emptyList<String>())
         ) { acc, checker -> checker() + acc }
 
-        val expectedMessage = "Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common source roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module).".replace('/', File.separatorChar)
+        val expectedMessage =
+            "Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common source roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module). ".replace('/', File.separatorChar) +
+                    "\nAlso, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"
+        assertFalse(preGenerationCheckResult)
+        assertEquals(listOf(expectedMessage), checkMessages)
+    }
+
+    @Test
+    @OnlySymbols("K1 supports all source roots including intersected ones")
+    fun `pre-generation check should failed if samples are intersected`() {
+        val collectingLogger = CollectingDokkaConsoleLogger()
+
+        val context = DokkaContext.create(
+            configuration = dokkaSampleConfiguration,
+            logger = collectingLogger,
+            pluginOverrides = listOf()
+        )
+
+        val (preGenerationCheckResult, checkMessages) = context[CoreExtensions.preGenerationCheck].fold(
+            Pair(true, emptyList<String>())
+        ) { acc, checker -> checker() + acc }
+
+        val expectedMessage =
+            "Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common sample roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module). ".replace('/', File.separatorChar) +
+                    "\nAlso, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"
         assertFalse(preGenerationCheckResult)
         assertEquals(listOf(expectedMessage), checkMessages)
     }
@@ -78,7 +125,26 @@ class SourceRootChecker {
             Pair(true, emptyList<String>())
         ) { acc, checker -> checker() + acc }
         assertEquals(checkMessages, emptyList())
-        assertTrue(collectingLogger.collectedLogMessages.contains("Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common source roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module).".replace('/', File.separatorChar) + "\nIn Dokka K2 it will be an error. Also, please consider reporting your user case: https://github.com/Kotlin/dokka/issues"))
+        assertTrue(collectingLogger.collectedLogMessages.contains("Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common source roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module).".replace('/', File.separatorChar) + "\nIn Dokka K2 it will be an error. Also, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"))
+        assertTrue(preGenerationCheckResult)
+    }
+
+    @Test
+    @OnlyDescriptors("K1 supports all source roots including intersected ones")
+    fun `pre-generation check should log warning if samples are intersected`() {
+        val collectingLogger = CollectingDokkaConsoleLogger()
+
+        val context = DokkaContext.create(
+            configuration = dokkaSampleConfiguration,
+            logger = collectingLogger,
+            pluginOverrides = listOf()
+        )
+
+        val (preGenerationCheckResult, checkMessages) = context[CoreExtensions.preGenerationCheck].fold(
+            Pair(true, emptyList<String>())
+        ) { acc, checker -> checker() + acc }
+        assertEquals(checkMessages, emptyList())
+        assertTrue(collectingLogger.collectedLogMessages.contains("Source sets 'KotlinJvmSourceSet' and 'KotlinJvmSourceSet2' have the common sample roots: /src/d1/d2, /src/d1, /src/d1/d2/d4. Every Kotlin source file should belong to only one source set (module).".replace('/', File.separatorChar) + "\nIn Dokka K2 it will be an error. Also, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"))
         assertTrue(preGenerationCheckResult)
     }
 }
