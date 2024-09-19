@@ -28099,6 +28099,15 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @Tag("klib")
+        public class DefaultCompatibilityBridges {
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("frontend-fir")

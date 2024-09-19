@@ -140,18 +140,6 @@ public class FirPsiJvmIntegrationDiagnosticTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
-    @TestMetadata("clashWithNoCompatibility.kt")
-    public void testClashWithNoCompatibility() {
-      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/clashWithNoCompatibility.kt");
-    }
-
-    @Test
-    @TestMetadata("clashWithOld.kt")
-    public void testClashWithOld() {
-      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/clashWithOld.kt");
-    }
-
-    @Test
     @TestMetadata("compatibilityAgainstJava.kt")
     public void testCompatibilityAgainstJava() {
       runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/compatibilityAgainstJava.kt");

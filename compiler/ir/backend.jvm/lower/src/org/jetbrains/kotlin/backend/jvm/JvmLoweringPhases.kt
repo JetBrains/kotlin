@@ -78,6 +78,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
 
     ::InterfaceLowering,
     ::InheritedDefaultMethodsOnClassesLowering,
+    ::GenerateJvmDefaultCompatibilityBridges,
     ::InterfaceSuperCallsLowering,
     ::InterfaceDefaultCallsLowering,
     ::InterfaceObjectCallsLowering,

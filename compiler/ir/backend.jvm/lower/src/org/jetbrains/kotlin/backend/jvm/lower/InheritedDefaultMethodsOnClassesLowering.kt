@@ -249,7 +249,9 @@ internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : Ir
  * interface implementation should be generated into the class containing the fake override; or null if the given function is not a fake
  * override of any interface implementation or such method was already generated into the superclass or is a method from Any.
  */
-internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
+internal fun IrSimpleFunction.findInterfaceImplementation(
+    jvmDefaultMode: JvmDefaultMode, allowJvmDefault: Boolean = false,
+): IrSimpleFunction? {
     if (!isFakeOverride) return null
 
     val parent = parent
@@ -259,11 +261,12 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
 
     if (!implementation.hasInterfaceParent()
         || DescriptorVisibilities.isPrivate(implementation.visibility)
-        || implementation.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation)
         || implementation.isMethodOfAny()
     ) {
         return null
     }
+
+    if (!allowJvmDefault && implementation.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation)) return null
 
     // Only generate interface delegation for functions immediately inherited from an interface.
     // (Otherwise, delegation will be present in the parent class)

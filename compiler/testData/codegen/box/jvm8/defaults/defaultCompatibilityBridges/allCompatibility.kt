@@ -1,5 +1,6 @@
+// TARGET_BACKEND: JVM
 // MODULE: library
-// KOTLINC_ARGS: -Xjvm-default=disable
+// JVM_DEFAULT_MODE: disable
 // FILE: a.kt
 package base
 
@@ -9,14 +10,14 @@ interface Check {
     }
 
     var test: String
-        get() = "123"
+        get() = "fail"
         set(value) { value.length}
 }
 
 open class CheckClass : Check
 
 // MODULE: main(library)
-// KOTLINC_ARGS: -Xjvm-default=all
+// JVM_DEFAULT_MODE: all-compatibility
 // FILE: source.kt
 import base.*
 
@@ -32,4 +33,12 @@ interface SubCheck : Check {
         }
 }
 
-class <!EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE, EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE!>SubCheckClass<!> : CheckClass(), SubCheck
+class SubCheckClass : CheckClass(), SubCheck
+
+fun box(): String {
+    val c = SubCheckClass()
+    if (c.test() != "OK") return "Fail: " + c.test()
+
+    c.test = ""
+    return c.test
+}

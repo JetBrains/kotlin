@@ -26986,6 +26986,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      public class DefaultCompatibilityBridges {
+        @Test
+        public void testAllFilesPresentInDefaultCompatibilityBridges() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("legacy-frontend")
