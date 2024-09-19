@@ -49,6 +49,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     apiVersion = KotlinVersion.KOTLIN_2_0
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
+    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
 val configurationBuiltins = resolvingConfiguration("builtins") {
@@ -248,8 +249,6 @@ kotlin {
                         "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
                         diagnosticNamesArg,
                     )
-
-                    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
                 }
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
@@ -274,7 +273,6 @@ kotlin {
             @Suppress("DEPRECATION")
             val main by getting {
                 kotlinOptions.freeCompilerArgs += "-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME"
-                if (!kotlinBuildProperties.disableWerror) kotlinOptions.allWarningsAsErrors = true
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
                 }
