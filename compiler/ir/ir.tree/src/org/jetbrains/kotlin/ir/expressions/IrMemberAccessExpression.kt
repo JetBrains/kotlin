@@ -26,6 +26,11 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     protected abstract val typeArguments: Array<IrType?>
 
+    // Dummy values. Real ones will be provided in subsequent commits.
+    val targetContextParameterCount: Int get() = -1
+    val targetHasDispatchReceiver: Boolean get() = false
+    val targetHasExtensionReceiver: Boolean get() = false
+
     val valueArgumentsCount: Int
         get() = valueArguments.size
 

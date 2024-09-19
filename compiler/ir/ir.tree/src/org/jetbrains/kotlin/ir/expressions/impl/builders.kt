@@ -792,6 +792,10 @@ private fun IrFunctionSymbol.getRealOwner(): IrFunction {
     return symbol.owner
 }
 
+/**
+ * Note: This functions requires [symbol] to be bound.
+ * If it may be not, use [IrCallImplWithShape].
+ */
 fun IrCallImpl(
     startOffset: Int,
     endOffset: Int,
@@ -800,17 +804,21 @@ fun IrCallImpl(
     typeArgumentsCount: Int = symbol.getRealOwner().typeParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
-): IrCallImpl = IrCallImplWithShape(
+): IrCallImpl = IrCallImpl(
+    constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    typeArgumentsCount = typeArgumentsCount,
-    valueArgumentsCount = symbol.getRealOwner().valueParameters.size,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(symbol.getRealOwner().valueParameters.size),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 )
 
+/**
+ * Prefer [IrCallImpl], unless [symbol] may be unbound.
+ */
 fun IrCallImplWithShape(
     startOffset: Int,
     endOffset: Int,
@@ -818,6 +826,9 @@ fun IrCallImplWithShape(
     symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
+    contextParameterCount: Int,
+    hasDispatchReceiver: Boolean,
+    hasExtensionReceiver: Boolean,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl = IrCallImpl(
@@ -942,6 +953,11 @@ fun IrEnumConstructorCallImplWithShape(
     valueArguments = initializeParameterArguments(valueArgumentsCount),
 )
 
+
+/**
+ * Note: This functions requires [symbol] to be bound.
+ * If it may be not, use [IrFunctionReferenceImplWithShape].
+ */
 fun IrFunctionReferenceImpl(
     startOffset: Int,
     endOffset: Int,
@@ -950,17 +966,21 @@ fun IrFunctionReferenceImpl(
     typeArgumentsCount: Int,
     reflectionTarget: IrFunctionSymbol? = symbol,
     origin: IrStatementOrigin? = null,
-): IrFunctionReferenceImpl = IrFunctionReferenceImplWithShape(
+): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
+    constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    typeArgumentsCount = typeArgumentsCount,
-    valueArgumentsCount = symbol.getRealOwner().valueParameters.size,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(symbol.getRealOwner().valueParameters.size),
     reflectionTarget = reflectionTarget,
     origin = origin,
 )
 
+/**
+ * Prefer [IrFunctionReferenceImpl], unless [symbol] may be unbound.
+ */
 fun IrFunctionReferenceImplWithShape(
     startOffset: Int,
     endOffset: Int,
@@ -968,6 +988,9 @@ fun IrFunctionReferenceImplWithShape(
     symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
+    contextParameterCount: Int,
+    hasDispatchReceiver: Boolean,
+    hasExtensionReceiver: Boolean,
     reflectionTarget: IrFunctionSymbol? = symbol,
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
@@ -1038,17 +1061,19 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
     symbol: IrSimpleFunctionSymbol,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
-): IrCallImpl =
-    IrCallImplWithShape(
-        startOffset = startOffset,
-        endOffset = endOffset,
-        type = type,
-        symbol = symbol,
-        typeArgumentsCount = symbol.descriptor.typeParametersCount,
-        valueArgumentsCount = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+): IrCallImpl {
+    val descriptor = symbol.descriptor
+    return IrCallImplWithShape(
+        startOffset, endOffset, type, symbol,
+        typeArgumentsCount = descriptor.typeParametersCount,
+        valueArgumentsCount = descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+        contextParameterCount = descriptor.contextReceiverParameters.size,
+        hasDispatchReceiver = descriptor.dispatchReceiverParameter != null,
+        hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
         origin = origin,
-        superQualifierSymbol = superQualifierSymbol
+        superQualifierSymbol = superQualifierSymbol,
     )
+}
 
 fun IrCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
@@ -1188,15 +1213,21 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
     symbol: IrFunctionSymbol,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
-): IrFunctionReferenceImpl = IrFunctionReferenceImplWithShape(
-    startOffset = startOffset, endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-    typeArgumentsCount = symbol.descriptor.typeParametersCount,
-    valueArgumentsCount = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
-    reflectionTarget = reflectionTarget,
-    origin = origin
-)
+): IrFunctionReferenceImpl {
+    val descriptor = symbol.descriptor
+    return IrFunctionReferenceImplWithShape(
+        startOffset = startOffset, endOffset = endOffset,
+        type = type,
+        symbol = symbol,
+        typeArgumentsCount = descriptor.typeParametersCount,
+        valueArgumentsCount = descriptor.valueParameters.size + descriptor.contextReceiverParameters.size,
+        contextParameterCount = descriptor.contextReceiverParameters.size,
+        hasDispatchReceiver = descriptor.dispatchReceiverParameter != null,
+        hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
+        reflectionTarget = reflectionTarget,
+        origin = origin
+    )
+}
 
 fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
     startOffset: Int,

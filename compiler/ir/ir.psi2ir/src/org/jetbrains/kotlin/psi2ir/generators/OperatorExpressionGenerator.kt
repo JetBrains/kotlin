@@ -255,6 +255,9 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     origin = IrStatementOrigin.NOT_IN,
                     typeArgumentsCount = 0,
                     valueArgumentsCount = 0,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
                 ).apply {
                     dispatchReceiver = irContainsCall
                 }
@@ -290,6 +293,9 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     origin = IrStatementOrigin.EXCLEQEQ,
                     typeArgumentsCount = 0,
                     valueArgumentsCount = 0,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
                 ).apply {
                     dispatchReceiver = irIdentityEquals
                 }
@@ -336,6 +342,9 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     symbol = context.irBuiltIns.booleanNotSymbol,
                     typeArgumentsCount = 0,
                     valueArgumentsCount = 0,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
                     origin = IrStatementOrigin.EXCLEQ,
                 ).apply {
                     dispatchReceiver = irEquals

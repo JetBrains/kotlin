@@ -160,6 +160,9 @@ abstract class DataClassMembersGenerator(
                         symbol = context.irBuiltIns.booleanNotSymbol,
                         typeArgumentsCount = 0,
                         valueArgumentsCount = 0,
+                        contextParameterCount = 0,
+                        hasDispatchReceiver = true,
+                        hasExtensionReceiver = false,
                         origin = IrStatementOrigin.EXCLEQ,
                     ).apply<IrCallImpl> {
                         dispatchReceiver = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
@@ -201,6 +204,9 @@ abstract class DataClassMembersGenerator(
                     symbol = context.irBuiltIns.intPlusSymbol,
                     typeArgumentsCount = 0,
                     valueArgumentsCount = 1,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
                 ).apply {
                     dispatchReceiver = shiftedResult
                     putValueArgument(0, getHashCodeOfProperty(property))
@@ -265,6 +271,9 @@ abstract class DataClassMembersGenerator(
             type = context.irBuiltIns.intType,
             typeArgumentsCount = 0,
             valueArgumentsCount = 1,
+            contextParameterCount = 0,
+            hasDispatchReceiver = true,
+            hasExtensionReceiver = false,
         ).apply {
             dispatchReceiver = irGet(irResultVar)
             putValueArgument(0, irInt(31))
@@ -283,6 +292,9 @@ abstract class DataClassMembersGenerator(
             symbol = hashCodeFunctionSymbol,
             type = context.irBuiltIns.intType,
             valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
+            contextParameterCount = 0,
+            hasDispatchReceiver = hasDispatchReceiver,
+            hasExtensionReceiver = false,
             typeArgumentsCount = 0,
         ).apply {
             if (hasDispatchReceiver) {

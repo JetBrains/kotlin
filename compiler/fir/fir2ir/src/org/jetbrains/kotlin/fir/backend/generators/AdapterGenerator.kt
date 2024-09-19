@@ -778,7 +778,12 @@ internal class AdapterGenerator(
                             startOffset, endOffset, irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
                             IrCallImplWithShape(
                                 startOffset, endOffset, irFunctionType, builtins.checkNotNullSymbol,
-                                typeArgumentsCount = 1, valueArgumentsCount = 1, origin = IrStatementOrigin.EXCLEXCL
+                                typeArgumentsCount = 1,
+                                valueArgumentsCount = 1,
+                                contextParameterCount = 0,
+                                hasDispatchReceiver = false,
+                                hasExtensionReceiver = false,
+                                origin = IrStatementOrigin.EXCLEXCL
                             ).apply {
                                 putTypeArgument(0, irFunctionType)
                                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol))

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.buildStatement
 import org.jetbrains.kotlin.ir.builders.irIfThenMaybeElse
-import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.whenComma
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -230,6 +229,9 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                 origin = IrStatementOrigin.EXCL,
                 typeArgumentsCount = 0,
                 valueArgumentsCount = 0,
+                contextParameterCount = 0,
+                hasDispatchReceiver = true,
+                hasExtensionReceiver = false,
             ).apply {
                 dispatchReceiver = irInstanceOf
             }
@@ -258,6 +260,9 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                     origin = IrStatementOrigin.EXCL,
                     typeArgumentsCount = 0,
                     valueArgumentsCount = 0,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
                 ).apply {
                     dispatchReceiver = irInCall
                 }

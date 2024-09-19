@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -67,6 +66,9 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
                             expression.symbol,
                             expression.typeArgumentsCount,
                             newArgumentsSize,
+                            expression.targetContextParameterCount,
+                            expression.targetHasDispatchReceiver,
+                            expression.targetHasExtensionReceiver,
                             expression.origin,
                             superQualifierSymbol = expression.superQualifierSymbol
                         ).apply {

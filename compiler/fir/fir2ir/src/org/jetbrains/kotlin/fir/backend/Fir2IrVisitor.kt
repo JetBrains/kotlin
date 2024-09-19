@@ -1213,6 +1213,9 @@ class Fir2IrVisitor(
                         symbol = builtins.eqeqSymbol,
                         typeArgumentsCount = 0,
                         valueArgumentsCount = 2,
+                        contextParameterCount = 0,
+                        hasDispatchReceiver = false,
+                        hasExtensionReceiver = false,
                         origin = IrStatementOrigin.EQEQ,
                     ).apply {
                         putValueArgument(0, irGetLhsValue())
@@ -1273,7 +1276,10 @@ class Fir2IrVisitor(
                         startOffset, endOffset, builtins.nothingType,
                         builtins.noWhenBranchMatchedExceptionSymbol,
                         typeArgumentsCount = 0,
-                        valueArgumentsCount = 0
+                        valueArgumentsCount = 0,
+                        contextParameterCount = 0,
+                        hasDispatchReceiver = false,
+                        hasExtensionReceiver = false,
                     )
                     irBranches += IrElseBranchImpl(
                         IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true), irResult
@@ -1611,6 +1617,9 @@ class Fir2IrVisitor(
                 builtins.checkNotNullSymbol,
                 typeArgumentsCount = 1,
                 valueArgumentsCount = 1,
+                contextParameterCount = 0,
+                hasDispatchReceiver = false,
+                hasExtensionReceiver = false,
                 origin = IrStatementOrigin.EXCLEXCL
             ).apply {
                 putTypeArgument(0, checkNotNullCall.argument.resolvedType.toIrType(c).makeNotNull())

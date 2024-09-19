@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -261,6 +260,9 @@ class IrBodyDeserializer(
                 start, end, type,
                 symbol, proto.memberAccess.typeArgumentCount,
                 proto.memberAccess.valueArgumentList.size,
+                contextParameterCount = 0,
+                hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
+                hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
                 origin,
                 superSymbol
             )
@@ -378,6 +380,9 @@ class IrBodyDeserializer(
             symbol,
             proto.memberAccess.typeArgumentCount,
             proto.memberAccess.valueArgumentCount,
+            contextParameterCount = 0,
+            hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
+            hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
             reflectionTarget,
             origin
         )

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -462,7 +461,11 @@ internal class InsertImplicitCasts(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = true,
+            hasExtensionReceiver = false,
         ).also { irCall ->
             irCall.dispatchReceiver = this
         }
@@ -484,7 +487,11 @@ internal class InsertImplicitCasts(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = true,
         ).also { irCall ->
             irCall.extensionReceiver = this
         }

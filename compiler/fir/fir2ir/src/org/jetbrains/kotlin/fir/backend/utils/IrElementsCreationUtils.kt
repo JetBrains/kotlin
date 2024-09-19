@@ -86,6 +86,9 @@ fun Fir2IrComponents.createSafeCallConstruction(
                 builtins.eqeqSymbol,
                 valueArgumentsCount = 2,
                 typeArgumentsCount = 0,
+                contextParameterCount = 0,
+                hasDispatchReceiver = false,
+                hasExtensionReceiver = false,
                 origin = IrStatementOrigin.EQEQ
             ).apply {
                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
