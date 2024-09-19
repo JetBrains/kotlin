@@ -39,7 +39,8 @@ object StandardClassIds {
         BASE_ANNOTATION_PACKAGE,
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
-        BASE_COROUTINES_PACKAGE
+        BASE_COROUTINES_PACKAGE,
+        BASE_CONCURRENT_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()

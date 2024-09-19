@@ -87,6 +87,9 @@ object StandardNames {
     @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
 
+    @JvmField
+    val CONCURRENT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("concurrent"))
+
     val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
     @JvmField
@@ -97,7 +100,8 @@ object StandardNames {
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
         KOTLIN_INTERNAL_FQ_NAME,
-        COROUTINES_PACKAGE_FQ_NAME
+        COROUTINES_PACKAGE_FQ_NAME,
+        CONCURRENT_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -199,6 +203,14 @@ object StandardNames {
         @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
         @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
+        @JvmField val atomicInt: FqName = concurrent("AtomicInt")
+        @JvmField val atomicLong: FqName = concurrent("AtomicLong")
+        @JvmField val atomicBoolean: FqName = concurrent("AtomicBoolean")
+        @JvmField val atomicReference: FqName = concurrent("AtomicReference")
+        @JvmField val atomicIntArray: FqName = concurrent("AtomicIntArray")
+        @JvmField val atomicLongArray: FqName = concurrent("AtomicLongArray")
+        @JvmField val atomicArray: FqName = concurrent("AtomicArray")
+
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
         }
@@ -249,6 +261,10 @@ object StandardNames {
 
         private fun internalName(simpleName: String): FqName {
             return KOTLIN_INTERNAL_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun concurrent(simpleName: String): FqName {
+            return CONCURRENT_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
         }
     }
 
