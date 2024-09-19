@@ -190,7 +190,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
 
     private fun makeGetterAccessor(
         field: IrField,
-        parent: IrDeclarationParent,
+        parent: IrClass,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -207,7 +207,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    RECEIVER_VALUE_PARAMETER_NAME, (parent as IrClass).defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -245,7 +245,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
 
     private fun makeSetterAccessor(
         field: IrField,
-        parent: IrDeclarationParent,
+        parent: IrClass,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -262,7 +262,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    RECEIVER_VALUE_PARAMETER_NAME, (parent as IrClass).defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -296,10 +296,10 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         )
     }
 
-    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrDeclarationParent> {
+    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrClass> {
         val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
         val field = expression.symbol.owner
-        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo)
+        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
 
         return field to parent
     }

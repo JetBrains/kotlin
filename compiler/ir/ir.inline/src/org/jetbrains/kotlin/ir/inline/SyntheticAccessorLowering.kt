@@ -15,13 +15,17 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 /**
  * Generates synthetic accessor functions for private declarations that are referenced from non-private inline functions,
@@ -75,7 +79,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
 
     private fun narrowAccessorVisibilities(accessors: Collection<GeneratedAccessor>) {
         for (accessor in accessors) {
-            accessor.accessorFunction.visibility = accessor.computeNarrowedVisibility()
+            accessor.accessor.visibility = accessor.computeNarrowedVisibility()
         }
     }
 
@@ -102,50 +106,44 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
      * ```
      */
     private fun addAccessorsToParents(accessors: Collection<GeneratedAccessor>) {
-        for ((parent, accessorsInParent) in accessors.groupBy { it.accessorFunction.parent }) {
+        for ((parent, accessorsInParent) in accessors.groupBy { it.accessor.parent }) {
             addAccessorsToParent(parent as IrDeclarationContainer, accessorsInParent)
         }
     }
 
     private fun addAccessorsToParent(parent: IrDeclarationContainer, accessors: List<GeneratedAccessor>) {
         if (accessors.size == 1) {
-            parent.declarations += accessors[0].accessorFunction
+            parent.declarations += accessors[0].accessor
             return
         }
 
-        /**
-         * Note: The mapping between a single target declaration and a single accessor works well at this place.
-         * We don't have any cases when multiple accessors can be generated for a single target.
-         * Though, that's possible with field-getters (generating now) and field-setters (unsupported).
-         */
-        val targetToAccessorFunction: Map<IrDeclaration, IrFunction> = accessors.associate { accessor ->
-            accessor.targetSymbol.owner as IrDeclaration to accessor.accessorFunction
+        val targetToAccessor: Map<IrDeclaration, IrFunction> = accessors.associate { accessor ->
+            accessor.targetSymbol.owner as IrDeclaration to accessor.accessor
         }
 
-        val remainingAccessorFunctions: MutableSet<IrFunction> = accessors.mapTo(HashSet(), GeneratedAccessor::accessorFunction)
+        val remainingAccessors: MutableSet<IrFunction> = accessors.mapTo(HashSet(), GeneratedAccessor::accessor)
 
-        fun addAccessorFunctionToParent(maybeTarget: IrDeclaration?) {
+        fun addAccessorToParent(maybeTarget: IrDeclaration?) {
             if (maybeTarget == null) return
-            val accessorFunction = targetToAccessorFunction[maybeTarget] ?: return
-            parent.declarations += accessorFunction
-            remainingAccessorFunctions -= accessorFunction
+            val accessor = targetToAccessor[maybeTarget] ?: return
+            parent.declarations += accessor
+            remainingAccessors -= accessor
         }
 
         for (maybeTarget in parent.declarations.toList()) {
-            addAccessorFunctionToParent(maybeTarget)
+            addAccessorToParent(maybeTarget)
             if (maybeTarget is IrProperty) {
-                addAccessorFunctionToParent(maybeTarget.getter)
-                addAccessorFunctionToParent(maybeTarget.setter)
-                addAccessorFunctionToParent(maybeTarget.backingField)
+                addAccessorToParent(maybeTarget.getter)
+                addAccessorToParent(maybeTarget.setter)
             }
         }
 
-        if (remainingAccessorFunctions.isNotEmpty()) {
+        if (remainingAccessors.isNotEmpty()) {
             irError(
-                "There are ${remainingAccessorFunctions.size} synthetic accessors in file ${remainingAccessorFunctions.first().file.fileEntry.name}" +
+                "There are ${remainingAccessors.size} synthetic accessors in file ${remainingAccessors.first().file.fileEntry.name}" +
                         " that have been generated but it's not possible to compute the proper order for them"
             ) {
-                remainingAccessorFunctions.forEachIndexed { index, accessor -> withIrEntry("accessor$index", accessor) }
+                remainingAccessors.forEachIndexed { index, accessor -> withIrEntry("accessor$index", accessor) }
             }
         }
     }
@@ -171,7 +169,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
-            if (data == null || !expression.isNonLocalPrivateFunctionAccess())
+            if (data == null || !expression.symbol.owner.isRequiredToGenerateAccessor())
                 return super.visitFunctionAccess(expression, data)
 
             // Generate and memoize the accessor. The visibility can be narrowed later.
@@ -182,34 +180,13 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
                 inlineFunction = data.currentInlineFunction
             )
 
-            return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol), data)
-        }
-
-        /**
-         * Note: Only field-getter accessors are generated. Field-setter accessors are not supported, as we don't know
-         * real cases when it's necessary.
-         */
-        override fun visitGetField(expression: IrGetField, data: TransformerData?): IrExpression {
-            if (data == null || !expression.isNonLocalBackingFieldAccess())
-                return super.visitGetField(expression, data)
-
-            val accessor = accessorGenerator.getSyntheticGetter(expression, null)
-            generatedAccessors.memoize(
-                accessor,
-                targetSymbol = expression.symbol,
-                inlineFunction = data.currentInlineFunction
-            )
-
-            return super.visitExpression(accessorGenerator.modifyGetterExpression(expression, accessor.symbol), data)
+            val accessorExpression = accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol)
+            return super.visitFunctionAccess(accessorExpression, data)
         }
     }
 
     companion object {
-        private fun IrFunctionAccessExpression.isNonLocalPrivateFunctionAccess(): Boolean =
-            with(symbol.owner) { isPrivate(visibility) && !isLocal }
-
-        private fun IrFieldAccessExpression.isNonLocalBackingFieldAccess(): Boolean =
-            symbol.owner.correspondingPropertySymbol?.owner?.isLocal == false
+        private fun IrDeclarationWithVisibility.isRequiredToGenerateAccessor(): Boolean = isPrivate(visibility) && !isLocal
     }
 }
 
@@ -233,12 +210,12 @@ private class GeneratedAccessors {
 }
 
 /**
- * @property accessorFunction The generated synthetic accessor.
+ * @property accessor The generated synthetic accessor.
  * @property targetSymbol The symbol of a private declaration that this accessor wraps.
  * @property inlineFunctions All inline functions where the accessor is used.
  */
 private class GeneratedAccessor(
-    val accessorFunction: IrFunction,
+    val accessor: IrFunction,
     val targetSymbol: IrSymbol,
 ) {
     val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
