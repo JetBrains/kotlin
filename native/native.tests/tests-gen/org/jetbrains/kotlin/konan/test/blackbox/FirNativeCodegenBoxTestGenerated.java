@@ -42339,6 +42339,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("nullableNothingArrayAsStringArray.kt")
+      public void testNullableNothingArrayAsStringArray() {
+        runTest("compiler/testData/codegen/box/reified/nullableNothingArrayAsStringArray.kt");
+      }
+
+      @Test
       @TestMetadata("recursiveNewArray.kt")
       public void testRecursiveNewArray() {
         runTest("compiler/testData/codegen/box/reified/recursiveNewArray.kt");
