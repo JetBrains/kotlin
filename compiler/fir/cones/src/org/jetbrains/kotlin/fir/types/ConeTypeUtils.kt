@@ -104,7 +104,6 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
         is ConeFlexibleType -> lowerBound.contains(predicate, visited) || upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
-        is ConeCapturedType -> constructor.projection.type?.contains(predicate, visited) == true
         else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
     }
 }

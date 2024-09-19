@@ -188,7 +188,42 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {
-        return (this as ConeKotlinType).contains(predicate as (ConeKotlinType) -> Boolean)
+        return this.containsInternal(predicate)
+    }
+
+    private fun KotlinTypeMarker?.containsInternal(
+        predicate: (KotlinTypeMarker) -> Boolean,
+    ): Boolean {
+        if (this == null) return false
+
+        if (predicate(this)) return true
+
+        val flexibleType = this as? ConeFlexibleType
+        if (flexibleType != null
+            && (flexibleType.lowerBound.containsInternal(predicate) || flexibleType.upperBound.containsInternal(predicate))
+        ) {
+            return true
+        }
+
+
+        if (this is ConeDefinitelyNotNullType && this.original.containsInternal(predicate)) {
+            return true
+        }
+
+        if (this is ConeIntersectionType) {
+            return this.intersectedTypes.any { it.containsInternal(predicate) }
+        }
+
+        if (this is ConeCapturedType) {
+            return this.constructor.projection.type?.containsInternal(predicate) == true
+        }
+
+        repeat(argumentsCount()) { index ->
+            val argument = getArgument(index)
+            if (!argument.isStarProjection() && argument.getType().containsInternal(predicate)) return true
+        }
+
+        return false
     }
 
     override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
