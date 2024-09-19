@@ -3984,6 +3984,10 @@ public class kotlin/jvm/internal/MagicApiIntrinsics {
 	public static fun voidMagicApiCall (Ljava/lang/Object;)V
 }
 
+public final class kotlin/jvm/internal/MetadataDebugUtilKt {
+	public static final fun getDebugMetadataAsJson (Ljava/lang/Class;)Ljava/lang/String;
+}
+
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;

@@ -29,6 +29,7 @@ dependencies {
     embedded(project(":core:metadata.jvm"))
     embedded(protobufLite())
     testImplementation(kotlinTest("junit"))
+    testImplementation("com.google.code.gson:gson:2.8.9")
     testImplementation(libs.junit4)
     testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
