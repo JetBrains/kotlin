@@ -1,0 +1,16 @@
+file: AnotherName.class
+- KtLightClassForDecompiledFacade of PsiFile:AnotherName.class (origin: null)
+  annotations:
+  - Metadata
+  methods:
+  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:AnotherName.class (origin: FUN test in AnotherName.class)
+    parameters:
+    - PsiParameter
+file: AnotherName__MultifileClassInheritedKt.class
+- KtLightClassForDecompiledFacade of PsiFile:AnotherName__MultifileClassInheritedKt.class (origin: null)
+  annotations:
+  - Metadata
+  methods:
+  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:AnotherName__MultifileClassInheritedKt.class (origin: FUN test in AnotherName__MultifileClassInheritedKt.class)
+    parameters:
+    - PsiParameter

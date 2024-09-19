@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.AbstractBlubTest
 import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractAdditionalStubInfoKnmTest
 import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyFe10Test
 import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyK2Test
@@ -53,6 +54,15 @@ internal fun TestGroupSuite.generateDecompiledTests() {
 
         testClass<AbstractByDecompiledPsiStubBuilderK2CompilerTest> {
             model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/light-classes-for-decompiled/tests",
+        "analysis/decompiled/light-classes-for-decompiled/testData",
+    ) {
+        testClass<AbstractBlubTest> {
+            model("blub")
         }
     }
 

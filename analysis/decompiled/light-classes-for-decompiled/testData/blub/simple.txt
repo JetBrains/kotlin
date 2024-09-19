@@ -1,0 +1,11 @@
+file: SimpleKt.class
+- KtLightClassForDecompiledFacade of PsiFile:SimpleKt.class (origin: null)
+  annotations:
+  - Metadata
+  fields:
+  - KtLightFieldForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:SimpleKt.class (origin: PROPERTY x in SimpleKt.class)
+  methods:
+  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:SimpleKt.class (origin: PROPERTY x in SimpleKt.class)
+  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:SimpleKt.class (origin: FUN test in SimpleKt.class)
+    parameters:
+    - PsiParameter
