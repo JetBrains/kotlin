@@ -11,6 +11,6 @@ file: AnotherName__MultifileClassKt.class
   annotations:
   - Metadata
   methods:
-  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:AnotherName__MultifileClassKt.class (origin: FUN test in AnotherName__MultifileClassKt.class)
+  - KtLightMethodForDecompiledDeclaration of KtLightClassForDecompiledFacade of PsiFile:AnotherName__MultifileClassKt.class (origin: FUN test in AnotherName.class)
     parameters:
     - PsiParameter
