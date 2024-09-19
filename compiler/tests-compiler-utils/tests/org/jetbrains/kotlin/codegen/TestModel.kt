@@ -135,7 +135,13 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
 
 private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
 
-class ProjectInfoParser(infoFile: File, private val target: String?) : InfoParser<ProjectInfo>(infoFile) {
+enum class ModelTarget {
+    ANY,
+    JS,
+    WASM,
+}
+
+class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelTarget.ANY) : InfoParser<ProjectInfo>(infoFile) {
     private val moduleKindMap = mapOf(
         "plain" to ModuleKind.PLAIN,
         "commonjs" to ModuleKind.COMMON_JS,
@@ -157,7 +163,7 @@ class ProjectInfoParser(infoFile: File, private val target: String?) : InfoParse
             val split = line.split(":")
             val opWithTarget = split[0]
             val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
-            if (opTarget != null && opTarget != target) {
+            if (opTarget != ModelTarget.ANY && opTarget != target) {
                 ++lineCounter
                 return@loop false
             }
@@ -205,7 +211,7 @@ class ProjectInfoParser(infoFile: File, private val target: String?) : InfoParse
             val split = line.split(":")
             val opWithTarget = split[0]
             val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
-            if (opTarget != null && opTarget != target) return@loop false
+            if (opTarget != ModelTarget.ANY && opTarget != target) return@loop false
 
             when {
                 op == MODULES_LIST -> libraries += split[1].splitAndTrim()
@@ -245,7 +251,7 @@ class ProjectInfoParser(infoFile: File, private val target: String?) : InfoParse
     }
 }
 
-class ModuleInfoParser(infoFile: File, private val target: String) : InfoParser<ModuleInfo>(infoFile) {
+class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTarget.ANY) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
         val modifications = mutableListOf<ModuleInfo.Modification>()
@@ -292,7 +298,7 @@ class ModuleInfoParser(infoFile: File, private val target: String) : InfoParser<
             val opWithTarget = line.substring(0, opIndex)
 
             val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
-            if (opTarget != null && opTarget != target) {
+            if (opTarget != ModelTarget.ANY && opTarget != target) {
                 if (op == MODIFICATIONS) parseModifications()
                 return@loop false
             }
@@ -302,10 +308,10 @@ class ModuleInfoParser(infoFile: File, private val target: String) : InfoParser<
             val expectedState = DirtyFileState.entries.find { it.str == op }
             if (expectedState != null) {
                 val stats = expectedFileStats[expectedState.str]
-                if (stats == null) {
-                    expectedFileStats[expectedState.str] = getOpArgs().toSet()
+                expectedFileStats[expectedState.str] = if (stats == null) {
+                    getOpArgs().toSet()
                 } else {
-                    expectedFileStats[expectedState.str] = stats + getOpArgs()
+                    stats + getOpArgs()
                 }
             } else {
                 when (op) {
@@ -368,13 +374,15 @@ class ModuleInfoParser(infoFile: File, private val target: String) : InfoParser<
     }
 }
 
-private fun parseOpAndTarget(opWithTarget: String): Pair<String, String?>? {
-    val targetStartIndex = opWithTarget.indexOf("<")
-    val targetEndIndex = opWithTarget.indexOf(">")
-    if (targetEndIndex == -1) return opWithTarget to null
+private fun parseOpAndTarget(opWithTarget: String): Pair<String, ModelTarget>? {
+    val targetStartIndex = opWithTarget.indexOf('<')
+    val targetEndIndex = opWithTarget.indexOf('>')
+
+    if (targetEndIndex == -1) return opWithTarget to ModelTarget.ANY
+    if (targetStartIndex == -1) return null
     if (targetStartIndex + 1 >= targetEndIndex) return null
 
     val op = opWithTarget.substring(0, targetStartIndex).trim()
     val target = opWithTarget.substring(targetStartIndex + 1, targetEndIndex)
-    return op to target
+    return op to ModelTarget.valueOf(target.uppercase())
 }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
-import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
@@ -47,7 +46,7 @@ abstract class AbstractInvalidationTest(
     protected val targetBackend: TargetBackend,
     private val workingDirPath: String,
 ) {
-    protected abstract val targetName: String
+    protected abstract val modelTarget: ModelTarget
 
     protected abstract val outputDirPath: String
 
@@ -88,11 +87,11 @@ abstract class AbstractInvalidationTest(
     }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
-        return ProjectInfoParser(infoFile, targetName).parse(testName)
+        return ProjectInfoParser(infoFile, modelTarget).parse(testName)
     }
 
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
-        return ModuleInfoParser(infoFile, targetName).parse(moduleName)
+        return ModuleInfoParser(infoFile, modelTarget).parse(moduleName)
     }
 
     private val File.filesInDir

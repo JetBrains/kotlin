@@ -26,7 +26,7 @@ abstract class WasmAbstractInvalidationTest(
     workingDirPath: String,
 ) : AbstractInvalidationTest(targetBackend, workingDirPath) {
 
-    override val targetName: String = "wasm"
+    override val modelTarget: ModelTarget = ModelTarget.WASM
 
     override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
 

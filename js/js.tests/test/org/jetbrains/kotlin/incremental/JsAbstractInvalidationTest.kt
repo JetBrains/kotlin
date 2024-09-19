@@ -42,7 +42,7 @@ abstract class JsAbstractInvalidationTest(
         protected const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
-    override val targetName: String = "js"
+    override val modelTarget: ModelTarget = ModelTarget.JS
 
     override val outputDirPath = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
 
