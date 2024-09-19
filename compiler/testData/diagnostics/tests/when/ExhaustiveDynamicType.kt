@@ -1,4 +1,5 @@
 // DIAGNOSTICS: -UNSUPPORTED
+// LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-71601
 
 fun subject(): dynamic = null

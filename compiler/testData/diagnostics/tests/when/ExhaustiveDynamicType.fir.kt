@@ -1,10 +1,11 @@
 // DIAGNOSTICS: -UNSUPPORTED
+// LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-71601
 
 fun subject(): dynamic = null
 
 fun testNoCases() {
-    val result = when (subject()) {
+    val result = <!NO_ELSE_IN_WHEN!>when<!> (subject()) {
     }
 }
 
@@ -15,7 +16,7 @@ fun testElse() {
 }
 
 fun testAny() {
-    val result = when (subject()) {
+    val result = <!NO_ELSE_IN_WHEN!>when<!> (subject()) {
         is Any -> ""
     }
 }
