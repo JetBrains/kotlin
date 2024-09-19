@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
@@ -41,6 +40,7 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
+import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
 
 abstract class Kapt3BaseIT : KGPBaseTest() {
 
@@ -1417,14 +1417,26 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("KT-64719 KAPT stub generation should fail on files with syntax errors")
+    @DisplayName("KT-64719 KAPT stub generation should fail on files with declaration errors")
     @GradleTest
-    fun testTopLevelSyntaxError(gradleVersion: GradleVersion) {
+    open fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
-            javaSourcesDir().resolve("invalid.kt").writeText("fun foo() { !!! }")
+            javaSourcesDir().resolve("invalid.kt").writeText("TopLevelDeclarationExpected")
 
             buildAndFail(":kaptGenerateStubsKotlin") {
-                assertOutputContains("invalid.kt:1:16 Expecting an element")
+                assertOutputContains("invalid.kt:1:1 Expecting a top level declaration")
+            }
+        }
+    }
+
+    @DisplayName("KT-64719 KAPT stub generation should not fail on errors in bodies")
+    @GradleTest
+    fun testNotFailOnBodyLevelSyntaxError(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("invalid.kt").writeText("fun foo() { ElementExpectedError }")
+
+            build(":kaptGenerateStubsKotlin") {
+                assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/InvalidKt.java"))
             }
         }
     }

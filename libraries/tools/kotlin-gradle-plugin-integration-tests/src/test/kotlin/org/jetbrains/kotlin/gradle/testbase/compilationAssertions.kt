@@ -172,7 +172,7 @@ fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, expectedD
  * Asserts that the given .kt [sources] are compiled and processed by the KAPT.
  * @param taskPath The path to the Gradle task that invokes the compilation, optional.
  */
-fun BuildResult.assertCompiledKotlinSourcesHandleKapt3(
+fun BuildResult.assertCompiledKotlinSourcesHandleKapt(
     sources: List<Path>,
     taskPath: String = ""
 ) {
@@ -193,7 +193,7 @@ fun BuildResult.assertCompiledKotlinSourcesHandleKapt3(
  * Asserts that the given .kt test [sources] are compiled and processed by the KAPT.
  * @param taskPath The path to the Gradle task that invokes the compilation, optional.
  */
-fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt3(
+fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt(
     sources: List<Path>,
     taskPath: String = ""
 ) {

@@ -274,7 +274,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertIncrementalCompilation(expectedCompiledKotlinFiles = listOf(projectPath.relativize(fileToEdit)))
-                assertCompiledKotlinSourcesHandleKapt3(
+                assertCompiledKotlinSourcesHandleKapt(
                     listOf(projectPath.relativize(fileToEdit)),
                     ":app"
                 )
@@ -315,7 +315,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
 
-                assertCompiledKotlinTestSourcesAreHandledByKapt3(
+                assertCompiledKotlinTestSourcesAreHandledByKapt(
                     listOf(projectPath.relativize(testFileToEdit)),
                     ":app"
                 )

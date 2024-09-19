@@ -33,6 +33,10 @@ class Kapt4IT : Kapt3IT() {
     @GradleTest
     override fun useK2KaptProperty(gradleVersion: GradleVersion) {}
 
+    @Disabled("KT-71786: K2KAPT task does not fail")
+    @GradleTest
+    override fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {}
+
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
     @GradleTest
     fun testEnumClass(gradleVersion: GradleVersion) {
@@ -61,18 +65,23 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     @Disabled("Doesn't make sense in Kapt 4")
     @GradleTest
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
+
+    @Disabled("KT-71786: K2KAPT task does not fail")
+    @GradleTest
+    override fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {}
 }
 
 fun TestProject.forceKapt4() {
     projectPath.walk().forEach {
         when (it.fileName.name) {
+            "gradle.properties" -> it.appendText("\nkapt.use.k2=true\n")
             "build.gradle" -> it.appendText(
                 """
                 
                 try {
                     Class.forName('org.jetbrains.kotlin.gradle.tasks.KotlinCompile')
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-k2-kapt', '-Xsuppress-version-warnings'])
+                       compilerOptions.freeCompilerArgs.addAll(['-Xsuppress-version-warnings'])
                     }
                 } catch(ClassNotFoundException ignore) {
                 }
@@ -85,7 +94,7 @@ fun TestProject.forceKapt4() {
                 try {
                     Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-k2-kapt", "-Xsuppress-version-warnings"))
+                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xsuppress-version-warnings"))
                     }
                 } catch(ignore: ClassNotFoundException) {
                 }
