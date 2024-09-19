@@ -11,6 +11,7 @@ object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
+    val BASE_SEQUENCES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("sequences"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
     val BASE_ANNOTATIONS_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotations")).child(Name.identifier("jvm"))
@@ -24,6 +25,7 @@ object StandardClassIds {
     val BASE_CONTRACTS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("contracts"))
     val BASE_CONCURRENT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent"))
     val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
+    val BASE_TEXT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("text"))
 
     val builtInsPackagesWithDefaultNamedImport = setOf(
         BASE_KOTLIN_PACKAGE,

@@ -3413,6 +3413,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("isNullOrEmptyFromJava.kt")
+        public void testIsNullOrEmptyFromJava() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/isNullOrEmptyFromJava.kt");
+        }
+
+        @Test
         @TestMetadata("NotNullType.kt")
         public void testNotNullType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NotNullType.kt");
