@@ -1,5 +1,7 @@
+// TARGET_BACKEND: JVM
+// WITH_STDLIB
 // MODULE: library
-// KOTLINC_ARGS: -Xjvm-default=disable
+// JVM_DEFAULT_MODE: disable
 // FILE: a.kt
 package base
 
@@ -8,7 +10,7 @@ interface UExpression {
 }
 
 // MODULE: main(library)
-// KOTLINC_ARGS: -Xjvm-default=all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // FILE: source.kt
 import base.*
 

@@ -1,0 +1,50 @@
+Module: library
+@kotlin.Metadata
+public final class base/A$DefaultImpls {
+    // source: 'a.kt'
+    public static method f(@org.jetbrains.annotations.NotNull p0: base.A): void
+    public final inner class base/A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface base/A {
+    // source: 'a.kt'
+    public abstract method f(): void
+    public final inner class base/A$DefaultImpls
+}
+
+@kotlin.Metadata
+public class base/B {
+    // source: 'a.kt'
+    public method <init>(): void
+    public method f(): void
+    public final inner class base/A$DefaultImpls
+}
+Module: main
+@kotlin.Metadata
+public final class C$DefaultImpls {
+    // source: 'source.kt'
+    public deprecated static @java.lang.Deprecated method f(@org.jetbrains.annotations.NotNull p0: C): void
+    public final inner class C$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface C {
+    // source: 'source.kt'
+    public synthetic static method access$f$jd(p0: C): void
+    public method f(): void
+    public final inner class C$DefaultImpls
+}
+
+@kotlin.Metadata
+public abstract class D {
+    // source: 'source.kt'
+    public method <init>(): void
+    public abstract method f(): void
+}
+
+@kotlin.Metadata
+public abstract class E {
+    // source: 'source.kt'
+    public method <init>(): void
+}
