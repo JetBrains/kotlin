@@ -13,9 +13,9 @@ import java.io.File
  * It checks that different source sets should have disjoint source roots and samples.
  *
  *
- * K2's analysis API does not support having two different [org.jetbrains.kotlin.analysis.project.structure.KtSourceModule] with the same file system directory or intersecting files, it throws the error "Modules are inconsistent".
+ * K2's analysis API does not support having two different [org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule] with the same file system directory or intersecting files, it throws the error "Modules are inconsistent".
  *
- * @see org.jetbrains.kotlin.analysis.project.structure.KtModule.contentScope
+ * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.contentScope
  * @see org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider.getModule
  */
 internal class SourceRootIndependentChecker(
@@ -28,20 +28,27 @@ internal class SourceRootIndependentChecker(
         for (i in sourceSets.indices) {
             for (j in i + 1 until sourceSets.size) {
                 // check source roots
-                val sourceRoot1 = sourceSets[i].sourceRoots.normalize()
-                val sourceRoot2 = sourceSets[j].sourceRoots.normalize()
-                val intersection = intersect(sourceRoot1, sourceRoot2)
+                val intersection = intersect(sourceSets[i].sourceRoots, sourceSets[j].sourceRoots)
                 if (intersection.isNotEmpty()) {
-                    messages += "Source sets '${sourceSets[i].displayName}' and '${sourceSets[j].displayName}' have the common source roots: ${intersection.joinToString()}. Every Kotlin source file should belong to only one source set (module)."
+                    messages += "Source sets '${sourceSets[i].displayName}' and '${sourceSets[j].displayName}' have the common source roots: ${intersection.joinToString()}. Every Kotlin source file should belong to only one source set (module). \n" +
+                            "Also, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"
+                }
+
+                //check sample roots
+                val sampleIntersection = intersect(sourceSets[i].samples, sourceSets[j].samples)
+                if (sampleIntersection.isNotEmpty()) {
+                    messages += "Source sets '${sourceSets[i].displayName}' and '${sourceSets[j].displayName}' have the common sample roots: ${sampleIntersection.joinToString()}. Every Kotlin source file should belong to only one source set (module). \n" +
+                            "Also, please consider reporting your user case: https://github.com/Kotlin/dokka/issues/3701"
                 }
             }
         }
         return PreGenerationCheckerOutput(messages.isEmpty(), messages)
     }
 
+    private fun intersect(paths: Set<File>, paths2: Set<File>) : Set<File>  = intersectOfNormalizedPaths(paths.normalize(), paths2.normalize())
 
     private fun Set<File>.normalize() = mapTo(mutableSetOf()) { it.normalize() }
-    private fun intersect(normalizedPaths: Set<File>, normalizedPaths2: Set<File>): Set<File> {
+    private fun intersectOfNormalizedPaths(normalizedPaths: Set<File>, normalizedPaths2: Set<File>): Set<File> {
         val result = mutableSetOf<File>()
         for (p1 in normalizedPaths) {
             for (p2 in normalizedPaths2) {
