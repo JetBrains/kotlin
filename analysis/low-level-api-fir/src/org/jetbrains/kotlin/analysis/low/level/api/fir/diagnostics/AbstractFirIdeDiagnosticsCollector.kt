@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 
@@ -82,6 +86,12 @@ private object CheckersFactory {
             when {
                 platform.isJvm() -> add(JvmDeclarationCheckers)
                 platform.isJs() -> add(JsDeclarationCheckers)
+                platform.isWasm() -> {
+                    add(WasmBaseDeclarationCheckers)
+                    // TODO, KT-71596: Add proper selection of either of the following two
+                    // add(WasmJsDeclarationCheckers)
+                    // add(WasmWasiDeclarationCheckers)
+                }
                 platform.isNative() -> add(NativeDeclarationCheckers)
                 else -> {}
             }
@@ -107,6 +117,12 @@ private object CheckersFactory {
             when {
                 platform.isJvm() -> add(JvmExpressionCheckers)
                 platform.isJs() -> add(JsExpressionCheckers)
+                platform.isWasm() -> {
+                    add(WasmBaseExpressionCheckers)
+                    // TODO, KT-71596
+                    // add(WasmJsExpressionCheckers)
+                }
+                platform.isNative() -> add(NativeExpressionCheckers)
                 else -> {
                 }
             }
@@ -131,6 +147,8 @@ private object CheckersFactory {
             add(CommonTypeCheckers)
             when {
                 platform.isJvm() -> add(JvmTypeCheckers)
+                platform.isWasm() -> add(WasmBaseTypeCheckers)
+                platform.isNative() -> add(NativeTypeCheckers)
                 else -> {}
             }
             addAll(extensionCheckers.map { it.typeCheckers })

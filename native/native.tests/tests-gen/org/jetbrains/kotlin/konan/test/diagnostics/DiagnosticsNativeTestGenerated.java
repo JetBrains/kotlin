@@ -37,6 +37,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   }
 
   @Test
+  @TestMetadata("dynamic.kt")
+  public void testDynamic() {
+    runTest("compiler/testData/diagnostics/nativeTests/dynamic.kt");
+  }
+
+  @Test
   @TestMetadata("forwardDeclarations.kt")
   public void testForwardDeclarations() {
     runTest("compiler/testData/diagnostics/nativeTests/forwardDeclarations.kt");
