@@ -160,7 +160,7 @@ internal object UnhandledExceptionHookHolder {
 @ExportForCppRuntime
 @OptIn(ExperimentalNativeApi::class)
 internal fun OnUnhandledException(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.value
+    val handler = UnhandledExceptionHookHolder.hook.load()
     if (handler == null) {
         ReportUnhandledException(throwable);
         return
@@ -175,7 +175,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
 @OptIn(ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
+    val handler = UnhandledExceptionHookHolder.hook.load() ?: throw throwable
     handler(throwable)
 }
 

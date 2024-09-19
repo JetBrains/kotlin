@@ -39,24 +39,24 @@ class AtomicIntStressTest {
     @Test fun addAndGet() {
         val atomic = AtomicInt(10)
         val futures = ThreadPool.execute {
-            atomic.addAndGet(1000)
+            atomic.addAndFetch(1000)
         }
         futures.forEach {
             it.result
         }
-        assertEquals(10 + 1000 * futures.size, atomic.value)
+        assertEquals(10 + 1000 * futures.size, atomic.load())
     }
 
     @Test fun incrementAndGet() {
         val initial = 15
         val atomic = AtomicInt(initial)
         val futures = ThreadPool.execute {
-            atomic.incrementAndGet()
+            atomic.incrementAndFetch()
         }
         futures.forEach {
             it.result
         }
-        assertEquals(initial + futures.size, atomic.value)
+        assertEquals(initial + futures.size, atomic.load())
     }
 
     @Test fun mutex() {
@@ -67,7 +67,7 @@ class AtomicIntStressTest {
             // When it is negative - worker executes exclusively.
             val tag = index + 1
             while (place.compareAndExchange(tag, -tag) != tag) {}
-            assertEquals(index + 1, counter.incrementAndGet())
+            assertEquals(index + 1, counter.incrementAndFetch())
             // Now, let the next worker run.
             val previousPlace = place.compareAndExchange(-tag, tag + 1)
             assertEquals(-tag, previousPlace)
@@ -75,7 +75,7 @@ class AtomicIntStressTest {
         futures.forEach {
             it.result
         }
-        assertEquals(futures.size, counter.value)
+        assertEquals(futures.size, counter.load())
     }
 }
 
@@ -86,12 +86,12 @@ class AtomicLongStressTest {
     @Test fun addAndGet() {
         val atomic = AtomicLong(10L)
         val futures = ThreadPool.execute {
-            atomic.addAndGet(9999999999)
+            atomic.addAndFetch(9999999999)
         }
         futures.forEach {
             it.result
         }
-        assertEquals(10L + 9999999999 * futures.size, atomic.value)
+        assertEquals(10L + 9999999999 * futures.size, atomic.load())
     }
 }
 
@@ -100,11 +100,11 @@ private class LockFreeStack<T> {
 
     private class Node<T>(val value: T, val next: Node<T>?)
 
-    fun isEmpty(): Boolean = top.value == null
+    fun isEmpty(): Boolean = top.load() == null
 
     fun push(value: T) {
         while(true) {
-            val cur = top.value
+            val cur = top.load()
             val upd = Node(value, cur)
             if (top.compareAndSet(cur, upd)) return
         }
@@ -112,7 +112,7 @@ private class LockFreeStack<T> {
 
     fun pop(): T? {
         while(true) {
-            val cur = top.value
+            val cur = top.load()
             if (cur == null) return null
             if (top.compareAndSet(cur, cur.next)) return cur.value
         }
@@ -132,7 +132,7 @@ class AtomicStressTest {
         val seen = mutableListOf<Int>()
         futures.forEach {
             while(true) {
-                val current = common.value ?: continue
+                val current = common.load() ?: continue
                 // Each worker publishes exactly once
                 assertFalse(seen.contains(current.value))
                 seen.add(current.value)
@@ -172,16 +172,16 @@ class AtomicIntArrayStressTest {
         val intArr = AtomicIntArray(10)
         val futures = ThreadPool.execute {
             for (i in 0 until 500) {
-                val index = (0 until intArr.length).random()
-                intArr.incrementAndGet(index)
+                val index = (0 until intArr.size).random()
+                intArr.incrementAndFetchAt(index)
             }
         }
         futures.forEach {
             it.result
         }
         var sum = 0
-        for (i in 0 until intArr.length) {
-            sum += intArr[i]
+        for (i in 0 until intArr.size) {
+            sum += intArr.loadAt(i)
         }
         assertEquals(futures.size * 500, sum)
     }
@@ -195,16 +195,16 @@ class AtomicLongArrayStressTest {
         val longArr = AtomicLongArray(10)
         val futures = ThreadPool.execute {
             for (i in 0 until 500) {
-                val index = (0 until longArr.length).random()
-                longArr.incrementAndGet(index)
+                val index = (0 until longArr.size).random()
+                longArr.incrementAndFetchAt(index)
             }
         }
         futures.forEach {
             it.result
         }
         var sum = 0L
-        for (i in 0 until longArr.length) {
-            sum += longArr[i]
+        for (i in 0 until longArr.size) {
+            sum += longArr.loadAt(i)
         }
         assertEquals(futures.size.toLong() * 500, sum)
     }
@@ -218,11 +218,11 @@ class AtomicArrayStressTest {
         val refArr = AtomicArray(10) { Data(0) }
         val futures = ThreadPool.execute {
             for (i in 0 until 500) {
-                val index = (0 until refArr.length).random()
+                val index = (0 until refArr.size).random()
                 while(true) {
-                    val cur = refArr[index]
+                    val cur = refArr.loadAt(index)
                     val newValue = Data(cur.value + 1)
-                    if (refArr.compareAndSet(index, cur, newValue)) break
+                    if (refArr.compareAndSetAt(index, cur, newValue)) break
                 }
             }
         }
@@ -230,8 +230,8 @@ class AtomicArrayStressTest {
             it.result
         }
         var sum = 0
-        for (i in 0 until refArr.length) {
-            sum += refArr[i].value
+        for (i in 0 until refArr.size) {
+            sum += refArr.loadAt(i).value
         }
         assertEquals(futures.size * 500, sum)
     }
