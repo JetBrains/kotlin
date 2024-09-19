@@ -1951,7 +1951,7 @@ internal class CodeGeneratorVisitor(
         private val inlineFunctionScope by lazy {
             inlinedBlock.inlineFunctionSymbol?.owner.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
-                it.scope(fileEntry().line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
+                it.scope(fileEntry().line(it.startOffset))
             }
         }
 
