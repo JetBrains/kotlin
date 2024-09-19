@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/extraCheckers.kt
+-o
+simple
+-p
+library
+-Wextra
