@@ -247,10 +247,6 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             is FirCallableDeclaration -> {
                 returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
                 receiverParameter?.takeIf { it.typeRef.psi == typeReference }?.let { return it }
-
-                for (typeParameterRef in typeParameters) {
-                    typeParameterRef.findTypeRefAnchor(typeReference)?.let { return it }
-                }
             }
 
             is FirTypeParameter -> {
@@ -267,6 +263,12 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
             is FirTypeAlias -> {
                 expandedTypeRef.takeIf { it.psi == typeReference }?.let { return it }
+            }
+        }
+
+        if (this is FirTypeParameterRefsOwner) {
+            for (typeParameterRef in typeParameters) {
+                typeParameterRef.findTypeRefAnchor(typeReference)?.let { return it }
             }
         }
 
