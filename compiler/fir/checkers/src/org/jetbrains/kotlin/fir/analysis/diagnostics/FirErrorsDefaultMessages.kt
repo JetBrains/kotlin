@@ -522,6 +522,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_TO_INHERITANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_TO_INHERITANCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_USAGE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_WITHOUT_ARGUMENTS
@@ -1171,6 +1173,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // OptIn
         map.put(OPT_IN_USAGE, "{1}", CLASS_ID, STRING)
         map.put(OPT_IN_USAGE_ERROR, "{1}", CLASS_ID, STRING)
+
+        map.put(OPT_IN_TO_INHERITANCE, "{1}", CLASS_ID, STRING)
+        map.put(OPT_IN_TO_INHERITANCE_ERROR, "{1}", CLASS_ID, STRING)
 
         map.put(OPT_IN_OVERRIDE, "{1}", CLASS_ID, STRING)
         map.put(OPT_IN_OVERRIDE_ERROR, "{1}", CLASS_ID, STRING)

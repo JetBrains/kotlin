@@ -78,6 +78,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             FirErrors.DEPRECATION_ERROR,
             FirErrors.DIVISION_BY_ZERO,
             FirErrors.OPT_IN_USAGE_ERROR,
+            FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
             FirErrors.OPT_IN_OVERRIDE_ERROR,
             FirErrors.UNSAFE_CALL,
             FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,

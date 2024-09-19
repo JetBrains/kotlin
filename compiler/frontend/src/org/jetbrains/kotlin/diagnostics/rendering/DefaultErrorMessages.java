@@ -197,6 +197,9 @@ public class DefaultErrorMessages {
         MAP.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_USAGE_FUTURE_ERROR, "{1}", TO_STRING, STRING);
 
+        MAP.put(OPT_IN_TO_INHERITANCE, "{1}", TO_STRING, STRING);
+        MAP.put(OPT_IN_TO_INHERITANCE_ERROR, "{1}", TO_STRING, STRING);
+
         MAP.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING);
 

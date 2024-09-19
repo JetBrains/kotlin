@@ -45,6 +45,6 @@ abstract class AbstractSerializationFirPsiDiagnosticTest : AbstractFirPsiDiagnos
 
 private fun TestConfigurationBuilder.disableOptInErrors() {
     defaultDirectives {
-        DIAGNOSTICS with listOf("-OPT_IN_USAGE", "-OPT_IN_USAGE_ERROR")
+        DIAGNOSTICS with listOf("-OPT_IN_USAGE", "-OPT_IN_USAGE_ERROR", "-OPT_IN_TO_INHERITANCE", "-OPT_IN_TO_INHERITANCE_ERROR")
     }
 }

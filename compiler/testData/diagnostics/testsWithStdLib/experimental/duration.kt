@@ -9,6 +9,6 @@ data class Some(val duration: Duration = Duration.INFINITE)
 fun foo(duration: Duration = Duration.INFINITE) {}
 
 fun test() {
-    <!OPT_IN_USAGE_FUTURE_ERROR!>Some<!>()
+    <!OPT_IN_USAGE_FUTURE_ERROR("kotlin.time.ExperimentalTime; This declaration is experimental due to signature types and its usage must be marked (will become an error in future releases) with '@kotlin.time.ExperimentalTime' or '@OptIn(kotlin.time.ExperimentalTime::class)'")!>Some<!>()
     <!OPT_IN_USAGE_ERROR!>foo<!>()
 }

@@ -344,6 +344,8 @@ object FirErrors {
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
     val OPT_IN_USAGE_ERROR: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE_ERROR", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
+    val OPT_IN_TO_INHERITANCE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_TO_INHERITANCE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
+    val OPT_IN_TO_INHERITANCE_ERROR: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_TO_INHERITANCE_ERROR", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
     val OPT_IN_OVERRIDE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_OVERRIDE", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val OPT_IN_OVERRIDE_ERROR: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_OVERRIDE_ERROR", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val OPT_IN_IS_NOT_ENABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_IS_NOT_ENABLED", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtAnnotationEntry::class)

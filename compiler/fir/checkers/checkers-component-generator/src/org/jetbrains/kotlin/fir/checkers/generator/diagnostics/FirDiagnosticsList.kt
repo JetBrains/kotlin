@@ -455,6 +455,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("message")
             isSuppressible = true
         }
+        val OPT_IN_TO_INHERITANCE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<ClassId>("optInMarkerClassId")
+            parameter<String>("message")
+        }
+        val OPT_IN_TO_INHERITANCE_ERROR by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<ClassId>("optInMarkerClassId")
+            parameter<String>("message")
+            isSuppressible = true
+        }
         val OPT_IN_OVERRIDE by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")

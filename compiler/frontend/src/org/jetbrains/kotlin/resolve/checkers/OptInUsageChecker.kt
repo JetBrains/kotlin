@@ -66,17 +66,22 @@ class OptInUsageChecker : CallChecker {
 
     class OptInFactoryBasedReporter(
         val factory: DiagnosticFactory2<PsiElement, FqName, String>,
-        val defaultMessage: (FqName) -> String
+        val getCustomMessage: (String) -> String,
+        val getDefaultMessage: (FqName) -> String,
     ) : OptInDiagnosticReporter {
         override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
-            trace.reportDiagnosticOnce(factory.on(element, fqName, message?.takeIf { it.isNotBlank() } ?: defaultMessage(fqName)))
+            val diagnosticMessage = when {
+                !message.isNullOrBlank() -> getCustomMessage(message)
+                else -> getDefaultMessage(fqName)
+            }
+            trace.reportDiagnosticOnce(factory.on(element, fqName, diagnosticMessage))
         }
     }
 
     data class OptInReporterMultiplexer(
-        val warning: OptInDiagnosticReporter,
-        val error: OptInDiagnosticReporter,
-        val futureError: OptInDiagnosticReporter
+        val warning: (subclassesOnly: Boolean) -> OptInDiagnosticReporter,
+        val error: (subclassesOnly: Boolean) -> OptInDiagnosticReporter,
+        val futureError: OptInDiagnosticReporter,
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -127,22 +132,35 @@ class OptInUsageChecker : CallChecker {
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
-        internal fun getDefaultDiagnosticMessage(prefix: String): (FqName) -> String = { fqName: FqName ->
-            OptInNames.buildDefaultDiagnosticMessage(prefix, fqName.asString())
-        }
+        internal fun getDefaultDiagnosticMessage(messageProvider: OptInDiagnosticMessageProvider, verb: String): (FqName) -> String =
+            { fqName: FqName ->
+                messageProvider.buildDefaultDiagnosticMessage(fqName.asString(), verb)
+            }
+
+        private fun getMessageProvider(subclassesOnly: Boolean) =
+            if (subclassesOnly) OptInInheritanceDiagnosticMessageProvider else OptInUsagesDiagnosticMessageProvider
 
         private val USAGE_DIAGNOSTICS = OptInReporterMultiplexer(
-            warning = OptInFactoryBasedReporter(
-                Errors.OPT_IN_USAGE,
-                getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("should"))
-            ),
-            error = OptInFactoryBasedReporter(
-                Errors.OPT_IN_USAGE_ERROR,
-                getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("must"))
-            ),
+            warning = { subclassesOnly ->
+                val messageProvider = getMessageProvider(subclassesOnly)
+                OptInFactoryBasedReporter(
+                    if (subclassesOnly) Errors.OPT_IN_TO_INHERITANCE else Errors.OPT_IN_USAGE,
+                    getCustomMessage = messageProvider::buildCustomDiagnosticMessage,
+                    getDefaultMessage = getDefaultDiagnosticMessage(messageProvider, "should")
+                )
+            },
+            error = { subclassesOnly ->
+                val messageProvider = getMessageProvider(subclassesOnly)
+                OptInFactoryBasedReporter(
+                    if (subclassesOnly) Errors.OPT_IN_TO_INHERITANCE_ERROR else Errors.OPT_IN_USAGE_ERROR,
+                    getCustomMessage = messageProvider::buildCustomDiagnosticMessage,
+                    getDefaultMessage = getDefaultDiagnosticMessage(messageProvider, "must")
+                )
+            },
             futureError = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE_FUTURE_ERROR,
-                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in future releases)")
+                getCustomMessage = OptInUsagesInFutureDiagnosticMessageProvider::buildCustomDiagnosticMessage,
+                getDefaultMessage = getDefaultDiagnosticMessage(OptInUsagesInFutureDiagnosticMessageProvider, "must")
             ),
         )
 
@@ -164,8 +182,8 @@ class OptInUsageChecker : CallChecker {
             for ((annotationFqName, severity, message, subclassesOnly) in descriptions) {
                 if (!element.isOptInAllowed(annotationFqName, languageVersionSettings, trace.bindingContext, subclassesOnly)) {
                     val diagnostic = when (severity) {
-                        OptInDescription.Severity.WARNING -> diagnostics.warning
-                        OptInDescription.Severity.ERROR -> diagnostics.error
+                        OptInDescription.Severity.WARNING -> diagnostics.warning(subclassesOnly)
+                        OptInDescription.Severity.ERROR -> diagnostics.error(subclassesOnly)
                         OptInDescription.Severity.FUTURE_ERROR -> diagnostics.futureError
                     }
                     diagnostic.report(trace, element, annotationFqName, message)

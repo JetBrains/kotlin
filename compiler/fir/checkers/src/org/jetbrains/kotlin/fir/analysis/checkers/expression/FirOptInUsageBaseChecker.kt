@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.checkers.OptInInheritanceDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.checkers.OptInUsagesDiagnosticMessageProvider
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -295,16 +297,36 @@ object FirOptInUsageBaseChecker {
     ) {
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
-                val (diagnostic, verb) = when (severity) {
-                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
-                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
-                }
-                val reportedMessage = message?.takeIf { it.isNotBlank() }
-                    ?: OptInNames.buildDefaultDiagnosticMessage(
-                        OptInNames.buildMessagePrefix(verb),
-                        annotationClassId.asFqNameString(),
-                        isSubclassOptInApplicable = fromSupertype
+                val (diagnostic, messageProvider, verb) = when {
+                    fromSupertype && severity == Experimentality.Severity.WARNING -> Triple(
+                        FirErrors.OPT_IN_TO_INHERITANCE,
+                        OptInInheritanceDiagnosticMessageProvider,
+                        "should"
                     )
+                    severity == Experimentality.Severity.WARNING -> Triple(
+                        FirErrors.OPT_IN_USAGE,
+                        OptInUsagesDiagnosticMessageProvider,
+                        "should"
+                    )
+                    fromSupertype && severity == Experimentality.Severity.ERROR -> Triple(
+                        FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
+                        OptInInheritanceDiagnosticMessageProvider,
+                        "must"
+                    )
+                    severity == Experimentality.Severity.ERROR -> Triple(
+                        FirErrors.OPT_IN_USAGE_ERROR,
+                        OptInUsagesDiagnosticMessageProvider,
+                        "must"
+                    )
+                    else -> error("Unexpected $severity type")
+                }
+
+                val reportedMessage =
+                    if (!message.isNullOrBlank()) messageProvider.buildCustomDiagnosticMessage(message) else messageProvider.buildDefaultDiagnosticMessage(
+                        annotationClassId.asFqNameString(),
+                        verb
+                    )
+
                 reporter.reportOn(source, diagnostic, annotationClassId, reportedMessage, context)
             }
         }

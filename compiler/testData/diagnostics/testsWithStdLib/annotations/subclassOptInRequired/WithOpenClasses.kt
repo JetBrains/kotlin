@@ -6,7 +6,7 @@ annotation class ApiMarker
 open class OpenKlassOptInApi
 
 // no opt-in: diagnostic reported
-open class OpenKlassOptInApiInheritorA: <!OPT_IN_USAGE_ERROR!>OpenKlassOptInApi<!>()
+open class OpenKlassOptInApiInheritorA: <!OPT_IN_TO_INHERITANCE_ERROR!>OpenKlassOptInApi<!>()
 
 // opt-in present: no diagnostic, opt-in isn't propagated
 @OptIn(ApiMarker::class)
@@ -21,7 +21,7 @@ open class OpenKlassOptInApiInheritorC: OpenKlassOptInApi()
 open class OpenKlassOptInApiInheritorD: OpenKlassOptInApi()
 
 open class OpenKlassOptInApiInheritorE: OpenKlassOptInApiInheritorB() // inheritance opt-in isn't propagated
-open class OpenKlassOptInApiInheritorF: <!OPT_IN_USAGE_ERROR!>OpenKlassOptInApiInheritorC<!>() // inheritance opt-in is propagated
+open class OpenKlassOptInApiInheritorF: <!OPT_IN_TO_INHERITANCE_ERROR!>OpenKlassOptInApiInheritorC<!>() // inheritance opt-in is propagated
 open class OpenKlassOptInApiInheritorG: <!OPT_IN_USAGE_ERROR!>OpenKlassOptInApiInheritorD<!>() // inheritance opt-in is propagated
 
 fun useSiteTestOpenClasses() {

@@ -331,6 +331,10 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
+
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_TO_INHERITANCE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_TO_INHERITANCE_ERROR = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_USAGE_FUTURE_ERROR = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory2<PsiElement, FqName, String> OPT_IN_OVERRIDE = DiagnosticFactory2.create(WARNING);

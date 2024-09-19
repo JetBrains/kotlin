@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUnsignedLiteralsDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*
@@ -330,19 +331,20 @@ class ConstantExpressionEvaluator(
     companion object {
         private class ExperimentalityDiagnostic1(
             val factory: DiagnosticFactory1<PsiElement, String>,
-            val verb: String
+            val verb: String,
         ) : OptInUsageChecker.OptInDiagnosticReporter {
             override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
                 val defaultMessage = OptInUsageChecker.getDefaultDiagnosticMessage(
-                    "Unsigned literals are experimental and their usages $verb be marked"
+                    ExperimentalUnsignedLiteralsDiagnosticMessageProvider,
+                    verb
                 )
                 trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName)))
             }
         }
 
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = OptInUsageChecker.OptInReporterMultiplexer(
-            warning = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should"),
-            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
+            warning = { ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should") },
+            error = { ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must") },
             futureError = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
         )
 

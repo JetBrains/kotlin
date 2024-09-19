@@ -6,7 +6,7 @@ annotation class ApiMarker
 interface InterfaceOptInApi
 
 // no opt-in: diagnostic reported
-interface InterfaceOptInApiInheritorA: <!OPT_IN_USAGE_ERROR!>InterfaceOptInApi<!>
+interface InterfaceOptInApiInheritorA: <!OPT_IN_TO_INHERITANCE_ERROR!>InterfaceOptInApi<!>
 
 // opt-in present: no diagnostic, opt-in isn't propagated
 @OptIn(ApiMarker::class)
@@ -21,7 +21,7 @@ interface InterfaceOptInApiInheritorC: InterfaceOptInApi
 interface InterfaceOptInApiInheritorD: InterfaceOptInApi
 
 interface InterfaceOptInApiInheritorE: InterfaceOptInApiInheritorB // inheritance opt-in isn't propagated
-interface InterfaceOptInApiInheritorF: <!OPT_IN_USAGE_ERROR!>InterfaceOptInApiInheritorC<!> // inheritance opt-in is propagated
+interface InterfaceOptInApiInheritorF: <!OPT_IN_TO_INHERITANCE_ERROR!>InterfaceOptInApiInheritorC<!> // inheritance opt-in is propagated
 interface InterfaceOptInApiInheritorG: <!OPT_IN_USAGE_ERROR!>InterfaceOptInApiInheritorD<!> // inheritance opt-in is propagated
 
 fun useSiteTestInterfaces(

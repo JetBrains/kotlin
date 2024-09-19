@@ -1524,6 +1524,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OPT_IN_TO_INHERITANCE) { firDiagnostic ->
+        OptInToInheritanceImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_TO_INHERITANCE_ERROR) { firDiagnostic ->
+        OptInToInheritanceErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPT_IN_OVERRIDE) { firDiagnostic ->
         OptInOverrideImpl(
             firDiagnostic.a,

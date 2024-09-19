@@ -45998,9 +45998,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
-        @TestMetadata("DiagnosticDefaultMessage.kt")
-        public void testDiagnosticDefaultMessage() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage.kt");
+        @TestMetadata("DiagnosticCustomMessage_error.kt")
+        public void testDiagnosticCustomMessage_error() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_error.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticCustomMessage_warning.kt")
+        public void testDiagnosticCustomMessage_warning() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_warning.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticDefaultMessage_error.kt")
+        public void testDiagnosticDefaultMessage_error() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_error.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticDefaultMessage_warning.kt")
+        public void testDiagnosticDefaultMessage_warning() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_warning.kt");
         }
 
         @Test

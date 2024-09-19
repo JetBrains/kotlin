@@ -1311,6 +1311,20 @@ internal class OptInUsageErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInUsageError
 
+internal class OptInToInheritanceImpl(
+    override val optInMarkerClassId: ClassId,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInToInheritance
+
+internal class OptInToInheritanceErrorImpl(
+    override val optInMarkerClassId: ClassId,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInToInheritanceError
+
 internal class OptInOverrideImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,

@@ -8,11 +8,11 @@ interface Interface
 
 fun foo() {
     // error: inheriting Interface requires an explicit opt-in
-    open class LocalOpenKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    abstract class LocalAbstractKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    class LocalKlassA: <!OPT_IN_USAGE_ERROR!>Interface<!>
-    data class LocalDataKlassA(val arg: Int): <!OPT_IN_USAGE_ERROR!>Interface<!>
-    object: <!OPT_IN_USAGE_ERROR!>Interface<!> {}
+    open class LocalOpenKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    abstract class LocalAbstractKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    class LocalKlassA: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    data class LocalDataKlassA(val arg: Int): <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!>
+    object: <!OPT_IN_TO_INHERITANCE_ERROR!>Interface<!> {}
 
     // opt-in is present, no errors
     @OptIn(ApiMarker::class) open class LocalOpenKlassB: Interface
