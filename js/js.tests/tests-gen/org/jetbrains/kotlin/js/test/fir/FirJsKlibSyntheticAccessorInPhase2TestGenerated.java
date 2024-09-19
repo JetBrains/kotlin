@@ -1192,12 +1192,6 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
-      public void testLeakingPrivateTopLevelLateinitVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelLateinitVar.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1388,12 +1382,6 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
-      public void testLeakingPrivateTopLevelLateinitVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelLateinitVar.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1479,12 +1467,6 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
-      public void testLeakingPrivateTopLevelLateinitVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateTopLevelLateinitVar.kt");
       }
 
       @Test

@@ -20,19 +20,15 @@ private inline fun doInitializeAndReadOK(): String
     /* TARGET use-site */ #o
     /* TARGET use-site */ <set-o>(<set-?> = "O")
     /* TARGET use-site */ #o
-    local class <no name provided>
-        public fun run()
-            /* TARGET use-site */ #k
-            /* TARGET use-site */ #k
+    /* TARGET use-site */ #k
+    /* TARGET use-site */ #k
     /* TARGET use-site */ <get-o>()
 internal inline fun initializeAndReadOK(): String
     /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
     /* ACCESSOR use-site */ access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?> = "O")
     /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
-    local class <no name provided>
-        public fun run()
-            /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
-            /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
+    /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
+    /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
     /* ACCESSOR use-site */ access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt()
 /* ACCESSOR declaration */ public fun access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt(): String
     /* TARGET use-site */ <get-o>()
