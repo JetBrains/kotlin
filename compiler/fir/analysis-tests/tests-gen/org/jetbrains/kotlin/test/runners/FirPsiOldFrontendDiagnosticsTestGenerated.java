@@ -41549,6 +41549,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveDynamicType.kt")
+      public void testExhaustiveDynamicType() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveDynamicType.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveEnumIs.kt")
       public void testExhaustiveEnumIs() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt");
