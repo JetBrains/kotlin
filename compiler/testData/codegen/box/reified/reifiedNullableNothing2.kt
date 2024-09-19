@@ -1,3 +1,4 @@
+// LANGUAGE: +NullableNothingInReifiedPosition
 // ISSUE: KT-54227
 // IGNORE_BACKEND_K1: ANY
 

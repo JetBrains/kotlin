@@ -1,3 +1,4 @@
+// LANGUAGE: +NullableNothingInReifiedPosition
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_VARIABLE -DEPRECATION
 
 inline fun<reified T> foo(block: () -> T): String = block().toString()

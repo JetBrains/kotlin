@@ -1,16 +1,16 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
-// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments +NullableNothingInReifiedPosition
+// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments -NullableNothingInReifiedPosition
 class A<T>
 class C<T, G>
 class D<T>
 
 fun test1(
     a: <!UNSUPPORTED!>Array<Nothing><!>,
-    b: Array<Nothing?>,
+    b: <!UNSUPPORTED!>Array<Nothing?><!>,
     c: <!UNSUPPORTED!>Array<in Nothing><!>,
-    d: Array<in Nothing?>,
+    d: <!UNSUPPORTED!>Array<in Nothing?><!>,
     e: <!UNSUPPORTED!>Array<out Nothing><!>,
-    f: Array<out Nothing?>,
+    f: <!UNSUPPORTED!>Array<out Nothing?><!>,
     g: C<String, <!UNSUPPORTED!>Array<Nothing><!>>,
     h: A<D<<!UNSUPPORTED!>Array<Nothing><!>>>
 ) {
@@ -18,21 +18,21 @@ fun test1(
 }
 
 fun test2(
-    a: <!UNSUPPORTED!>Array<Nothing>?<!>,
-    b: Array<Nothing?>?,
-    c: <!UNSUPPORTED!>Array<in Nothing>?<!>,
-    d: Array<in Nothing?>?,
-    e: <!UNSUPPORTED!>Array<out Nothing>?<!>,
-    f: Array<out Nothing?>?
+    a: <!UNSUPPORTED!>Array<Nothing><!>?,
+    b: <!UNSUPPORTED!>Array<Nothing?><!>?,
+    c: <!UNSUPPORTED!>Array<in Nothing><!>?,
+    d: <!UNSUPPORTED!>Array<in Nothing?><!>?,
+    e: <!UNSUPPORTED!>Array<out Nothing><!>?,
+    f: <!UNSUPPORTED!>Array<out Nothing?><!>?
 ) {}
 
 fun test3(
     a: A<<!UNSUPPORTED!>Array<Nothing><!>>,
-    b: A<Array<Nothing?>>,
+    b: A<<!UNSUPPORTED!>Array<Nothing?><!>>,
     c: A<<!UNSUPPORTED!>Array<in Nothing><!>>,
-    d: A<Array<in Nothing?>>,
+    d: A<<!UNSUPPORTED!>Array<in Nothing?><!>>,
     e: A<<!UNSUPPORTED!>Array<out Nothing><!>>,
-    f: A<Array<out Nothing?>>
+    f: A<<!UNSUPPORTED!>Array<out Nothing?><!>>
 ) {}
 
 fun test4(

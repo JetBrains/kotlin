@@ -9,25 +9,22 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirArrayOfNothingQualifierChecker.isArrayOfNothing
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.isArrayOfNothing
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        /** Ignore typealias, see [TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
+        /** Ignore typealias, see [FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
         if (context.containingDeclarations.lastOrNull() is FirTypeAlias) return
-        val coneType = typeRef.coneType ?: return
-        val fullyExpandedType = coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = typeRef.coneType.fullyExpandedType(context.session)
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameter)?.isVararg ?: false
-        if (!isVararg && fullyExpandedType.isArrayOfNothing()) {
+        if (!isVararg && fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
             reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
         }
     }
