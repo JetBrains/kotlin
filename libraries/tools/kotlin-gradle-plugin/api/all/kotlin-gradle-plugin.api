@@ -3339,6 +3339,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public fun <init> ()V
+	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
 	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
 }
@@ -3360,20 +3361,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion {
 	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Extension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Extension$Companion;
-	public static final field EXTENSION_NAME Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec;)V
-	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
-	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Env;
-	public final fun getEdition ()Lorg/gradle/api/provider/Property;
-	public final fun getProject ()Lorg/gradle/api/Project;
-	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Extension$Companion {
-}
-
 public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
@@ -3383,7 +3370,21 @@ public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin$Companion {
-	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Extension;
+	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension;
+}
+
+public class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec;)V
+	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
+	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Env;
+	public final fun getEdition ()Lorg/gradle/api/provider/Property;
+	public final fun getProject ()Lorg/gradle/api/Project;
+	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Companion {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8SetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {

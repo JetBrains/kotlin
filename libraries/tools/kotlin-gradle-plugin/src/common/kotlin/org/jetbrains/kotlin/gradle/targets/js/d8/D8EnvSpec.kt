@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
@@ -73,6 +76,9 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
             )
         }
     }
+
+    val Project.d8SetupTaskProvider: TaskProvider<out D8SetupTask>
+        get() = project.tasks.withType(D8SetupTask::class.java).named(D8SetupTask.NAME)
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinD8Spec"

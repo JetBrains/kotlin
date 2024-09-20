@@ -55,16 +55,18 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
         fun create(
             compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: D8Exec.() -> Unit = {}
+            configuration: D8Exec.() -> Unit = {},
         ): TaskProvider<D8Exec> {
             val target = compilation.target
             val project = target.project
-            val d8 = D8Plugin.apply(project)
+            val d8 = D8Plugin.applyWithEnvSpec(project)
             return project.registerTask(
                 name
             ) {
-                it.executable = d8.d8EnvSpec.produceEnv(project.providers).get().executable
-                it.dependsOn(d8.setupTaskProvider)
+                it.executable = d8.produceEnv(project.providers).get().executable
+                with(d8) {
+                    it.dependsOn(project.d8SetupTaskProvider)
+                }
                 it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }

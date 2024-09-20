@@ -21,7 +21,7 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "d8"),
     KotlinWasmD8Dsl {
 
-    private val d8 = D8Plugin.apply(project)
+    private val d8 = D8Plugin.applyWithEnvSpec(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"
@@ -48,6 +48,8 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(d8.setupTaskProvider)
+        with(d8) {
+            test.dependsOn(project.d8SetupTaskProvider)
+        }
     }
 }
