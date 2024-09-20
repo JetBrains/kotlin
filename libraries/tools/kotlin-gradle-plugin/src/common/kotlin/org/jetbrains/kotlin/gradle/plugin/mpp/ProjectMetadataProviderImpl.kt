@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 private typealias SourceSetName = String
@@ -104,18 +107,22 @@ private fun Configuration.addSecondaryOutgoingVariant(project: Project) {
 internal fun GenerateProjectStructureMetadata.addMetadataSourceSetsToOutput(project: Project) {
     val generateTask = this
     project.launch {
-        val dependencies = mutableMapOf<String, LazyResolvedConfiguration>()
+        val dependencies = mutableMapOf<String, KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>>()
+        val kotlinProjectDataSharingService = project.kotlinSecondaryVariantsDataSharing
+
         val sourceSetOutputs =
             project.multiplatformExtension.kotlinMetadataCompilations()
                 .map {
-                    dependencies[it.defaultSourceSet.name] = it.defaultSourceSet.internal.projectCoordinatesConfiguration()
+                    dependencies[it.defaultSourceSet.name] = kotlinProjectDataSharingService
+                        .consumeRootModuleCoordinates(it.defaultSourceSet.internal)
+
                     GenerateProjectStructureMetadata.SourceSetMetadataOutput(
                         sourceSetName = it.defaultSourceSet.name,
                         metadataOutput = project.provider { it.output.classesDirs.singleFile }
                     )
                 }
         generateTask.sourceSetOutputs.set(sourceSetOutputs)
-        generateTask.sourceSetDependencies.set(dependencies)
+        generateTask.coordinatesOfProjectDependencies.set(dependencies)
     }
 }
 

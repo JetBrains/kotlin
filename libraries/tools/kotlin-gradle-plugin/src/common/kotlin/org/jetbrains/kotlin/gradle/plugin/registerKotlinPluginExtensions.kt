@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportRootModuleCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportTargetPublicationCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MultiplatformPublishingSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
@@ -92,7 +95,8 @@ internal fun Project.registerKotlinPluginExtensions() {
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
                 register(project, MetadataApiElementsSecondaryVariantsSetupAction)
-                register(project, ExportKotlinProjectCoordinates)
+                register(project, ExportRootModuleCoordinates)
+                register(project, ExportTargetPublicationCoordinates)
             } else {
                 register(project, GlobalProjectStructureMetadataStorageSetupAction)
             }

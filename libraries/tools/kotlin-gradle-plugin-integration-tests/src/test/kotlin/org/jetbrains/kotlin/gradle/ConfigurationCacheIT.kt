@@ -97,7 +97,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val (commonizeNativeDistributionTask, cleanNativeDistributionCommonizationTask) = if (isolatedProjectsEnabled) {
+            val (commonizeNativeDistributionTask, cleanNativeDistributionCommonizationTask) = if (kmpIsolatedProjectsSupportEnabled) {
                 ":lib:commonizeNativeDistribution" to ":lib:cleanNativeDistributionCommonization"
             } else {
                 ":commonizeNativeDistribution" to ":cleanNativeDistributionCommonization"
@@ -371,7 +371,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
 /** @return true when the patch was applied */
 private fun TestProject.patchKmpSampleLibForIsolatedProjects() =
-    if (isolatedProjectsEnabled) {
+    if (kmpIsolatedProjectsSupportEnabled) {
         // TODO: KT-70569 add support for JS/WASM JS. The current problem with buildModulesInfo for Incremental Compilation
         buildGradle.replaceText(
             "shouldBeJs = true",

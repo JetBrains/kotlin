@@ -19,8 +19,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MetadataJsonSerialisationTool
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
 import java.io.File
 import javax.inject.Inject
 
@@ -42,18 +43,19 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
     internal val kotlinProjectStructureMetadata: KotlinProjectStructureMetadata
         get() = lazyKotlinProjectStructureMetadata.value
 
-    /**
-     * Map of Source Set dependencies, for project 2 project dependencies should resolve into [KotlinProjectCoordinatesData] file.
-     */
     @get:Internal
-    internal abstract val sourceSetDependencies: MapProperty<String, LazyResolvedConfiguration>
+    internal abstract val coordinatesOfProjectDependencies: MapProperty<String, KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>>
 
     /**
-     * Gradle InputFiles view of [sourceSetDependencies]
+     * Gradle InputFiles view of [coordinatesOfProjectDependencies]
      */
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    internal val sourceSetDependenciesInputFiles: List<FileCollection> get() = sourceSetDependencies.get().values.map { it.files }
+    internal val sourceSetDependenciesInputFiles: List<FileCollection>
+        get() = coordinatesOfProjectDependencies
+            .get()
+            .values
+            .map { it.files }
 
     @get:OutputFile
     val resultFile: File
@@ -71,27 +73,20 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
     internal abstract val sourceSetOutputs: ListProperty<SourceSetMetadataOutput>
 
     /**
-     * @param projectCoordinatesConfiguration Should contain resolved configuration with [KotlinProjectCoordinatesData] in artifacts
+     * @param projectCoordinates Should contain resolved configuration with [KotlinProjectCoordinatesData] in artifacts
      */
     private fun ResolvedDependencyResult.moduleDependencyIdentifier(
-        projectCoordinatesConfiguration: LazyResolvedConfiguration
+        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>
     ): ModuleDependencyIdentifier = when(selected.id) {
-        is ProjectComponentIdentifier -> tryReadFromKotlinProjectCoordinatesData(projectCoordinatesConfiguration)
+        is ProjectComponentIdentifier -> tryReadFromKotlinProjectCoordinatesData(projectCoordinates)
             ?: selected.moduleDependencyIdentifier()
         is ModuleComponentIdentifier -> selected.moduleDependencyIdentifier()
         else -> error("Unknown ComponentIdentifier: $selected")
     }
 
     private fun ResolvedDependencyResult.tryReadFromKotlinProjectCoordinatesData(
-        projectCoordinatesConfiguration: LazyResolvedConfiguration
-    ): ModuleDependencyIdentifier? {
-        val projectCoordinatesFile = projectCoordinatesConfiguration
-            .getArtifacts(this)
-            .singleOrNull()
-            ?: return null
-        val projectCoordinates = parseKotlinProjectCoordinatesOrNull(projectCoordinatesFile.file) ?: return null
-        return projectCoordinates.moduleId
-    }
+        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>
+    ): ModuleDependencyIdentifier? = projectCoordinates.getProjectDataFromDependencyOrNull(this)?.moduleId
 
     private fun ResolvedComponentResult.moduleDependencyIdentifier() = ModuleDependencyIdentifier(
         groupId = moduleVersion?.group,
@@ -104,13 +99,14 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
 
         val actualProjectStructureMetadata = if (kmpIsolatedProjectsSupport) {
             kotlinProjectStructureMetadata.copy(
-                sourceSetModuleDependencies = sourceSetDependencies.get().mapValues { (_, resolvedConfiguration) ->
-                    val directDependencies = resolvedConfiguration.root.dependencies
+                sourceSetModuleDependencies = coordinatesOfProjectDependencies.get().mapValues { (_, resolvedProjectCoordinates) ->
+                    val directDependencies = resolvedProjectCoordinates.rootComponent.dependencies
                     val result = mutableSetOf<ModuleDependencyIdentifier>()
                     for (dependency in directDependencies) {
                         if (dependency.isConstraint) continue
                         if (dependency !is ResolvedDependencyResult) continue
-                        result.add(dependency.moduleDependencyIdentifier(resolvedConfiguration))
+
+                        result.add(dependency.moduleDependencyIdentifier(resolvedProjectCoordinates))
                     }
 
                     result

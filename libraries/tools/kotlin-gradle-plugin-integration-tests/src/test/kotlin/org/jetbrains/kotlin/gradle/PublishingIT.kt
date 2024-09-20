@@ -6,25 +6,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.testbase.DependencyManagement
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.addDefaultSettingsToSettingsGradle
-import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectContains
-import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.defaultLocalRepo
-import org.jetbrains.kotlin.gradle.testbase.project
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
-import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 @DisplayName("Artifacts publication")
@@ -130,7 +119,7 @@ class PublishingIT : KGPBaseTest() {
             "pom-rewriter",
             gradleVersion,
             localRepoDir = localRepo,
-            buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
         ) {
 
             projectPath.resolve("included").addDefaultSettingsToSettingsGradle(
@@ -141,19 +130,21 @@ class PublishingIT : KGPBaseTest() {
             )
 
             build("publishJvmPublicationToCustomRepository") {
-                val actualPomContext = localRepo.resolve("pom-rewriter")
+                val actualPomContent = localRepo.resolve("pom-rewriter")
                     .resolve("pom-rewriter-root-jvm")
                     .resolve("1.0.0")
                     .resolve("pom-rewriter-root-jvm-1.0.0.pom")
                     .readText()
-                    .replace("""\s+""".toRegex(), "")
+                    .replace(buildOptions.kotlinVersion, "{kotlin_version}")
 
-                val expectedPomContext = projectPath.resolve("expected-pom.xml")
-                    .readText()
-                    .replace("""\s+""".toRegex(), "")
-                    .replace("{kotlin_version}", buildOptions.kotlinVersion)
+                val expectedPomName = if (kmpIsolatedProjectsSupportEnabled) {
+                    "expected-pom-kmp-isolated-projects-support-pom-rewriter.xml"
+                } else {
+                    "expected-pom-legacy-pom-rewriter.xml"
+                }
+                val expectedPomFile = projectPath.resolve(expectedPomName)
 
-                assertContains(actualPomContext, expectedPomContext)
+                KotlinTestUtils.assertEqualsToFile(expectedPomFile, actualPomContent)
             }
         }
     }

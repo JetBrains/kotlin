@@ -388,3 +388,12 @@ fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSup
 fun BuildOptions.autoIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.AUTO)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
+
+/** Should be used when test data doesn't support isolated projects completely,
+ *  but tests can be run to verify KMP Isolated Projects support feature flag */
+fun BuildOptions.disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion: GradleVersion) =
+    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
+        disableIsolatedProjects().enableKmpIsolatedProjectSupport()
+    } else {
+        disableIsolatedProjects().disableKmpIsolatedProjectSupport()
+    }

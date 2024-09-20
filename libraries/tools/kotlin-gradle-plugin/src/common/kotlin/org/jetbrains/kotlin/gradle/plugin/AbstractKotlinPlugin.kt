@@ -15,7 +15,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.tasks.SourceSet
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
 import org.gradle.jvm.tasks.Jar
@@ -23,9 +22,11 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.PomDependenciesRewriter
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.createDefaultPomDependenciesRewriterForTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.rewriteKmpDependenciesInPomForTargetPublication
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -119,42 +119,16 @@ internal abstract class AbstractKotlinPlugin(
         classesTask.configure { it.finalizedBy(inspectTask) }
     }
 
-    private fun rewritePom(pom: MavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
-        pom.withXml { xml ->
-            if (shouldRewritePom.get())
-                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
-        }
-    }
-
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
         val project = target.project
 
-        val shouldRewritePoms = project.provider {
-            PropertiesProvider(project).keepMppDependenciesIntactInPoms != true
-        }
-
         project.pluginManager.withPlugin("maven-publish") {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                @Suppress("DEPRECATION") val pomRewriter = if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
-                    val lazyResolvedConfigurationsFromKotlinComponent =
-                        createLazyResolvedConfigurationsFromKotlinComponent(project, target.kotlinComponents.single())
-                    publishing.publications.withType(MavenPublication::class.java).all { publication ->
-                        val artifacts = lazyResolvedConfigurationsFromKotlinComponent.map { lazyResolvedConfiguration ->
-                            lazyResolvedConfiguration.files
-                        }
-
-                        project.tasks.withType(GenerateMavenPom::class.java).configureEach {
-                            if (it.name.contains(publication.name.capitalizeAsciiOnly())) {
-                                it.dependsOn(artifacts)
-                            }
-                        }
-                    }
-                    PomDependenciesRewriterImpl(lazyResolvedConfigurationsFromKotlinComponent)
-                } else {
-                    DeprecatedPomDependenciesRewriter(project, target.kotlinComponents.single())
-                }
                 publishing.publications.withType(MavenPublication::class.java).all { publication ->
-                    rewritePom(publication.pom, pomRewriter, shouldRewritePoms)
+                    project.rewriteKmpDependenciesInPomForTargetPublication(
+                        component = target.kotlinComponents.single(),
+                        publication = publication
+                    )
                 }
             }
         }

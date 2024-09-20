@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
@@ -246,5 +247,12 @@ internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_L
     )
 }
 
-/** Helper function for test code with differences when Isolated Projects enabled */
-internal val TestProject.isolatedProjectsEnabled: Boolean get() = buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
+internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean
+    get() {
+        val mode = buildOptions.kmpIsolatedProjectsSupport
+        return when (mode) {
+            KmpIsolatedProjectsSupport.ENABLE -> true
+            KmpIsolatedProjectsSupport.DISABLE -> false
+            KmpIsolatedProjectsSupport.AUTO, null -> buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
+        }
+    }

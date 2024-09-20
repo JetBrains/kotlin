@@ -394,7 +394,9 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         project(
             "new-mpp-android",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).disableConfigurationCache_KT70416(),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .disableConfigurationCache_KT70416()
+                .disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             // Convert the 'app' project to a library, publish two flavors without metadata,
@@ -506,7 +508,9 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         project(
             "new-mpp-android",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             settingsGradle.replaceText("include ':app', ':lib'", "include ':lib'")
@@ -525,12 +529,18 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                     .resolve("lib/build/publications/androidLibRelease/pom-default.xml")
                     .readText()
                     .replace("""\s+""".toRegex(), "")
-                assertContains(
-                    pomText,
-                    // TODO: When KT-69974 is fixed replace it with this
-                    // ...<artifactId>libFromIncluded-android</artifactId>...
-                    """<groupId>com.example</groupId><artifactId>libFromIncluded</artifactId><version>1.0</version>"""
-                )
+
+                if (kmpIsolatedProjectsSupportEnabled) {
+                    assertContains(
+                        pomText,
+                        """<groupId>com.example</groupId><artifactId>libFromIncluded-androidlib</artifactId><version>1.0</version>"""
+                    )
+                } else {
+                    assertContains(
+                        pomText,
+                        """<groupId>com.example</groupId><artifactId>libFromIncluded</artifactId><version>1.0</version>"""
+                    )
+                }
             }
         }
     }

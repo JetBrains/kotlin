@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeAdditionalArtifactResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCapability
-import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 internal object IdeSourcesVariantsResolver : IdeAdditionalArtifactResolver {
