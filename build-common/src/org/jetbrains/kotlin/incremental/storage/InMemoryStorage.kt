@@ -137,6 +137,10 @@ open class InMemoryStorage<KEY, VALUE>(
         storage.close()
     }
 
+    @Synchronized
+    override fun clean() {
+        storage.clean()
+    }
 }
 
 /** [InMemoryStorage] where a map entry's value is a [Collection] of elements of type [E]. */

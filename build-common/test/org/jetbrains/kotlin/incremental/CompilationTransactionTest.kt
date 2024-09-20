@@ -50,6 +50,8 @@ private class InMemoryStorageWrapperMock : InMemoryStorageInterface<Any, Any> {
     override fun get(key: Any) = null
 
     override fun contains(key: Any) = false
+
+    override fun clean() {}
 }
 
 abstract class BaseCompilationTransactionTest {
