@@ -28,7 +28,7 @@ open class WasmICContext(
     override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
         WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags)
 
-    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File?): SrcFileArtifact =
+    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
         WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
 
     override fun createModuleArtifact(

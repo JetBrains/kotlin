@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.ic.IrModule
-import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragment
-import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.OutputStream
 
 class JsIrProgramFragments(override val mainFragment: JsIrProgramFragment, override val exportFragment: JsIrProgramFragment? = null) :
-    IrProgramFragments() {
+    IrICProgramFragments() {
     override fun serialize(stream: OutputStream) {
         serializeTo(stream)
     }
@@ -29,7 +29,7 @@ data class JsIrProgramTestEnvironment(
     val suiteFunctionTag: String
 )
 
-class JsIrProgramFragment(val name: String, val packageFqn: String) : IrProgramFragment() {
+class JsIrProgramFragment(val name: String, val packageFqn: String) : IrICProgramFragment() {
     val nameBindings = mutableMapOf<String, JsName>()
     val optionalCrossModuleImports = hashSetOf<String>()
     val declarations = JsCompositeBlock()
@@ -52,7 +52,7 @@ class JsIrModule(
     override val fragments: List<JsIrProgramFragment>,
     val reexportedInModuleWithName: String? = null,
     val importedWithEffectInModuleWithName: String? = null,
-) : IrModule() {
+) : IrICModule() {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
         val definitions = mutableSetOf<String>()

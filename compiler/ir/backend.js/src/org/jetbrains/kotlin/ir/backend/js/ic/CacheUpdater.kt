@@ -32,16 +32,16 @@ import java.io.OutputStream
 import java.nio.file.Files
 import java.util.*
 
-abstract class IrModule {
+abstract class IrICModule {
     abstract val moduleName: String
-    abstract val fragments: List<IrProgramFragment>
+    abstract val fragments: List<IrICProgramFragment>
 }
 
-abstract class IrProgramFragment
+abstract class IrICProgramFragment
 
-abstract class IrProgramFragments {
-    abstract val mainFragment: IrProgramFragment
-    abstract val exportFragment: IrProgramFragment?
+abstract class IrICProgramFragments {
+    abstract val mainFragment: IrICProgramFragment
+    abstract val exportFragment: IrICProgramFragment?
     abstract fun serialize(stream: OutputStream)
 }
 
@@ -50,7 +50,7 @@ fun interface IrCompilerICInterface {
      * It is expected that the method implementation runs a lowering pipeline
      * and produces a list of generators capable of generating JS AST fragments.
      */
-    fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments>
+    fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments>
 }
 
 enum class DirtyFileState(val str: String) {
@@ -72,7 +72,7 @@ interface PlatformDependentICContext {
      */
     fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface
 
-    fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File? = null): SrcFileArtifact
+    fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File? = null): SrcFileArtifact
 
     fun createModuleArtifact(
         moduleName: String,
@@ -669,7 +669,7 @@ class CacheUpdater(
     private fun commitCacheAndBuildModuleArtifacts(
         incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         moduleNames: Map<KotlinLibraryFile, String>,
-        rebuiltFileFragments: KotlinSourceFileMap<IrProgramFragments>
+        rebuiltFileFragments: KotlinSourceFileMap<IrICProgramFragments>
     ): List<ModuleArtifact> = stopwatch.measure("Incremental cache - committing artifacts") {
         incrementalCacheArtifacts.map { (libFile, incrementalCacheArtifact) ->
             incrementalCacheArtifact.buildModuleArtifactAndCommitCache(
@@ -684,7 +684,7 @@ class CacheUpdater(
         compilerForIC: IrCompilerICInterface,
         loadedIr: LoadedJsIr,
         dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
-    ): MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrProgramFragments>> =
+    ): MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>> =
         stopwatch.measure("Processing IR - lowering") {
             val dirtyFilesForCompiling = mutableListOf<IrFile>()
             val dirtyFilesForRestoring = mutableListOf<Pair<KotlinLibraryFile, KotlinSourceFile>>()
@@ -792,7 +792,7 @@ class CacheUpdater(
     private data class FragmentGenerators(
         val incrementalCacheArtifacts: Map<KotlinLibraryFile, IncrementalCacheArtifact>,
         val moduleNames: Map<KotlinLibraryFile, String>,
-        val generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrProgramFragments>>
+        val generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>>
     )
 
     private fun loadIrAndMakeIrFragmentGenerators(): FragmentGenerators {
@@ -806,9 +806,9 @@ class CacheUpdater(
     }
 
     private fun generateIrFragments(
-        generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrProgramFragments>>
-    ): KotlinSourceFileMap<IrProgramFragments> = stopwatch.measure("Processing IR - generating program fragments") {
-        val rebuiltFragments = KotlinSourceFileMutableMap<IrProgramFragments>()
+        generators: MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> IrICProgramFragments>>
+    ): KotlinSourceFileMap<IrICProgramFragments> = stopwatch.measure("Processing IR - generating program fragments") {
+        val rebuiltFragments = KotlinSourceFileMutableMap<IrICProgramFragments>()
         while (generators.isNotEmpty()) {
             val (libFile, srcFile, fragmentGenerator) = generators.removeFirst()
             rebuiltFragments[libFile, srcFile] = fragmentGenerator()
@@ -821,11 +821,11 @@ class CacheUpdater(
      *  - Estimates dirty files that must be relowered;
      *  - Creates a compiler instance by calling [compilerInterfaceFactory];
      *  - Runs the compiler (lowering pipeline) for the dirty files (see [IrCompilerICInterface]);
-     *  - Transforms lowered IR to JS AST fragments [IrProgramFragments];
+     *  - Transforms lowered IR to JS AST fragments [IrICProgramFragments];
      *  - Saves the cache data on the disk.
      *
      *  @return A module artifact list, where [JsModuleArtifact] represents a compiled klib.
-     *   It contains either paths to files with serialized JS AST or the deserialized [IrProgramFragments] objects themselves
+     *   It contains either paths to files with serialized JS AST or the deserialized [IrICProgramFragments] objects themselves
      *   for every file in the generating JS module. The list should be used for building the final JS module in [JsExecutableProducer]
      */
     fun actualizeCaches(): List<ModuleArtifact> {
@@ -849,7 +849,7 @@ fun rebuildCacheForDirtyFiles(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
-): Pair<IrModuleFragment, List<Pair<IrFile, IrProgramFragments>>> {
+): Pair<IrModuleFragment, List<Pair<IrFile, IrICProgramFragments>>> {
     val irInterner = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())

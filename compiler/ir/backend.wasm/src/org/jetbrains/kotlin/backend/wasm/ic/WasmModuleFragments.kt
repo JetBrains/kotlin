@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.backend.wasm.ic
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
-import org.jetbrains.kotlin.ir.backend.js.ic.IrModule
-import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragments
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import java.io.OutputStream
 
 class WasmIrProgramFragments(
     override val mainFragment: WasmCompiledFileFragment,
-) : IrProgramFragments() {
+) : IrICProgramFragments() {
 
     override val exportFragment: WasmCompiledFileFragment? = null
 
@@ -26,4 +25,4 @@ class WasmIrProgramFragments(
 class WasmIrModule(
     override val moduleName: String,
     override val fragments: List<WasmCompiledFileFragment>,
-) : IrModule()
+) : IrICModule()

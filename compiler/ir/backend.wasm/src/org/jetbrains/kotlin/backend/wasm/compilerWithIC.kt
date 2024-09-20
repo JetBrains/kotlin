@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -70,7 +70,7 @@ open class WasmCompilerWithIC(
         )
     }
 
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val wasmPhases = getWasmPhases(true)
         val phaseConfig = PhaseConfigBuilder(wasmPhases).also { lowerings ->
             lowerings.enabled.addAll(wasmPhases.toPhaseMap().values)
@@ -96,7 +96,7 @@ class WasmCompilerWithICForTesting(
     allowIncompleteImplementations: Boolean,
     safeFragmentTags: Boolean = false,
 ) : WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags) {
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val testFile = dirtyFiles.firstOrNull { file ->
             file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }
         } ?: return super.compile(allModules, dirtyFiles)

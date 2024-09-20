@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
 import org.jetbrains.kotlin.backend.wasm.utils.DisjointUnions
-import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.*
@@ -54,7 +54,7 @@ class WasmCompiledFileFragment(
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
     var tryGetAssociatedObjectFun: IdSignature? = null,
     var jsToKotlinAnyAdapterFun: IdSignature? = null,
-) : IrProgramFragment()
+) : IrICProgramFragment()
 
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,

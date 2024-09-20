@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrPro
 import java.io.File
 
 abstract class SrcFileArtifact {
-    abstract fun loadIrFragments(): IrProgramFragments?
+    abstract fun loadIrFragments(): IrICProgramFragments?
     abstract fun isModified(): Boolean
 }
 
