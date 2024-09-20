@@ -18,6 +18,13 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
+    /**
+     * When this is a [ConeClassLikeType], returns the type arguments of this type.
+     *
+     * When this is a [ConeFlexibleType], returns the type arguments of the [ConeFlexibleType.lowerBound].
+     *
+     * In all other cases, returns an empty array.
+     */
     abstract val typeArguments: Array<out ConeTypeProjection>
 
     @Deprecated("Useless call. Receiver is already a ConeKotlinType.", level = DeprecationLevel.ERROR)
