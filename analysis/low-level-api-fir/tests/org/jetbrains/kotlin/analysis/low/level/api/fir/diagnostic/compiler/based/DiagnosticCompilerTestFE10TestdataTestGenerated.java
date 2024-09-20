@@ -44271,6 +44271,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveSealedInterface.kt")
+      public void testExhaustiveSealedInterface() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSealedInterface.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveSealedIntersection.kt")
       public void testExhaustiveSealedIntersection() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSealedIntersection.kt");
