@@ -86,6 +86,29 @@ sealed class ObjCExportTestCases(private val fileFilter: (File) -> Boolean) {
 }
 
 abstract class GroupedFrameworkTestBase(private val cases: ObjCExportTestCases) : FrameworkTestBase() {
+
+    // Compile a couple of KLIBs
+    private val library by lazy {
+        compileToLibrary(
+            testSuiteDir.resolve("objcexport/library"),
+            buildDir,
+            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
+            emptyList(),
+        )
+    }
+
+    private val noEnumEntries by lazy {
+        compileToLibrary(
+            testSuiteDir.resolve("objcexport/noEnumEntries"),
+            buildDir,
+            TestCompilerArgs(
+                "-Xshort-module-name=NoEnumEntriesLibrary", "-XXLanguage:-EnumEntries",
+                "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library",
+            ),
+            emptyList(),
+        )
+    }
+
     @Test
     fun objCExportTest() {
         objCExportTestImpl(
@@ -169,23 +192,6 @@ abstract class GroupedFrameworkTestBase(private val cases: ObjCExportTestCases) 
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val doLazyHeaderCheck = needLazyHeaderCheck && testRunSettings.get<PipelineType>() == PipelineType.K1
         val lazyHeader: File = buildDir.resolve("lazy-$suffix.h").also { it.delete() } // Clean up lazy header after previous runs
-
-        // Compile a couple of KLIBs
-        val library = compileToLibrary(
-            testSuiteDir.resolve("objcexport/library"),
-            buildDir,
-            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
-            emptyList(),
-        )
-        val noEnumEntries = compileToLibrary(
-            testSuiteDir.resolve("objcexport/noEnumEntries"),
-            buildDir,
-            TestCompilerArgs(
-                "-Xshort-module-name=NoEnumEntriesLibrary", "-XXLanguage:-EnumEntries",
-                "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library",
-            ),
-            emptyList(),
-        )
 
         // Convert KT sources into ObjC framework using two KLIbs
         val objcExportTestSuiteDir = testSuiteDir.resolve("objcexport")
