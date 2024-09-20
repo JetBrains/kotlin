@@ -39613,6 +39613,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("illegalTypeInTypeAliasExpansionDisabled.kt")
+      public void testIllegalTypeInTypeAliasExpansionDisabled() {
+        runTest("compiler/testData/diagnostics/tests/typealias/illegalTypeInTypeAliasExpansionDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("import.kt")
       public void testImport() {
         runTest("compiler/testData/diagnostics/tests/typealias/import.kt");

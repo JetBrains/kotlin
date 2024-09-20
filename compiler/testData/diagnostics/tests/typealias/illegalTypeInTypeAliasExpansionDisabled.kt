@@ -1,4 +1,4 @@
-// LANGUAGE: +NullableNothingInReifiedPosition
+// LANGUAGE: -NullableNothingInReifiedPosition
 
 typealias A<T> = Array<T>
 typealias AA<T> = A<A<T>>
