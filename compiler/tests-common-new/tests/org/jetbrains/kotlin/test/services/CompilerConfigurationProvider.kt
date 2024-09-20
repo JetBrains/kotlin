@@ -151,10 +151,6 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING,
         CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in module.directives
     )
-    configuration.put(
-        KlibConfigurationKeys.NO_DOUBLE_INLINING,
-        CodegenTestDirectives.ENABLE_DOUBLE_INLINING !in module.directives
-    )
 
     val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)
     configuration.messageCollector = messageCollector

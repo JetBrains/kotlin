@@ -221,7 +221,6 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
         commonConfigurationForJsBlackBoxCodegenTest()
         defaultDirectives {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
-            +CodegenTestDirectives.ENABLE_DOUBLE_INLINING
             +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
             if (narrowedAccessorVisibility) +CodegenTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
         }

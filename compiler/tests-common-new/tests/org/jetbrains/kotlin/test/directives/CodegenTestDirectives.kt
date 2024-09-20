@@ -283,13 +283,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val ENABLE_DOUBLE_INLINING by directive(
-        """
-            Enable double-inlining for KLIB-based backend.
-            Equivalent to passing the '-Xklib-no-double-inlining=false' CLI flag.
-        """.trimIndent()
-    )
-
     val KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by directive(
         """
             Narrow the visibility of generated synthetic accessors to _internal_" +
