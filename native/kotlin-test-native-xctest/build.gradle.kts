@@ -96,13 +96,18 @@ fun registerCopyFrameworkTask(target: KonanTarget): TaskProvider<Sync> =
 
 val nativeTargets = mutableListOf<KotlinNativeTarget>()
 
+val hostManager = HostManager()
+fun MutableList<KotlinNativeTarget>.addIfEnabledOnHost(target: KotlinNativeTarget) {
+    if (hostManager.isEnabled(target.konanTarget)) add(target)
+}
+
 kotlin {
     with(nativeTargets) {
-        add(macosX64())
-        add(macosArm64())
-        add(iosX64())
-        add(iosArm64())
-        add(iosSimulatorArm64())
+        addIfEnabledOnHost(macosX64())
+        addIfEnabledOnHost(macosArm64())
+        addIfEnabledOnHost(iosX64())
+        addIfEnabledOnHost(iosArm64())
+        addIfEnabledOnHost(iosSimulatorArm64())
 
         forEach {
             val copyTask = registerCopyFrameworkTask(it.konanTarget)
