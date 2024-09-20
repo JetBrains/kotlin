@@ -73,7 +73,7 @@ open class BasicMapsOwner(val cachesDir: File) : Closeable {
      * Instead, just call [close] and/or [deleteStorageFiles] explicitly.
      */
     fun clean() {
-//        close()
+        close()
         deleteStorageFiles()
     }
 
