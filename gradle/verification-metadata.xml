@@ -14,75 +14,7 @@
          <trust file=".*-sources[.]jar" regex="true"/>
          <trust file=".*[.]module" regex="true"/>
          <trust file=".*[.]pom" regex="true"/>
-         <trust file="kotlin-native-prebuilt-.*-2\.0\.20(-.+)?" regex="true"/>
-         <trust file="kotlin-native-prebuilt-.*-2\.1\.0(-.+)?" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="builtins" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-assignment" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-assignment-compiler-plugin-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-statistics" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-enum-compat" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-dom-api-compat" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-compiler-dependencies" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-native-prebuilt" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-native-utils" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-project-model" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-reflect" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver-compiler-plugin" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver-compiler-plugin-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-common" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-jvm" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-unshaded" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-wasm-js" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-wasm-wasi" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-annotations-common" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-common" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-js" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-junit" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-junit5" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-testng" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-wasm-js" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-wasm-wasi" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-util-io" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-util-klib-metadata" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
@@ -3892,10 +3824,34 @@
             <sha256 value="742fc253d719293c2188adc7ec3dfc3fc6562dea06258ec8b345d23d0d6c24ad" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-assignment" version="2.1.0-dev-7621">
+         <artifact name="kotlin-assignment-2.1.0-dev-7621-gradle85.jar">
+            <md5 value="c2a8ca318b6de9615de3d6d2130dc849" origin="Generated by Gradle"/>
+            <sha256 value="be57276c6b5fa6db19a321d93d1046a998e0ad22242d230564820ab9507f4d8c" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-assignment-compiler-plugin-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-assignment-compiler-plugin-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="602592a43f8bda97a0918812be9aeda4" origin="Generated by Gradle"/>
+            <sha256 value="8366c671d56aef09e325a4a62660b60cf08f05e014e34e35a1da5885187ae47f" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.20">
          <artifact name="kotlin-build-common-1.9.20.jar">
             <md5 value="e275ef9d49e72fc34a51b376f77de5fb" origin="Generated by Gradle"/>
             <sha256 value="17319416d0fa12cd77a9f365f8b8cb9c616953883368a5c7f529cf082da9e98d" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-common" version="2.0.20-RC">
+         <artifact name="kotlin-build-common-2.0.20-RC.jar">
+            <md5 value="a0b1450177304792fcfbc7ef1f7989cd" origin="Generated by Gradle"/>
+            <sha256 value="251bc1abbc61fbd4bd21e3403757c7604296228db97acd184f280c64c6a357c1" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-common" version="2.1.0-dev-7621">
+         <artifact name="kotlin-build-common-2.1.0-dev-7621.jar">
+            <md5 value="ab91e497addd7467d9dd1104b0fc1798" origin="Generated by Gradle"/>
+            <sha256 value="fcfcb0d4a3fd911931c97e6438adcff55504f4c338fa437a7e735a7ad6faa784" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-build-gradle-plugin" version="0.0.40">
@@ -3904,16 +3860,46 @@
             <sha256 value="ea3644137bdf9006eecd1fa1e6771548de3c9b335ffac6387bff01400ab63bd9" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-statistics" version="2.1.0-dev-7621">
+         <artifact name="kotlin-build-statistics-2.1.0-dev-7621.jar">
+            <md5 value="8541a80e714c01fea92d612a6dd8a9f1" origin="Generated by Gradle"/>
+            <sha256 value="afb2b3ba818444ae1e2a4e3ae0c4cbf968e0ba55f5ad314560ec16391b07e2de" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="1.9.20">
          <artifact name="kotlin-build-tools-api-1.9.20.jar">
             <md5 value="d198342d234320740d50caa6b650df0c" origin="Generated by Gradle"/>
             <sha256 value="c722948c568352cdc19dc8a8b245d14aae507d4dcffde6a7b26c535c472c1b17" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="2.0.20-RC">
+         <artifact name="kotlin-build-tools-api-2.0.20-RC.jar">
+            <md5 value="35f5276edcd75ce4dc5f8b9e9d584e20" origin="Generated by Gradle"/>
+            <sha256 value="cecf8f8f235e9342371a5d59322d33a64bb63fc4fdeee912289af3a20ec8af70" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="2.1.0-dev-7621">
+         <artifact name="kotlin-build-tools-api-2.1.0-dev-7621.jar">
+            <md5 value="f86b1c281309e28bb09b6774908f25f4" origin="Generated by Gradle"/>
+            <sha256 value="947c1dee4ef4d2807270d9587147ae9e36f5d273c0827724ccb2a261ffa039c2" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="1.9.20">
          <artifact name="kotlin-build-tools-impl-1.9.20.jar">
             <md5 value="a6f2282c211d133a4c602b28c30a83ef" origin="Generated by Gradle"/>
             <sha256 value="b7377a08d67dcddcbe4f7930d8cb0f7d0055789fbb30efdbe97008405d1f026d" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="2.0.20-RC">
+         <artifact name="kotlin-build-tools-impl-2.0.20-RC.jar">
+            <md5 value="0acaec816065b19b8750d5600e946cc5" origin="Generated by Gradle"/>
+            <sha256 value="266584817e3085506080381632e404ce5818d65fc1f80478147ff71bbd9ea233" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="2.1.0-dev-7621">
+         <artifact name="kotlin-build-tools-impl-2.1.0-dev-7621.jar">
+            <md5 value="b67569df0ad233b5c960a119ed6fe478" origin="Generated by Gradle"/>
+            <sha256 value="db22945c07ecfcc2102bc065bbdb8200e3e67f01f7338c3bafd3963d8f872489" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="1.9.20">
@@ -3928,16 +3914,52 @@
             <sha256 value="e71ff19e6b141ab85a9328fd010941531a302543026bd4244c95adc208d501f6" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="2.0.20-RC">
+         <artifact name="kotlin-compiler-embeddable-2.0.20-RC.jar">
+            <md5 value="991563b4789fb7fbf3f3853a1aa57709" origin="Generated by Gradle"/>
+            <sha256 value="779323bedea319aa4848e874744dff238ffa25e971603a7a07f026b8450c1568" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-compiler-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="f4e51b81f759186703d8e854579a2471" origin="Generated by Gradle"/>
+            <sha256 value="141422ec203cec80a5c623d3df268c0a355cbd321dd2682da0ed08ee0aadf347" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="1.9.20">
          <artifact name="kotlin-compiler-runner-1.9.20.jar">
             <md5 value="c82ae3a34c76a7e5097402604671a725" origin="Generated by Gradle"/>
             <sha256 value="49769c046f8d392654a4ab52af795455bd41e88d8392aeab9028f0edd5e8d50b" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="2.0.20-RC">
+         <artifact name="kotlin-compiler-runner-2.0.20-RC.jar">
+            <md5 value="06b892a78d54bbb09dd89a0f1a5ae44c" origin="Generated by Gradle"/>
+            <sha256 value="b333a493309510d2056aa9a55cfc1d2ef92748a1d77ef2d1ec05a91373bcec3d" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="2.1.0-dev-7621">
+         <artifact name="kotlin-compiler-runner-2.1.0-dev-7621.jar">
+            <md5 value="8904e1a230bc6234d1fdbf03ce752ff8" origin="Generated by Gradle"/>
+            <sha256 value="7e86ee079aa2d2c3de54e9ffc1f5c4f88ca5620f21b88580684cff0671dfb730" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="1.9.20">
          <artifact name="kotlin-daemon-client-1.9.20.jar">
             <md5 value="4f46aeada4e73361b4bb2be71784b434" origin="Generated by Gradle"/>
             <sha256 value="582230cbcfd65d36b94bc9d127f90024b8cf17dfa4a67ef6a929f14c6c27661c" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="2.0.20-RC">
+         <artifact name="kotlin-daemon-client-2.0.20-RC.jar">
+            <md5 value="ff2c4bc7fcefe8fdaa78a914f92b5a07" origin="Generated by Gradle"/>
+            <sha256 value="4f821f3870f88b080599b8cc2621c03b762d2779fa0db55b477f42ee65629bc2" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="2.1.0-dev-7621">
+         <artifact name="kotlin-daemon-client-2.1.0-dev-7621.jar">
+            <md5 value="a550a70f7548613a4070c33164d421f0" origin="Generated by Gradle"/>
+            <sha256 value="22863ad2814dcd797038a6ef233bdcf681e1bb552ea02bb0f2c654b9aab6aa2d" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="1.9.20">
@@ -3952,10 +3974,44 @@
             <sha256 value="177bc8b2a4076dcce7878ad0d8fd07163af3178e3fa90ee63d4f733bb47bfdc9" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="2.0.20-RC">
+         <artifact name="kotlin-daemon-embeddable-2.0.20-RC.jar">
+            <md5 value="ec2355718dc88d6885dc9659c6cc978e" origin="Generated by Gradle"/>
+            <sha256 value="aa1cb526bf9ed52c1d6b9cf549df04eff25e1bee707bc0931d5d29d75011527a" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-daemon-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="7a906032fa6c45a0ed933dbbdb9b37e8" origin="Generated by Gradle"/>
+            <sha256 value="2b0eb6bc73762f0d31fe760a9d77474c981e5b27b57f14626063e0677346bd02" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-2.1.0-dev-7621-gradle85.jar">
+            <md5 value="c698a90b422b0c8d76c971257b47f687" origin="Generated by Gradle"/>
+            <sha256 value="77c8d402caeee32501ac76eab1f7bc384726593f682f462da3f30a8fcbc707ca" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1.8.20-dev-4242">
          <artifact name="kotlin-gradle-plugin-annotations-1.8.20-dev-4242.jar">
             <md5 value="eab72c484635dc4d819cdb1c2222e238" origin="Generated by Gradle"/>
             <sha256 value="b1736cea5d4693607d0f67aaafecd57cc2bf38efa543a2b44d0ca7296a898862" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-annotations-2.1.0-dev-7621.jar">
+            <md5 value="876b16372aba9f1abfc7b1fb80b6a955" origin="Generated by Gradle"/>
+            <sha256 value="042339c7e539b14e16588b5fca0a35108ebde47fffc13b7cdccc23c390941c1b" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-api-2.1.0-dev-7621-gradle85.jar">
+            <md5 value="b141483ad1e5795b29dc53d1e17cdb5f" origin="Generated by Gradle"/>
+            <sha256 value="2ffe070f5a5abffcee8473cf004974be585265fcb9e1447ee74ac8d2f5252580" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-gradle-plugin-api-2.1.0-dev-7621.jar">
+            <md5 value="b141483ad1e5795b29dc53d1e17cdb5f" origin="Generated by Gradle"/>
+            <sha256 value="2ffe070f5a5abffcee8473cf004974be585265fcb9e1447ee74ac8d2f5252580" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="1.8.20-dev-4242">
@@ -3968,10 +4024,40 @@
             <sha256 value="7d41826fb0310a6d68a919eeae06a922fc12502f0209c02d6797b1af335e433f" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-idea-2.1.0-dev-7621.jar">
+            <md5 value="5e4b14a1c9fa236963376945a618ee24" origin="Generated by Gradle"/>
+            <sha256 value="68d4cac3649c5522981dd22ff0903f9186f3c3cf0a5b40ba964499a3837a456e" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="1.8.20-dev-4242">
          <artifact name="kotlin-gradle-plugin-idea-proto-1.8.20-dev-4242.jar">
             <md5 value="83a175d02ebbf353b6928b91882855b1" origin="Generated by Gradle"/>
             <sha256 value="38d596755e93cf84e6d00188bff93fc0b70ed279056999a18953e13804dca9c6" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-idea-proto-2.1.0-dev-7621.jar">
+            <md5 value="b0e80703521bb57be007e9e649d13434" origin="Generated by Gradle"/>
+            <sha256 value="e952d4727908d4fbeebeb0e766723156dc43373a854a6ede168ae143dbe6dc43" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model" version="2.1.0-dev-7621">
+         <artifact name="kotlin-gradle-plugin-model-2.1.0-dev-7621.jar">
+            <md5 value="f407403a9d903798e996310f92f4a96e" origin="Generated by Gradle"/>
+            <sha256 value="6243890c309c40ac07f9a34a7271c3ee9df38fdbdc343001017667b14b8bfa86" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api" version="2.1.0-dev-7621">
+         <artifact name="kotlin-klib-commonizer-api-2.1.0-dev-7621.jar">
+            <md5 value="8cabedfc8a2a5e0b9a65863d3e68c984" origin="Generated by Gradle"/>
+            <sha256 value="d03ad7529ac41258088ee912ce868a76001b57d57d23bd38f665d7022bedb12b" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-klib-commonizer-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="44af4cd26f6da8ddfcc51c9bacde1f38" origin="Generated by Gradle"/>
+            <sha256 value="2e30a4ceed9fa0f1858b7a36d5db3f5aedad7cdf4c446b24b0a34b76e9d33d89" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-native-prebuilt" version="1.9.24">
@@ -3990,6 +4076,30 @@
          <artifact name="kotlin-native-prebuilt-1.9.24-windows-x86_64.zip">
             <md5 value="9d52cc390ab9b65f76906263e3bca762" origin="Generated by Gradle"/>
             <sha256 value="9d630d9be6156954bba15809c55bc838ca4cc25f5e1b7c6fbfe6bc7b727b0778" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-native-prebuilt" version="2.1.0-dev-7621">
+         <artifact name="kotlin-native-prebuilt-2.1.0-dev-7621-linux-x86_64.tar.gz">
+            <md5 value="63d21bc19c8b3fe5b0f23615b6a7b319" origin="Generated by Gradle"/>
+            <sha256 value="25c7494c76b5d55a6ed9b49fae2f55fd4f98571e2a744bd3d72e44b7f774734f" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-native-prebuilt-2.1.0-dev-7621-macos-aarch64.tar.gz">
+            <md5 value="68d08f8edbac4a58ecc47ad686c1a008" origin="Generated by Gradle"/>
+            <sha256 value="b9f456871412026103076d8afe7a02a5e4ea4673d4148b1e262178b60e748bb8" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-native-prebuilt-2.1.0-dev-7621-macos-x86_64.tar.gz">
+            <md5 value="f888cb0eaebb99f50017f6096808f23c" origin="Generated by Gradle"/>
+            <sha256 value="f4d328ee4e2d85fab21e271fca4df1f91cdc47dccdb47bffdf1faf791f3a6251" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-native-prebuilt-2.1.0-dev-7621-windows-x86_64.zip">
+            <md5 value="afebe89c087f5178b4535dfa6c30a899" origin="Generated by Gradle"/>
+            <sha256 value="ccce353c7355ad65c00a0b5f7e3920c69d060bfe6f2c00fd30d6dcfa2390f168" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-native-utils" version="2.1.0-dev-7621">
+         <artifact name="kotlin-native-utils-2.1.0-dev-7621.jar">
+            <md5 value="ac874f87abdf6389da167e6ad5675a08" origin="Generated by Gradle"/>
+            <sha256 value="cd2875e36d6f945c5f3154418649744de8b334300aa8a8ac82030d30dd977748" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-reflect" version="1.5.32">
@@ -4034,6 +4144,24 @@
             <sha256 value="747c2927a623b6ebb734b465d6a26862e920ddd1828ef43716887c0849a3131f" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-reflect" version="2.1.0-dev-7621">
+         <artifact name="kotlin-reflect-2.1.0-dev-7621.jar">
+            <md5 value="c991f48b2bf052930d83626141106e1f" origin="Generated by Gradle"/>
+            <sha256 value="de431ccc0e0d84535b756762e3b2d2152f76b8f52c3915eed58692da49b22806" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver" version="2.1.0-dev-7621">
+         <artifact name="kotlin-sam-with-receiver-2.1.0-dev-7621-gradle85.jar">
+            <md5 value="89580b1e3c8451810457309932c19d5a" origin="Generated by Gradle"/>
+            <sha256 value="ea16a95d2c094125135f1bdb3761948bc66c198457c553ee542c7ae9c1b305c1" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver-compiler-plugin-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-sam-with-receiver-compiler-plugin-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="5d57c5f4e5f41c9f11803bf2b4b3dd2f" origin="Generated by Gradle"/>
+            <sha256 value="e5a60e7691f1fff4b49289987a18e65292152946f25112de4471da7290903d00" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="1.9.20">
          <artifact name="kotlin-script-runtime-1.9.20.jar">
             <md5 value="448f3cef7b52d1552ad3c3d61b08ce04" origin="Generated by Gradle"/>
@@ -4044,6 +4172,78 @@
          <artifact name="kotlin-script-runtime-1.9.24.jar">
             <md5 value="8e46083688f9531ebf952ec8917e3b6c" origin="Generated by Gradle"/>
             <sha256 value="314c7d308fe750654365bac6144780613c9169cf3d9e1dafbab91cf80bdc357c" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="2.0.20-RC">
+         <artifact name="kotlin-script-runtime-2.0.20-RC.jar">
+            <md5 value="284b2b410c7db621413ea480e04a7050" origin="Generated by Gradle"/>
+            <sha256 value="26185c8a9af2d81505bfe3876d4fb5bb5d76e8804719e05a183c4be920149636" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="2.1.0-dev-7621">
+         <artifact name="kotlin-script-runtime-2.1.0-dev-7621.jar">
+            <md5 value="fec4d72f5aaecfb1b8f19bc526807200" origin="Generated by Gradle"/>
+            <sha256 value="df052c64783143d33d2ff0134f1eaf1a22f3dae614ce5522a8018f8f7b5193d4" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-common" version="2.0.20-RC">
+         <artifact name="kotlin-scripting-common-2.0.20-RC.jar">
+            <md5 value="29bb0ba028203c06f8863ec3b214e6e9" origin="Generated by Gradle"/>
+            <sha256 value="fee7a554585bf04e4a8c45591a7604cf5fe0744a42db683e70c3d61338e36ee6" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-common" version="2.1.0-dev-7621">
+         <artifact name="kotlin-scripting-common-2.1.0-dev-7621.jar">
+            <md5 value="e19d294ed920243b9a4c4fff836d2639" origin="Generated by Gradle"/>
+            <sha256 value="55347933efcf9dc7be98f51b83ad7f4b2057a844c46db1ea882062bbf913551b" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable" version="2.0.20-RC">
+         <artifact name="kotlin-scripting-compiler-embeddable-2.0.20-RC.jar">
+            <md5 value="8ebd2a685227e958b262aff92acb2b11" origin="Generated by Gradle"/>
+            <sha256 value="197a7cbe2530a29943d3158a84c23655121e88a8e9ba687a5183283fc55c56e0" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-scripting-compiler-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="b364a179564968b33c9f7238e41cdabb" origin="Generated by Gradle"/>
+            <sha256 value="4ba751da3a842b61605246a5bd8f34e58d6cf4179cf71c192eba3e1c88802b43" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="2.0.20-RC">
+         <artifact name="kotlin-scripting-compiler-impl-embeddable-2.0.20-RC.jar">
+            <md5 value="1283c18055c810d6753a3c5df2afe1c8" origin="Generated by Gradle"/>
+            <sha256 value="340e9095400187b2d59c9a84c100642079c924b9e2fce535f05a3fd61d1bd881" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-scripting-compiler-impl-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="a325de6cc232fbda9bf2157bddfbc04f" origin="Generated by Gradle"/>
+            <sha256 value="80aa9212003ade65fe4d3e2a10870e7cf129ea1e2cab778efb577a8fe7ab5471" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-jvm" version="2.0.20-RC">
+         <artifact name="kotlin-scripting-jvm-2.0.20-RC.jar">
+            <md5 value="5a5be54ce72c56e475a59e4f4b713e06" origin="Generated by Gradle"/>
+            <sha256 value="6a471e554a6e27e13cd8d66173cab34eca0dad148ebe73b5a2e3fc4498103a0e" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-scripting-jvm" version="2.1.0-dev-7621">
+         <artifact name="kotlin-scripting-jvm-2.1.0-dev-7621.jar">
+            <md5 value="a4b8929c39ab4adea3f8b7018b59fa81" origin="Generated by Gradle"/>
+            <sha256 value="259623811f96ad8e8fb3eea1914bd1c43481421e7c52de4117eda90211e78354" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-serialization" version="2.1.0-dev-7621">
+         <artifact name="kotlin-serialization-2.1.0-dev-7621-gradle85.jar">
+            <md5 value="e57e00218841236ff5f2514461016782" origin="Generated by Gradle"/>
+            <sha256 value="33b9d6c01291b6a92d312ce4c6f1a28f8fbe5bb055d993d04bcfa12fe74b07bd" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin-embeddable" version="2.1.0-dev-7621">
+         <artifact name="kotlin-serialization-compiler-plugin-embeddable-2.1.0-dev-7621.jar">
+            <md5 value="47b5afef66abeae8eb53cddd58527cf7" origin="Generated by Gradle"/>
+            <sha256 value="74352e7757e24ac7d19d7f959a82f1cf165f6fd18ad31f04c45fc8c48a9d5ffc" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-stdlib" version="1.6.0">
@@ -4122,6 +4322,22 @@
          <artifact name="kotlin-stdlib-2.0.0.jar">
             <md5 value="13af6aba9109c07c47de3e7f344993ca" origin="Generated by Gradle"/>
             <sha256 value="240938c4aab8e73e888703e3e7d3f87383ffe5bd536d6d5e3c100d4cd0379fcf" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-stdlib" version="2.0.20-RC">
+         <artifact name="kotlin-stdlib-2.0.20-RC.jar">
+            <md5 value="70d14545f769c0674dab9464916f2333" origin="Generated by Gradle"/>
+            <sha256 value="f82ca9253d60c559b1f0d84382e0019d000e7e61bb6012371fe32ceedd6fad6e" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-stdlib" version="2.1.0-dev-7621">
+         <artifact name="kotlin-stdlib-2.1.0-dev-7621-all.jar">
+            <md5 value="87bae0b5d813ae8514264c7e98bba43b" origin="Generated by Gradle"/>
+            <sha256 value="767719ca21f953d68855c525292aed0734568a690e70fdb6e07e5ddba0817f43" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-stdlib-2.1.0-dev-7621.jar">
+            <md5 value="26e1a71a5893bb51c097de91290accf0" origin="Generated by Gradle"/>
+            <sha256 value="8161b3b99c3d9e2cecc8c75f2f6346d2349a385cad4daedc4985f1e53e371695" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.6.0">
@@ -4256,10 +4472,44 @@
             <sha256 value="a5502b8c40c3f85c805a87403a85e825e8736c69cce471e83704cbe22c4dd72b" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="2.1.0-dev-7621">
+         <artifact name="kotlin-stdlib-js-2.1.0-dev-7621.klib">
+            <md5 value="c1b40be7f78e5c5923ce8c8b05982827" origin="Generated by Gradle"/>
+            <sha256 value="0d316d80e5732ef7c0a53b1e5b3495e6e417c108bee6ef41d1564c630914d330" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-test" version="2.1.0-dev-7621">
+         <artifact name="kotlin-test-2.1.0-dev-7621-all.jar">
+            <md5 value="de495525c277de160da086e41e15d83f" origin="Generated by Gradle"/>
+            <sha256 value="0c65d56a4fd5c7340b3269296ca4682718d034a3c0fca368f86d9c91f0be63c4" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-test-2.1.0-dev-7621.jar">
+            <md5 value="cf6fb6278c9d64c75bfe8a2a36b2fbf0" origin="Generated by Gradle"/>
+            <sha256 value="e6ddd56feed6a19a6209c14885e6e2bf6b29e9c512ec100c0f4a2a3c8f5df9c9" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-test-junit" version="2.1.0-dev-7621">
+         <artifact name="kotlin-test-junit-2.1.0-dev-7621.jar">
+            <md5 value="eaea4872d492731d1146747e5ead1953" origin="Generated by Gradle"/>
+            <sha256 value="1cb179db89a7d76222d950ea0592ffb40d59d78d99e4e2a8cfde651363733310" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-test-junit5" version="2.1.0-dev-7621">
+         <artifact name="kotlin-test-junit5-2.1.0-dev-7621.jar">
+            <md5 value="cf3e522e9d76d5aedbbc9b54a5dc765e" origin="Generated by Gradle"/>
+            <sha256 value="aedb9d90cc59ef39f40a40d6fb84f99a98ffbad7aff87e08bac168caa98dd684" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="1.8.20-dev-4242">
          <artifact name="kotlin-tooling-core-1.8.20-dev-4242.jar">
             <md5 value="3762be9ba7cdfc5e9e63dee28bab3515" origin="Generated by Gradle"/>
             <sha256 value="1b7309b7c1f4bf739ba807e7c275e1fb3748dbe5c58b0100357b0a40003b948d" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="2.1.0-dev-7621">
+         <artifact name="kotlin-tooling-core-2.1.0-dev-7621.jar">
+            <md5 value="53353b43f92e798f0e3ca8d4b38993f8" origin="Generated by Gradle"/>
+            <sha256 value="4176c612098cb92df38a485ff8b10aaa24abb400f610d48f5088aeb07c8002c8" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-util-io" version="1.7.20">
@@ -4268,16 +4518,34 @@
             <sha256 value="aede08b11a141706f6a75d64dad2d704637d8f4435eac11b212c7b546c600c62" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-util-io" version="2.1.0-dev-7621">
+         <artifact name="kotlin-util-io-2.1.0-dev-7621.jar">
+            <md5 value="03e7cbec2920be13029ab3cbbde13de8" origin="Generated by Gradle"/>
+            <sha256 value="3a07074a35b589e02b990de8a2d1e991f9bc042fd60b1e985bd071e73806248c" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.7.20">
          <artifact name="kotlin-util-klib-1.7.20.jar">
             <md5 value="c5cb43c69360a99fb3881baeacfb1751" origin="Generated by Gradle"/>
             <sha256 value="8534ac8eb04876be0ef0ba1c2e31f76916869a4253ddbdfcff48cec979886030" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-util-klib" version="2.1.0-dev-7621">
+         <artifact name="kotlin-util-klib-2.1.0-dev-7621.jar">
+            <md5 value="7e86714ab7d771710838ae1cab5e249d" origin="Generated by Gradle"/>
+            <sha256 value="b1143696c1c0f6999f42617bcef3cc3ec9b8eaaec18843939c85529e1ca9e5f5" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-util-klib-metadata" version="1.7.20">
          <artifact name="kotlin-util-klib-metadata-1.7.20.jar">
             <md5 value="bf5236129b08a8b822fef2aa281e1f1b" origin="Generated by Gradle"/>
             <sha256 value="f78227aad95bb4a1b228cbbe2ad1c126a19c1dacc63340620da658c0d7f91b35" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-util-klib-metadata" version="2.1.0-dev-7621">
+         <artifact name="kotlin-util-klib-metadata-2.1.0-dev-7621.jar">
+            <md5 value="71af3c1b0a946b98bf5443299b50d212" origin="Generated by Gradle"/>
+            <sha256 value="d9a6258bc576e3cc5363ac6d18cfa260bccb9e5c70061ceebdce56d0630c4f25" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="protobuf-lite" version="2.6.1-1">
