@@ -88,10 +88,24 @@ abstract class KtClassOrObject :
 
     override fun getClassId(): ClassId? {
         greenStub?.let { return it.getClassId() }
+
+        if (isLocal()) return null
+
         return ClassIdCalculator.calculateClassId(this)
     }
 
-    override fun isLocal(): Boolean = greenStub?.isLocal() ?: KtPsiUtil.isLocal(this)
+    @Volatile
+    private var isLocal: Boolean? = null
+
+    override fun isLocal(): Boolean {
+        greenStub?.isLocal()?.let { return it }
+
+        isLocal?.let { return it }
+
+        return KtPsiUtil.isLocal(this).also {
+            isLocal = it
+        }
+    }
 
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
 
@@ -134,53 +148,19 @@ abstract class KtClassOrObject :
         }
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (this === another) {
-            return true
-        }
-
-        if (another !is KtClassOrObject) {
-            return false
-        }
-
-        val fq1 = getQualifiedName() ?: return false
-        val fq2 = another.getQualifiedName() ?: return false
-        if (fq1 == fq2) {
-            val thisLocal = isLocal
-            if (thisLocal != another.isLocal) {
-                return false
-            }
-
-            // For non-local classes same fqn is enough
-            // Consider different instances of local classes non-equivalent
-            return !thisLocal
-        }
-
-        return false
+    override fun subtreeChanged() {
+        // most likely, we may not drop isLocal as the class shouldn't survive such a destructive change
+        isLocal = null
+        super.subtreeChanged()
     }
 
-    protected fun getQualifiedName(): String? {
-        val stub = greenStub
-        if (stub != null) {
-            val fqName = stub.getFqName()
-            return fqName?.asString()
-        }
-
-        val parts = mutableListOf<String>()
-        var current: KtClassOrObject? = this
-        while (current != null) {
-            val name = current.name ?: return null
-            parts.add(name)
-            current = PsiTreeUtil.getParentOfType(current, KtClassOrObject::class.java)
-        }
-        val file = containingFile as? KtFile ?: return null
-        val fileQualifiedName = file.packageFqName.asString()
-        if (!fileQualifiedName.isEmpty()) {
-            parts.add(fileQualifiedName)
-        }
-        parts.reverse()
-        return parts.joinToString(separator = ".")
-    }
+    override fun isEquivalentTo(another: PsiElement?): Boolean =
+        this === another ||
+                another is KtClassOrObject &&
+                // Consider different instances of local classes non-equivalent
+                !isLocal() &&
+                !another.isLocal() &&
+                getClassId() == another.getClassId()
 
     fun getContextReceiverList(): KtContextReceiverList? = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST)
 
