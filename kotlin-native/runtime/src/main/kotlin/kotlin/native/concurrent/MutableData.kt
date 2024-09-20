@@ -18,6 +18,8 @@ external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, coun
  */
 @NoReorderFields
 @FreezingIsDeprecated
+@Deprecated("Support for the legacy memory manager has been completely removed. Use any regular collection instead.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public class MutableData constructor(capacity: Int = 16) {
     init {
         if (capacity <= 0) throw IllegalArgumentException()
@@ -57,6 +59,7 @@ public class MutableData constructor(capacity: Int = 16) {
     /**
      * Appends data to the buffer.
      */
+    @Suppress("DEPRECATION_ERROR")
     public fun append(data: MutableData): Unit = locked(lock) {
         val toCopy = data.size
         val where = resizeDataLocked(size + toCopy)

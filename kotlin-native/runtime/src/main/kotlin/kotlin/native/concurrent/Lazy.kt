@@ -3,13 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-@file:Suppress("DEPRECATION")
-@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.concurrent.AtomicReference
-import kotlinx.cinterop.ExperimentalForeignApi
 
 internal object UNINITIALIZED
 
@@ -56,6 +53,8 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
  * such as object singletons, or in cases where it's guaranteed not to have cyclical garbage.
  */
 @FreezingIsDeprecated
+@Deprecated("Support for the legacy memory manager has been completely removed. Use lazy() instead.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
 
 @Suppress("UNCHECKED_CAST")

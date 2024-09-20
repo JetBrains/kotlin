@@ -2,12 +2,8 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.concurrent
-
-import kotlin.native.internal.*
-import kotlinx.cinterop.ExperimentalForeignApi
 
 /**
  * A shared reference to a Kotlin object that doesn't freeze the referred object when it gets frozen itself.
@@ -21,6 +17,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
  */
 @FreezingIsDeprecated
 @ObsoleteWorkersApi
+@Deprecated("Support for the legacy memory manager has been completely removed. Use the referenced value directly.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public class WorkerBoundReference<out T : Any>(
         /**
          * The referenced value.

@@ -3,12 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlinx.cinterop.*
 
 import kotlin.native.CName
-import kotlin.native.concurrent.freeze
 
 // Top level functions.
 fun hello() {
@@ -127,7 +126,7 @@ fun setCErrorHandler(callback: CPointer<CFunction<(CPointer<ByteVar>) -> Unit>>?
             callback!!(throwable.toString().cstr.ptr)
         }
         kotlin.system.exitProcess(0)
-    }.freeze())
+    })
 }
 
 fun throwException() {

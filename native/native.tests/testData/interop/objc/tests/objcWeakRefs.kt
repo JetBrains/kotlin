@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
 
 import kotlinx.cinterop.*
 import kotlin.native.concurrent.*
@@ -36,8 +36,6 @@ private fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
 //            deallocListener.deallocExecutorIsNil()
 //        }
 //    }
-
-    obj.freeze()
 
     runInWorker {
         // [deallocListener.deallocExecutorIsNil()] calls deallocExecutor getter, which retains [obj] and either

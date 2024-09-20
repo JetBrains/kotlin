@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-//@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class)
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class)
+@file:Suppress("DEPRECATION_ERROR")
 
 import kotlin.test.*
 import kotlin.native.concurrent.*

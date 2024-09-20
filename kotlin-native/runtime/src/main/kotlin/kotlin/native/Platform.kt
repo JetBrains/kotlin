@@ -6,8 +6,6 @@ package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.TypedIntrinsic
-import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
@@ -100,6 +98,8 @@ public object Platform {
      * If freezing is enabled. Always [false]
      */
     @FreezingIsDeprecated
+    @Deprecated("Support for the legacy memory manager has been completely removed. Consequently, this property is always `false`.", ReplaceWith("false"))
+    @DeprecatedSinceKotlin(errorSince = "2.1")
     public val isFreezingEnabled: Boolean
         get() = false
 

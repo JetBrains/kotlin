@@ -257,8 +257,10 @@ fun IC2?.getValueOrNull2() = this?.value
 fun IC3.getValue3() = value
 fun IC3?.getValueOrNull3() = this?.value
 
+@Suppress("DEPRECATION_ERROR")
 fun isFrozen(obj: Any): Boolean = obj.isFrozen
-@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class)
+@Suppress("DEPRECATION_ERROR")
 fun isFreezingEnabled() = Platform.isFreezingEnabled
 fun kotlinLambda(block: (Any) -> Any): Any = block
 
@@ -480,10 +482,6 @@ class GH2931 {
 
     class Holder {
         val data = Data()
-
-        init {
-            freeze()
-        }
     }
 }
 
@@ -819,9 +817,7 @@ fun gc() {
 }
 
 class TestWeakRefs(private val frozen: Boolean) {
-    private var obj: Any? = Any().also {
-        if (frozen) it.freeze()
-    }
+    private var obj: Any? = Any()
 
     fun getObj() = obj!!
 
@@ -834,14 +830,14 @@ class TestWeakRefs(private val frozen: Boolean) {
         val node2 = Node(node1)
         node1.next = node2
 
-        if (frozen) node1.freeze()
-
         return listOf(node1, node2)
     }
 
     private class Node(var next: Node?)
 }
 
+@OptIn(FreezingIsDeprecated::class)
+@Suppress("DEPRECATION_ERROR") // Freezing API
 class SharedRefs {
     class MutableData {
         var x = 0
@@ -862,11 +858,8 @@ class SharedRefs {
         mutableListOf()
     }
 
-    @OptIn(FreezingIsDeprecated::class)
     fun createFrozenRegularObject() = createRegularObject().freeze()
-    @OptIn(FreezingIsDeprecated::class)
     fun createFrozenLambda() = createLambda().freeze()
-    @OptIn(FreezingIsDeprecated::class)
     fun createFrozenCollection() = createCollection().freeze()
 
     fun hasAliveObjects(): Boolean {
@@ -896,10 +889,6 @@ class KT49497Model {
 
     // Wrapping `this` to make the strongly connected component non-trival, just in case:
     private val selfRef = SelfRef(this)
-
-    init {
-        freeze()
-    }
 }
 
 open class ClassForTypeCheck

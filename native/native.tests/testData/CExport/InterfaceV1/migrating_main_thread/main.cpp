@@ -10,20 +10,19 @@
 
 constexpr int kInitialValue = 0;
 constexpr int kNewValue = 1;
-constexpr int kErrorValue = 2;
 
 int main() {
     auto* symbols = migrating_main_thread_symbols();
     std::thread main1([symbols]() {
-        assert(symbols->kotlin.root.tryReadFromA(kErrorValue) == kInitialValue);
+        assert(symbols->kotlin.root.tryReadFromA() == kInitialValue);
         symbols->kotlin.root.writeToA(kNewValue);
-        assert(symbols->kotlin.root.tryReadFromA(kErrorValue) == kNewValue);
+        assert(symbols->kotlin.root.tryReadFromA() == kNewValue);
     });
     main1.join();
 
     std::thread main2([symbols]() {
         // Globals are preserved.
-        assert(symbols->kotlin.root.tryReadFromA(kErrorValue) == kNewValue);
+        assert(symbols->kotlin.root.tryReadFromA() == kNewValue);
 
     });
     main2.join();

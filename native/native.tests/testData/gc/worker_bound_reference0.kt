@@ -12,8 +12,7 @@ import kotlin.native.runtime.GC
 
 class A(var a: Int)
 
-class Wrapper(val ref: WorkerBoundReference<A>)
-
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun getOwnerAndWeaks(initial: Int): Triple<AtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
     val ref = WorkerBoundReference(A(initial))
     val refOwner: AtomicReference<WorkerBoundReference<A>?> = AtomicReference(ref)
@@ -35,6 +34,7 @@ fun testCollect() {
     assertNull(refValueWeak.value)
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun getOwnerAndWeaksFrozen(initial: Int): Triple<AtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
     val ref = WorkerBoundReference(A(initial)).freeze()
     val refOwner: AtomicReference<WorkerBoundReference<A>?> = AtomicReference(ref)
@@ -98,6 +98,7 @@ fun testCollectInWorkerFrozen() {
     worker.requestTermination().result
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun doNotCollectInWorkerFrozen(worker: Worker, semaphore: AtomicInt): Future<WorkerBoundReference<A>> {
     val ref = WorkerBoundReference(A(3)).freeze()
 
@@ -128,12 +129,15 @@ fun testDoNotCollectInWorkerFrozen() {
     worker.requestTermination().result
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 class B1 {
     lateinit var b2: WorkerBoundReference<B2>
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 data class B2(val b1: WorkerBoundReference<B1>)
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun createCyclicGarbage(): Triple<AtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
     val ref1 = WorkerBoundReference(B1())
     val ref1Owner: AtomicReference<WorkerBoundReference<B1>?> = AtomicReference(ref1)
@@ -158,68 +162,7 @@ fun collectCyclicGarbage() {
     assertNull(ref2Weak.value)
 }
 
-fun createCyclicGarbageFrozen(): Triple<AtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
-    val ref1 = WorkerBoundReference(B1()).freeze()
-    val ref1Owner: AtomicReference<WorkerBoundReference<B1>?> = AtomicReference(ref1)
-    val ref1Weak = WeakReference(ref1.value)
-
-    val ref2 = WorkerBoundReference(B2(ref1)).freeze()
-    val ref2Weak = WeakReference(ref2.value)
-
-    ref1.value.b2 = ref2
-
-    return Triple(ref1Owner, ref1Weak, ref2Weak)
-}
-
-@Test
-fun doesNotCollectCyclicGarbageFrozen() {
-    if (!Platform.isFreezingEnabled) return
-    val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageFrozen()
-
-    ref1Owner.value = null
-    GC.collect()
-
-    // If these asserts fail, that means WorkerBoundReference managed to clean up cyclic garbage all by itself.
-    assertNotNull(ref1Weak.value)
-    assertNotNull(ref2Weak.value)
-}
-
-fun createCrossThreadCyclicGarbageFrozen(
-        worker: Worker
-): Triple<AtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
-    val ref1 = WorkerBoundReference(B1()).freeze()
-    val ref1Owner: AtomicReference<WorkerBoundReference<B1>?> = AtomicReference(ref1)
-    val ref1Weak = WeakReference(ref1.value)
-
-    val future = worker.execute(TransferMode.SAFE, { ref1 }) { ref1 ->
-        val ref2 = WorkerBoundReference(B2(ref1)).freeze()
-        Pair(ref2, WeakReference(ref2.value))
-    }
-    val (ref2, ref2Weak) = future.result
-
-    ref1.value.b2 = ref2
-
-    return Triple(ref1Owner, ref1Weak, ref2Weak)
-}
-
-@Test
-fun doesNotCollectCrossThreadCyclicGarbageFrozen() {
-    if (!Platform.isFreezingEnabled) return
-    val worker = Worker.start()
-
-    val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageFrozen(worker)
-
-    ref1Owner.value = null
-    GC.collect()
-    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-
-    // If these asserts fail, that means WorkerBoundReference managed to clean up cyclic garbage all by itself.
-    assertNotNull(ref1Weak.value)
-    assertNotNull(ref2Weak.value)
-
-    worker.requestTermination().result
-}
-
+@Suppress("DEPRECATION_ERROR") // Freezing API
 class C1 {
     lateinit var c2: AtomicReference<WorkerBoundReference<C2>?>
 
@@ -228,8 +171,10 @@ class C1 {
     }
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 data class C2(val c1: AtomicReference<WorkerBoundReference<C1>>)
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
     val ref1 = WorkerBoundReference(C1()).freeze()
     val ref1Weak = WeakReference(ref1.value)
@@ -242,22 +187,10 @@ fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundRe
     return Triple(AtomicReference(ref1), ref1Weak, ref2Weak)
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
     refOwner.value!!.value.dispose()
     refOwner.value = null
-}
-
-@Test
-fun doesNotCollectCyclicGarbageWithAtomicsFrozen() {
-    if (!Platform.isFreezingEnabled) return
-    val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomicsFrozen()
-
-    ref1Owner.value = null
-    GC.collect()
-
-    // If these asserts fail, that means AtomicReference<WorkerBoundReference> managed to clean up cyclic garbage all by itself.
-    assertNotNull(ref1Weak.value)
-    assertNotNull(ref2Weak.value)
 }
 
 @Test
@@ -276,6 +209,7 @@ fun collectCyclicGarbageWithAtomicsFrozen() {
     assertNull(ref2Weak.value)
 }
 
+@Suppress("DEPRECATION_ERROR") // Freezing API
 fun createCrossThreadCyclicGarbageWithAtomicsFrozen(
         worker: Worker
 ): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
@@ -291,24 +225,6 @@ fun createCrossThreadCyclicGarbageWithAtomicsFrozen(
     ref1.value.c2 = AtomicReference(ref2)
 
     return Triple(AtomicReference(ref1), ref1Weak, ref2Weak)
-}
-
-@Test
-fun doesNotCollectCrossThreadCyclicGarbageWithAtomicsFrozen() {
-    if (!Platform.isFreezingEnabled) return
-    val worker = Worker.start()
-
-    val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageWithAtomicsFrozen(worker)
-
-    ref1Owner.value = null
-    GC.collect()
-    worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-
-    // If these asserts fail, that means AtomicReference<WorkerBoundReference> managed to clean up cyclic garbage all by itself.
-    assertNotNull(ref1Weak.value)
-    assertNotNull(ref2Weak.value)
-
-    worker.requestTermination().result
 }
 
 @Test

@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
+@file:OptIn(ObsoleteWorkersApi::class)
 
 import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.*
@@ -99,7 +99,7 @@ interface ExecuteMethod<F> {
 }
 
 object Execute : ExecuteMethod<Future<Unit>> {
-    override fun submit(worker: Worker, block: () -> Unit) = worker.execute(TransferMode.SAFE, { block.freeze() }) {
+    override fun submit(worker: Worker, block: () -> Unit) = worker.execute(TransferMode.SAFE, { block }) {
         it()
     }
 
@@ -121,9 +121,9 @@ abstract class ExecuteAfter : ExecuteMethod<AtomicReference<Any?>> {
                 block()
                 result.value = true
             } catch (e: Throwable) {
-                result.value = e.freeze()
+                result.value = e
             }
-        }.freeze())
+        })
 
         return result
     }

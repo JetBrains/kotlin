@@ -55,6 +55,8 @@ public enum class TransferMode(public val value: Int) {
  */
 @FreezingIsDeprecated
 @ObsoleteWorkersApi
+@Deprecated("Support for the legacy memory manager has been completely removed. Use the pointed value directly. To pass the value through the C interop, use the StableRef class.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     @PublishedApi
     internal val stable: AtomicNativePtr = AtomicNativePtr(pointer)
@@ -87,6 +89,9 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
  */
 @FreezingIsDeprecated
 @ObsoleteWorkersApi
+@Deprecated("Support for the legacy memory manager has been completely removed.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
+@Suppress("DEPRECATION_ERROR")
 public inline fun <reified T> DetachedObjectGraph<T>.attach(): T {
     var rawStable: NativePtr
     do {
