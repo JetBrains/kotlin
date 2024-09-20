@@ -34,7 +34,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean
 
     /* Long deprecation cycle, because IDE might be calling into this via reflection */
-    @Deprecated("Scheduled for removal with Kotlin 2.2")
+    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     val overrideDisambiguationClassifierOnIdeImport: String?
 
     val platformType: KotlinPlatformType

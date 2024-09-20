@@ -25,6 +25,7 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
     protected open fun useDisambiguationClassifierAsSourceSetNamePrefix() = true
 
     // This function is used in IDE import in order to override sourceSetName
+    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     protected open fun overrideDisambiguationClassifierOnIdeImport(name: String): String? = null
 
     protected abstract fun instantiateTarget(name: String): R
@@ -33,8 +34,6 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
-            @Suppress("DEPRECATION")
-            overrideDisambiguationClassifierOnIdeImport = overrideDisambiguationClassifierOnIdeImport(name)
             @Suppress("DEPRECATION")
             preset = this@KotlinOnlyTargetPreset
 
