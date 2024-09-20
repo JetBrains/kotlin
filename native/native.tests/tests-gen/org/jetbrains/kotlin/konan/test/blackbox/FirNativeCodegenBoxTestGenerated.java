@@ -1135,6 +1135,36 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         runTest("compiler/testData/codegen/box/assert/alwaysEnable.kt");
       }
 
+      @Test
+      @TestMetadata("assertDisabledWithFunctionReference.kt")
+      public void testAssertDisabledWithFunctionReference() {
+        runTest("compiler/testData/codegen/box/assert/assertDisabledWithFunctionReference.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInConditionAndMessage.kt")
+      public void testAssertEnabledInConditionAndMessage() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInConditionAndMessage.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInlined.kt")
+      public void testAssertEnabledInlined() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInlined.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInlinedCrossModule.kt")
+      public void testAssertEnabledInlinedCrossModule() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInlinedCrossModule.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledWithFunctionReference.kt")
+      public void testAssertEnabledWithFunctionReference() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledWithFunctionReference.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/assert/jvm")
       @TestDataPath("$PROJECT_ROOT")
@@ -31011,6 +31041,30 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("anonymousObjectAndSpecificImplementationInDeserializedIr.kt")
         public void testAnonymousObjectAndSpecificImplementationInDeserializedIr() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
+        }
+
+        @Test
+        @TestMetadata("assertDisabledAsActualFunction.kt")
+        public void testAssertDisabledAsActualFunction() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("assertDisabledAsActualFunctionHmpp.kt")
+        public void testAssertDisabledAsActualFunctionHmpp() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/assertDisabledAsActualFunctionHmpp.kt");
+        }
+
+        @Test
+        @TestMetadata("assertEnabledAsActualFunction.kt")
+        public void testAssertEnabledAsActualFunction() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("assertEnabledAsActualFunctionHmpp.kt")
+        public void testAssertEnabledAsActualFunctionHmpp() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/assertEnabledAsActualFunctionHmpp.kt");
         }
 
         @Test

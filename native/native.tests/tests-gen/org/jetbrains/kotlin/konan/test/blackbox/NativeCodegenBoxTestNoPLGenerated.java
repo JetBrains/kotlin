@@ -1136,6 +1136,36 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         runTest("compiler/testData/codegen/box/assert/alwaysEnable.kt");
       }
 
+      @Test
+      @TestMetadata("assertDisabledWithFunctionReference.kt")
+      public void testAssertDisabledWithFunctionReference() {
+        runTest("compiler/testData/codegen/box/assert/assertDisabledWithFunctionReference.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInConditionAndMessage.kt")
+      public void testAssertEnabledInConditionAndMessage() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInConditionAndMessage.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInlined.kt")
+      public void testAssertEnabledInlined() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInlined.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledInlinedCrossModule.kt")
+      public void testAssertEnabledInlinedCrossModule() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledInlinedCrossModule.kt");
+      }
+
+      @Test
+      @TestMetadata("assertEnabledWithFunctionReference.kt")
+      public void testAssertEnabledWithFunctionReference() {
+        runTest("compiler/testData/codegen/box/assert/assertEnabledWithFunctionReference.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/assert/jvm")
       @TestDataPath("$PROJECT_ROOT")
