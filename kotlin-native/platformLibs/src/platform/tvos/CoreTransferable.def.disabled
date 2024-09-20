@@ -4,4 +4,4 @@ package = platform.CoreTransferable
 modules = CoreTransferable
 compilerOpts = -framework CoreTransferable
 linkerOpts = -framework CoreTransferable
-#Disabled: Swift-only framework
+# The framework has no ObjC API surface

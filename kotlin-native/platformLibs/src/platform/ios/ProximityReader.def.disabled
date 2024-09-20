@@ -4,4 +4,4 @@ package = platform.ProximityReader
 modules = ProximityReader
 compilerOpts = -framework ProximityReader
 linkerOpts = -framework ProximityReader
-#Disabled: Swift-only framework
+# The framework has no ObjC API surface
