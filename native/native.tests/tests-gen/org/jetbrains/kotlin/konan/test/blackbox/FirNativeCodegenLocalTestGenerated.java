@@ -905,6 +905,24 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("assertDisabledInConditionAndMessage.kt")
+    public void testAssertDisabledInConditionAndMessage() {
+      runTest("native/native.tests/testData/codegen/fileCheck/assertDisabledInConditionAndMessage.kt");
+    }
+
+    @Test
+    @TestMetadata("assertDisabledInlined.kt")
+    public void testAssertDisabledInlined() {
+      runTest("native/native.tests/testData/codegen/fileCheck/assertDisabledInlined.kt");
+    }
+
+    @Test
+    @TestMetadata("assertDisabledInlinedCrossModule.kt")
+    public void testAssertDisabledInlinedCrossModule() {
+      runTest("native/native.tests/testData/codegen/fileCheck/assertDisabledInlinedCrossModule.kt");
+    }
+
+    @Test
     @TestMetadata("atomics.kt")
     public void testAtomics() {
       runTest("native/native.tests/testData/codegen/fileCheck/atomics.kt");
