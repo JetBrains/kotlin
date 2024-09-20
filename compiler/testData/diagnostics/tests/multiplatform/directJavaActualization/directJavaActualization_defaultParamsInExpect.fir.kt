@@ -4,11 +4,11 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+expect class Foo {
     fun foo(a: Int = 1)
 
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>Nested<!> {
-        <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>constructor(b: Int = 2)<!>
+    class Nested {
+        constructor(b: Int = 2)
     }
 }
 
