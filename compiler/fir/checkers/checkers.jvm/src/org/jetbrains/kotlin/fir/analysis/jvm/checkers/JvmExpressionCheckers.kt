@@ -24,6 +24,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJvmModuleAccessibilityQualifiedAccessChecker,
             FirJvmInlineTargetQualifiedAccessChecker,
             FirJavaClassInheritsKtPrivateClassExpressionChecker,
+            FirArrayOfNullableNothingExpressionChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>

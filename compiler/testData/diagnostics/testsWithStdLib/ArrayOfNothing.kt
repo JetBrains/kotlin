@@ -6,6 +6,8 @@ class D<T>
 
 fun test1(
     a: <!UNSUPPORTED!>Array<Nothing><!>,
+    // Note: in K2, it's JVM-only diagnostic. Other platforms support Array<Nothing?> properly.
+    // See also BB tests: reifiedNullableNothing3.kt, reifiedNullableNothing4.kt
     b: <!UNSUPPORTED!>Array<Nothing?><!>,
     c: <!UNSUPPORTED!>Array<in Nothing><!>,
     d: <!UNSUPPORTED!>Array<in Nothing?><!>,
