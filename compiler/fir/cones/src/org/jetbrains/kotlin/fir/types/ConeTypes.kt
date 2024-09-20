@@ -197,7 +197,7 @@ data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType
 ) : ConeRigidType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = original.typeArguments
+        get() = EMPTY_ARRAY
 
     override val attributes: ConeAttributes
         get() = original.attributes
