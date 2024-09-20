@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreator
@@ -65,7 +64,7 @@ internal class KaFirTypeCreator(
         withValidityAssertion {
             val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
             val symbol = builder.symbol
-            val coneType = (symbol as KaFirTypeParameterSymbol).firSymbol.toConeType()
+            val coneType = symbol.firSymbol.toConeType()
             return coneType.asKtType() as KaTypeParameterType
         }
     }

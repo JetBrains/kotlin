@@ -46,6 +46,18 @@ public class FirIdeDependentAnalysisSourceModuleTypeParameterTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("javaByName.kt")
+  public void testJavaByName() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/javaByName.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinByName.kt")
+  public void testKotlinByName() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/kotlinByName.kt");
+  }
+
+  @Test
   @TestMetadata("multipleBounds.kt")
   public void testMultipleBounds() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/multipleBounds.kt");
