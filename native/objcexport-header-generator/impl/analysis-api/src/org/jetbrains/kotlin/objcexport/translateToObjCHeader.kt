@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
-import org.jetbrains.kotlin.objcexport.extras.originClassId
-import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
-import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
+import org.jetbrains.kotlin.objcexport.extras.*
+import org.jetbrains.kotlin.objcexport.mangling.mangleObjCStubs
 
 
 fun ObjCExportContext.translateToObjCHeader(
@@ -68,7 +67,7 @@ private class KtObjCExportHeaderGenerator(
     /**
      * The mutable aggregate of all class names that shall later be rendered as forward declarations
      */
-    private val objCClassForwardDeclarations = mutableSetOf<String>()
+    private val objCClassForwardDeclarations = mutableSetOf<ObjCClassKey>()
 
 
     fun ObjCExportContext.translateAll(files: List<KtObjCExportFile>) {
@@ -120,9 +119,9 @@ private class KtObjCExportHeaderGenerator(
             val symbol = symbolToFacade.key
             val facade = symbolToFacade.value
             translateClassOrObjectSymbol(symbol)
-            addObjCStubIfNotTranslated(facade)
+            addObjCStubIfNotTranslated(facade, symbol.classId?.packageFqName?.asString())
             enqueueDependencyClasses(facade)
-            objCClassForwardDeclarations += facade.name
+            objCClassForwardDeclarations += ObjCClassKey(facade.name, symbol.classId?.packageFqName?.asString())
         }
     }
 
@@ -164,13 +163,13 @@ private class KtObjCExportHeaderGenerator(
 
         analysisSession.getSuperClassSymbolNotAny(symbol)?.takeIf { analysisSession.isVisibleInObjC(it) }?.let { superClassSymbol ->
             translateClassOrObjectSymbol(superClassSymbol)?.let {
-                objCClassForwardDeclarations += it.name
+                objCClassForwardDeclarations += ObjCClassKey(it.name, superClassSymbol.classId?.packageFqName?.asString())
             }
         }
 
 
         /* Note: It is important to add *this* stub to the result list only after translating/processing the superclass symbols */
-        addObjCStubIfNotTranslated(objCClass)
+        addObjCStubIfNotTranslated(objCClass, symbol.classId?.packageFqName?.asString())
         enqueueDependencyClasses(objCClass)
         return objCClass
     }
@@ -221,7 +220,10 @@ private class KtObjCExportHeaderGenerator(
             .onEach { type ->
                 if (!type.requiresForwardDeclaration) return@onEach
                 val nonNullType = if (type is ObjCNullableReferenceType) type.nonNullType else type
-                if (nonNullType is ObjCClassType) objCClassForwardDeclarations += nonNullType.className
+                if (nonNullType is ObjCClassType) objCClassForwardDeclarations += ObjCClassKey(
+                    nonNullType.className,
+                    nonNullType.originClassId?.packageFqName?.asString()
+                )
                 if (nonNullType is ObjCProtocolType) objCProtocolForwardDeclarations += nonNullType.protocolName
             }
             .mapNotNull { it.originClassId }
@@ -235,12 +237,12 @@ private class KtObjCExportHeaderGenerator(
      * If no such class was explicitly translated a simple [ObjCClassForwardDeclaration] will be emitted that does not
      * carry any generics.
      */
-    private fun resolveObjCClassForwardDeclaration(className: String): ObjCClassForwardDeclaration {
-        objCStubsByClassKey[ObjCClassKey(className)]
+    private fun resolveObjCClassForwardDeclaration(classKey: ObjCClassKey): ObjCClassForwardDeclaration {
+        objCStubsByClassKey[classKey]
             .let { it as? ObjCInterface }
             ?.let { objCClass -> return ObjCClassForwardDeclaration(objCClass.name, objCClass.generics) }
 
-        return ObjCClassForwardDeclaration(className)
+        return ObjCClassForwardDeclaration(classKey.className)
     }
 
     fun ObjCExportContext.buildObjCHeader(): ObjCHeader {
@@ -249,14 +251,16 @@ private class KtObjCExportHeaderGenerator(
         val protocolForwardDeclarations = objCProtocolForwardDeclarations.toSet()
 
         val classForwardDeclarations = objCClassForwardDeclarations
-            .map { className -> resolveObjCClassForwardDeclaration(className) }
+            .map { className ->
+                resolveObjCClassForwardDeclaration(className)
+            }
             .toSet()
 
         val stubs = (if (withObjCBaseDeclarations) exportSession.objCBaseDeclarations() else emptyList()).plus(objCStubs)
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
-            stubs = stubs.sortedWith(ObjCInterfaceOrder),
+            stubs = stubs.mangleObjCStubs().sortedWith(ObjCInterfaceOrder),
             classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()
@@ -277,8 +281,8 @@ private class KtObjCExportHeaderGenerator(
      * K1 also uses a dedicated hash map, but filtering out is spread across the translation traversal.
      * See the usage of [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator.generatedClasses].
      */
-    private fun addObjCStubIfNotTranslated(objCClass: ObjCClass) {
-        val key = ObjCClassKey(objCClass.name, (objCClass as? ObjCInterface)?.categoryName)
+    private fun addObjCStubIfNotTranslated(objCClass: ObjCClass, packageFqn: String? = "") {
+        val key = ObjCClassKey(objCClass.name, packageFqn, (objCClass as? ObjCInterface)?.categoryName)
         val translatedClass = objCStubsByClassKey[key]
         if (translatedClass != null) return
         objCStubsByClassKey[key] = objCClass
@@ -286,4 +290,8 @@ private class KtObjCExportHeaderGenerator(
     }
 }
 
-private data class ObjCClassKey(val className: String, val categoryName: String? = null)
+private data class ObjCClassKey(
+    val className: String,
+    val packageFqn: String? = null,
+    val categoryName: String? = null,
+)

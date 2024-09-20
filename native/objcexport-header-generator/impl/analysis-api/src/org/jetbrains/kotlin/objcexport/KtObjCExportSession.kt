@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.utils.getOrPutNullable
 
 sealed interface KtObjCExportSession {
     val configuration: KtObjCExportConfiguration
-
     val useSiteExportSession: KtObjCExportSession
         get() = this
 }
@@ -67,7 +66,7 @@ inline fun <T> withKtObjCExportSession(
         moduleNaming = moduleNaming,
         moduleClassifier = moduleClassifier,
         cache = hashMapOf(),
-        overrides = hashMapOf(),
+        overrides = hashMapOf()
     ).block()
 }
 
@@ -77,7 +76,7 @@ internal data class KtObjCExportSessionImpl(
     override val moduleNaming: KtObjCExportModuleNaming,
     override val moduleClassifier: KtObjCExportModuleClassifier,
     override val cache: MutableMap<Any, Any?>,
-    override val overrides: Map<KaSymbol, KtObjCExportSymbolOverride>,
+    override val overrides: Map<KaSymbol, KtObjCExportSymbolOverride>
 ) : KtObjCExportSessionPrivate
 
 

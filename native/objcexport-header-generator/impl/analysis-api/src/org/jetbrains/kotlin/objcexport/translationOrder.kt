@@ -5,32 +5,26 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getStringSignature
 
 internal val StableFileOrder: Comparator<KtObjCExportFile>
     get() = compareBy<KtObjCExportFile> { file -> file.packageFqName.asString() }
         .thenComparing { file -> file.fileName }
 
-internal val StableFunctionOrder: Comparator<KaNamedFunctionSymbol>
-    get() = compareBy(
-        { it.isConstructor },
-        { it.name },
-        { it.valueParameters.size },
-        /**
-         * Signature order should be added
-         *
-         * See KT-66066
-         * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorKt.makeMethodsOrderStable]
-         * { KonanManglerDesc.run { it.signatureString(false) } }
-         */
-    )
+internal fun KaSession.getStableFunctionOrder(): Comparator<KaNamedFunctionSymbol> = compareBy(
+    { it.isConstructor },
+    { it.name },
+    { it.valueParameters.size },
+    { getStringSignature(it) }
+)
 
-internal val StableConstructorOrder: Comparator<KaConstructorSymbol>
-    get() = compareBy(
-        { it.valueParameters.size },
-        // TODO NOW! { KonanManglerDesc.run { it.signatureString(false) } }
-    )
+internal fun KaSession.getStableConstructorOrder(): Comparator<KaConstructorSymbol> = compareBy(
+    { it.valueParameters.size },
+    { getStringSignature(it) }
+)
 
 internal val StableClassifierOrder: Comparator<KaClassifierSymbol> =
     compareBy<KaClassifierSymbol> { classifier ->
@@ -55,15 +49,15 @@ internal val StableClassifierOrder: Comparator<KaClassifierSymbol> =
 //    }
 internal val StableNamedOrder: Comparator<KaNamedSymbol> = compareBy { it.name.toString() }
 
-internal val StableCallableOrder: Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
+internal fun KaSession.getStableCallableOrder(): Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
     when (it) {
         is KaConstructorSymbol -> 0
         is KaNamedFunctionSymbol -> 1
         is KaPropertySymbol -> 2
         else -> 3
     }
-}.thenComparing(StableConstructorOrder)
-    .thenComparing(StableFunctionOrder)
+}.thenComparing(getStableConstructorOrder())
+    .thenComparing(getStableFunctionOrder())
     .thenComparing(StableNamedOrder)
 
 private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {

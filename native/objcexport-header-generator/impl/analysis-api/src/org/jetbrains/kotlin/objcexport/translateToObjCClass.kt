@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
@@ -47,7 +48,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
         }
 
         this += analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
-            .sortedWith(StableCallableOrder)
+            .sortedWith(analysisSession.getStableCallableOrder())
             .flatMap { translateToObjCExportStub(it) }
 
         if (symbol.classKind == KaClassKind.ENUM_CLASS) {

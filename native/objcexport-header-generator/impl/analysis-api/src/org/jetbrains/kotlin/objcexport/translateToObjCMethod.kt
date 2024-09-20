@@ -51,37 +51,43 @@ internal fun ObjCExportContext.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
+    val exportContext = this
     val bridge = getBaseFunctionMethodBridge(symbol)
     val returnType: ObjCType = mapReturnType(symbol, bridge.returnBridge)
     val parameters = translateToObjCParameters(symbol, bridge)
     val selector = getSelector(symbol, bridge)
     val selectors = splitSelector(selector)
     val swiftName = getSwiftName(symbol, bridge)
-    val attributes = mutableListOf<String>()
+
     val returnBridge = bridge.returnBridge
     val comment = analysisSession.translateToObjCComment(symbol, bridge, parameters)
     val throws = analysisSession.getDefinedThrows(symbol).map { it }.toList()
 
-    attributes += symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
-
-    if (returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError && returnBridge.successMayBeZero) {
-        // Method may return zero on success, but
-        // standard Objective-C convention doesn't suppose this happening.
-        // Add non-standard convention hint for Swift:
-        attributes += "swift_error(nonnull_error)" // Means "failure <=> (error != nil)".
-    }
-
-    if (symbol.isConstructor && !analysisSession.isArrayConstructor(symbol)) { // TODO: check methodBridge instead.
-        attributes += "objc_designated_initializer"
-    }
-
-    if (unavailable) {
-        attributes += "unavailable"
-    } else {
-        attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
-    }
-
     val isMethodInstance = if (isExtensionOfMappedObjCType(symbol)) false else bridge.isInstance
+
+    fun buildAttributes(mangleNameAttribute: (String) -> String = { it }): List<String> {
+        val attributes = mutableListOf<String>()
+        val swiftNameAttribute = symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(mangleNameAttribute(swiftName))
+        attributes += swiftNameAttribute
+
+        if (returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError && returnBridge.successMayBeZero) {
+            // Method may return zero on success, but
+            // standard Objective-C convention doesn't suppose this happening.
+            // Add non-standard convention hint for Swift:
+            attributes += "swift_error(nonnull_error)" // Means "failure <=> (error != nil)".
+        }
+
+        if (symbol.isConstructor && !analysisSession.isArrayConstructor(symbol)) { // TODO: check methodBridge instead.
+            attributes += "objc_designated_initializer"
+        }
+
+        if (unavailable) {
+            attributes += "unavailable"
+        } else {
+            attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
+        }
+        return attributes
+    }
 
     return ObjCMethod(
         comment = comment,
@@ -90,12 +96,13 @@ internal fun ObjCExportContext.buildObjCMethod(
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
-        attributes = attributes,
+        attributes = buildAttributes(),
         extras = objCExportStubExtras {
             throwsAnnotationClassIds = throws
         }
     )
 }
+
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerKt.toValidObjCSwiftIdentifier]
@@ -154,7 +161,7 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         append(")")
     }
 
-    return sb.toString()
+    return sb.toString() //mangle
 }
 
 
@@ -200,7 +207,7 @@ internal object Predefined {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.splitSelector]
  */
-private fun splitSelector(selector: String): List<String> {
+internal fun splitSelector(selector: String): List<String> {
     return if (!selector.endsWith(":")) {
         listOf(selector)
     } else {
@@ -213,7 +220,6 @@ private fun splitSelector(selector: String): List<String> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-
     if (symbol is KaNamedSymbol) {
         val name = symbol.name
 
@@ -261,7 +267,6 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
 
         sb.append(':')
     }
-
     return sb.toString()
 }
 
@@ -286,7 +291,7 @@ fun ObjCExportContext.mapReturnType(symbol: KaFunctionSymbol, returnBridge: Meth
     return when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void,
-        -> ObjCVoidType
+            -> ObjCVoidType
         MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType.NSUInteger
         is MethodBridge.ReturnValue.Mapped -> translateToObjCType(symbol.returnType, returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType.BOOL
@@ -307,6 +312,6 @@ fun ObjCExportContext.mapReturnType(symbol: KaFunctionSymbol, returnBridge: Meth
 
         MethodBridge.ReturnValue.Instance.InitResult,
         MethodBridge.ReturnValue.Instance.FactoryResult,
-        -> ObjCInstanceType
+            -> ObjCInstanceType
     }
 }

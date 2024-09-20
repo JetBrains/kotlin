@@ -101,7 +101,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - samePropertyAndFunctionName`() {
         doTest(headersTestDataDir.resolve("samePropertyAndFunctionName"))
     }
@@ -321,7 +320,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
      * KT-66066
      */
     @Test
-    @TodoAnalysisApi
     fun `test - member function signature order`() {
         doTest(headersTestDataDir.resolve("memberFunctionSignatureOrder"))
     }
@@ -548,6 +546,26 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - nullable functional type arguments and return types translated`() {
         doTest(headersTestDataDir.resolve("nullableFunctionalTypeArgumentsAndReturnTypesTranslated"))
+    }
+
+    @Test
+    fun `test - methods mangling`() {
+        doTest(headersTestDataDir.resolve("methodsMangling"))
+    }
+
+    @Test
+    fun `test - methods mangling with the same parameter names`() {
+        doTest(headersTestDataDir.resolve("methodsManglingWithTheSameParameterNames"))
+    }
+
+    @Test
+    fun `test - mangle receiver`() {
+        doTest(headersTestDataDir.resolve("mangleReceiver"))
+    }
+
+    @Test
+    fun `test - mangle property`() {
+        doTest(headersTestDataDir.resolve("mangleProperty"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

@@ -231,7 +231,7 @@ class TypeParametersTranslationTests(
                         moduleNaming = KtObjCExportModuleNaming.default,
                         moduleClassifier = KtObjCExportModuleClassifier.default,
                         cache = hashMapOf(),
-                        overrides = hashMapOf(),
+                        overrides = hashMapOf()
                     )
                 )
             ) {

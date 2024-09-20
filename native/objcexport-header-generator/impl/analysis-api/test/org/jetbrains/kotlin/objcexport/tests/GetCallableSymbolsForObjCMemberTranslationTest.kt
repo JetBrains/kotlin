@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.objcexport.StableCallableOrder
+import org.jetbrains.kotlin.objcexport.getStableCallableOrder
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
@@ -55,7 +55,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             assertEquals(
                 listOf("component1", "copy", "equals", "hashCode", "toString", "a"),
                 getCallableSymbolsForObjCMemberTranslation(foo)
-                    .sortedWith(StableCallableOrder)
+                    .sortedWith(getStableCallableOrder())
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
@@ -76,7 +76,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             assertEquals(
                 emptyList(),
                 getCallableSymbolsForObjCMemberTranslation(foo)
-                    .sortedWith(StableCallableOrder)
+                    .sortedWith(getStableCallableOrder())
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )

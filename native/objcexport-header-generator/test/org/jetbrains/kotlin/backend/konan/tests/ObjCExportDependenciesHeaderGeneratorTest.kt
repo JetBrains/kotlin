@@ -263,6 +263,16 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test - class name mangling`() {
+        doTest(
+            dependenciesDir.resolve("classNameMangling"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOf(testLibraryCKlibFile),
+                exportedDependencies = setOf(testLibraryCKlibFile),
+            )
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

@@ -25,7 +25,7 @@ fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtoc
 
     val members = analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
         .filter { analysisSession.isObjCBaseCallable(it) }
-        .sortedWith(StableCallableOrder)
+        .sortedWith(analysisSession.getStableCallableOrder())
         .flatMap { translateToObjCExportStub(it) }
 
     val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)

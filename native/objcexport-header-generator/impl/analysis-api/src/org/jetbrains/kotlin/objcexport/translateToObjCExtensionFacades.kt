@@ -81,7 +81,7 @@ internal fun ObjCExportContext.translateToObjCExtensionFacades(files: List<KtObj
 private fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): Map<KaClassSymbol, ObjCClass> {
     val extensions = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
-        .sortedWith(StableCallableOrder)
+        .sortedWith(analysisSession.getStableCallableOrder())
         .groupBy {
             val type = it.receiverParameter?.returnType
             if (analysisSession.isMappedObjCType(type)) return@groupBy null

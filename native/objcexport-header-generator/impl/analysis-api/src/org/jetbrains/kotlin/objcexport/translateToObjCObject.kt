@@ -35,7 +35,7 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? =
     objectMembers += getDefaultMembers(symbol, objectMembers)
     objectMembers += with(analysisSession) {
         symbol.declaredMemberScope.callables
-            .sortedWith(StableCallableOrder)
+            .sortedWith(getStableCallableOrder())
             .flatMap { translateToObjCExportStub(it) }
     }
 

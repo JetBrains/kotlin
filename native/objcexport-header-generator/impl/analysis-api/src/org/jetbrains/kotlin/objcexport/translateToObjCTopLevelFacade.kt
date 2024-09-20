@@ -48,7 +48,7 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
     val topLevelCallables = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) == null }
         .toList()
-        .sortedWith(StableCallableOrder)
+        .sortedWith(analysisSession.getStableCallableOrder())
         .flatMap { translateToObjCExportStub(it) }
 
     val fileName = getObjCFileClassOrProtocolName(file)

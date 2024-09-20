@@ -24,7 +24,7 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
         .constructors
         .filter { !it.hasExportForCompilerAnnotation }
         .filter { analysisSession.isVisibleInObjC(it) }
-        .sortedWith(StableCallableOrder)
+        .sortedWith(analysisSession.getStableCallableOrder())
         .flatMap { constructor ->
             val objCConstructor = buildObjCMethod(constructor)
             listOf(objCConstructor) + if (objCConstructor.name == "init") listOf(analysisSession.buildNewInitConstructor(constructor)) else emptyList()

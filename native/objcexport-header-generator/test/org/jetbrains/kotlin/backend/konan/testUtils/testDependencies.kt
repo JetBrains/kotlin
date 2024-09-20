@@ -21,6 +21,10 @@ val testLibraryBKlibFile
     get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryB")) }
         ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
 
+val testLibraryCKlibFile
+    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryC")) }
+        ?: error("Missing 'testLibraryC' in 'testDependencyKlibs' System Property")
+
 val testInternalKlibFile
     get() = testDependencyKlibs.firstOrNull { it.contains(Path("testInternalLibrary")) }
         ?: error("Missing 'testInternalLibrary' in 'testDependencyKlibs' System Property")
