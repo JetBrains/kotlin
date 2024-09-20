@@ -3112,6 +3112,10 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public final class kotlin/coroutines/jvm/internal/SpillingKt {
+	public static final fun nullOutSpilledVariable (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
 }
 
