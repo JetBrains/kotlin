@@ -356,7 +356,7 @@ fun foo(x: List<String>) {
 
 - Type variables are gathered from the call tree of the supplied *nested* call.
 - Variable fixation is not allowed if the TV is *deeply related to any TV from the outer CS*.
-- All the lambdas belonging to the supplied call need to be analyzed during this completion.
+- Analysis of all lambdas belonging to the supplied nested call *is forced even if some input types are not properly inferred*.
 - We don't run completion writing in this mode.
 
 ### Limitation on variable fixation
@@ -428,22 +428,34 @@ So we postpone fixation of `Xv` as deeply related to an outer TV to achieve this
 
 ### Forcing lambda analysis
 
-Unlike `FULL` mode, it doesn't require fixing all the variables, in that sense it works more like `PARTIAL`.
+Unlike the `FULL` mode, `PCLA_POSTPONED_CALL` doesn't require fixing all the variables;
+it works like the `PARTIAL` mode in this sense.
 
-But unlike `PARTIAL`, if forces analysis of all the lambdas even if some input types are not properly inferred yet.
-It's crucial because otherwise, contract-affecting information gained would stop working across different statements.
+But unlike `PARTIAL`, `PCLA_POSTPONED_CALL` forces analysis of all lambdas even if some input types are not properly inferred.
+It's crucial because gained contract-affecting information would otherwise stop working across different statements.
 
-For lambdas, there might be three kinds of situations:
-- There's some lambda which input types do not contain any not fixed type variables => might be analyzed in a regular way
-- For some lambda, some of the input types satisfy PCLA requirement (see [Entry-point to PCLA](#Entry-point-to-PCLA)) 
-    => might be analyzed in recursive PCLA mode (see [Nested PCLA](#nested-pcla))
-- For all lambdas, all the input types are either proper or a top-level type variable (most complicated).
+As a result, three kinds of scenarios are possible when completing postponed nested calls with lambdas:
+1. Nested PCLA scenario:
+   - [for some lambdas, some input types contain not-fixed type variables as type arguments](#entry-point-to-pcla)
+2. Top-level variable scenario (the most complicated):
+   - for all lambdas, no input types contain not-fixed type variables as type arguments
+   - but for some lambdas, some input types are top-level not-fixed type variables
+3. Trivial scenario:
+   - for all lambdas, no input types contain not-fixed type variables as type arguments
+   - and for all lambdas, no input types are top-level not-fixed type variables
 
-In the third (and sometimes in the second) situation, we start regular lambda analysis, but with the following modifications:
-- If the lambda parameter has a type of some not fixed TV, we just leave it there.
-- If the receiver type of lambda is some type variable [on demand](#on-demand-variable-fixation). One of the options would be just leaving TV
-not fixed as for value parameter, but that seems meaningless because almost any call inside the lambda might require the member scope
-of the receiver, thus need to fix its result type.
+In the nested PCLA scenario, relevant lambdas are generally processed via [nested PCLA](#nested-pcla).
+
+In the top-level variable scenario (and sometimes in the nested PCLA scenario),
+relevant lambdas are processed via regular lambda analysis with the following modifications:
+- If a top-level not-fixed type variable is a lambda parameter's type, we don't do anything special.
+- But if a top-level not-fixed type variable is a **lambda receiver**'s type, we [fix it on demand](#on-demand-variable-fixation).
+  - (the alternative is to leave the TV as is, the same as in lambda parameters' case;
+    but it seems meaningless as almost any call inside the lambda
+    might require the member scope of the lambda receiver,
+    which in turn requires fixing the TV anyway)
+
+In the trivial scenario, all lambdas are processed via regular lambda analysis.
 
 ## Analysis mode for return statements of a PCLA lambda
 
