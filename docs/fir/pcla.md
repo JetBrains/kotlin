@@ -355,48 +355,76 @@ fun foo(x: List<String>) {
 ### Short description
 
 - Type variables are gathered from the call tree of the supplied *nested* call.
-- Variable fixation is not allowed if the variable is deeply related to some TV from the outer CS.
+- Variable fixation is not allowed if the TV is *deeply related to any TV from the outer CS*.
 - All the lambdas belonging to the supplied call need to be analyzed during this completion.
 - We don't run completion writing in this mode.
 
-### Variable fixation limitation
+### Limitation on variable fixation
 
-The only limitation that we've got for `PCLA_POSTPONED_CALL` is that we don't allow fixing TVs that are *deeply related* to some outer TV
-(for definition, see the relevant part at [inference.md](inference.md)).
+The `PCLA_POSTPONED_CALL` mode imposes the following limitation on variable fixation:
+it is not allowed to fix TVs that are deeply related to any TV from the outer CS
+(see [inference.md](inference.md#related-tvs) for the definition of a deep relation).
 
-**References in code:** `TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY`
+**Source code reference:** `TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY`
 
-See the following example,
+Consider the following example:
 
 ```kotlin
-interface A
-object B : A
-object C : A
-
-class GenericController<T> {
-    fun yield(t: T) {}
+class Container<T> {
+    fun consume(t: T) {}
 }
 
-fun <K> GenericController<K>.yieldAll(s: Collection<K>) {}
+fun <X> Container<X>.consumeAll(xs: List<X>) {}
 
-fun <S> generate(g: suspend GenericController<S>.() -> Unit): S = TODO()
+fun <OT> pcla(func: (Container<OT>) -> Unit): OT = TODO()
 
-fun foo(x: Collection<B>) {
-    generate {
-        // GenericController<K> <: GenericController<S> => K := S
-        // Collection<B> <: Collection<K>
-        // B <: K
-        // Let's imagine we fix K to B, then it would lead to the constraint S := B
-        yieldAll(x)
+interface Parent
+object ChildA : Parent
+object ChildB : Parent
 
-        // And to constraint error here: C <: B 
-        yield(C)
+fun foo(childrenB: List<ChildB>) {
+    pcla { container ->
+        container.consumeAll(childrenB)
+        // candidate CS:
+        //     Controller<OTv> <: Controller<Xv>  =>  OTv == Xv
+        //     List<ChildB> <: List<Xv>  =>  ChildB <: Xv
+        // let Xv := ChildB; then:
+        //     OTv == Xv  =>  OTv == ChildB
+        
+        container.consume(ChildA)
+        // candidate CS:
+        //     ChildA <: OTv
+        
+        // the resulting shared CS:
+        //     OTv == ChildB
+        //     ChildA <: OTv
+        // is contradictory as ChildA </: ChildB
     }
 }
 ```
 
-While in fact, `Sv` might be easily inferred to `A` as a common supertype. To make it happen we just postpone fixation of the `Sv` as one
-having deep
+However, `OTv` could be correctly inferred to `Parent` if `Xv` was not immediately fixed to `ChildB`:
+
+```kotlin
+        container.consumeAll(childrenB)
+        // candidate CS:
+        //     Controller<OTv> <: Controller<Xv>  =>  OTv == Xv
+        //     List<ChildB> <: List<Xv>  =>  ChildB <: Xv
+        
+        container.consume(ChildA)
+        // candidate CS:
+        //     ChildA <: OTv
+        
+        // the resulting shared CS:
+        //     OTv == Xv
+        //     ChildB <: Xv
+        //     ChildA <: OTv
+        // can be solved via:
+        //     Xv := OTv
+        //     OTv := CST(ChildA, ChildB) == Parent
+```
+
+So we postpone fixation of `Xv` as deeply related to an outer TV to achieve this result.
 
 ### Forcing lambda analysis
 
