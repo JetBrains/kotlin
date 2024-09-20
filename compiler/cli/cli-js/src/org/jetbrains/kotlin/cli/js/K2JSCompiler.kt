@@ -238,7 +238,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
-        configuration.put(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED, !arguments.noDoubleInlining)
+        configuration.put(KlibConfigurationKeys.NO_DOUBLE_INLINING, arguments.noDoubleInlining)
         configuration.put(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
             DuplicatedUniqueNameStrategy.parseOrDefault(

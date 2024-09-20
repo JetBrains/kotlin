@@ -86,7 +86,7 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
         val body = function.body ?: return
 
-        val doubleInliningEnabled = context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)
+        val doubleInliningEnabled = !context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
 
         NativeAssertionWrapperLowering(context).lower(function)
 

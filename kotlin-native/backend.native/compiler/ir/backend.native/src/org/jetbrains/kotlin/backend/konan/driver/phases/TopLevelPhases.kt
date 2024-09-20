@@ -351,7 +351,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
         // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
         // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
         runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
-        if (context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)) {
+        if (!context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)) {
             runModuleWisePhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
             if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
                 runModuleWisePhase(dumpSyntheticAccessorsPhase, allModulesToLower)

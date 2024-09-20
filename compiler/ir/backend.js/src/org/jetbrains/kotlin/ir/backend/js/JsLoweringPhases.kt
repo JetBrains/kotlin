@@ -888,20 +888,20 @@ fun getJsLowerings(
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
-    localClassesExtractionFromInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    localClassesInInlineFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    localClassesExtractionFromInlineFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    legacySyntheticAccessorLoweringPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
-    inlineOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
-    syntheticAccessorGenerationPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineOnlyPrivateFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    syntheticAccessorGenerationPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    validateIrAfterInliningOnlyPrivateFunctions.takeUnless { configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     dumpSyntheticAccessorsPhase.takeIf {
-        configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) &&
+        !configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) &&
                 configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
     },
     cacheInlineFunctionsBeforeInliningAllFunctionsPhase,

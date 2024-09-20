@@ -185,7 +185,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
 private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
         { context, irFile ->
             // Make accessors public if `SyntheticAccessorLowering` is disabled.
-            val generatePublicAccessors = !context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)
+            val generatePublicAccessors = context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
             OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors).lower(irFile)
         },
         name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
@@ -195,7 +195,7 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringP
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
         { context, irFile ->
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
-            if (!context.config.produce.isCache && !context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)) {
+            if (!context.config.produce.isCache && context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)) {
                 LocalClassesInInlineFunctionsLowering(context).lower(irFile)
                 LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
             }
@@ -640,9 +640,9 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    cacheOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
-    inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
-    syntheticAccessorGenerationPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    cacheOnlyPrivateFunctionsPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    inlineOnlyPrivateFunctionsPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+    syntheticAccessorGenerationPhase.takeUnless { context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
     cacheAllFunctionsPhase,
 )
 
