@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -113,13 +114,16 @@ private fun <T : FirSymbolProvider> createFirSymbolProviderForScopeLimitedByFile
     fileFilter: (VirtualFile) -> Boolean,
     symbolProviderFactory: (reducedScope: GlobalSearchScope) -> T,
 ): T {
-    val scopeWithFileFiltering = object : DelegatingGlobalSearchScope(project, baseScope) {
+    val scopeWithFileFiltering = object : DelegatingGlobalSearchScope(project, baseScope), TopPackageNamesProvider {
         override fun contains(file: VirtualFile): Boolean {
             if (!fileFilter(file)) {
                 return false
             }
             return super.contains(file)
         }
+
+        override val topPackageNames: Set<String>?
+            get() = (delegate as? TopPackageNamesProvider)?.topPackageNames
     }
 
     return symbolProviderFactory(scopeWithFileFiltering)
