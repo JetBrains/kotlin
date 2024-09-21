@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFr
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -39,6 +41,9 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.checkers.OptInInheritanceDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInUsagesDiagnosticMessageProvider
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -360,6 +365,12 @@ object FirOptInUsageBaseChecker {
         }
     }
 
+    fun FirAnnotationCall.getSourceForIsMarkerDiagnostic(annotationClassId: ClassId, argumentIndex: Int): KtSourceElement? {
+        if (annotationClassId == OPT_IN_CLASS_ID) return this.source
+        val markerArgumentsSources = this.getMarkerArgumentsSources()
+        return markerArgumentsSources[argumentIndex]
+    }
+
     private fun isExperimentalityAcceptableInContext(
         annotationClassId: ClassId,
         context: CheckerContext,
@@ -435,6 +446,15 @@ object FirOptInUsageBaseChecker {
             }
         }
         return false
+    }
+
+    private fun FirAnnotationCall.getMarkerArgumentsSources(): List<KtSourceElement?> {
+        val annotationClasses = this.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
+        val markerArgumentsSources =
+            if (annotationClasses is FirVarargArgumentsExpression) annotationClasses.arguments.map { it.source } else listOfNotNull(
+                annotationClasses?.source
+            )
+        return markerArgumentsSources
     }
 
     private val LEVEL = Name.identifier("level")

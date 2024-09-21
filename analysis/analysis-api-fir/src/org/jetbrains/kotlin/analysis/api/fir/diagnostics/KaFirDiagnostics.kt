@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -1163,8 +1164,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val target: String
     }
 
-    interface SubclassOptArgumentIsNotMarker : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = SubclassOptArgumentIsNotMarker::class
+    interface SubclassOptInArgumentIsNotMarker : KaFirDiagnostic<KtClassLiteralExpression> {
+        override val diagnosticClass get() = SubclassOptInArgumentIsNotMarker::class
         val notMarkerClassId: ClassId
     }
 

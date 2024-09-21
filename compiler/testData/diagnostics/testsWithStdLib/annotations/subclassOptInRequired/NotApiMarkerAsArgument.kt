@@ -1,10 +1,13 @@
-annotation class DummyAnnotation
+// FIR_IDENTICAL
+@file:OptIn(ExperimentalSubclassOptIn::class)
+
+annotation class NotOptInAnnotation
 
 @RequiresOptIn
-annotation class NotDummyAnnotation
+annotation class OptInAnnotation
 
-<!OPT_IN_ARGUMENT_IS_NOT_MARKER!>@SubclassOptInRequired(DummyAnnotation::class)<!>
+@SubclassOptInRequired(<!SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER!>NotOptInAnnotation::class<!>)
 open class IncorrectSubclassOptInArgumentMarkerA
 
-<!OPT_IN_ARGUMENT_IS_NOT_MARKER("DummyAnnotation")!>@SubclassOptInRequired(DummyAnnotation::class, NotDummyAnnotation::class)<!>
+@SubclassOptInRequired(OptInAnnotation::class, <!SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER!>NotOptInAnnotation::class<!>)
 open class IncorrectSubclassOptInArgumentMarkerB

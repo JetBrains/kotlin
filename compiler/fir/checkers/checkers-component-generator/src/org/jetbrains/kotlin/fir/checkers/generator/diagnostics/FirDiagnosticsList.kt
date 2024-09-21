@@ -496,7 +496,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUBCLASS_OPT_IN_INAPPLICABLE by error<KtAnnotationEntry> {
             parameter<String>("target")
         }
-        val SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER by error<KtAnnotationEntry> {
+        val SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER by error<KtClassLiteralExpression> {
             parameter<ClassId>("notMarkerClassId")
         }
     }
