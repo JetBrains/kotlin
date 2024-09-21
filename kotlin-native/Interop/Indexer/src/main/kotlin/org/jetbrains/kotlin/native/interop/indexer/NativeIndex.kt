@@ -116,6 +116,7 @@ data class NativeLibrary(
         val headerExclusionPolicy: HeaderExclusionPolicy,
         val headerFilter: NativeLibraryHeaderFilter,
         val objCClassesIncludingCategories: Set<String>,
+        val allowIncludingObjCCategoriesFromDefFile: Boolean,
 ) : Compilation
 
 data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
