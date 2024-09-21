@@ -16,13 +16,13 @@ FILE: ClassIdDiagnosticRendering.kt
     public final fun main(): R|kotlin/Unit| {
         R|a/b/c/Some.Some|()
     }
-    public final annotation class DummyAnnotation : R|kotlin/Annotation| {
-        public constructor(): R|a/b/c/DummyAnnotation| {
+    public final annotation class NotOptIn : R|kotlin/Annotation| {
+        public constructor(): R|a/b/c/NotOptIn| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/SubclassOptInRequired|(markerClass = vararg(<getClass>(Q|a/b/c/DummyAnnotation|))) public open class IncorrectSubclassOptInArgumentMarker : R|kotlin/Any| {
+    @R|kotlin/SubclassOptInRequired|(markerClass = vararg(<getClass>(Q|a/b/c/NotOptIn|))) public open class IncorrectSubclassOptInArgumentMarker : R|kotlin/Any| {
         public constructor(): R|a/b/c/IncorrectSubclassOptInArgumentMarker| {
             super<R|kotlin/Any|>()
         }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -1626,8 +1627,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER) { firDiagnostic ->
-        SubclassOptArgumentIsNotMarkerImpl(
+    add(FirErrors.SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER) { firDiagnostic ->
+        SubclassOptInArgumentIsNotMarkerImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,

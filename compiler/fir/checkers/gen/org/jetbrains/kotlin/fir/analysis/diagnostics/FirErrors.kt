@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -359,7 +360,7 @@ object FirErrors {
     val OPT_IN_MARKER_ON_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_ON_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OPT_IN_MARKER_ON_OVERRIDE_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_ON_OVERRIDE_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SUBCLASS_OPT_IN_INAPPLICABLE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SUBCLASS_OPT_IN_INAPPLICABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtClassLiteralExpression::class)
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_TYPEALIAS_EXPANDED_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
