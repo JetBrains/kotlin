@@ -447,7 +447,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 val categoryClassName = clang_getCursorDisplayName(categoryClassCursor).convertAndDispose()
                 if (className == categoryClassName) {
                     val categoryFile = getContainingFile(childCursor)
-                    if (clang_File_isEqual(categoryFile, classFile) != 0) {
+                    val isCategoryInTheSameFileAsClass = clang_File_isEqual(categoryFile, classFile) != 0
+                    val isCategoryFromDefFile = library.allowIncludingObjCCategoriesFromDefFile
+                            && clang_Location_isFromMainFile(clang_getCursorLocation(childCursor)) != 0
+                    if (isCategoryInTheSameFileAsClass || isCategoryFromDefFile) {
                         result += childCursor
                     }
                 }

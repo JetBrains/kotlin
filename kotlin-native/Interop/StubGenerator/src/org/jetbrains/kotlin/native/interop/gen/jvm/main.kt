@@ -579,7 +579,8 @@ internal fun buildNativeLibrary(
             excludeSystemLibs = excludeSystemLibs,
             headerExclusionPolicy = headerExclusionPolicy,
             headerFilter = headerFilter,
-            objCClassesIncludingCategories = objCClassesIncludingCategories
+            objCClassesIncludingCategories = objCClassesIncludingCategories,
+            allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
     )
 }
 
