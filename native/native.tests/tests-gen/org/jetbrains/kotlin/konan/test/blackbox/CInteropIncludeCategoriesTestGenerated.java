@@ -52,4 +52,16 @@ public class CInteropIncludeCategoriesTestGenerated extends AbstractNativeCInter
   public void testSmoke4() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke4/");
   }
+
+  @Test
+  @TestMetadata("smoke5")
+  public void testSmoke5() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke5/");
+  }
+
+  @Test
+  @TestMetadata("smoke6")
+  public void testSmoke6() {
+    runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke6/");
+  }
 }
