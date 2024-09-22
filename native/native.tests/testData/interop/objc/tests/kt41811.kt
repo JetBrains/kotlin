@@ -124,7 +124,7 @@ var localDeallocRetainAndAccessDeallocated = false
 @Test
 fun testKT41811WithAccess() {
     // Attempt to make the state predictable:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     deallocRetainAndAccessDeallocated = false
     localDeallocRetainAndAccessDeallocated = false
@@ -132,13 +132,13 @@ fun testKT41811WithAccess() {
     createGarbageDeallocRetainAndAccess()
 
     // Runs [DeallocRetainAndAccess dealloc]:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(deallocRetainAndAccessDeallocated)
     assertTrue(localDeallocRetainAndAccessDeallocated)
 
     // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 }
 
 private fun createGarbageDeallocRetainAndAccess() {

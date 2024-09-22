@@ -103,7 +103,7 @@ extern "C" void spin() {
 
 // MODULE: main(cinterop)
 // FILE: main.kt
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import objclib.*
 
@@ -132,7 +132,7 @@ fun alloc(): Unit = autoreleasepool {
 
 fun waitDestruction() {
     assertTrue(isMainThread())
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     spin()
 }
 

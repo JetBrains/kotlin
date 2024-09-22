@@ -35,7 +35,7 @@ import kotlin.time.*
  * are less desirable than cyclical garbage leaks.
  */
 @Deprecated("Use kotlin.native.runtime.GC instead.", ReplaceWith("GC", "kotlin.native.runtime.GC"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 object GC {
     /**

@@ -2,7 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import friendly_dealloc.*
 import platform.objc.*
@@ -41,7 +41,7 @@ val trigerSelector = sel_registerName("trigger")
 fun waitTriggered(event: Event) {
     val timeoutMark = TimeSource.Monotonic.markNow() + timeout
 
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     while (true) {
         if (event.isTriggered()) {
             return

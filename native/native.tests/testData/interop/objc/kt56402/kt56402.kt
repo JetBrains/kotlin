@@ -2,7 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kt56402.*
 
@@ -58,7 +58,7 @@ fun waitDestruction(id: ULong) {
     // Make sure the finalizers are not run on the main thread even for STMS.
     withWorker {
         execute(TransferMode.SAFE, {}) {
-            kotlin.native.internal.GC.collect()
+            kotlin.native.runtime.GC.collect()
         }.result
     }
     while (true) {

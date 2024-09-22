@@ -1,6 +1,6 @@
-@file:OptIn(kotlin.ExperimentalStdlibApi::class)
+@file:OptIn(kotlin.ExperimentalStdlibApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.internal.isPermanent
 import kotlin.test.*
 
