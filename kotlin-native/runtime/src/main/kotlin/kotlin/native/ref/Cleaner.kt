@@ -109,7 +109,7 @@ internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cle
     return CleanerImpl(cleanPtr)
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalNativeApi
 @NoReorderFields
 @ExportTypeInfo("theCleanerImplTypeInfo")
