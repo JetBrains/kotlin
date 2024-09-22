@@ -195,7 +195,7 @@ Being called after the single successful candidate is chosen just before the com
 
 Currently, it returns `PCLA_POSTPONED_CALL` if the candidate is *postponed*.
 
-See more details on `PCLA_POSTPONED_CALL` completion mode in the [section](#pclapostponedcall-completion-mode) below.
+See more details on `PCLA_POSTPONED_CALL` completion mode in [the section below](#pcla_postponed_call-completion-mode).
 
 ### processPartiallyResolvedCall
 
@@ -330,34 +330,46 @@ That's how this callback is currently used from the place before bare-type compu
 
 ## PCLA_POSTPONED_CALL completion mode
 
-This mode is assumed to be used for postponed nested calls inside PCLA lambdas instead of FULL mode (i.e., mostly for top-level calls).
-
-The set of the type variables that might be considered for fixation are obtained from the call tree of the supplied nested call itself,
-i.e., it would be a set of fresh type variables of the candidate itself, type variable of its arguments and from the return statements
-of lambdas. That part works the same way as for regular calls outside PCLA context.
+It is intended to use this mode instead of the `FULL` mode (i.e., mostly for top-level calls) when completing postponed nested calls.
 
 ### Example
 ```
 fun foo(x: List<String>) {
     buildList {
-        x.mapTo(this) { // `mapTo` analyzed in PCLA_POSTPONED_CALL
-            add("") // analyzed in PCLA_POSTPONED_CALL
-            it.length // analyzed in PCLA_POSTPONED_CALL
-        }
-        
-        println("") // analyzed in FULL mode (because it's a trivial call, irrelevant to outer CS)
-        
-        add(x.get(0) /* analyzed in PARTIAL */) // analyzed in PCLA_POSTPONED_CALL
+        x.mapTo( // analyzed in PCLA_POSTPONED_CALL mode
+            this,
+            {
+                add("") // analyzed in PCLA_POSTPONED_CALL mode
+                it.length // analyzed in PCLA_POSTPONED_CALL mode
+            }
+        )
+
+        // a trivial call that's irrelevant to the outer CS
+        println("") // analyzed in FULL mode
+
+        add( // analyzed in PCLA_POSTPONED_CALL mode
+            x.get(0) // analyzed in PARTIAL mode
+        )
     }
 }
 ```
 
 ### Short description
 
-- Type variables are gathered from the call tree of the supplied *nested* call.
+- Type variables eligible for fixation come *from the call tree of the supplied nested call itself*.
 - Variable fixation is not allowed if the TV is *deeply related to any TV from the outer CS*.
 - Analysis of all lambdas belonging to the supplied nested call *is forced even if some input types are not properly inferred*.
 - We don't run completion writing in this mode.
+
+### Eligibility for variable fixation
+
+The set of type variables eligible for fixation is obtained
+in the same way as for regular calls outside PCLA —
+from the call tree of the supplied nested call itself.
+This means that this set consists of:
+* fresh type variables of the supplied nested call itself
+* type variables from the supplied nested call's value arguments
+* type variables from return statements of lambdas from the supplied nested call's tree
 
 ### Limitation on variable fixation
 
