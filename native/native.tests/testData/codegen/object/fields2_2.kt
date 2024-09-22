@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.test.*
 
 @ThreadLocal

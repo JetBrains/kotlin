@@ -4,7 +4,7 @@ import kotlin.native.concurrent.*
 import kotlin.native.*
 
 @<!DEPRECATION, TYPEALIAS_EXPANSION_DEPRECATION!>SharedImmutable<!>
-@<!DEPRECATION!>ThreadLocal<!>
+@<!DEPRECATION_ERROR!>ThreadLocal<!>
 val x = 42
 
 @Throws(Exception::class)

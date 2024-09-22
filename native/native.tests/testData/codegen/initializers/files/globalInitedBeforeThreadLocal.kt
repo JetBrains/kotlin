@@ -4,6 +4,7 @@
  */
 
 // FILE: lib.kt
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.test.*
 
 val x = foo()

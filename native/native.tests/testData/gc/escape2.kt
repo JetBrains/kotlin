@@ -1,3 +1,4 @@
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.test.*
 
 class A(val s: String)

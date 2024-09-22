@@ -5,6 +5,8 @@
 
 // MODULE: lib
 // FILE: lib.kt
+import kotlin.native.concurrent.ThreadLocal
+
 @ThreadLocal
 var z1 = false
 var z2 = false
@@ -13,6 +15,7 @@ var z3 = false
 
 // MODULE: lib2(lib)
 // FILE: lib2.kt
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.test.*
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)

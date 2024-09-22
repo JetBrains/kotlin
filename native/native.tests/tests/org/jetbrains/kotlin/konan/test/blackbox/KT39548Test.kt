@@ -35,6 +35,7 @@ abstract class KT39548TestBase : AbstractNativeSimpleTest() {
         }
 
         val text = """
+            import kotlin.native.concurrent.ThreadLocal
             import kotlin.test.*
 
             fun $longName(): Int = 42

@@ -8,7 +8,6 @@ package kotlin.native
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
-import kotlin.reflect.KClass
 
 /**
  * [SymbolName] is a dangerous deprecated and internal annotation. Please avoid using it.
@@ -57,7 +56,7 @@ public typealias Throws = kotlin.Throws
 
 /** @suppress */
 @Deprecated("Use kotlin.native.concurrent.ThreadLocal instead.", ReplaceWith("ThreadLocal", "kotlin.native.concurrent.ThreadLocal"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
