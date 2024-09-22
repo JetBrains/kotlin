@@ -9,6 +9,7 @@ import java.lang.reflect.Method
 
 @Target(AnnotationTarget.CLASS)
 @SinceKotlin("1.3")
+@PublishedApi
 internal annotation class DebugMetadata(
     @get:JvmName("v")
     val version: Int = 1,
@@ -38,6 +39,7 @@ internal annotation class DebugMetadata(
  */
 @SinceKotlin("1.3")
 @JvmName("getStackTraceElement")
+@PublishedApi
 internal fun BaseContinuationImpl.getStackTraceElementImpl(): StackTraceElement? {
     val debugMetadata = getDebugMetadataAnnotation() ?: return null
     checkDebugMetadataVersion(COROUTINES_DEBUG_METADATA_VERSION, debugMetadata.version)
@@ -117,6 +119,7 @@ private fun checkDebugMetadataVersion(expected: Int, actual: Int) {
  */
 @SinceKotlin("1.3")
 @JvmName("getSpilledVariableFieldMapping")
+@PublishedApi
 internal fun BaseContinuationImpl.getSpilledVariableFieldMapping(): Array<String>? {
     val debugMetadata = getDebugMetadataAnnotation() ?: return null
     checkDebugMetadataVersion(COROUTINES_DEBUG_METADATA_VERSION, debugMetadata.version)

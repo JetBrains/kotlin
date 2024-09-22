@@ -12,6 +12,7 @@ import kotlin.jvm.internal.FunctionBase
 import kotlin.jvm.internal.Reflection
 
 @SinceKotlin("1.3")
+@PublishedApi
 internal abstract class BaseContinuationImpl(
     // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
     // it has a public getter (since even untrusted code is allowed to inspect its call stack).
@@ -77,6 +78,7 @@ internal abstract class BaseContinuationImpl(
 }
 
 @SinceKotlin("1.3")
+@PublishedApi
 // State machines for named restricted suspend functions extend from this class
 internal abstract class RestrictedContinuationImpl(
     completion: Continuation<Any?>?
@@ -94,6 +96,7 @@ internal abstract class RestrictedContinuationImpl(
 }
 
 @SinceKotlin("1.3")
+@PublishedApi
 // State machines for named suspend functions extend from this class
 internal abstract class ContinuationImpl(
     completion: Continuation<Any?>?,
@@ -133,10 +136,12 @@ internal object CompletedContinuation : Continuation<Any?> {
 }
 
 @SinceKotlin("1.3")
+@PublishedApi
 // To distinguish suspend function types from ordinary function types all suspend function types shall implement this interface
 internal interface SuspendFunction
 
 @SinceKotlin("1.3")
+@PublishedApi
 // Restricted suspension lambdas inherit from this class
 internal abstract class RestrictedSuspendLambda(
     public override val arity: Int,
@@ -152,6 +157,7 @@ internal abstract class RestrictedSuspendLambda(
 }
 
 @SinceKotlin("1.3")
+@PublishedApi
 // Suspension lambdas inherit from this class
 internal abstract class SuspendLambda(
     public override val arity: Int,

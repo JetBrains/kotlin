@@ -77,6 +77,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  */
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
+@PublishedApi
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
     /** implementation of this function is replaced by debugger */
 }

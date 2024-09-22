@@ -3096,6 +3096,19 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function3;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract class kotlin/coroutines/jvm/internal/BaseContinuationImpl : java/io/Serializable, kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
+	public final fun getCompletion ()Lkotlin/coroutines/Continuation;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+	protected abstract fun invokeSuspend (Ljava/lang/Object;)Ljava/lang/Object;
+	protected fun releaseIntercepted ()V
+	public final fun resumeWith (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class kotlin/coroutines/jvm/internal/Boxing {
 	public static final fun boxBoolean (Z)Ljava/lang/Boolean;
 	public static final fun boxByte (B)Ljava/lang/Byte;
@@ -3107,13 +3120,67 @@ public final class kotlin/coroutines/jvm/internal/Boxing {
 	public static final fun boxShort (S)Ljava/lang/Short;
 }
 
+public abstract class kotlin/coroutines/jvm/internal/ContinuationImpl : kotlin/coroutines/jvm/internal/BaseContinuationImpl {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun <init> (Lkotlin/coroutines/Continuation;Lkotlin/coroutines/CoroutineContext;)V
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun intercepted ()Lkotlin/coroutines/Continuation;
+	protected fun releaseIntercepted ()V
+}
+
 public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFrame {
 	public abstract fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public abstract interface annotation class kotlin/coroutines/jvm/internal/DebugMetadata : java/lang/annotation/Annotation {
+	public abstract fun c ()Ljava/lang/String;
+	public abstract fun f ()Ljava/lang/String;
+	public abstract fun i ()[I
+	public abstract fun l ()[I
+	public abstract fun m ()Ljava/lang/String;
+	public abstract fun n ()[Ljava/lang/String;
+	public abstract fun s ()[Ljava/lang/String;
+	public abstract fun v ()I
+}
+
+public final class kotlin/coroutines/jvm/internal/DebugMetadataKt {
+	public static final fun getSpilledVariableFieldMapping (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;
+	public static final fun getStackTraceElement (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)Ljava/lang/StackTraceElement;
+}
+
+public final class kotlin/coroutines/jvm/internal/DebugProbesKt {
+	public static final fun probeCoroutineSuspended (Lkotlin/coroutines/Continuation;)V
+}
+
+public abstract class kotlin/coroutines/jvm/internal/RestrictedContinuationImpl : kotlin/coroutines/jvm/internal/BaseContinuationImpl {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+}
+
+public abstract class kotlin/coroutines/jvm/internal/RestrictedSuspendLambda : kotlin/coroutines/jvm/internal/RestrictedContinuationImpl, kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/internal/FunctionBase {
+	public fun <init> (I)V
+	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	public fun getArity ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/coroutines/jvm/internal/RunSuspendKt {
+	public static final fun runSuspend (Lkotlin/jvm/functions/Function1;)V
+}
+
 public final class kotlin/coroutines/jvm/internal/SpillingKt {
 	public static final fun nullOutSpilledVariable (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class kotlin/coroutines/jvm/internal/SuspendFunction {
+}
+
+public abstract class kotlin/coroutines/jvm/internal/SuspendLambda : kotlin/coroutines/jvm/internal/ContinuationImpl, kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/internal/FunctionBase {
+	public fun <init> (I)V
+	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	public fun getArity ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {

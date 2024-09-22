@@ -14,6 +14,7 @@ import kotlin.coroutines.startCoroutine
  * Wrapper for `suspend fun main` and `@Test suspend fun testXXX` functions.
  */
 @SinceKotlin("1.3")
+@PublishedApi
 internal fun runSuspend(block: suspend () -> Unit) {
     val run = RunSuspend()
     block.startCoroutine(run)
