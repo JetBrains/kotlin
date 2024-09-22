@@ -82,11 +82,6 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    private fun MemberBuilder.deprecatedNonNullArrayFunction() {
-        deprecate("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-        annotation("""@DeprecatedSinceKotlin(hiddenSince = "1.4")""")
-    }
-
     private fun MemberBuilder.contentEqualsDoc(nullabilityNote: String = "") {
         doc {
             """
@@ -132,18 +127,6 @@ object ArrayOps : TemplateGroupBase() {
             else -> "intArrayContentEquals"
         }
         sample("samples.collections.Arrays.ContentOperations.$sampleMethod")
-    }
-
-    val f_contentEquals = fn("contentEquals(other: SELF)") {
-        platforms(Platform.Native)
-        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
-    } builder {
-        since("1.1")
-        deprecatedNonNullArrayFunction()
-        infix(true)
-        returns("Boolean")
-        contentEqualsDoc()
-        body { "return this.contentEquals(other)" }
     }
 
     val f_contentEquals_nullable = fn("contentEquals(other: SELF?)") {
@@ -261,25 +244,6 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_contentToString = fn("contentToString()") {
-        platforms(Platform.Native)
-        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
-    } builder {
-        since("1.1")
-        deprecatedNonNullArrayFunction()
-        doc {
-            """
-            Returns a string representation of the contents of the specified array as if it is [List].
-            """
-        }
-        sample("samples.collections.Arrays.ContentOperations.contentToString")
-        returns("String")
-        body { "return this.contentToString()" }
-        if (f == ArraysOfUnsigned) {
-            return@builder
-        }
-    }
-
     val f_contentToString_nullable = fn("contentToString()") {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
@@ -365,22 +329,6 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.Native) {
             body { "return contentDeepToStringImpl()" }
-        }
-    }
-
-    val f_contentHashCode = fn("contentHashCode()") {
-        platforms(Platform.Native)
-        include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
-    } builder {
-        since("1.1")
-        deprecatedNonNullArrayFunction()
-        doc {
-            "Returns a hash code based on the contents of this array as if it is [List]."
-        }
-        returns("Int")
-        body { "return this.contentHashCode()" }
-        if (f == ArraysOfUnsigned) {
-            return@builder
         }
     }
 
