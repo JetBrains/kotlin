@@ -4283,9 +4283,6 @@ open class kotlin/AssertionError : kotlin/Error { // kotlin/AssertionError|null[
     constructor <init>(kotlin/Any?) // kotlin/AssertionError.<init>|<init>(kotlin.Any?){}[0]
     constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin/AssertionError.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
 
-    // Targets: [native]
-    constructor <init>(kotlin/Throwable?) // kotlin/AssertionError.<init>|<init>(kotlin.Throwable?){}[0]
-
     // Targets: [js, wasmJs, wasmWasi]
     constructor <init>(kotlin/String?) // kotlin/AssertionError.<init>|<init>(kotlin.String?){}[0]
 }
