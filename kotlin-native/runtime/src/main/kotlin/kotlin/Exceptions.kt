@@ -93,7 +93,7 @@ public actual open class IndexOutOfBoundsException : RuntimeException {
 }
 
 @Deprecated("Use IndexOutOfBoundsException instead.")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public open class ArrayIndexOutOfBoundsException : IndexOutOfBoundsException {
 
     public constructor() : super()

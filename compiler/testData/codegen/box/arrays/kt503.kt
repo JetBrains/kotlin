@@ -2,9 +2,6 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 
-// On Wasm we don't currently have ArrayIndexOutOfBoundsException
-// IGNORE_BACKEND: WASM
-
 fun iarr(vararg a : Int) = a
 fun <T> array(vararg a : T) = a
 
@@ -26,7 +23,7 @@ fun box() : String {
               n++
         }
     }
-    catch (e : ArrayIndexOutOfBoundsException) {
+    catch (e : IndexOutOfBoundsException) {
         // No more tests to process
     }
     return if(n == 2) "OK" else "fail"
