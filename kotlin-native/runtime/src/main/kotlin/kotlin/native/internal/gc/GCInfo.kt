@@ -16,7 +16,7 @@ package kotlin.native.internal.gc
  *                                 All alignment and auxiliary object headers are included.
  */
 @Deprecated("Use kotlin.native.runtime.MemoryUsage instead.", ReplaceWith("MemoryUsage", "kotlin.native.runtime.MemoryUsage"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @ExperimentalStdlibApi
 public class MemoryUsage(
         val objectsCount: Long,
@@ -39,7 +39,7 @@ public class MemoryUsage(
  */
 @ExperimentalStdlibApi
 @Deprecated("Use kotlin.native.runtime.RootSetStatistics instead.", ReplaceWith("RootSetStatistics", "kotlin.native.runtime.RootSetStatistics"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public class RootSetStatistics(
         val threadLocalReferences: Long,
         val stackReferences: Long,
@@ -75,9 +75,9 @@ public class RootSetStatistics(
  */
 @ExperimentalStdlibApi
 @Deprecated("Use kotlin.native.runtime.GCInfo instead.", ReplaceWith("GCInfo", "kotlin.native.runtime.GCInfo"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public class GCInfo(
         val epoch: Long,
         val startTimeNs: Long,

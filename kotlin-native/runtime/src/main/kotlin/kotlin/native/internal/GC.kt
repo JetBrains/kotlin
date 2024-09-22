@@ -242,7 +242,7 @@ object GC {
      * Legacy MM: Always returns null
      */
     @ExperimentalStdlibApi
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val lastGCInfo: kotlin.native.internal.gc.GCInfo?
         get() = kotlin.native.internal.gc.GCInfo.lastGCInfo
 }
