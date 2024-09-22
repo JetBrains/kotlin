@@ -95,13 +95,10 @@ class Controller : NSObject() {
         }
 
         override fun URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData: NSData) {
-            initRuntimeIfNeeded()
             receivedData = didReceiveData
         }
 
         override fun URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError: NSError?) {
-            initRuntimeIfNeeded()
-
             executeAsync(NSOperationQueue.mainQueue) {
                 val response = task.response as? NSHTTPURLResponse
                 Pair(when {

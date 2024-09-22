@@ -50,7 +50,6 @@ fun main() {
     memScoped {
         val thread = alloc<pthread_tVar>()
         pthread_create(thread.ptr, null, staticCFunction { argC ->
-            initRuntimeIfNeeded()
             dumpShared("thread2")
             val arg = argC!!.asStableRef<SharedDataMember>()
             println("thread arg is ${arg.get()} shared is $globalObject")

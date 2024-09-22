@@ -38,12 +38,6 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
-  @TestMetadata("initRuntimeInGlobal.kt")
-  public void testInitRuntimeInGlobal() {
-    runTest("native/native.tests/testData/standalone/initRuntimeInGlobal.kt");
-  }
-
-  @Test
   @TestMetadata("kt56048.kt")
   public void testKt56048() {
     runTest("native/native.tests/testData/standalone/kt56048.kt");

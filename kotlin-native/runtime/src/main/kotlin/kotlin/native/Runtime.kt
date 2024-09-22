@@ -11,7 +11,8 @@ import kotlin.native.internal.escapeAnalysis.Escapes
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
  */
-@Deprecated("Initializing runtime is not possible in the new memory model.", level = DeprecationLevel.WARNING)
+@Deprecated("Initializing runtime is not possible in the new memory model.")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public fun initRuntimeIfNeeded() {}
 
 
