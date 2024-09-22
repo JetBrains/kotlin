@@ -1,71 +1,91 @@
 # Partially Constrained Lambda Analysis
 
-**Prerequisites:** That document is built under the assumption that the reader is more or less aware of how inference
-works for calls without lambdas or with lambdas for which all input-types are proper at the point where
-they should be analyzed. Also, some terms that are used here described at [Common inference terms definition](inference.md)
+(see also:
+[Kotlin Specification / Type inference / Builder-style type inference](https://kotlinlang.org/spec/type-inference.html#builder-style-type-inference)
+)
 
-See also: [Kotlin Spec: Builder-style type inference](https://kotlinlang.org/spec/type-inference.html#builder-style-type-inference)
-
-The most basic scenario where PCLA is used is calls to builder-like functions:
+PCLA's primary use case is inference of type variables in calls to "builder-like" functions:
 
 ```kotlin
-fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> = ...
+fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> { /* ... */ }
 
 fun main() {
-    buildList { 
-        add("")
-    } // E is inferred to `String`
+    buildList { // Ev := ????
+        add("") // Ev <: String
+    } // Ev := String
 }
 ```
 
-There in the `buildList` call there is no other source of information what type should be inferred for `E` beside the body of the lambda.
-That is the case where partially constrained lambda analysis (PCLA) starts.
+The `buildList` call from the example above has no sources of type information available
+for inference of a type argument for the type parameter `E` besides the `add("")` call inside the body of the lambda argument.
+This is where partially constrained lambda analysis (PCLA) comes into play.
+
+There are a lot of unique conceptual & technical details when resolution of a lambda's body is performed during PCLA.
+Describing these details in detail (pun intended) is the goal of the rest of this document.
+
+## Prerequisites
+
+This document is written with the following assumptions in mind:
+- the reader is aware of how type inference works for calls without lambdas
+- the reader is more or less aware of how inference works
+  for calls with lambdas for which all input types are proper by when the lambda should be analyzed
+
+Definitions of some terms used in this document can be found in [inference.md](inference.md).
 
 ## Glossary
 
 **Regular lambda analysis**
 
-Currently, we start lambda analysis only during call completion (`ConstraintSystemCompleter.runCompletion`).
-Let's call "regular lambda analysis" situation when we start body resolution of the anonymous function when all input types do not contain
-uninferred TVs.
+Resolution of a lambda's body when all input types of the lambda are proper.
 
-**PCLA (Partially Constrained Lambda Analysis)**
+**Partially constrained lambda analysis (PCLA)**
 
-PCLA is the way of lambda analysis during call completion that happens when some input types are not properly inferred, and there are no other sources of constraints.
+Resolution of a lambda's body when some input types of the lambda are not proper and there are no other sources of type constraints.
 
-**PCLA lambda** = lambda analyzed with PCLA
+**PCLA lambda** — a lambda which is processed via PCLA
 
-**Main call/candidate** is the call that contains PCLA lambda
+**Main call** — the call that contains the PCLA lambda
 
-**Nested call/candidate** is a call being resolved in other than `ContextDependent` mode (usually statement-level) that belongs to PCLA lambda
-  * **Postponed nested calls** are nested calls which we decided not to complete in the FULL mode immediately
+**Nested call** — a call inside the PCLA lambda that is resolved in any mode other than `ContextDependent` (usually `ContextIndependent`)
 
-**Shared CS** is a constraint system being shared between postponed nested calls inside PCLA lambda
+**Postponed nested call** — a nested call that is not immediately completed in the `FULL` mode
+
+**Shared CS**
+- A constraint system shared between all postponed nested calls inside the PCLA lambda
+- Serves as a storage of information about:
+  - not-fixed type variables of postponed nested calls
+  - constraints, extracted from postponed nested calls, that are imposed on:
+    - not-fixed type variables of the containing PCLA lambdas
+    - not-fixed type variables of postponed nested calls
 
 **Outer CS**
-  * Defined only for nested postponed candidates (for shared CS)
-  * It consists of type variables of the containing PCLA lambdas and all the type variables of already processed inner candidates
-  * For inner CS, all the outer CS-related type variables are always coming at the beginning of the list of all variables
+- A union of the shared CS and the containing PCLA lambdas' constraint systems
 
-**Outer Type Variable (TV)**
-  * In the context of *shared CS*, it's a subset of type variables that are brought from the *outer CS*
-  * In the list of all variables (`NewConstraintSystemImpl.allTypeVariables`) outer TV always comes in the beginning.
-    * See `NewConstraintSystemImpl.outerSystemVariablesPrefixSize`
+**Outer TV**
+- A type variable that was brought to the CS of a postponed nested call from the outer CS
+- The list of all type variables from the postponed nested call's CS always contains outer TVs at its beginning
+  - see `NewConstraintSystemImpl.allTypeVariables` and `NewConstraintSystemImpl.outerSystemVariablesPrefixSize`
 
-## Entry-point to PCLA
+## PCLA entry point
 
-The conditions to run a lambda resolution in PCLA mode is the following:
-- Completion mode for the current call tree is `FULL` 
-- There are no other ways to infer some new constraints for any type variable.
-- There is some lambda that among its input types has at least one with a not fixed TV being used as type argument
-    - So, if one of the input types is `MutableList<Ev>` that lambda suits for PCLA
-    - But if some of the input types are proper and other are top-level type variables (`Tv`, `Tv?`, `Tv & Any`, etc.), it doesn't suit
+A lambda is resolved in PCLA mode when the following conditions apply:
+- There are no other ways to infer new constraints for any type variable of the given call tree.
+  - This condition necessitates that the given call tree has to be completed in `FULL` mode.
+- *At least one input type of the lambda contains not-fixed type variables as type arguments:*
+  - for example, the following lambdas are suitable for PCLA:
+    - `MutableList<Ev>.() -> Unit`
+    - `(Container<Tv>) -> Pair<Tv, String>`
+    - `(Map<Kv, Vv>) -> Container<Rv>`
+    - `Checker<Tv>.(Tv) -> Boolean`
+    - `Set<Processor<Tv?>>.(Tv & Any) -> Tv?`
+  - **NOTE:** not-fixed top-level type variables as input types
+    **do not**, by themselves, make lambdas suitable for PCLA; for example:
+    - `Tv.() -> Unit` is not suitable for PCLA
+    - `(Kv & Any, Vv?) -> Map<Kv, Vv>` is not suitable for PCLA
 
-**References in code:**
+**Source code references:**
+- `ConstraintSystemCompleter.runCompletion`
 - `ConstraintSystemCompleter.tryToCompleteWithPCLA`
-
-During PCLA, there is a quite specific behavior of how actually lambda body resolution
-happens, and describing it is actually a goal of the following parts document.
 
 ## Algorithm backbone
 
@@ -79,7 +99,7 @@ as usual, and after that at completion results writing phase all type variables 
 ### More details
 
 * **NB:** This algorithm doesn't use any stub types, just regular type variables everywhere
-* Once we see a need to start PCLA (see [Entry-point to PCLA](#entry-point-to-pcla)), we create
+* Once we see a need to start PCLA (see [PCLA entry point](#pcla-entry-point)), we create
     * `FirPCLAInferenceSession` (introduced at `LambdaAnalyzerImpl.analyzeAndGetLambdaReturnArguments`)
     * Shared CS (see `FirPCLAInferenceSession.currentCommonSystem` property)
       * It's mostly a copy of **outer CS** (the CS of the containing candidate), but we mark all the variables as *outer*
@@ -448,7 +468,7 @@ It's crucial because gained contract-affecting information would otherwise stop 
 
 As a result, three kinds of scenarios are possible when completing postponed nested calls with lambdas:
 1. Nested PCLA scenario:
-   - [for some lambdas, some input types contain not-fixed type variables as type arguments](#entry-point-to-pcla)
+   - [for some lambdas, some input types contain not-fixed type variables as type arguments](#pcla-entry-point)
 2. Top-level variable scenario (the most complicated):
    - for all lambdas, no input types contain not-fixed type variables as type arguments
    - but for some lambdas, some input types are top-level not-fixed type variables
