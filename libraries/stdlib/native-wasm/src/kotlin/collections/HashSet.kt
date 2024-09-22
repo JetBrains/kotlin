@@ -66,7 +66,7 @@ public actual class HashSet<E> internal constructor(
 
     /** Implements KonanSet.getElement(). Used for ObjC interop. */
     @Deprecated("This function is not supposed to be used directly.")
-    @DeprecatedSinceKotlin(warningSince = "1.9") // TODO: advance to HIDDEN eventually
+    @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1") // TODO: advance to HIDDEN eventually
     override fun getElement(element: E): E? = backing.getKey(element)
     override actual fun clear(): Unit = backing.clear()
     override actual fun add(element: E): Boolean = backing.addKey(element) >= 0
