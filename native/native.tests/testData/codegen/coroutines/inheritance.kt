@@ -22,6 +22,7 @@ class SuspendHere(): suspend () -> Int {
 
 // in old compiler versions all suspend functions were implementing this interface
 // now they are not, but let's test it works correctly
+@Suppress("DEPRECATION_ERROR")
 class SuspendHereLegacy(): suspend () -> Int, SuspendFunction<Int> {
     override suspend fun invoke() : Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(43)
