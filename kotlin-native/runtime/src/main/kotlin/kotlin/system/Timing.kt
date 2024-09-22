@@ -71,7 +71,7 @@ public external fun getTimeMicros() : Long
  * @sample samples.system.Timing.measureBlockTimeMillis
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeMilliseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @Suppress("DEPRECATION")
 public inline fun measureTimeMillis(block: () -> Unit) : Long {
     val start = getTimeMillis()
@@ -89,7 +89,7 @@ public inline fun measureTimeMillis(block: () -> Unit) : Long {
  * using [Duration.inWholeMicroseconds].
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeMicroseconds", "kotlin.time.measureTime"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @Suppress("DEPRECATION")
 public inline fun measureTimeMicros(block: () -> Unit) : Long {
     val start = getTimeMicros()
@@ -109,7 +109,7 @@ public inline fun measureTimeMicros(block: () -> Unit) : Long {
  * @sample samples.system.Timing.measureBlockNanoTime
  */
 @Deprecated("Use measureTime() instead.", ReplaceWith("measureTime(block).inWholeNanoseconds", "kotlin.time.measureTime"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @Suppress("DEPRECATION")
 public inline fun measureNanoTime(block: () -> Unit) : Long {
     val start = getTimeNanos()
