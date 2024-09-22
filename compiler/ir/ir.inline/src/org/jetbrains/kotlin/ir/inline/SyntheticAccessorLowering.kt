@@ -163,19 +163,21 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
                 TransformerData(declaration)
             }
 
-            // Wrap it to the stage controller to avoid JS BE failing with not found lowered declaration signature
-            // in `IrDeclaration.signatureForJsIC` cache.
-            return declaration.factory.stageController.restrictTo(declaration) {
-                super.visitFunction(declaration, newData)
-            }
+            return super.visitFunction(declaration, newData)
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
-            if (data == null || !expression.isNonLocalPrivateFunctionAccess())
+            if (data == null)
+                return super.visitFunctionAccess(expression, data = null)
+
+            val targetFunction = expression.symbol.owner
+            if (!targetFunction.isNonLocalPrivateFunction())
                 return super.visitFunctionAccess(expression, data)
 
             // Generate and memoize the accessor. The visibility can be narrowed later.
-            val accessor = accessorGenerator.getSyntheticFunctionAccessor(expression, null)
+            val accessor = targetFunction.factory.stageController.restrictTo(targetFunction) {
+                accessorGenerator.getSyntheticFunctionAccessor(expression, null)
+            }
             generatedAccessors.memoize(
                 accessor,
                 targetSymbol = expression.symbol,
@@ -190,10 +192,16 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
          * real cases when it's necessary.
          */
         override fun visitGetField(expression: IrGetField, data: TransformerData?): IrExpression {
-            if (data == null || !expression.isNonLocalBackingFieldAccess())
+            if (data == null)
+                return super.visitGetField(expression, data = null)
+
+            val targetField = expression.symbol.owner
+            if (!targetField.isNonLocalBackingField())
                 return super.visitGetField(expression, data)
 
-            val accessor = accessorGenerator.getSyntheticGetter(expression, null)
+            val accessor = targetField.factory.stageController.restrictTo(targetField) {
+                accessorGenerator.getSyntheticGetter(expression, null)
+            }
             generatedAccessors.memoize(
                 accessor,
                 targetSymbol = expression.symbol,
@@ -205,11 +213,11 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
     }
 
     companion object {
-        private fun IrFunctionAccessExpression.isNonLocalPrivateFunctionAccess(): Boolean =
-            with(symbol.owner) { isPrivate(visibility) && !isLocal }
+        private fun IrFunction.isNonLocalPrivateFunction(): Boolean =
+            isPrivate(visibility) && !isLocal
 
-        private fun IrFieldAccessExpression.isNonLocalBackingFieldAccess(): Boolean =
-            symbol.owner.correspondingPropertySymbol?.owner?.isLocal == false
+        private fun IrField.isNonLocalBackingField(): Boolean =
+            correspondingPropertySymbol?.owner?.isLocal == false
     }
 }
 
