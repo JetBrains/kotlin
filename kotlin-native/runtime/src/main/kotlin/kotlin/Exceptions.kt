@@ -126,9 +126,6 @@ public actual open class AssertionError : Error {
 
     public actual constructor()
 
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(cause: Throwable?) : super(cause)
-
     public actual constructor(message: Any?) : super(message?.toString(), message as? Throwable)
 
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
