@@ -644,7 +644,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `2`\", ReplaceWith(\"2\"))"
-            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"
             expectActual = ExpectActualModifier.Unspecified
             name = "MIN_RADIX"
             type = PrimitiveType.INT.capitalized
@@ -654,7 +654,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `36\", ReplaceWith(\"36\"))"
-            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"
             expectActual = ExpectActualModifier.Unspecified
             name = "MAX_RADIX"
             type = PrimitiveType.INT.capitalized

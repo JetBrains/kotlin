@@ -225,14 +225,14 @@ public actual class Char private constructor() : Comparable<Char> {
          * The minimum radix available for conversion to and from strings.
          */
         @Deprecated("Introduce your own constant with the value of `2`", ReplaceWith("2"))
-        @DeprecatedSinceKotlin(warningSince = "1.9")
+        @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
         public const val MIN_RADIX: Int = 2
 
         /**
          * The maximum radix available for conversion to and from strings.
          */
         @Deprecated("Introduce your own constant with the value of `36", ReplaceWith("36"))
-        @DeprecatedSinceKotlin(warningSince = "1.9")
+        @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
         public const val MAX_RADIX: Int = 36
     }
 }
