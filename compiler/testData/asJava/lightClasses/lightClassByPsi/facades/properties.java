@@ -9,7 +9,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static @org.jetbrains.annotations.NotNull() java.lang.String protectedWithPrivateSet = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private static @org.jetbrains.annotations.NotNull() java.lang.String x$1 = "" /* initializer type: java.lang.String */;
+  private static @org.jetbrains.annotations.NotNull() java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() error.NonExistentClass delegatedProp$delegate;

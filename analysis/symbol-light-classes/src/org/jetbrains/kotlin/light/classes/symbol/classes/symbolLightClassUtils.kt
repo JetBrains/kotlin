@@ -7,19 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -44,7 +38,6 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForPrope
 import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.*
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -227,7 +220,7 @@ internal fun SymbolLightClassBase.createMethods(
     declarations: Sequence<KaCallableSymbol>,
     result: MutableList<PsiMethod>,
     isTopLevel: Boolean = false,
-    suppressStatic: Boolean = false
+    suppressStatic: Boolean = false,
 ) {
     val (ctorProperties, regularMembers) = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
 
@@ -292,7 +285,7 @@ context(KaSession)
 private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
     declaration: T,
     result: MutableList<PsiMethod>,
-    lightMethodCreator: (Int, BitSet) -> PsiMethod
+    lightMethodCreator: (Int, BitSet) -> PsiMethod,
 ) {
     if (!declaration.hasJvmOverloadsAnnotation()) return
     var methodIndex = METHOD_INDEX_BASE
@@ -449,7 +442,7 @@ internal fun SymbolLightClassBase.createAndAddField(
     declaration: KaPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
     isStatic: Boolean,
-    result: MutableList<PsiField>
+    result: MutableList<PsiField>,
 ) {
     val field = createField(declaration, nameGenerator, isStatic) ?: return
     result += field
@@ -467,10 +460,7 @@ internal fun SymbolLightClassBase.createField(
     if (declaration.name.isSpecial) return null
     if (!hasBackingField(declaration)) return null
 
-    val isDelegated = (declaration as? KaKotlinPropertySymbol)?.isDelegatedProperty == true
-    val fieldName = nameGenerator.generateUniqueFieldName(
-        declaration.name.asString() + (if (isDelegated) JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX else "")
-    )
+    val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
 
     return SymbolLightFieldForProperty(
         ktAnalysisSession = this@KaSession,
@@ -594,7 +584,7 @@ context(KaSession)
 internal fun KaDeclarationContainerSymbol.createInnerClasses(
     manager: PsiManager,
     containingClass: SymbolLightClassBase,
-    classOrObject: KtClassOrObject?
+    classOrObject: KtClassOrObject?,
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 

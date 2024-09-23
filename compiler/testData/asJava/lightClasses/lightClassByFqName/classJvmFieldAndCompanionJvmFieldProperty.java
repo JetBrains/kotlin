@@ -1,7 +1,7 @@
 public final class KotlinClass /* fields.KotlinClass*/ {
   @kotlin.jvm.JvmField()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String foo$1 = "1" /* initializer type: java.lang.String */;
+  public final @org.jetbrains.annotations.NotNull() java.lang.String foo = "1" /* initializer type: java.lang.String */;
 
   @kotlin.jvm.JvmField()
   public static final int foo = 0 /* initializer type: int */;

@@ -1,9 +1,9 @@
 public final class A /* A*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String i$1;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String i;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String j$1;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String j;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String j;
