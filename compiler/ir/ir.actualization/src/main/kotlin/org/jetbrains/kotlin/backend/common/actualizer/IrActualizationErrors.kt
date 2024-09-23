@@ -36,6 +36,9 @@ internal object IrActualizationErrors {
     val JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val KOTLIN_ACTUAL_ANNOTATION_MISSING by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
 
+    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION by error1<PsiElement, IrSymbol>()
+    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION by error1<PsiElement, IrSymbol>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultIrActualizationErrorMessages)
     }
@@ -90,6 +93,16 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         map.put(
             IrActualizationErrors.KOTLIN_ACTUAL_ANNOTATION_MISSING,
             "Respective Java declaration ''{0}'' must be marked with '@kotlin.jvm.KotlinActual'",
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+        )
+        map.put(
+            IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION,
+            "Default parameters in expect function ''{0}'' are not allowed since the function is actualized via '@KotlinActual' annotation",
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+        )
+        map.put(
+            IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION,
+            "Default parameters in actual function ''{0}'' are not allowed since the actualization is done via '@KotlinActual' annotation",
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
     }

@@ -4,8 +4,8 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
-}
+<!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION{JVM}!>expect class Foo {
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
