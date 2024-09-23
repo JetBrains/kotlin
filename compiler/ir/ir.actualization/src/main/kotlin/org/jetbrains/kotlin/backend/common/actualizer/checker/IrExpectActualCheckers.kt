@@ -24,6 +24,8 @@ internal class IrExpectActualCheckers(
         IrAnnotationMatchingKmpChecker,
         IrAnnotationConflictingDefaultArgumentValueKmpChecker,
         IrKotlinActualAnnotationOnJavaKmpChecker,
+        IrJavaDirectActualizationDefaultParametersInExpectKmpChecker,
+        IrJavaDirectActualizationDefaultParametersInActualKmpChecker,
     )
 
     override val matchingContext = object : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
