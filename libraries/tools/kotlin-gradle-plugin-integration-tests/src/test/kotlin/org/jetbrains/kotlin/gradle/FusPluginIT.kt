@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.nio.file.Files
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.pathString
-import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -40,7 +39,7 @@ class FusPluginIT : KGPBaseTest() {
                 "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
             ) {
                 assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "$metricName=$metricValue",
                     "BUILD FINISHED"
                 )
@@ -89,7 +88,7 @@ class FusPluginIT : KGPBaseTest() {
             ) {
                 assertConfigurationCacheStored()
                 assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "app=$executionTimeValue",
                     "lib=$executionTimeValue",
                     "$configurationTimeMetricName=app",
@@ -110,7 +109,7 @@ class FusPluginIT : KGPBaseTest() {
                 assertConfigurationCacheReused()
 
                 assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "$configurationTimeMetricName=app",
                     "$configurationTimeMetricName=lib",
                     "BUILD FINISHED"
@@ -154,7 +153,7 @@ class FusPluginIT : KGPBaseTest() {
             ) {
                 //Metrics should not be overridden and both metrics should be in the file
                 assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "Build: ",
                     "$metricName=1",
                     "$metricName=2",
@@ -207,12 +206,12 @@ class FusPluginIT : KGPBaseTest() {
                 }
             }
 
-             build(
+            build(
                 "assemble",
                 "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
             ) {
-                 assertFilesCombinedContains(
-                     Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                assertFilesCombinedContains(
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "subProjectA=value",
                     "subProjectB=value",
                     "BUILD FINISHED"
@@ -226,7 +225,7 @@ class FusPluginIT : KGPBaseTest() {
                 "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
             ) {
                 assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
+                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
                     "subProjectA=value",
                     "subProjectB=value",
                     "BUILD FINISHED"
