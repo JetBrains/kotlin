@@ -46,28 +46,46 @@ private fun groupCFilter(file: File): Boolean {
 }
 
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicFrameworkTestGroupA : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupAFilter))
+class ClassicFrameworkTestGroupA : GroupedFrameworkTestBase(
+    "GroupA",
+    ObjCExportTestCases.Subset(::groupAFilter)
+)
 
 @FirPipeline
 @Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
-class FirFrameworkTestGroupA : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupAFilter))
+class FirFrameworkTestGroupA : GroupedFrameworkTestBase(
+    "GroupA",
+    ObjCExportTestCases.Subset(::groupAFilter)
+)
 
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicFrameworkTestGroupB : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupBFilter))
-
-@FirPipeline
-@Tag("frontend-fir")
-@TestDataPath("\$PROJECT_ROOT")
-class FirFrameworkTestGroupB : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupBFilter))
-
-@TestDataPath("\$PROJECT_ROOT")
-class ClassicFrameworkTestGroupC : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupCFilter))
+class ClassicFrameworkTestGroupB : GroupedFrameworkTestBase(
+    "GroupB",
+    ObjCExportTestCases.Subset(::groupBFilter)
+)
 
 @FirPipeline
 @Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
-class FirFrameworkTestGroupC : GroupedFrameworkTestBase(ObjCExportTestCases.Subset(::groupCFilter))
+class FirFrameworkTestGroupB : GroupedFrameworkTestBase(
+    "GroupB",
+    ObjCExportTestCases.Subset(::groupBFilter)
+)
+
+@TestDataPath("\$PROJECT_ROOT")
+class ClassicFrameworkTestGroupC : GroupedFrameworkTestBase(
+    "GroupC",
+    ObjCExportTestCases.Subset(::groupCFilter)
+)
+
+@FirPipeline
+@Tag("frontend-fir")
+@TestDataPath("\$PROJECT_ROOT")
+class FirFrameworkTestGroupC : GroupedFrameworkTestBase(
+    "GroupC",
+    ObjCExportTestCases.Subset(::groupCFilter)
+)
 
 /**
  * A dirty hack to split ObjCExportTest family into multiple groups to fight timeouts on CI.
@@ -85,7 +103,10 @@ sealed class ObjCExportTestCases(private val fileFilter: (File) -> Boolean) {
     class Subset(fileFilter: (File) -> Boolean) : ObjCExportTestCases(fileFilter)
 }
 
-abstract class GroupedFrameworkTestBase(private val cases: ObjCExportTestCases) : FrameworkTestBase() {
+abstract class GroupedFrameworkTestBase(
+    private val groupSuffix: String,
+    private val cases: ObjCExportTestCases
+) : FrameworkTestBase() {
 
     // Compile a couple of KLIBs
     private val library by lazy {
@@ -191,7 +212,7 @@ abstract class GroupedFrameworkTestBase(private val cases: ObjCExportTestCases) 
     ) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val doLazyHeaderCheck = needLazyHeaderCheck && testRunSettings.get<PipelineType>() == PipelineType.K1
-        val lazyHeader: File = buildDir.resolve("lazy-$suffix.h").also { it.delete() } // Clean up lazy header after previous runs
+        val lazyHeader: File = buildDir.resolve("lazy-$suffix-$groupSuffix.h").also { it.delete() } // Clean up lazy header after previous runs
 
         // Convert KT sources into ObjC framework using two KLIbs
         val objcExportTestSuiteDir = testSuiteDir.resolve("objcexport")
@@ -251,7 +272,7 @@ abstract class GroupedFrameworkTestBase(private val cases: ObjCExportTestCases) 
         }
 
         if (doLazyHeaderCheck) {
-            val expectedLazyHeaderName = "expectedLazy/expectedLazy${suffix}.h"
+            val expectedLazyHeaderName = "expectedLazy${groupSuffix}/expectedLazy${suffix}.h"
             val expectedLazyHeader = objcExportTestSuiteDir.resolve(expectedLazyHeaderName)
             if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
                 runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
