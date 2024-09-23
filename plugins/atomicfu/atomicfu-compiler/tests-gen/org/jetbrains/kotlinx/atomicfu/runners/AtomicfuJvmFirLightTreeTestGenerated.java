@@ -171,6 +171,12 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     }
 
     @Test
+    @TestMetadata("PlusMinusAssignTest.kt")
+    public void testPlusMinusAssignTest() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/PlusMinusAssignTest.kt");
+    }
+
+    @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ScopeTest.kt");

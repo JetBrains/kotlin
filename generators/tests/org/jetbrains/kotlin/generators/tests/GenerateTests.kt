@@ -244,11 +244,11 @@ fun main(args: Array<String>) {
             testRunnerMethodName = "runTest0"
         ) {
             testClass<AbstractAtomicfuJsIrTest> {
-                model("box/")
+                model(relativeRootPath = "box/", excludedPattern = "PlusMinusAssignTest.kt")
             }
 
             testClass<AbstractAtomicfuJsFirTest> {
-                model("box/")
+                model(relativeRootPath = "box/", excludedPattern = "PlusMinusAssignTest.kt")
             }
         }
 

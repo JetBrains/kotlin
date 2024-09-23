@@ -72,6 +72,8 @@ class NativeAtomicfuIrBuilder(
                     "addAndGet" -> addAndGetField(getAtomicHandler, valueType, valueArguments[0])
                     "incrementAndGet" -> incrementAndGetField(getAtomicHandler, valueType)
                     "decrementAndGet" -> decrementAndGetField(getAtomicHandler, valueType)
+                    "plusAssign" -> addAndGetField(getAtomicHandler, valueType, valueArguments[0])
+                    "minusAssign" -> addAndGetField(getAtomicHandler, valueType, unaryMinus(valueArguments[0]!!))
                     else -> error("Unsupported atomic function name $functionName")
                 }
             }

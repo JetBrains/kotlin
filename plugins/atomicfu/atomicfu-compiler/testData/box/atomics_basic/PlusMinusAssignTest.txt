@@ -1,0 +1,40 @@
+@kotlin.Metadata
+public final class AtomicArrayPlusAssignTest {
+    // source: 'PlusMinusAssignTest.kt'
+    private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field longArr: java.util.concurrent.atomic.AtomicLongArray
+    public method <init>(): void
+    private synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
+    public final method test(): void
+    private final method testInt(): void
+    private final method testLong(): void
+}
+
+@kotlin.Metadata
+public final class AtomicPlusAssignTest {
+    // source: 'PlusMinusAssignTest.kt'
+    private synthetic final static field _l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field _l$volatile: long
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _x$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getL(): long
+    public final method getX(): int
+    private synthetic final static method get_l$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method get_l$volatile(): long
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_x$volatile(): int
+    private synthetic final method set_l$volatile(p0: long): void
+    private synthetic final method set_x$volatile(p0: int): void
+    public final method test(): void
+    private final method testInt(): void
+    private final method testLong(): void
+}
+
+@kotlin.Metadata
+public final class PlusMinusAssignTestKt {
+    // source: 'PlusMinusAssignTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

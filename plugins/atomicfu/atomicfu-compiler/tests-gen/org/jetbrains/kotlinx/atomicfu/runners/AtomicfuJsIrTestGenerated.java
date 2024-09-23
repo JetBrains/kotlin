@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Atomic_extensions {
     @Test
     public void testAllFilesPresentInAtomic_extensions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Atomics_basic {
     @Test
     public void testAllFilesPresentInAtomics_basic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Delegated {
     @Test
     public void testAllFilesPresentInDelegated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test
@@ -211,7 +211,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Locks {
     @Test
     public void testAllFilesPresentInLocks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test
@@ -233,7 +233,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Top_level {
     @Test
     public void testAllFilesPresentInTop_level() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   public class Trace {
     @Test
     public void testAllFilesPresentInTrace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("PlusMinusAssignTest.kt"), TargetBackend.JS_IR, true);
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -72,6 +74,7 @@ abstract class AbstractAtomicfuTransformer(
         transformAtomicProperties(moduleFragment)
         transformAtomicExtensions(moduleFragment)
         transformAtomicFunctions(moduleFragment)
+        removeTemporaryVariables(moduleFragment)
         remapValueParameters(moduleFragment)
         finalTransformationCheck(moduleFragment)
         for (irFile in moduleFragment.files) {
@@ -94,6 +97,12 @@ abstract class AbstractAtomicfuTransformer(
     private fun transformAtomicFunctions(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
             irFile.transform(atomicfuFunctionCallTransformer, null)
+        }
+    }
+
+    private fun removeTemporaryVariables(moduleFragment: IrModuleFragment) {
+        for (irFile in moduleFragment.files) {
+            irFile.transform(RemoveTemporaryAtomicVariables(), null)
         }
     }
 
@@ -404,10 +413,7 @@ abstract class AbstractAtomicfuTransformer(
             } else {
                 atomicfuSymbols.atomicToPrimitiveType(propertyGetterCall.type as IrSimpleType)
             }
-            val dispatchReceiver =
-                if (propertyGetterCall is IrCall && propertyGetterCall.isArrayElementGetter())
-                    (propertyGetterCall.dispatchReceiver as? IrCall)?.dispatchReceiver
-                else (propertyGetterCall as? IrCall)?.dispatchReceiver
+            val dispatchReceiver = propertyGetterCall.getDispatchReceiverOfAtomicReceiver()
             val atomicHandler = getAtomicHandler(propertyGetterCall, data)
             val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, propertyGetterCall, data)
             val builder = atomicfuSymbols.createBuilder(expression.symbol)
@@ -589,7 +595,7 @@ abstract class AbstractAtomicfuTransformer(
             when {
                 atomicCallReceiver is IrCall -> {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
-                    val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.dispatchReceiver as IrCall else atomicCallReceiver
+                    val getAtomicProperty = if (isArrayReceiver) requireNotNull(atomicCallReceiver.dispatchReceiver) else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
                     atomicfuPropertyToAtomicHandler[atomicProperty]
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.atomicfuRender()}, \n" +
@@ -627,6 +633,28 @@ abstract class AbstractAtomicfuTransformer(
             propertyGetterCall: IrExpression,
             parentFunction: IrFunction?
         ): IrExpression?
+
+        private fun IrExpression.getDispatchReceiverOfAtomicReceiver(): IrExpression? =
+            when {
+                this is IrCall -> {
+                    if (isArrayElementGetter()) {
+                        this.dispatchReceiver?.getDispatchReceiverOfAtomicReceiver()
+                    } else {
+                        this.dispatchReceiver
+                    }
+                }
+                this.isThisReceiver() -> null
+                this is IrGetValue -> {
+                    // Compiler may generate a temporary variable as a call receiver instead of the direct factory call, e.g.
+                    // val arr = get_arr()
+                    // val tmp_arr = arr
+                    // tmp_arr[index].plusAssign(delta)
+                    val tmp = symbol.owner
+                    require(tmp.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
+                    (tmp as IrVariable).initializer?.getDispatchReceiverOfAtomicReceiver()
+                }
+                else -> error("Tried to extract the corresponding property from ${this.render()}, which is not an IrCall or IrGetValue.")
+            }
 
         protected fun AtomicArray.getAtomicArrayElementIndex(propertyGetterCall: IrExpression): IrExpression =
             requireNotNull((propertyGetterCall as IrCall).valueArguments[0]) {
@@ -688,6 +716,27 @@ abstract class AbstractAtomicfuTransformer(
                 }
                     ?: error("In the sequence of parents for the local function ${this.render()} no containing function was found" + CONSTRAINTS_MESSAGE)
             }
+    }
+
+    inner class RemoveTemporaryAtomicVariables : IrTransformer<IrFunction?>() {
+
+        override fun visitBlock(expression: IrBlock, data: IrFunction?): IrExpression {
+            expression.statements.removeIf {
+                it.isTemporaryAtomicVariable()
+            }
+            return super.visitBlock(expression, data)
+        }
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: IrFunction?): IrExpression {
+            expression.statements.removeIf {
+                it.isTemporaryAtomicVariable()
+            }
+            return super.visitContainerExpression(expression, data)
+        }
+
+        private fun IrStatement.isTemporaryAtomicVariable() =
+            this is IrVariable && origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
+                    initializer?.let { it.type.isAtomicType() || it.type.isAtomicArrayType() } ?: false
     }
 
     /**
@@ -846,9 +895,21 @@ abstract class AbstractAtomicfuTransformer(
             it.parent().asString() == AFU_PKG && it.shortName().asString() == TRACE_BASE_TYPE
         } ?: false
 
-    private fun IrCall.getCorrespondingProperty(): IrProperty =
-        symbol.owner.correspondingPropertySymbol?.owner
-            ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol" + CONSTRAINTS_MESSAGE)
+    private fun IrExpression.getCorrespondingProperty(): IrProperty =
+        when (this) {
+            is IrCall -> symbol.owner.correspondingPropertySymbol?.owner
+                ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol" + CONSTRAINTS_MESSAGE)
+            // Compiler may generate a temporary variable as a call receiver instead of the direct factory call, e.g.
+            // val arr = get_arr()
+            // val tmp_arr = arr
+            // tmp_arr[index].plusAssign(delta)
+            is IrGetValue -> {
+                val tmp = symbol.owner
+                require(tmp.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
+                (tmp as IrVariable).initializer?.getCorrespondingProperty()
+            }
+            else -> error("Tried to extract the corresponding property from ${this.render()}, which is not an IrCall or IrGetValue.")
+        } ?: error("The corresponding property of the expression ${this.render()} could not be extracted.")
 
     private fun mangleAtomicExtension(name: String, atomicHandlerType: AtomicHandlerType, valueType: IrType) =
         name + "$" + ATOMICFU + "$" + atomicHandlerType + "$" + if (valueType.isPrimitiveType()) valueType.classFqName?.shortName() else "Any"

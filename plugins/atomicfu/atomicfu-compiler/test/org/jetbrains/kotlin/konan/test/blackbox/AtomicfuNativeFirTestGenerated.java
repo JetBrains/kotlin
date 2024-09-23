@@ -190,6 +190,12 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
     }
 
     @Test
+    @TestMetadata("PlusMinusAssignTest.kt")
+    public void testPlusMinusAssignTest() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/PlusMinusAssignTest.kt");
+    }
+
+    @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ScopeTest.kt");

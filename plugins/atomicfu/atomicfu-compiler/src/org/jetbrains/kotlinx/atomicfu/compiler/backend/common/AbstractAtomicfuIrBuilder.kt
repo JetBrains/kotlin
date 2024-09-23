@@ -78,13 +78,19 @@ abstract class AbstractAtomicfuIrBuilder(
         val functionSymbol = when (functionName) {
             "get", "<get-value>", "getValue" -> atomicHandlerClassSymbol.getSimpleFunction("get")
             "set", "<set-value>", "setValue", "lazySet" -> atomicHandlerClassSymbol.getSimpleFunction("set")
+            "plusAssign", "minusAssign" -> atomicHandlerClassSymbol.getSimpleFunction("addAndGet")
             else -> atomicHandlerClassSymbol.getSimpleFunction(functionName)
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
+        val callValueArguments = if (functionName == "minusAssign") { // a -= 5 -> a.addAndGet(-5)
+            val delta = valueArguments.last()
+            require(delta != null && delta.type == valueType)
+            if (valueArguments.size == 1) listOf(unaryMinus(delta)) else listOf(valueArguments[0], unaryMinus(delta))
+        } else valueArguments
         return irCallFunction(
             functionSymbol,
             dispatchReceiver = getAtomicHandler,
             extensionReceiver = null,
-            valueArguments,
+            valueArguments = callValueArguments,
             valueType
         )
     }
@@ -339,6 +345,10 @@ abstract class AbstractAtomicfuIrBuilder(
     fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply { dispatchReceiver = refGetter }
     fun toBoolean(irExpr: IrExpression) = irEquals(irExpr, irInt(1)) as IrCall
     fun toInt(irExpr: IrExpression) = irIfThenElse(irBuiltIns.intType, irExpr, irInt(1), irInt(0))
+
+    private val intUnaryMinus: IrSimpleFunctionSymbol = irBuiltIns.intType.classOrNull?.getSimpleFunction("unaryMinus") ?: error("Couldn't find unaryMinus operator on class kotlin.Int")
+    private val longUnaryMinus: IrSimpleFunctionSymbol = irBuiltIns.longType.classOrNull?.getSimpleFunction("unaryMinus") ?: error("Couldn't find unaryMinus operator on class kotlin.Long")
+    fun unaryMinus(expr: IrExpression) = irCall(if (expr.type.isInt()) intUnaryMinus else longUnaryMinus).apply { dispatchReceiver = expr }
 
     fun buildPropertyWithAccessors(
         field: IrField,
