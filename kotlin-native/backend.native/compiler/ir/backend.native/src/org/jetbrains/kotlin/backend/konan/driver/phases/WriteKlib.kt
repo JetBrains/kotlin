@@ -68,7 +68,6 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
 
     config.usedKlibDependenciesPath?.let { path ->
         val usedDependenciesFile = File(path)
-        if (usedDependenciesFile.exists) return@let
         usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.canonicalPath })
     }
 
