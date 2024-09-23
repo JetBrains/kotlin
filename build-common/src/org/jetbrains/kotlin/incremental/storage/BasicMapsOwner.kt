@@ -41,40 +41,42 @@ open class BasicMapsOwner(val cachesDir: File) : Closeable {
         forEachMapSafe("flush", BasicMap<*, *>::flush)
     }
 
-    override fun close() {
-        forEachMapSafe("close", BasicMap<*, *>::close)
-    }
-
     open fun deleteStorageFiles() {
         forEachMapSafe("deleteStorageFiles", BasicMap<*, *>::deleteStorageFiles)
     }
 
     /**
-     * DEPRECATED: This API should be removed because
-     *   - It's not clear what [memoryCachesOnly] means.
-     *   - In the past, when `memoryCachesOnly=true` we applied a small optimization: Checking
-     *   [com.intellij.util.io.PersistentHashMap.isDirty] before calling [com.intellij.util.io.PersistentHashMap.force]. However, if that
-     *   optimization is useful, it's better to always do it (perhaps inside the [com.intellij.util.io.PersistentHashMap.force] method
-     *   itself) rather than doing it based on the value of this parameter.
-     *
-     * Instead, just call [flush] (without a parameter) directly.
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
+     */
+    override fun close() {
+        forEachMapSafe("close", BasicMap<*, *>::close)
+    }
+
+    /**
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
      */
     fun flush(@Suppress("UNUSED_PARAMETER") memoryCachesOnly: Boolean) {
         flush()
     }
 
     /**
-     * DEPRECATED: This API should be removed because:
-     *   - It's not obvious what "clean" means: It does not exactly describe the current implementation, and it also sounds similar to
-     *   "clear" which means removing all the map entries, but this method does not do that.
-     *   - This method currently calls [close] (and [deleteStorageFiles]). However, [close] is often already called separately and
-     *   automatically, so this API makes it more likely for [close] to be accidentally called twice.
+     * Please do not remove or modify this function.
+     * It is implementing [org.jetbrains.jps.incremental.storage.StorageOwner] interface and needed for correct JPS compilation.
+     * Calling [org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.close] here is unnecessary and will produce race conditions
+     * for JPS build because JPS can modify caches of dependant modules.
      *
-     * Instead, just call [close] and/or [deleteStorageFiles] explicitly.
+     * More context:
+     * 1) While compiling module Foo, thread A can open caches of dependent module Bar
+     * 2) When we will compile module Bar in thread B we can decide to rebuild the module (e.g. configuration of facet changed)
+     * 3) Thread B will call `clean` action on caches of module Bar
+     * 4) If `clean` action also call `close` action,
+     * it will close opened map and will make it unusable when it tries to add info after recompilation,
+     * which will cause a "Storage already closed" exception.
      */
     fun clean() {
-        close()
-        deleteStorageFiles()
+        forEachMapSafe("clean", BasicMap<*, *>::clean)
     }
 
     @Synchronized

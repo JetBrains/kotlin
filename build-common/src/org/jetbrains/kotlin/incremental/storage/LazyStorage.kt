@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental.storage
 import com.intellij.util.CommonProcessors
 import com.intellij.util.io.AppendablePersistentMap
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.PersistentHashMap
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
@@ -27,6 +28,7 @@ import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
 import java.io.File
+import java.io.IOException
 
 /**
  * [PersistentStorage] which delegates operations to a [PersistentHashMap]. Note that the [PersistentHashMap] is created lazily (only when
@@ -90,9 +92,24 @@ open class LazyStorage<KEY, VALUE>(
 
     @Synchronized
     override fun close() {
-        storage?.close()
+        try {
+            storage?.close()
+        } finally {
+            storage = null
+        }
     }
 
+    @Synchronized
+    override fun clean() {
+        try {
+            storage?.close()
+        } finally {
+            storage = null
+            if (!IOUtil.deleteAllFilesStartingWith(storageFile)) {
+                throw IOException("Could not delete internal storage: ${storageFile.absolutePath}")
+            }
+        }
+    }
 }
 
 /** [LazyStorage] where a map entry's value is a [Collection] of elements of type [E]. */
