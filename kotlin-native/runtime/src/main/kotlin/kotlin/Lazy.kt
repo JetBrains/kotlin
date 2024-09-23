@@ -48,5 +48,5 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  */
 @Suppress("UNUSED_PARAMETER")
 @Deprecated("Synchronization on Any? object is not supported.", ReplaceWith("lazy(initializer)"))
-@DeprecatedSinceKotlin(errorSince = "1.9")
+@DeprecatedSinceKotlin(errorSince = "1.9", hiddenSince = "2.1")
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = throw UnsupportedOperationException()
