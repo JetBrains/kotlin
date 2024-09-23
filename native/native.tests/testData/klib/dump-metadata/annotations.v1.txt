@@ -22,8 +22,10 @@ library {
     // class name: test/AnnoSetParam2
     // class name: test/AnnoSetter
     // class name: test/AnnoSetter2
+    // class name: test/AnnoType
     // class name: test/B
     // class name: test/Foo
+    // class name: test/Param
 
     // signature: test/AnnoBackingField|null[0]
     public final annotation class test/AnnoBackingField : kotlin/Annotation {
@@ -154,6 +156,14 @@ library {
       public constructor()
     }
 
+    // signature: test/AnnoType|null[0]
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoType : kotlin/Annotation {
+
+      // signature: test/AnnoType.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
     // signature: test/B|null[0]
     public final class test/B<@test/AnnoClassTypeParameter T#0 /* T */> : kotlin/Any {
 
@@ -193,6 +203,13 @@ library {
         public final /* non-default */ set(@test/AnnoSetParam x: kotlin/Int)
     }
 
+    // signature: test/Param|null[0]
+    public final class test/Param : kotlin/Any {
+
+      // signature: test/Param.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
     package {
 
       // signature: test/extfun|-4862331552047794615[0]
@@ -201,6 +218,21 @@ library {
 
       // signature: test/f|-1335249788552583475[0]
       public final fun <@test/AnnoFunctionTypeParameter T#0 /* T */> f(x: test/B<@test/AnnoClassUsageTypeParameter kotlin/Int>): kotlin/Unit
+
+      // signature: test/varargWithCustomAndExtensionFunctionTypeAnnotation|-1232918933172190415[0]
+      public final fun varargWithCustomAndExtensionFunctionTypeAnnotation(vararg v: @test/AnnoType @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @test/AnnoType @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
+
+      // signature: test/varargWithCustomTypeAnnotationOnInt|-8671106892442509905[0]
+      public final fun varargWithCustomTypeAnnotationOnInt(vararg v: @test/AnnoType kotlin/Int /* kotlin/IntArray */): kotlin/Unit
+
+      // signature: test/varargWithCustomTypeAnnotationOnLambda|-6029549133446755883[0]
+      public final fun varargWithCustomTypeAnnotationOnLambda(vararg v: @test/AnnoType kotlin/Function0<kotlin/Unit> /* kotlin/Array<out @test/AnnoType kotlin/Function0<kotlin/Unit>> */): kotlin/Unit
+
+      // signature: test/varargWithCustomTypeAnnotationOnParam|-7793719899759806945[0]
+      public final fun varargWithCustomTypeAnnotationOnParam(vararg v: @test/AnnoType test/Param /* kotlin/Array<out @test/AnnoType test/Param> */): kotlin/Unit
+
+      // signature: test/varargWithExtensionFunctionTypeAnnotation|1919546537069024950[0]
+      public final fun varargWithExtensionFunctionTypeAnnotation(vararg v: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
 
       // signature: test/extProp|-6867325556440293248[0]
       @test/AnnoPropertyExtensionReceiver
