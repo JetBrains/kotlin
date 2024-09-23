@@ -329,8 +329,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         }
 
         return WasmModule(
-            functionTypes = functionTypes,
-            recGroupTypes = gcTypes,
+            recGroups = (functionTypes + gcTypes).map { listOf(it) },
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,

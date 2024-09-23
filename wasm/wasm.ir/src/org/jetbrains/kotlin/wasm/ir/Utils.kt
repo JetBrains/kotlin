@@ -15,8 +15,11 @@ fun WasmModule.calculateIds() {
         }
     }
 
-    functionTypes.calculateIds()
-    recGroupTypes.calculateIds(startIndex = functionTypes.size)
+    var recGroupCurrentStartIndex = 0
+    recGroups.forEach { recGroup ->
+        recGroup.calculateIds(startIndex = recGroupCurrentStartIndex)
+        recGroupCurrentStartIndex += recGroup.size
+    }
     importedFunctions.calculateIds()
     importedMemories.calculateIds()
     importedTables.calculateIds()
