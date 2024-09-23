@@ -28389,6 +28389,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/involvesIrInterpreter/enumRecursiveName.kt");
     }
 
+    @TestMetadata("enumWithDifferentFileOrder.kt")
+    public void testEnumWithDifferentFileOrder() {
+      runTest("compiler/testData/codegen/box/involvesIrInterpreter/enumWithDifferentFileOrder.kt");
+    }
+
     @TestMetadata("floatOperations.kt")
     public void testFloatOperations() {
       runTest("compiler/testData/codegen/box/involvesIrInterpreter/floatOperations.kt");

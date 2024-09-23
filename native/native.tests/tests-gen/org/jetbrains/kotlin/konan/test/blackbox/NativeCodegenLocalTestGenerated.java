@@ -917,6 +917,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("enumWithDifferentFileOrder.kt")
+    public void testEnumWithDifferentFileOrder() {
+      runTest("native/native.tests/testData/codegen/fileCheck/enumWithDifferentFileOrder.kt");
+    }
+
+    @Test
     @TestMetadata("enum_when.kt")
     public void testEnum_when() {
       runTest("native/native.tests/testData/codegen/fileCheck/enum_when.kt");
