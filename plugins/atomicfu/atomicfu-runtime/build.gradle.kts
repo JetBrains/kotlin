@@ -29,6 +29,10 @@ kotlin {
     }
 }
 
+dependencies {
+    implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
+}
+
 val emptyJavadocJar by tasks.creating(Jar::class) {
     archiveClassifier.set("javadoc")
 }

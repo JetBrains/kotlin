@@ -23,6 +23,10 @@ kotlin {
     }
 }
 
+dependencies {
+    implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

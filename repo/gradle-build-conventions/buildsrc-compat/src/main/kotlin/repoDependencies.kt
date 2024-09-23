@@ -7,9 +7,9 @@
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.closureOf
@@ -59,6 +59,23 @@ fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): An
         kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
     else
         dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+}
+
+/**
+ * If some MPP project depends on kotlin stdlib and it is included in JPS build, then it will depend
+ *   on kotlin-stdlib-jdk7/8 of the bootstrap version during import (without JPS it will be the snapshot stdlib).
+ * And since no other project actually doesn't depend on these specific version of the stdlib, they won't be
+ *   added to the `verification-metadata.xml` during bootstrap update, which will cause JPS import to fail.
+ * So to workaround this problem, these artifacts are referenced manually in all required projects
+ */
+fun DependencyHandler.implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project: Project) {
+    implicitDependencies(project.jdkVariantsOfBootstrapStdlib(7))
+    implicitDependencies(project.jdkVariantsOfBootstrapStdlib(8))
+}
+
+private fun Project.jdkVariantsOfBootstrapStdlib(variant: Int): Any {
+    require(variant == 7 || variant == 8) { "There are only jdk7 and jdk8 stdlib, but jdk$variant passed"}
+    return kotlinDep(listOfNotNull("stdlib", "jdk$variant").joinToString("-"), bootstrapKotlinVersion)
 }
 
 /**
