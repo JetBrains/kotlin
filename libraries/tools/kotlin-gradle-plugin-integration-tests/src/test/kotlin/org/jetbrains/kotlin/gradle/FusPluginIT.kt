@@ -55,7 +55,6 @@ class FusPluginIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1]
     )
     @GradleTest
-    @Tag("DebugFusKGP")
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         val executionTimeValue = "EXECUTION_METRIC_VALUE"
         val configurationTimeMetricName = "CONFIGURATION_METRIC_NAME"
@@ -136,6 +135,7 @@ class FusPluginIT : KGPBaseTest() {
 
     @DisplayName("test override metrics for fus-statistics-gradle-plugin")
     @GradleTest
+    @Tag("DebugFusKGP")
     fun testMetricsOverrideForFusStatisticsPlugin(gradleVersion: GradleVersion) {
         val metricName = "METRIC_NAME"
         project("simpleProject", gradleVersion) {
