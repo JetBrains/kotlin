@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.reportKotlinActualAnnotati
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.ENUM_CLASS_SPECIAL_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -52,9 +54,13 @@ private fun checkAnnotationRecursive(
     }
     if (actual is IrClass) {
         for (member in actual.declarations) {
-            if (!member.isFakeOverride && (member is IrFunction || member is IrClass)) {
+            if (!member.isFakeOverride && (member is IrFunction || member is IrClass) &&
+                !member.isInterfaceConstructor(actual) // In Java, annotations are interfaces, and they can't have constructors.
+            ) {
                 checkAnnotationRecursive(member, expectActualMap, diagnosticsReporter, topLevelExpect)
             }
         }
     }
 }
+
+private fun IrDeclaration.isInterfaceConstructor(parent: IrClass): Boolean = parent.isAnnotationClass && this is IrConstructor
