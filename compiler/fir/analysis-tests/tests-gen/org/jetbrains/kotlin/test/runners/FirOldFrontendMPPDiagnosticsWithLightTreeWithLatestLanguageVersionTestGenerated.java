@@ -116,6 +116,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("arrayLimitationsInJvm.kt")
+  public void testArrayLimitationsInJvm() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/arrayLimitationsInJvm.kt");
+  }
+
+  @Test
   @TestMetadata("arraySort.kt")
   public void testArraySort() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/arraySort.kt");
