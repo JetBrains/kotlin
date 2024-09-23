@@ -251,7 +251,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
                 }
 
                 useJUnitPlatform {
-                    includeTags(junitTag)
+                    includeTags("DebugFusKGP")
                     excludeTags(*(junitTags - junitTag).toTypedArray())
                 }
             }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import java.nio.file.Files
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.pathString
@@ -54,6 +55,7 @@ class FusPluginIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1]
     )
     @GradleTest
+    @Tag("DebugFusKGP")
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         val executionTimeValue = "EXECUTION_METRIC_VALUE"
         val configurationTimeMetricName = "CONFIGURATION_METRIC_NAME"
@@ -153,13 +155,15 @@ class FusPluginIT : KGPBaseTest() {
                 "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
             ) {
                 //Metrics should not be overridden and both metrics should be in the file
-                assertFilesCombinedContains(
-                    Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).toList(),
-                    "Build: ",
-                    "$metricName=1",
-                    "$metricName=2",
-                    "BUILD FINISHED"
-                )
+                Files.list(projectPath.resolve("$reportRelativePath/kotlin-profile")).use {
+                    assertFilesCombinedContains(
+                        it.toList(),
+                        "Build: ",
+                        "$metricName=1",
+                        "$metricName=2",
+                        "BUILD FINISHED"
+                    )
+                }
             }
             projectPath.resolve(reportRelativePath).deleteRecursively()
         }
