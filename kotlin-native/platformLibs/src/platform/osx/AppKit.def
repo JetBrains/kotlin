@@ -8,7 +8,7 @@ linkerOpts = -framework AppKit
 
 strictEnums = NSBezierPathElement
 objcClassesIncludingCategories = NSImage NSProgressIndicator NSCursor NSDocument NSGraphicsContext NSMutableParagraphStyle NSParagraphStyle NSTextTab NSToolbar NSWindow NSTextContainer NSTextAttachment
-allowIncludingObjCCategoriesFromTemporaryFile = true
+allowIncludingObjCCategoriesFromDefFile = true
 ---
 @interface NSTextAttachment(K)
 - (nullable NSImage *)imageForBounds:(CGRect)imageBounds textContainer:(nullable NSTextContainer *)textContainer characterIndex:(NSUInteger)charIndex  API_AVAILABLE(macos(10.11), ios(7.0), tvos(9.0), visionos(1.0)) API_UNAVAILABLE(watchos);
