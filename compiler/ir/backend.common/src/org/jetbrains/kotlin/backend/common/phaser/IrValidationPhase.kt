@@ -66,12 +66,12 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-            checkValueScopes = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
-            checkCrossFileFieldUsage = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkValueScopes = context.configuration.enableIrVisibilityChecks,
+            checkCrossFileFieldUsage = context.configuration.enableIrVisibilityChecks,
             checkTypeParameterScopes = false,
-            checkVisibilities = context.configuration.getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkVisibilities = context.configuration.enableIrVisibilityChecks,
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
-            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            checkVarargTypes = context.configuration.enableIrVarargTypesChecks,
         )
 }
 

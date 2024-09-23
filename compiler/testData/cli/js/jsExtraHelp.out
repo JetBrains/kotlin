@@ -151,11 +151,6 @@ where advanced options include:
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
   -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xverify-ir-visibility-after-inlining
-                             Check for visibility violations in IR when validating it after the function inlining phase.
-                             Only has effect if '-Xverify-ir' is not 'none'.
-                             This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
-                             
   -Xwasm                     Use the WebAssembly compiler backend.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-enable-array-range-checks

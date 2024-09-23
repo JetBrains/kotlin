@@ -24,9 +24,6 @@ object KlibConfigurationKeys {
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
 
     @JvmField
-    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING = CompilerConfigurationKey.create<Boolean>("Check post-inlining IR for visibility violations")
-
-    @JvmField
     val NO_DOUBLE_INLINING = CompilerConfigurationKey.create<Boolean>("Turns off double-inlining mode")
 
     @JvmField
@@ -51,10 +48,6 @@ var CompilerConfiguration.klibNormalizeAbsolutePath: Boolean
 var CompilerConfiguration.produceKlibSignaturesClashChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
     set(value) { put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, value) }
-
-var CompilerConfiguration.enableIrVisibilityChecksAfterInlining: Boolean
-    get() = getBoolean(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING)
-    set(value) { put(KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING, value) }
 
 var CompilerConfiguration.noDoubleInlining: Boolean
     get() = getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)

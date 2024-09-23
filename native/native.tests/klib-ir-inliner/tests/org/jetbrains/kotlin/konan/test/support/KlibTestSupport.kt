@@ -31,7 +31,6 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         val nativeTestInstances = computeKlibSyntheticAccessorTestInstances()
         val settings = createTestRunSettings(nativeTestInstances) {
             with(RegisteredDirectivesBuilder()) {
-                +KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
                 +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 
                 TestDirectives.FREE_COMPILER_ARGS with listOfNotNull(
