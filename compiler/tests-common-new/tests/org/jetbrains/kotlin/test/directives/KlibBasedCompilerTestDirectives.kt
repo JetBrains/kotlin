@@ -10,19 +10,6 @@ import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
-    // TODO: to be dropped in KT-70295
-    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING by directive(
-        """
-            Check for visibility violation when validating IR after inlining.
-            Equivalent to passing the '-Xverify-ir-visibility-after-inlining' CLI flag.
-            
-            This directive is opt-in rather than opt-out (like ${CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS})
-            because right now most test pass with visibility checks enabled before lowering, but enabling these checks
-            after inlining by default will cause some tests to fail, because some lowerings that are run before inlining
-            generate calls to internal intrinsics (KT-70295).
-        """.trimIndent()
-    )
-
     val DUMP_KLIB_SYNTHETIC_ACCESSORS by directive(
         """
             Enable dumping synthetic accessors and their use-sites immediately generation.

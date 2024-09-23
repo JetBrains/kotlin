@@ -7,6 +7,9 @@
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_LIGHT_ANALYSIS
 
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ isInitialized results in private field access which is reported by the visibility checker.
+
 // FILE: A.kt
 
 fun test1F(o: Foo) = if (!o::bar.isInitialized)  "1F" else "Fail1F"

@@ -16,8 +16,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS by key<Boolean>("Turn on the checks on uniqueness of signatures")
 
-    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING by key<Boolean>("Check post-inlining IR for visibility violations")
-
     val NO_DOUBLE_INLINING by key<Boolean>("Turns off double-inlining mode")
 
     val SYNTHETIC_ACCESSORS_DUMP_DIR by key<String>("Path to a directory to dump synthetic accessors and their use sites")

@@ -234,7 +234,6 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
         defaultDirectives {
-            +KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
             +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
             if (narrowedAccessorVisibility) +KlibBasedCompilerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
         }
