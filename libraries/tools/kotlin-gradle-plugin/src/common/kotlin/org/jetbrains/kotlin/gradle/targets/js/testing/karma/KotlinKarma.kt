@@ -346,16 +346,6 @@ class KotlinKarma(
         config.files.add(npmProject.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
         if (!debug) {
             if (platformType == KotlinPlatformType.wasm) {
-                val wasmFile = file.parentFile.resolve("${file.nameWithoutExtension}.wasm")
-                val wasmFileString = wasmFile.normalize().absolutePath
-                config.files.add(
-                    KarmaFile(
-                        pattern = wasmFileString,
-                        included = false,
-                        served = true,
-                        watched = false
-                    )
-                )
                 config.files.add(
                     createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
                 )
@@ -386,17 +376,6 @@ class KotlinKarma(
 
             config.frameworks.add("karma-kotlin-debug")
         }
-
-        val resources = object {
-            val pattern = file.parentFile.resolve("**/*").normalize().absolutePath
-            val watched = false
-            val included = false
-        }
-
-        config.files.add(
-            resources
-        )
-        config.proxies["/"] = "/base/kotlin/"
 
         if (config.browsers.isEmpty()) {
             error("No browsers configured for $task")

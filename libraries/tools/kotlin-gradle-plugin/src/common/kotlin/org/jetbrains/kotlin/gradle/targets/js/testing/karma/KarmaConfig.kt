@@ -24,13 +24,6 @@ data class KarmaConfig(
     val proxies: MutableMap<String, String> = mutableMapOf()
 )
 
-data class KarmaFile(
-    val pattern: String,
-    val included: Boolean,
-    val served: Boolean,
-    val watched: Boolean
-)
-
 data class KarmaClient(
     val args: MutableList<String> = mutableListOf()
 )
