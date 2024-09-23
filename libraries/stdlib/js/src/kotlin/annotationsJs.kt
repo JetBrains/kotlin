@@ -40,7 +40,7 @@ internal annotation class marker
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * class Person(val name: String) {
  *     fun hello() {
  *         println("Hello $name!")
@@ -84,7 +84,7 @@ public actual annotation class JsFileName(actual val name: String)
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * @JsModule("jquery")
  * external abstract class JQuery() {
  *     // some declarations here
@@ -114,7 +114,7 @@ public annotation class JsModule(val import: String)
  *
  * For example:
  *
- * ``` kotlin
+ * ```kotlin
  * @JsModule("jquery")
  * @JsNonModule
  * @JsName("$")

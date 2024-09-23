@@ -26,7 +26,7 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  *
  * Examples:
  *
- * ``` kotlin
+ * ```kotlin
  * external fun foo(): String = definedExternally
  * external fun bar(x: Int) { definedExternally }
  * external fun baz(z: Any = definedExternally): Array<Any>
@@ -48,14 +48,14 @@ public external val definedExternally: Nothing
  *
  * When used in an expression context, [code] should contain a single JavaScript expression. For example:
  *
- * ``` kotlin
+ * ```kotlin
  * val version: String = js("process.version")
  * fun newEmptyJsArray(): JsValue = js("[]")
  * ```
  *
  * When used in a function body, [code] is expected to be a list of JavaScript statements. For example:
  *
- * ``` kotlin
+ * ```kotlin
  * fun log(message1: String, message2: String) {
  *     js("""
  *     console.log(message1);

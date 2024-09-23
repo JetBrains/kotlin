@@ -1094,7 +1094,7 @@ public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MA
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * projectDirectory.visitFileTree {
  *     onPreVisitDirectory { directory, _ ->
  *         if (directory.name == "build") {
@@ -1152,7 +1152,7 @@ public fun Path.visitFileTree(
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * val cleanVisitor = fileVisitor {
  *     onPreVisitDirectory { directory, _ ->
  *         if (directory.name == "build") {

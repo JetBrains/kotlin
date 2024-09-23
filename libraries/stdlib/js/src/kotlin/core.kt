@@ -24,7 +24,7 @@ package kotlin.js
  *
  * Examples:
  *
- * ``` kotlin
+ * ```kotlin
  * external fun foo(): String = definedExternally
  * external fun bar(x: Int) { definedExternally }
  * external fun baz(z: Any = definedExternally): Array<Any>
@@ -39,7 +39,7 @@ public external val definedExternally: Nothing
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * fun logToConsole(message: String): Unit {
  *     js("console.log(message)")
  * }

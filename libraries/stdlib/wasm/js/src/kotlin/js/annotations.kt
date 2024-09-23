@@ -51,7 +51,7 @@ public actual annotation class JsName(actual val name: String)
  *
  * Example:
  *
- * ``` kotlin
+ * ```kotlin
  * @JsModule("jquery")
  * external abstract class JQuery() {
  *     // some declarations here
