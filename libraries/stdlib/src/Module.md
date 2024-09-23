@@ -28,7 +28,7 @@ Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][
 
 # Package kotlin.comparisons
 
-Helper functions for creating [Comparator][java.util.Comparator] instances.
+Helper functions for creating [Comparator][kotlin.Comparator] instances.
 
 # Package kotlin.concurrent
 
@@ -47,11 +47,15 @@ Basic primitives for creating and suspending coroutines: [Continuation][kotlin.c
 
 Low-level building blocks for libraries that provide coroutine-based APIs.
 
+# Package kotlin.coroutines.cancellation
+
+Provides exceptions arising on suspended coroutine cancellation. 
+
 # Package kotlin.dom
 
 Utility functions for working with the browser DOM.
 
-# Package kotlin.enum
+# Package kotlin.enums
 
 Utilities for working with Kotlin enum classes.
 
@@ -67,9 +71,17 @@ IO API for working with files and streams.
 
 Convenient extensions for working with file system using [java.nio.file.Path][java.nio.file.Path].
 
+# Package kotlin.io.encoding
+
+API for encoding and decoding data using various encoding schemes, such as [Base64][kotlin.io.encoding.Base64].
+
 # Package kotlin.js
 
 Functions and other APIs specific to the JavaScript platform.
+
+# Package kotlin.js.collections
+
+JavaScript-specific collection types, such as [JsArray][kotlin.js.collections.JsArray] and [JsReadonlyMap][kotlin.js.collections.JsReadonlyMap].
 
 # Package kotlin.jvm
 
@@ -84,6 +96,23 @@ Convenience extension functions for `java.util.Optional` to simplify Kotlin-Java
 Mathematical functions and constants. 
 
 The functions include trigonometric, hyperbolic, exponentiation and power, logarithmic, rounding, sign and absolute value.
+
+# Package kotlin.native
+
+Provides functions and types specific to Kotlin/Native, as well as means for interoperability with an underlying platform
+and other languages.
+
+# Package kotlin.native.concurrent
+
+Kotlin/Native-specific concurrency primitives and utility functions for concurrent programming.
+
+# Package kotlin.native.ref
+
+API for object life-cycle and references management.
+
+# Package kotlin.native.runtime
+
+Allows to query information from and interact with the Kotlin/Native runtime. 
 
 # Package kotlin.properties
 
@@ -156,6 +185,11 @@ For more information, see our [Time measurement](https://kotlinlang.org/docs/tim
 # Package kotlin.uuid
 
 Multiplatform `Uuid` class and utility functions for working with UUIDs.
+
+# Package kotlinx.cinterop
+
+Experimental API for working with unmanaged and foreign memory, as well as for interoperability with other languages,
+such as Objective-C and C.
 
 # Package org.khronos.webgl
 
