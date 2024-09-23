@@ -277,23 +277,27 @@ class WasmIrToText(
         }
     }
 
+    private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
+        typeList.forEach { type ->
+            when (type) {
+                is WasmStructDeclaration ->
+                    appendStructTypeDeclaration(type)
+                is WasmArrayDeclaration ->
+                    appendArrayTypeDeclaration(type)
+                is WasmFunctionType ->
+                    appendFunctionTypeDeclaration(type)
+            }
+        }
+    }
+
     fun appendWasmModule(module: WasmModule) {
         with(module) {
             newLineList("module") {
-                functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-
-                if(recGroupTypes.isNotEmpty()) {
-                    newLineList("rec") {
-                        recGroupTypes.forEach {
-                            when (it) {
-                                is WasmStructDeclaration ->
-                                    appendStructTypeDeclaration(it)
-                                is WasmArrayDeclaration ->
-                                    appendArrayTypeDeclaration(it)
-                                is WasmFunctionType ->
-                                    appendFunctionTypeDeclaration(it)
-                            }
-                        }
+                recGroups.forEach { recGroup ->
+                    if (recGroup.size > 1) {
+                        newLineList("rec") { appendWasmTypeList(recGroup) }
+                    } else {
+                        appendWasmTypeList(recGroup)
                     }
                 }
 
