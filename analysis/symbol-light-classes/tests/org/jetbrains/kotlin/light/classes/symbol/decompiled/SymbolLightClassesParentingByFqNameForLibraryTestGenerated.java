@@ -91,6 +91,36 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("classAndCompanionDelegatedProperty.kt")
+  public void testClassAndCompanionDelegatedProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionDelegatedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("classAndCompanionJvmFieldProperty.kt")
+  public void testClassAndCompanionJvmFieldProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionJvmFieldProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("classAndCompanionProperty.kt")
+  public void testClassAndCompanionProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("classJvmFieldAndCompanionJvmFieldProperty.kt")
+  public void testClassJvmFieldAndCompanionJvmFieldProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionJvmFieldProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("classJvmFieldAndCompanionProperty.kt")
+  public void testClassJvmFieldAndCompanionProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionProperty.kt");
+  }
+
+  @Test
   @TestMetadata("ClassTypeParameterAnnotation.kt")
   public void testClassTypeParameterAnnotation() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ClassTypeParameterAnnotation.kt");

@@ -84,6 +84,31 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/BackingFields.kt");
   }
 
+  @TestMetadata("classAndCompanionDelegatedProperty.kt")
+  public void testClassAndCompanionDelegatedProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionDelegatedProperty.kt");
+  }
+
+  @TestMetadata("classAndCompanionJvmFieldProperty.kt")
+  public void testClassAndCompanionJvmFieldProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionJvmFieldProperty.kt");
+  }
+
+  @TestMetadata("classAndCompanionProperty.kt")
+  public void testClassAndCompanionProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionProperty.kt");
+  }
+
+  @TestMetadata("classJvmFieldAndCompanionJvmFieldProperty.kt")
+  public void testClassJvmFieldAndCompanionJvmFieldProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionJvmFieldProperty.kt");
+  }
+
+  @TestMetadata("classJvmFieldAndCompanionProperty.kt")
+  public void testClassJvmFieldAndCompanionProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionProperty.kt");
+  }
+
   @TestMetadata("ClassTypeParameterAnnotation.kt")
   public void testClassTypeParameterAnnotation() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ClassTypeParameterAnnotation.kt");
