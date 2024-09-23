@@ -166,6 +166,11 @@ abstract class AppendableSetBasicMap<KEY, E>(
     fun append(key: KEY, elements: Set<E>) {
         storage.append(key, elements)
     }
+
+    @Synchronized
+    override fun clean() {
+        storage.clean()
+    }
 }
 
 abstract class BasicStringMap<VALUE>(

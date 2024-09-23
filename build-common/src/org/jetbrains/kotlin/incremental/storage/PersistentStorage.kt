@@ -48,6 +48,8 @@ interface PersistentStorage<KEY, VALUE> : Closeable {
 
     /** Writes any remaining in-memory changes to [storageFile] ([flush]) and closes this map. */
     override fun close()
+
+    fun clean()
 }
 
 /** [PersistentStorage] where a map entry's value is a [Collection] of elements of type [E]. */
@@ -107,6 +109,11 @@ abstract class PersistentStorageWrapper<KEY, VALUE>(
     @Synchronized
     override fun close() {
         storage.close()
+    }
+
+    @Synchronized
+    override fun clean() {
+        storage.clean()
     }
 }
 
