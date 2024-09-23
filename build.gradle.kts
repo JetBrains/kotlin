@@ -528,6 +528,14 @@ val gradlePluginProjects = listOf(
     ":kotlin-assignment"
 )
 
+val projectsUsedInKotlinGradlePlugin =
+    gradlePluginProjects + listOf(
+        ":compiler:plugin-api",
+        ":kotlin-gradle-plugin-integration-tests",
+    )
+
+extra["projectsUsedInKotlinGradlePlugin"] = projectsUsedInKotlinGradlePlugin.toTypedArray()
+
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 val dependencyOnSnapshotReflectWhitelist = setOf(
