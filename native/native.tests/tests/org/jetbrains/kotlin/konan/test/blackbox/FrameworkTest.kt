@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
+import org.jetbrains.kotlin.native.executors.RunProcessException
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -275,7 +276,16 @@ abstract class GroupedFrameworkTestBase(
             val expectedLazyHeaderName = "expectedLazy${groupSuffix}/expectedLazy${suffix}.h"
             val expectedLazyHeader = objcExportTestSuiteDir.resolve(expectedLazyHeaderName)
             if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
+                try {
+                    runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
+                } catch (e: RunProcessException) {
+                    // exit code 1 means diff is non-empty.
+                    if (e.exitCode == 1) {
+                        println(e.stdout)
+                    } else {
+                        throw e
+                    }
+                }
                 lazyHeader.copyTo(expectedLazyHeader, overwrite = true)
                 fail("$expectedLazyHeader file patched;\nPlease review this change and commit the patch, if change is correct")
             }
