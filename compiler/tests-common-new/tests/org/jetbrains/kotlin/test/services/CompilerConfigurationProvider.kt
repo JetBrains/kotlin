@@ -148,10 +148,6 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
                 TargetBackend.ANY !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS],
     )
     configuration.put(
-        CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING,
-        CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in module.directives
-    )
-    configuration.put(
         KlibConfigurationKeys.DOUBLE_INLINING_ENABLED,
         CodegenTestDirectives.ENABLE_DOUBLE_INLINING in module.directives
     )
