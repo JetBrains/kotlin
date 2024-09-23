@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
@@ -1133,7 +1134,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(REDUNDANT_ANNOTATION, "Annotation ''{0}'' is redundant.", CLASS_ID)
         map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclasses are meaningless.")
         map.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, "Expression annotations with retention other than SOURCE are prohibited.")
-        map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''.", TO_STRING)
+        map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''. Applicable targets: {1}", TO_STRING, KOTLIN_TARGETS)
         map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations can only be applied to property declarations.", TO_STRING)
         map.put(
             INAPPLICABLE_TARGET_ON_PROPERTY_WARNING,
@@ -1151,9 +1152,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration.")
         map.put(
             WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-            "This annotation is not applicable to target ''{0}'' and use-site target ''@{1}''.",
+            "This annotation is not applicable to target ''{0}'' and use-site target ''@{1}''. Applicable targets: {2}",
             TO_STRING,
-            TO_STRING
+            TO_STRING,
+            KOTLIN_TARGETS,
         )
         map.put(REPEATED_ANNOTATION, "This annotation is not repeatable.")
         map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable.")

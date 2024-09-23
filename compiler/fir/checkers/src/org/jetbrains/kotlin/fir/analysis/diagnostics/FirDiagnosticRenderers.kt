@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
@@ -308,6 +309,10 @@ object FirDiagnosticRenderers {
             is FirTypeAliasSymbol -> "type alias"
             else -> "declaration"
         }
+    }
+
+    val KOTLIN_TARGETS = Renderer { targets: Collection<KotlinTarget> ->
+        targets.joinToString { it.description }
     }
 }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -30,6 +31,7 @@ object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Com
                     expression.source,
                     FirErrors.WRONG_ANNOTATION_TARGET,
                     targetDescription,
+                    listOf(KotlinTarget.LAMBDA_EXPRESSION),
                     context
                 )
             }

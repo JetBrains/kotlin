@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -317,8 +318,8 @@ object FirErrors {
     val REDUNDANT_ANNOTATION: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("REDUNDANT_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val ANNOTATION_ON_SUPERCLASS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("ANNOTATION_ON_SUPERCLASS", ProhibitUseSiteTargetAnnotationsOnSuperTypes, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION", RestrictRetentionForExpressionAnnotations, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val WRONG_ANNOTATION_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_ANNOTATION_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val WRONG_ANNOTATION_TARGET: KtDiagnosticFactory2<String, Collection<KotlinTarget>> = KtDiagnosticFactory2("WRONG_ANNOTATION_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET: KtDiagnosticFactory3<String, String, Collection<KotlinTarget>> = KtDiagnosticFactory3("WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val INAPPLICABLE_TARGET_ON_PROPERTY: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INAPPLICABLE_TARGET_ON_PROPERTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INAPPLICABLE_TARGET_ON_PROPERTY_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

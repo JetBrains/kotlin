@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
@@ -860,12 +861,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface WrongAnnotationTarget : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = WrongAnnotationTarget::class
         val actualTarget: String
+        val allowedTargets: List<KotlinTarget>
     }
 
     interface WrongAnnotationTargetWithUseSiteTarget : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = WrongAnnotationTargetWithUseSiteTarget::class
         val actualTarget: String
         val useSiteTarget: String
+        val allowedTargets: List<KotlinTarget>
     }
 
     interface InapplicableTargetOnProperty : KaFirDiagnostic<KtAnnotationEntry> {

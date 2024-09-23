@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -397,10 +398,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by deprecationError<PsiElement>(LanguageFeature.RestrictRetentionForExpressionAnnotations)
         val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
+            parameter<Collection<KotlinTarget>>("allowedTargets")
         }
         val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
             parameter<String>("useSiteTarget")
+            parameter<Collection<KotlinTarget>>("allowedTargets")
         }
         val INAPPLICABLE_TARGET_ON_PROPERTY by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")

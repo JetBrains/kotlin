@@ -79,14 +79,14 @@ external fun baz(): String<!>
 external var qux: String<!>
 
 external var quux: String
-    <!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("getter")!>@JsExport<!>
+    <!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("getter; class, property, function, file")!>@JsExport<!>
     get() = definedExternally
-    <!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("setter")!>@JsExport<!>
+    <!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("setter; class, property, function, file")!>@JsExport<!>
     set(v) = definedExternally
 
-<!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("getter; get")!>@get:JsExport<!>
-<!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("setter; set")!>@set:JsExport<!>
+<!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("getter; get; class, property, function, file")!>@get:JsExport<!>
+<!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("setter; set; class, property, function, file")!>@set:JsExport<!>
 external var quuux: String
 
-<!WRONG_ANNOTATION_TARGET("typealias")!>@JsExport<!>
+<!WRONG_ANNOTATION_TARGET("typealias; class, property, function, file")!>@JsExport<!>
 <!WRONG_MODIFIER_TARGET("external; typealias")!>external<!> typealias ExternalTypeAlias = String
