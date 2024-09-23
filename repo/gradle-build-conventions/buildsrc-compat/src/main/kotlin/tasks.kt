@@ -287,9 +287,11 @@ fun Project.projectTest(
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
 
-        defineJDKEnvVariables.forEach { version ->
-            val jdkHome = project.getToolchainJdkHomeFor(version).orNull ?: error("Can't find toolchain for $version")
-            environment(version.envName, jdkHome)
+        if (!kotlinBuildProperties.isTeamcityBuild) {
+            defineJDKEnvVariables.forEach { version ->
+                val jdkHome = project.getToolchainJdkHomeFor(version).orNull ?: error("Can't find toolchain for $version")
+                environment(version.envName, jdkHome)
+            }
         }
     }.apply { configure(body) }
 }
