@@ -65,8 +65,7 @@ extern "C" void runInForeignThread(void(*callback)(void)) {
 
 // MODULE: main(cinterop)
 // FILE: main.kt
-@file:OptIn(FreezingIsDeprecated::class,
-            kotlin.experimental.ExperimentalNativeApi::class,
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class,
             kotlin.native.runtime.NativeRuntimeApi::class,
             kotlinx.cinterop.ExperimentalForeignApi::class)
 

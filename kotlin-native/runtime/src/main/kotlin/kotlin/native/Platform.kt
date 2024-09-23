@@ -97,7 +97,6 @@ public object Platform {
     /**
      * If freezing is enabled. Always [false]
      */
-    @FreezingIsDeprecated
     @Deprecated("Support for the legacy memory manager has been completely removed. Consequently, this property is always `false`.", ReplaceWith("false"))
     @DeprecatedSinceKotlin(errorSince = "2.1")
     public val isFreezingEnabled: Boolean

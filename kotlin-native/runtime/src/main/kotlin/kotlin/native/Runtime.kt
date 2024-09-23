@@ -19,7 +19,6 @@ public fun initRuntimeIfNeeded() {}
 /**
  * Exception thrown when top level variable is accessed from incorrect execution context.
  */
-@FreezingIsDeprecated
 @Deprecated("Support for the legacy memory manager has been completely removed. Usages of this exception can be safely dropped.")
 @DeprecatedSinceKotlin(errorSince = "2.1")
 public class IncorrectDereferenceException : RuntimeException {

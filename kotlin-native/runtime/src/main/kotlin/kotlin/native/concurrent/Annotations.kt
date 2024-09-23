@@ -35,5 +35,4 @@ public actual annotation class ThreadLocal
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-// Not @FreezingIsDeprecated: Lots of usages, only the doc updated.
 public actual annotation class SharedImmutable

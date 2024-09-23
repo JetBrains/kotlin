@@ -63,7 +63,6 @@ public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 @Suppress("DEPRECATION")
 @Deprecated("This annotation is redundant and has no effect")
 @DeprecatedSinceKotlin(warningSince = "1.9")
-// Not @FreezingIsDeprecated: Lots of usages. Usages will trigger INFO reports in the frontend.
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
 /**

@@ -9,7 +9,6 @@ class X(val s: String)
 val x = X("zzz")
 
 // FILE: lib2.kt
-@file:OptIn(FreezingIsDeprecated::class)
 import kotlin.native.concurrent.*
 
 class Z(val x: Int)

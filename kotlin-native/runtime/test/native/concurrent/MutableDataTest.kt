@@ -10,7 +10,6 @@ package test.native.concurrent
 import kotlin.native.concurrent.*
 import kotlin.test.*
 
-@OptIn(FreezingIsDeprecated::class)
 private fun assertContentsEquals(expected: ByteArray, actual: MutableData) {
     assertEquals(expected.size, actual.size)
 
@@ -19,7 +18,6 @@ private fun assertContentsEquals(expected: ByteArray, actual: MutableData) {
     }
 }
 
-@OptIn(FreezingIsDeprecated::class)
 class MutableDataTest {
     // See https://youtrack.jetbrains.com/issue/KT-39145
     @Test

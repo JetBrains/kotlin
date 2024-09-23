@@ -276,7 +276,6 @@ private fun debugString(value: Any?): String {
 /**
  * This class was useful only with legacy memory manager. Please use [AtomicReference] instead.
  */
-@FreezingIsDeprecated
 @Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"), DeprecationLevel.ERROR)
 public class FreezableAtomicReference<T>(public @Volatile var value: T) {
 

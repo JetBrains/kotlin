@@ -17,7 +17,6 @@ external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, coun
  * Mutable concurrently accessible data buffer. Could be accessed from several workers simultaneously.
  */
 @NoReorderFields
-@FreezingIsDeprecated
 @Deprecated("Support for the legacy memory manager has been completely removed. Use any regular collection instead.")
 @DeprecatedSinceKotlin(errorSince = "2.1")
 public class MutableData constructor(capacity: Int = 16) {

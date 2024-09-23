@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, ObsoleteWorkersApi::class)
 @file:Suppress("DEPRECATION_ERROR") // Freezing API
 
 import kotlinx.cinterop.*

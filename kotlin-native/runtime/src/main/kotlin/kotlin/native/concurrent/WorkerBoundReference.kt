@@ -15,7 +15,6 @@ package kotlin.native.concurrent
  * To resolve such cycles consider using [AtomicReference]`<WorkerBoundReference?>` which can be explicitly
  * nulled out.
  */
-@FreezingIsDeprecated
 @ObsoleteWorkersApi
 @Deprecated("Support for the legacy memory manager has been completely removed. Use the referenced value directly.")
 @DeprecatedSinceKotlin(errorSince = "2.1")

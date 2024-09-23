@@ -1,5 +1,5 @@
 // DISABLE_NATIVE: gcType=NOOP
-// FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi,kotlin.native.runtime.NativeRuntimeApi,kotlin.native.FreezingIsDeprecated
+// FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi,kotlin.native.runtime.NativeRuntimeApi
 
 import kotlin.test.*
 

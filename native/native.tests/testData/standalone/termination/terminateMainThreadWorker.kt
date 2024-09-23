@@ -1,5 +1,5 @@
 // OUTPUT_REGEX: ^$
-@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
+@file:OptIn(ObsoleteWorkersApi::class)
 
 import kotlin.test.*
 

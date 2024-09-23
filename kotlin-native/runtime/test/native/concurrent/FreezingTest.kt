@@ -12,7 +12,6 @@ import kotlin.test.*
 
 private class A(var x: Int)
 
-@OptIn(FreezingIsDeprecated::class)
 class FreezingTest {
     @Test
     fun freezeIsNoopForObjects() {

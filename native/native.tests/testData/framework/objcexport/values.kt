@@ -5,7 +5,7 @@
 
 // All classes and methods should be used in tests
 @file:Suppress("UNUSED")
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 package conversions
 
@@ -259,7 +259,7 @@ fun IC3?.getValueOrNull3() = this?.value
 
 @Suppress("DEPRECATION_ERROR")
 fun isFrozen(obj: Any): Boolean = obj.isFrozen
-@OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class)
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 @Suppress("DEPRECATION_ERROR")
 fun isFreezingEnabled() = Platform.isFreezingEnabled
 fun kotlinLambda(block: (Any) -> Any): Any = block
@@ -836,7 +836,6 @@ class TestWeakRefs(private val frozen: Boolean) {
     private class Node(var next: Node?)
 }
 
-@OptIn(FreezingIsDeprecated::class)
 @Suppress("DEPRECATION_ERROR") // Freezing API
 class SharedRefs {
     class MutableData {

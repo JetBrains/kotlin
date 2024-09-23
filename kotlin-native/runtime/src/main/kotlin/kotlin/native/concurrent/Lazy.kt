@@ -13,7 +13,6 @@ internal object UNINITIALIZED
 internal object INITIALIZING
 
 @OptIn(ExperimentalNativeApi::class)
-@FreezingIsDeprecated
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val initializer_ = AtomicReference<Function0<T>?>(initializer)
     private val value_ = AtomicReference<Any?>(UNINITIALIZED)
@@ -52,7 +51,6 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
  * leak memory, so it is recommended to use `atomicLazy` in cases of objects living forever,
  * such as object singletons, or in cases where it's guaranteed not to have cyclical garbage.
  */
-@FreezingIsDeprecated
 @Deprecated("Support for the legacy memory manager has been completely removed. Use lazy() instead.", ReplaceWith("lazy(initializer)"))
 @DeprecatedSinceKotlin(errorSince = "2.1")
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)

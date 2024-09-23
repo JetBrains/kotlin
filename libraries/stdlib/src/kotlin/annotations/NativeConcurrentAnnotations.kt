@@ -37,7 +37,6 @@ public expect annotation class ThreadLocal()
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-// Not @FreezingIsDeprecated: Lots of usages, only the doc updated.
 @OptionalExpectation
 public expect annotation class SharedImmutable()
 
