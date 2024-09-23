@@ -11,6 +11,10 @@
 #include "CompilerConstants.hpp"
 #include "Porting.h"
 
+#if KONAN_WINDOWS
+#include "concurrent/Mutex.hpp"
+#endif
+
 using namespace kotlin;
 
 namespace {
@@ -33,8 +37,17 @@ std::atomic<InitState> globalDataInitState = InitState::kUninitialized;
 std::atomic<std::thread::id> globalDataInitializingThread{};
 ManuallyScoped<mm::GlobalData> globalDataInstance{};
 
+#if KONAN_WINDOWS
+// On winpthreads, there's a weird bug if this is a regular `std::mutex`:
+// even though `constructGlobalDataInstance()` has already started (and so,
+// has already successfully tried locking this mutex), `waitGlobalDataInitialized`
+// may crash trying to lock it too.
+SpinLock globalDataInitMutex;
+std::condition_variable_any globalDataInitCV;
+#else
 std::mutex globalDataInitMutex;
 std::condition_variable globalDataInitCV;
+#endif
 
 void constructGlobalDataInstance() noexcept {
     std::unique_lock guard{globalDataInitMutex};
