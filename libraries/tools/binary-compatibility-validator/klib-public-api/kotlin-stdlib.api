@@ -15197,10 +15197,22 @@ final fun (kotlin/String).kotlin.js/toJsString(): kotlin.js/JsString // kotlin.j
 final fun <#A: kotlin.js/JsAny> (kotlin.js/JsAny).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@kotlin.js.JsAny(){0§<kotlin.js.JsAny>}[0]
 
 // Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> (kotlin.collections/List<#A>).kotlin.js/toJsArray(): kotlin.js/JsArray<#A> // kotlin.js/toJsArray|toJsArray@kotlin.collections.List<0:0>(){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
 final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/get(kotlin/Int): #A? // kotlin.js/get|get@kotlin.js.JsArray<0:0>(kotlin.Int){0§<kotlin.js.JsAny?>}[0]
 
 // Targets: [wasmJs]
 final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/set(kotlin/Int, #A) // kotlin.js/set|set@kotlin.js.JsArray<0:0>(kotlin.Int;0:0){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/toArray(): kotlin/Array<#A> // kotlin.js/toArray|toArray@kotlin.js.JsArray<0:0>(){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/toList(): kotlin.collections/List<#A> // kotlin.js/toList|toList@kotlin.js.JsArray<0:0>(){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> (kotlin/Array<#A>).kotlin.js/toJsArray(): kotlin.js/JsArray<#A> // kotlin.js/toJsArray|toJsArray@kotlin.Array<0:0>(){0§<kotlin.js.JsAny?>}[0]
 
 // Targets: [wasmJs]
 final fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsReference<#A> // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
