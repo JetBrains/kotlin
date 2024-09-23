@@ -161,7 +161,7 @@ public expect annotation class JvmRecord()
 @MustBeDocumented
 @OptionalExpectation
 @Deprecated("Use kotlin.concurrent.Volatile annotation in multiplatform code instead.", ReplaceWith("kotlin.concurrent.Volatile", "kotlin.concurrent.Volatile"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public expect annotation class Volatile()
 
 /**
