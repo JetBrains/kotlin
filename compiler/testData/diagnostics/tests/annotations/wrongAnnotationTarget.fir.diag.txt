@@ -1,0 +1,5 @@
+/wrongAnnotationTarget.fir.kt:(114,128): error: This annotation is not applicable to target 'top level property with backing field' and use-site target '@property'.
+
+/wrongAnnotationTarget.fir.kt:(138,143): error: This annotation is not applicable to target 'type usage'.
+
+/wrongAnnotationTarget.fir.kt:(144,149): error: This annotation is not applicable to target 'type usage'.

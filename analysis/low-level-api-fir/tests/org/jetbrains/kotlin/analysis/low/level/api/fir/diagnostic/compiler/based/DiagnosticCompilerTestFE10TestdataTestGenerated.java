@@ -2857,6 +2857,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("wrongAnnotationTarget.kt")
+      public void testWrongAnnotationTarget() {
+        runTest("compiler/testData/diagnostics/tests/annotations/wrongAnnotationTarget.kt");
+      }
+
+      @Test
       @TestMetadata("wrongAnnotationTargetAnnotationOrder.kt")
       public void testWrongAnnotationTargetAnnotationOrder() {
         runTest("compiler/testData/diagnostics/tests/annotations/wrongAnnotationTargetAnnotationOrder.kt");
