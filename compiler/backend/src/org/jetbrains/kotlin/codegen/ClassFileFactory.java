@@ -255,9 +255,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
-        assert !isDone : "Already done!";
-        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
-        return new PackageCodegenImpl(state, files, fqName);
+        throw new IllegalStateException("Old JVM backend is not supported anymore");
     }
 
     @NotNull
