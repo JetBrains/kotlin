@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -295,8 +294,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val purgeUserLibs: Boolean
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
 
-    internal val writeDependenciesFile: Boolean
-        get() = configuration.getBoolean(KonanConfigKeys.WRITE_DEPENDENCIES_FILE)
+    internal val usedKlibDependenciesPath
+        get() = configuration.get(KonanConfigKeys.USED_KLIB_DEPENDENCIES_PATH)
 
     internal val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
