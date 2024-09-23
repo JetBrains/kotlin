@@ -157,6 +157,26 @@ internal fun IrDiagnosticReporter.reportKotlinActualAnnotationMissing(actual: Ir
     )
 }
 
+internal fun IrDiagnosticReporter.reportJavaDirectActualizationDefaultParametersInActualFunction(
+    actualFunction: IrFunction,
+    reportOn: IrSymbol,
+) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION,
+        actualFunction.symbol
+    )
+}
+
+internal fun IrDiagnosticReporter.reportJavaDirectActualizationDefaultParametersInExpectFunction(
+    expectFunction: IrFunction,
+    reportOn: IrSymbol,
+) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION,
+        expectFunction.symbol
+    )
+}
+
 internal fun IrDiagnosticReporter.reportActualAnnotationConflictingDefaultArgumentValue(
     reportOn: IrElement,
     file: IrFile,
