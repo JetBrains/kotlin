@@ -8577,6 +8577,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("catchOfTypeNothing.kt")
+      public void testCatchOfTypeNothing() {
+        runTest("compiler/testData/diagnostics/tests/controlStructures/catchOfTypeNothing.kt");
+      }
+
+      @Test
       @TestMetadata("catchWithDefault.kt")
       public void testCatchWithDefault() {
         runTest("compiler/testData/diagnostics/tests/controlStructures/catchWithDefault.kt");

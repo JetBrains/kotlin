@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,8 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.typeContext
 
@@ -45,7 +48,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             }
 
             val session = context.session
-            if (!coneType.isSubtypeOfThrowable(session)) {
+            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(context, coneType)) {
                 reporter.reportOn(
                     source,
                     FirErrors.THROWABLE_TYPE_MISMATCH,
@@ -58,5 +61,9 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 )
             }
         }
+    }
+
+    private fun isProhibitedNothing(context: CheckerContext, coneType: ConeKotlinType): Boolean {
+        return context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNothingAsCatchParameter) && coneType.isNothing
     }
 }
