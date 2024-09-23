@@ -696,29 +696,6 @@ open class FunctionInlining(
             return evaluationStatements
         }
 
-        private fun evaluateReceiverForPropertyWithField(reference: IrPropertyReference): IrVariable? {
-            val argument = reference.getArgumentsWithIr().singleOrNull()?.let { ParameterToArgument(it.first, it.second) } ?: return null
-            // Arguments may reference the previous ones - substitute them.
-            val irExpression = argument.argumentExpression.transform(ParameterSubstitutor(), data = null)
-
-            val newVariable = currentScope.scope.createTemporaryVariable(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                irExpression = irExpression.doImplicitCastIfNeededTo(argument.parameter.type),
-                nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_this",
-                isMutable = false,
-                origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
-            )
-
-            val newArgument = irGetValueWithoutLocation(newVariable.symbol)
-            when {
-                reference.dispatchReceiver != null -> reference.dispatchReceiver = newArgument
-                reference.extensionReceiver != null -> reference.extensionReceiver = newArgument
-            }
-
-            return newVariable
-        }
-
         private fun evaluateArguments(
             callSite: IrFunctionAccessExpression, callee: IrFunction
         ): Triple<List<IrVariable>, List<IrVariable>, List<IrVariable>> {
@@ -746,12 +723,9 @@ open class FunctionInlining(
                     && inlineFunctionResolver.inlineMode != InlineMode.ALL_FUNCTIONS
                 ) {
                     substituteMap[parameter] = argument.argumentExpression
-                    val arg = argument.argumentExpression
-                    when {
-                        // This first branch is required to avoid assertion in `getArgumentsWithIr`
-                        arg is IrPropertyReference && arg.field != null -> evaluateReceiverForPropertyWithField(arg)?.let { container += it }
-                        arg is IrCallableReference<*> -> container += evaluateArguments(arg)
-                        arg is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || arg.origin == IrStatementOrigin.LAMBDA) {
+                    when (val arg = argument.argumentExpression) {
+                        is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${arg.render()}")
+                        is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || arg.origin == IrStatementOrigin.LAMBDA) {
                             container += evaluateArguments(arg.statements.last() as IrFunctionReference)
                         }
                     }
