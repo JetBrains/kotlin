@@ -6633,6 +6633,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("companionInInnerOfObjectExpression.kt")
+      public void testCompanionInInnerOfObjectExpression() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/companionInInnerOfObjectExpression.kt");
+      }
+
+      @Test
       @TestMetadata("companionObjectOfPrivateClassVisibility.kt")
       public void testCompanionObjectOfPrivateClassVisibility() {
         runTest("compiler/testData/diagnostics/tests/classObjects/companionObjectOfPrivateClassVisibility.kt");
