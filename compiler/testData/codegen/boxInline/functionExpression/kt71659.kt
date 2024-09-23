@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR, NATIVE
-
 // FILE: 1.kt
 
 internal inline fun <T> internalInlineFun(block: () -> T): T = block()

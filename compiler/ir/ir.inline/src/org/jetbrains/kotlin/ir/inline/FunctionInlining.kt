@@ -514,9 +514,11 @@ open class FunctionInlining(
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,
-            val argumentExpression: IrExpression,
+            originalArgumentExpression: IrExpression,
             val isDefaultArg: Boolean = false
         ) {
+            val argumentExpression: IrExpression = originalArgumentExpression.unwrapAdditionalImplicitCastsIfNeeded()
+
             val isInlinableLambdaArgument: Boolean
                 // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
                 get() = parameter.getOriginalParameter().isInlineParameter() &&
@@ -557,7 +559,7 @@ open class FunctionInlining(
 
                 val parameterToArgument = ParameterToArgument(
                     parameter = outerClassThis,
-                    argumentExpression = IrGetFieldImpl(
+                    originalArgumentExpression = IrGetFieldImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
                         context.innerClassesSupport.getOuterThisField(parameterClassDeclaration).symbol,
@@ -584,7 +586,7 @@ open class FunctionInlining(
             if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
                 parameterToArgument += ParameterToArgument(
                     parameter = callee.dispatchReceiverParameter!!,
-                    argumentExpression = callSite.dispatchReceiver!!
+                    originalArgumentExpression = callSite.dispatchReceiver!!
                 ).andAllOuterClasses()
 
             val valueArguments =
@@ -593,7 +595,7 @@ open class FunctionInlining(
             if (callee.extensionReceiverParameter != null) {
                 parameterToArgument += ParameterToArgument(
                     parameter = callee.extensionReceiverParameter!!,
-                    argumentExpression = if (callSite.extensionReceiver != null) {
+                    originalArgumentExpression = if (callSite.extensionReceiver != null) {
                         callSite.extensionReceiver!!
                     } else {
                         // Special case: lambda with receiver is called as usual lambda:
@@ -612,7 +614,7 @@ open class FunctionInlining(
                     argument != null -> {
                         parameterToArgument += ParameterToArgument(
                             parameter = parameter,
-                            argumentExpression = argument
+                            originalArgumentExpression = argument
                         )
                     }
 
@@ -621,7 +623,7 @@ open class FunctionInlining(
                     parameter.defaultValue != null -> {  // There is no argument - try default value.
                         parametersWithDefaultToArgument += ParameterToArgument(
                             parameter = parameter,
-                            argumentExpression = parameter.defaultValue!!.expression,
+                            originalArgumentExpression = parameter.defaultValue!!.expression,
                             isDefaultArg = true
                         )
                     }
@@ -635,7 +637,7 @@ open class FunctionInlining(
                         )
                         parameterToArgument += ParameterToArgument(
                             parameter = parameter,
-                            argumentExpression = emptyArray
+                            originalArgumentExpression = emptyArray
                         )
                     }
 
