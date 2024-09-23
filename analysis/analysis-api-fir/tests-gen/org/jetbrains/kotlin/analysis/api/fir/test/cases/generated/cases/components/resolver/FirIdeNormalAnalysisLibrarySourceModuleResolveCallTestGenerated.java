@@ -3103,6 +3103,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
       }
 
       @Test
+      @TestMetadata("KT-69128.kt")
+      public void testKT_69128() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations/KT-69128.kt");
+      }
+
+      @Test
       @TestMetadata("KT-69736.kt")
       public void testKT_69736() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations/KT-69736.kt");

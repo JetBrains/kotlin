@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -131,9 +130,7 @@ internal class KaFirSymbolRelationProvider(
                 }
 
                 is KaClassLikeSymbol -> {
-                    val outerClassId = classId?.outerClassId
-                    if (outerClassId != null) { // Won't work for local and top-level classes, or classes inside a script
-                        val outerFirClassifier = symbolFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
+                    firSymbol.getContainingClassSymbol()?.let { outerFirClassifier ->
                         return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
                     }
                     getContainingDeclarationsForLocalClass(firSymbol, symbolFirSession)?.let { return it }
