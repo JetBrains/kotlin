@@ -119,47 +119,47 @@ internal abstract class IrConstTransformer(
         return this
     }
 
-    protected fun IrExpression.canBeInterpreted(): Boolean {
+    protected fun canBeInterpreted(expression: IrExpression): Boolean {
         return try {
-            this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
+            expression.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
                 return false
             }
-            throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
+            throw AssertionError("Error occurred while optimizing an expression:\n${expression.dump()}", e)
         }
     }
 
-    protected fun IrExpression.interpret(failAsError: Boolean): IrExpression {
+    protected fun interpret(expression: IrExpression, failAsError: Boolean): IrExpression {
         val result = try {
-            interpreter.interpret(this, irFile)
+            interpreter.interpret(expression, irFile)
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
-                return this
+                return expression
             }
-            throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
+            throw AssertionError("Error occurred while optimizing an expression:\n${expression.dump()}", e)
         }
 
-        result.saveInConstTracker()
+        saveInConstTracker(result)
 
         if (result is IrConst) {
-            reportInlinedJavaConst(result)
+            reportInlinedJavaConst(expression, result)
         }
 
-        return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
+        return if (failAsError) result.reportIfError(expression) else result.warningIfError(expression)
     }
 
-    protected fun IrExpression.saveInConstTracker() {
+    protected fun saveInConstTracker(expression: IrExpression) {
         evaluatedConstTracker?.save(
-            startOffset, endOffset, irFile.nameWithPackage,
-            constant = if (this is IrErrorExpression) ErrorValue.create(description) else this.toConstantValue()
+            expression.startOffset, expression.endOffset, irFile.nameWithPackage,
+            constant = if (expression is IrErrorExpression) ErrorValue.create(expression.description) else expression.toConstantValue()
         )
     }
 
-    private fun IrExpression.reportInlinedJavaConst(result: IrConst) {
-        this.acceptVoid(object : IrElementVisitorVoid {
+    private fun reportInlinedJavaConst(expression: IrExpression, result: IrConst) {
+        expression.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

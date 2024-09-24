@@ -48,8 +48,8 @@ internal abstract class IrConstExpressionTransformer(
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
-        if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = data.inConstantExpression)
+        if (canBeInterpreted(expression)) {
+            return interpret(expression, failAsError = data.inConstantExpression)
         }
         return super.visitCall(expression, data)
     }
@@ -59,16 +59,16 @@ internal abstract class IrConstExpressionTransformer(
         val expression = initializer?.expression ?: return declaration
         val getField = declaration.createGetField()
 
-        if (getField.canBeInterpreted()) {
-            initializer.expression = expression.interpret(failAsError = true)
+        if (canBeInterpreted(getField)) {
+            initializer.expression = interpret(expression, failAsError = true)
         }
 
         return super.visitField(declaration, data)
     }
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
-        if (expression.canBeInterpreted()) {
-            return expression.interpret(failAsError = data.inConstantExpression)
+        if (canBeInterpreted(expression)) {
+            return interpret(expression, failAsError = data.inConstantExpression)
         }
         return super.visitGetField(expression, data)
     }
@@ -78,7 +78,9 @@ internal abstract class IrConstExpressionTransformer(
             this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
         )
 
-        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = data.inConstantExpression)
+        fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression =
+            interpret(wrapInStringConcat(), failAsError = data.inConstantExpression)
+
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst) value.toString() else ""
 
         // If we have some complex expression in arguments (like some `IrComposite`) we will skip it,
@@ -90,11 +92,11 @@ internal abstract class IrConstExpressionTransformer(
         for (next in transformed.arguments) {
             val last = folded.lastOrNull()
             when {
-                !next.wrapInStringConcat().canBeInterpreted() -> {
+                !canBeInterpreted(next.wrapInStringConcat()) -> {
                     folded += next
                     buildersList.add(StringBuilder(next.getConstStringOrEmpty()))
                 }
-                last == null || !last.wrapInStringConcat().canBeInterpreted() -> {
+                last == null || !canBeInterpreted(last.wrapInStringConcat()) -> {
                     val result = next.wrapInToStringConcatAndInterpret()
                     folded += result
                     buildersList.add(StringBuilder(result.getConstStringOrEmpty()))

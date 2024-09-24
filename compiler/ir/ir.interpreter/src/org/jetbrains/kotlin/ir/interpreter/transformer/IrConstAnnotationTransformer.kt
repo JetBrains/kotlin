@@ -49,7 +49,7 @@ internal abstract class IrConstAnnotationTransformer(
             val arg = annotation.getValueArgument(i) ?: continue
             annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
         }
-        annotation.saveInConstTracker()
+        saveInConstTracker(annotation)
     }
 
     protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
@@ -80,7 +80,7 @@ internal abstract class IrConstAnnotationTransformer(
                 transformAnnotation(this)
                 this
             }
-            this.canBeInterpreted() -> this.interpret(failAsError = true).convertToConstIfPossible(expectedType)
+            canBeInterpreted(this) -> interpret(this, failAsError = true).convertToConstIfPossible(expectedType)
             else -> error("Cannot evaluate IR expression in annotation:\n ${this.dump()}")
         }
     }
