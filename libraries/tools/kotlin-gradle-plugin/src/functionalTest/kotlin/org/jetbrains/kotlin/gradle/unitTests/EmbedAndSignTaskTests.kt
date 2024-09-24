@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CopyDsymDuringArchiving
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SymbolicLinkToFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -108,8 +109,6 @@ class EmbedAndSignTaskTests {
             project.tasks.getByName("symbolicLinkToAssembleDebugAppleFrameworkForXcodeIosSimulatorArm64")
         )
 
-        assembleFrameworkTask.assertDependsOn(symbolicLinkTask)
-
         assertEquals(
             project.layout.buildDirectory.file("xcode-frameworks/Debug/iphonesimulator/Foo.framework").getFile(),
             assembleFrameworkTask.destinationFramework,
@@ -150,8 +149,6 @@ class EmbedAndSignTaskTests {
         val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
             project.tasks.getByName("symbolicLinkToAssembleDebugAppleFrameworkForXcode")
         )
-
-        assembleFrameworkTask.assertDependsOn(symbolicLinkTask)
 
         assertEquals(
             project.layout.buildDirectory.file("xcode-frameworks/Debug/iphonesimulator/Foo.framework").getFile(),
@@ -204,10 +201,112 @@ class EmbedAndSignTaskTests {
         )
     }
 
+    @Test
+    fun `symbolic link task - dSYM shouldn't exist when archiving`() {
+        assertFalse(
+            assertIsInstance<SymbolicLinkToFrameworkTask>(
+                embedAndSignProjectWithUniversalTargetCombination(
+                    archs = "arm64",
+                    isFrameworkStatic = false,
+                    action = "install"
+                ).evaluate().tasks.getByName(
+                    "symbolicLinkToAssembleDebugAppleFrameworkForXcodeIosSimulatorArm64"
+                )
+            ).shouldDsymLinkExist.get()
+        )
+    }
+
+    @Test
+    fun `dward dsym copy task - is created disabled by default`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            dwarfDsymFolderPath = null,
+            isFrameworkStatic = false,
+        ).evaluate()
+        val task = assertIsInstance<CopyDsymDuringArchiving>(
+            project.tasks.getByName("copyDsymForEmbedAndSignAppleFrameworkForXcode")
+        )
+        assertEquals(
+            false,
+            task.onlyIf.isSatisfiedBy(task),
+        )
+        assertEquals(
+            project.layout.buildDirectory.file("xcode-frameworks/Debug/iphonesimulator/Foo.framework.dSYM").getFile(),
+            task.dsymPath.orNull,
+        )
+        assertEquals(
+            null,
+            task.dwarfDsymFolderPath.orNull,
+        )
+    }
+
+    @Test
+    fun `dward dsym copy task - is enabled by archive action`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            dwarfDsymFolderPath = "/path/to/dsym_folder",
+            isFrameworkStatic = false,
+            action = "install",
+        ).evaluate()
+        val task = assertIsInstance<CopyDsymDuringArchiving>(
+            project.tasks.getByName("copyDsymForEmbedAndSignAppleFrameworkForXcode")
+        )
+        assertEquals(
+            true,
+            task.onlyIf.isSatisfiedBy(task),
+        )
+        assertEquals(
+            project.layout.buildDirectory.file("xcode-frameworks/Debug/iphonesimulator/Foo.framework.dSYM").getFile(),
+            task.dsymPath.orNull,
+        )
+        assertEquals(
+            "/path/to/dsym_folder",
+            task.dwarfDsymFolderPath.orNull,
+        )
+    }
+
+    @Test
+    fun `dward dsym copy task - is disabled for static framework`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            dwarfDsymFolderPath = "/path/to/dsym_folder",
+            isFrameworkStatic = true,
+            action = "install",
+        ).evaluate()
+        val task = assertIsInstance<CopyDsymDuringArchiving>(
+            project.tasks.getByName("copyDsymForEmbedAndSignAppleFrameworkForXcode")
+        )
+        assertEquals(
+            false,
+            task.onlyIf.isSatisfiedBy(task),
+        )
+    }
+
+
+    @Test
+    fun `dward dsym copy task - has an explicit dependecy on symbolic link task - because symbolic link task does clean-up for KT-68257`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            dwarfDsymFolderPath = "/path/to/dsym_folder",
+            isFrameworkStatic = false,
+            action = "install",
+        ).evaluate()
+        val task = assertIsInstance<CopyDsymDuringArchiving>(
+            project.tasks.getByName("copyDsymForEmbedAndSignAppleFrameworkForXcode")
+        )
+        assert(
+            task.taskDependencies.getDependencies(null).contains(
+                project.tasks.getByName("symbolicLinkToAssembleDebugAppleFrameworkForXcodeIosSimulatorArm64")
+            )
+        )
+    }
+
     private fun embedAndSignProjectWithUniversalTargetCombination(
         archs: String,
         builtProductsDirectory: String = "/dd",
+        dwarfDsymFolderPath: String? = null,
         isFrameworkStatic: Boolean? = null,
+        action: String = "build",
     ): ProjectInternal {
         return buildProjectWithMPP(
             preApplyCode = {
@@ -216,6 +315,8 @@ class EmbedAndSignTaskTests {
                     sdk = "iphonesimulator",
                     archs = archs,
                     builtProductsDirectory = builtProductsDirectory,
+                    dwarfDsymFolderPath = dwarfDsymFolderPath,
+                    action = action,
                 )
             }
         ) {

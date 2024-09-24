@@ -43,7 +43,13 @@ internal object AppleXcodeTasks {
     const val checkSandboxAndWriteProtection = "checkSandboxAndWriteProtection"
 }
 
-private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): TaskProvider<out Task>? {
+private class AssembleFramework(
+    val taskProvider: TaskProvider<out Task>,
+    val frameworkPath: Provider<File>?,
+    val dsymPath: Provider<File>?,
+)
+
+private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): AssembleFramework? {
     if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
 
     val envTargets = environment.targets
@@ -66,16 +72,15 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
         return null
     }
 
-    val symbolicLinkTask = registerSymbolicLinkTask(
-        frameworkCopyTaskName = frameworkTaskName,
-        builtProductsDir = builtProductsDir(frameworkTaskName, environment),
-    )
-
     if (!isRequestedFramework) {
-        return locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
-            task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
-            task.isEnabled = false
-        }
+        return AssembleFramework(
+            locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
+                task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
+                task.isEnabled = false
+            },
+            null,
+            null,
+        )
     }
 
     val frameworkPath: Provider<File>
@@ -87,7 +92,6 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
             task.baseName = framework.baseName
             task.destinationDirProperty.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
             task.isEnabled = frameworkBuildType == envBuildType
-            task.dependsOn(symbolicLinkTask)
         }.also { taskProvider ->
             taskProvider.configure { task -> task.from(framework) }
             frameworkPath = taskProvider.map { it.fatFramework }
@@ -99,20 +103,17 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
             task.sourceFramework.fileProvider(framework.linkTaskProvider.map { it.outputFile.get() })
             task.sourceDsym.fileProvider(dsymFile(task.sourceFramework.mapToFile()))
             task.destinationDirectory.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
-            task.dependsOn(symbolicLinkTask)
         }.also { taskProvider ->
             frameworkPath = taskProvider.map { it.destinationFramework }
             dsymPath = taskProvider.map { it.destinationDsym }
         }
     }
 
-    symbolicLinkTask.configure {
-        it.frameworkPath.set(frameworkPath)
-        it.dsymPath.set(dsymPath)
-        it.shouldDsymLinkExist.set(!framework.isStatic)
-    }
-
-    return assembleFrameworkTask
+    return AssembleFramework(
+        assembleFrameworkTask,
+        frameworkPath,
+        dsymPath,
+    )
 }
 
 private fun Project.registerSymbolicLinkTask(
@@ -127,6 +128,25 @@ private fun Project.registerSymbolicLinkTask(
     ) {
         it.enabled = kotlinPropertiesProvider.appleCreateSymbolicLinkToFrameworkInBuiltProductsDir
         it.builtProductsDirectory.set(builtProductsDir)
+    }
+}
+
+private fun Project.registerDsymArchiveTask(
+    frameworkCopyTaskName: String,
+    dsymPath: Provider<File>?,
+    dwarfDsymFolderPath: String?,
+    action: XcodeEnvironment.Action?,
+    isStatic: Provider<Boolean>,
+): TaskProvider<*> {
+    return locateOrRegisterTask<CopyDsymDuringArchiving>(
+        lowerCamelCaseName(
+            "copyDsymFor",
+            frameworkCopyTaskName
+        )
+    ) { task ->
+        task.onlyIf { action == XcodeEnvironment.Action.install && !isStatic.get() }
+        task.dwarfDsymFolderPath.set(dwarfDsymFolderPath)
+        dsymPath?.let { task.dsymPath.set(it) }
     }
 }
 
@@ -180,7 +200,9 @@ internal fun Project.registerEmbedSwiftExportTask(
         swiftExportTask.dependsOn(sandBoxTask)
         binary.linkTaskProvider.dependsOn(sandBoxTask)
 
-        registerEmbedTask(binary, binaryTaskName, environment, swiftExportTask) { false }
+        val embedAndSignTask = registerEmbedTask(binary, binaryTaskName, environment) { false } ?: return
+
+        embedAndSignTask.dependsOn(swiftExportTask)
     }
 }
 
@@ -199,10 +221,46 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
-    assembleTask.dependsOn(sandBoxTask)
+    val symbolicLinkTask = registerSymbolicLinkTask(
+        frameworkCopyTaskName = assembleTask.taskProvider.name,
+        builtProductsDir = builtProductsDir(frameworkTaskName, environment),
+    )
+    symbolicLinkTask.configure { task ->
+        assembleTask.frameworkPath?.let { task.frameworkPath.set(it) }
+        assembleTask.dsymPath?.let { task.dsymPath.set(it) }
+        task.shouldDsymLinkExist.set(
+            provider {
+                when (environment.action) {
+                    // Don't create symbolic link for dSYM when archiving: KT-71423
+                    XcodeEnvironment.Action.install -> false
+                    XcodeEnvironment.Action.other,
+                    null -> !framework.isStatic
+                }
+            }
+        )
+    }
+
+    assembleTask.taskProvider.dependsOn(sandBoxTask)
     framework.linkTaskProvider.dependsOn(sandBoxTask)
 
-    registerEmbedTask(framework, frameworkTaskName, environment, assembleTask) { !framework.isStatic }
+    val embedAndSignTask = registerEmbedTask(framework, frameworkTaskName, environment) { !framework.isStatic } ?: return
+    embedAndSignTask.dependsOn(assembleTask.taskProvider)
+    embedAndSignTask.dependsOn(symbolicLinkTask)
+
+    if (kotlinPropertiesProvider.appleCopyDsymDuringArchiving) {
+        val dsymCopyTask = registerDsymArchiveTask(
+            frameworkCopyTaskName = frameworkTaskName,
+            dsymPath = assembleTask.dsymPath,
+            dwarfDsymFolderPath = environment.dwarfDsymFolderPath,
+            action = environment.action,
+            isStatic = provider { framework.isStatic },
+        )
+        // FIXME: KT-71720
+        // Dsym copy task must execute after symbolic link task because symbolic link task does clean up for KT-68257 and dSYM is copied to the same location
+        dsymCopyTask.dependsOn(symbolicLinkTask)
+        dsymCopyTask.dependsOn(assembleTask.taskProvider)
+        embedAndSignTask.dependsOn(dsymCopyTask)
+    }
 }
 
 private fun Project.isRunWithXcodeEnvironment(
@@ -233,16 +291,15 @@ private fun Project.registerEmbedTask(
     binary: NativeBinary,
     frameworkTaskName: String,
     environment: XcodeEnvironment,
-    dependencyTask: TaskProvider<out Task>,
     embedAndSignEnabled: () -> Boolean = { true },
-) {
+): TaskProvider<out Task>? {
     val envBuildType = environment.buildType
     val envTargets = environment.targets
     val envEmbeddedFrameworksDir = environment.embeddedFrameworksDir
     val envSign = environment.sign
     val userScriptSandboxingEnabled = environment.userScriptSandboxingEnabled
 
-    if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) return
+    if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) return null
 
     val embedAndSignTask = locateOrRegisterTask<EmbedAndSignTask>(frameworkTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -259,11 +316,10 @@ private fun Project.registerEmbedTask(
         }
     }
 
-    if (binary.buildType != envBuildType || !envTargets.contains(binary.konanTarget)) return
+    if (binary.buildType != envBuildType || !envTargets.contains(binary.konanTarget)) return null
 
     embedAndSignTask.configure { task ->
         val frameworkFile = binary.outputFile
-        task.dependsOn(dependencyTask)
         task.sourceFramework.fileProvider(appleFrameworkDir(frameworkTaskName, environment).map { it.resolve(frameworkFile.name) })
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {
@@ -277,6 +333,8 @@ private fun Project.registerEmbedTask(
             }
         }
     }
+
+    return embedAndSignTask
 }
 
 private fun Project.checkSandboxAndWriteProtectionTask(
