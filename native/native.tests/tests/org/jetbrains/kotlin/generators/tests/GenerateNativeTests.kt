@@ -227,7 +227,10 @@ fun main() {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropKT39120Test>(
-                suiteTestClassName = "CInteropKT39120TestGenerated"
+                suiteTestClassName = "CInteropKT39120TestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
             ) {
                 model("KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
             }
