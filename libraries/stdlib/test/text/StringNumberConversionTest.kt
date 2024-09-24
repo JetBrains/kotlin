@@ -156,6 +156,31 @@ class StringNumberConversionTest {
             assertFailsOrNull("007 not a number")
             assertFailsOrNull("")
             assertFailsOrNull("   ")
+            assertFailsOrNull("2.-")
+            assertFailsOrNull("0e12notvalid3")
+
+            testExceptOn(TestPlatform.Native) {
+                assertProduces("123e2147483647", Double.POSITIVE_INFINITY)
+                assertProduces("-123e2147483647", Double.NEGATIVE_INFINITY)
+
+                assertProduces("123e20000000000", Double.POSITIVE_INFINITY)
+                assertProduces("-123e20000000000", Double.NEGATIVE_INFINITY)
+
+                assertProduces("123e30000000000", Double.POSITIVE_INFINITY)
+                assertProduces("-123e30000000000", Double.NEGATIVE_INFINITY)
+            }
+
+            assertProduces("123e-2147483647", 0.0)
+            assertProduces("-123e-2147483647", -0.0)
+
+            assertProduces("123e-20000000000", 0.0)
+            assertProduces("-123e-20000000000", -0.0)
+
+            assertProduces("123e-30000000000", 0.0)
+            assertProduces("-123e-30000000000", -0.0)
+
+            assertProduces("0e9999999999999", 0.0)
+            assertProduces("-0e9999999999999", -0.0)
         }
     }
 
@@ -180,6 +205,31 @@ class StringNumberConversionTest {
             assertFailsOrNull("007 not a number")
             assertFailsOrNull("")
             assertFailsOrNull("   ")
+            assertFailsOrNull("2.-")
+            assertFailsOrNull("0e12notvalid3")
+
+            testExceptOn(TestPlatform.Native) {
+                assertProduces("123e2147483647", Float.POSITIVE_INFINITY)
+                assertProduces("-123e2147483647", Float.NEGATIVE_INFINITY)
+
+                assertProduces("123e20000000000", Float.POSITIVE_INFINITY)
+                assertProduces("-123e20000000000", Float.NEGATIVE_INFINITY)
+
+                assertProduces("123e30000000000", Float.POSITIVE_INFINITY)
+                assertProduces("-123e30000000000", Float.NEGATIVE_INFINITY)
+            }
+
+            assertProduces("123e-2147483647", 0.0f)
+            assertProduces("-123e-2147483647", -0.0f)
+
+            assertProduces("123e-20000000000", 0.0f)
+            assertProduces("-123e-20000000000", -0.0f)
+
+            assertProduces("123e-30000000000", 0.0f)
+            assertProduces("-123e-30000000000", -0.0f)
+
+            assertProduces("0e9999999999999", 0.0f)
+            assertProduces("-0e9999999999999", -0.0f)
         }
     }
 
