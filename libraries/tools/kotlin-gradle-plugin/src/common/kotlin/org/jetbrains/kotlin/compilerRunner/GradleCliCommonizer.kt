@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -71,7 +72,8 @@ internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
     kotlinNativeCommonizerToolSpec(
         toolClasspath,
         toolJvmArgs,
-    )
+    ),
+    property(BuildFusService::class.java)
 )
 
 private fun ObjectFactory.kotlinNativeCommonizerToolSpec(

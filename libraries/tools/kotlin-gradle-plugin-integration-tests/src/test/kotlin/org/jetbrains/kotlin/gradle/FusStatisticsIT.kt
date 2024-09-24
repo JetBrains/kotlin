@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
 import kotlin.streams.toList
@@ -391,6 +392,32 @@ class FusStatisticsIT : KGPBaseTest() {
                 assertFileContains(
                     fusStatisticsPath,
                     "WASM_IR_INCREMENTAL=true",
+                )
+            }
+        }
+    }
+
+    @DisplayName("native compiler arguments")
+    @GradleTest
+    @NativeGradlePluginTests
+    fun testNativeCompilerArguments(gradleVersion: GradleVersion) {
+        nativeProject("native-incremental-simple", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |
+                |kotlin {
+                |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+                |        kotlinOptions {
+                |            freeCompilerArgs += listOf("-Xbinary=gc=noop")
+                |        }
+                |    }
+                |}
+                """.trimMargin())
+
+            build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertFileContains(
+                    fusStatisticsPath,
+                    "ENABLED_NOOP_GC=true",
                 )
             }
         }

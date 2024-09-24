@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -66,7 +67,9 @@ constructor(
     UsesBuildMetricsService,
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    UsesBuildFusService
+{
 
     @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
@@ -86,6 +89,7 @@ constructor(
     @Suppress("DEPRECATION")
     @get:Internal
     internal val nativeDependencies = compilation.nativeDependencies
+
     @Suppress("DEPRECATION")
     @get:Internal
     internal val nativeDistributionDependencies = compilation.nativeDistributionDependencies
@@ -405,7 +409,8 @@ constructor(
             useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
-            konanPropertiesService
+            konanPropertiesService,
+            buildFusService
         )
 
     @TaskAction

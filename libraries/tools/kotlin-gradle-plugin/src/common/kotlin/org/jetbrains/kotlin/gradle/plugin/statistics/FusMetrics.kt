@@ -103,6 +103,27 @@ internal object CompilerArgumentMetrics : FusMetrics {
 
 }
 
+internal object NativeArgumentMetrics : FusMetrics {
+    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
+        val arguments = K2NativeCompilerArguments()
+        parseCommandLineArguments(compilerArguments, arguments)
+
+        arguments.binaryOptions
+            ?.filter { it.startsWith("gc=") }
+            ?.map { it.substring("gc=".length) }
+            ?.mapNotNull {
+                //Values are connected to [org.jetbrains.kotlin.backend.konan.GC], but the class can't be access from here
+                when (it) {
+                    "noop" -> BooleanMetrics.ENABLED_NOOP_GC
+                    "stwms" -> BooleanMetrics.ENABLED_STWMS_GC
+                    "pmcs" -> BooleanMetrics.ENABLED_PMCS_GC
+                    "cms" -> BooleanMetrics.ENABLED_CMS_GC
+                    else -> null
+                }
+            }?.forEach { metricsConsumer.report(it, true) }
+    }
+}
+
 internal object NativeCompilerOptionMetrics : FusMetrics {
     fun collectMetrics(compilerOptions: KotlinNativeCompilerOptions, metricsConsumer: StatisticsValuesConsumer) {
         metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -191,7 +212,7 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
     internal fun collectMetrics(
         name: String,
         compilerOptions: KotlinCommonCompilerOptions,
-        metricsContainer: StatisticsValuesConsumer
+        metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
         compilerOptions.apiVersion.orNull?.also { v ->
@@ -251,7 +272,7 @@ internal object UrlRepoConfigurationMetrics : FusMetrics {
     internal fun collectMetrics(
         length: Long,
         downloadDuration: Long,
-        metricsConsumer: StatisticsValuesConsumer
+        metricsConsumer: StatisticsValuesConsumer,
     ) {
         metricsConsumer.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, length * 1000 / downloadDuration)
     }
@@ -291,7 +312,7 @@ internal object NativeLinkTaskMetrics : FusMetrics {
 }
 
 internal object KotlinStdlibConfigurationMetrics : FusMetrics {
-    internal fun collectMetrics(project: Project, requestedStdlibVersion: String, ) {
+    internal fun collectMetrics(project: Project, requestedStdlibVersion: String) {
         project.addConfigurationMetrics {
             it.put(StringMetrics.KOTLIN_STDLIB_VERSION, requestedStdlibVersion)
         }

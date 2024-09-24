@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
@@ -457,7 +458,8 @@ internal constructor(
             useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
-            konanPropertiesService
+            konanPropertiesService,
+            buildFusService
         )
 
     // endregion.
@@ -558,7 +560,8 @@ internal constructor(
         if (isMetadataCompilation) {
             null
         } else {
-            objectFactory.fileCollection().from(KonanDistribution(konanDistribution.get()).platformLibsDir.resolve(konanTarget.name).listLibraryFiles())
+            objectFactory.fileCollection()
+                .from(KonanDistribution(konanDistribution.get()).platformLibsDir.resolve(konanTarget.name).listLibraryFiles())
         }
 
     private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.plugin.statistics.NativeArgumentMetrics
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -33,6 +35,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
+    private val fusMetricsConsumer: Provider<BuildFusService>,
     private val execOperations: ExecOperations,
 ) {
     private val logger = Logging.getLogger(toolSpec.displayName.get())
@@ -42,6 +45,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
     fun runTool(args: ToolArguments) {
         metricsReporter.measure(GradleBuildTime.RUN_COMPILATION_IN_WORKER) {
+            fusMetricsConsumer.orNull?.let { metricsConsumer ->
+                NativeArgumentMetrics.collectMetrics(args.arguments, metricsConsumer.getFusMetricsConsumer())
+            }
             if (args.shouldRunInProcessMode) {
                 runInProcess(args)
             } else {

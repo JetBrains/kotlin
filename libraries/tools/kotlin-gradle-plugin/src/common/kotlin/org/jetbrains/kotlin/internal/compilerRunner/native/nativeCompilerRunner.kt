@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -27,6 +29,7 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
+    buildFusService: Property<BuildFusService?>,
 ): KotlinNativeToolRunner = newInstance<KotlinNativeToolRunner>(
     metricsReporter,
     classLoadersCachingBuildService,
@@ -37,7 +40,8 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
         actualNativeHomeDirectory,
         jvmArgs,
         konanPropertiesBuildService,
-    )
+    ),
+    buildFusService
 )
 
 private fun ObjectFactory.kotlinToolSpec(

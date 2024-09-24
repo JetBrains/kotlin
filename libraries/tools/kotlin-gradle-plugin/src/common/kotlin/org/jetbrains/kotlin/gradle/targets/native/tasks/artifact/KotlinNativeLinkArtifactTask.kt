@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
@@ -61,7 +62,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService,
-    KotlinToolTask<KotlinCommonCompilerToolOptions> {
+    KotlinToolTask<KotlinCommonCompilerToolOptions>,
+    UsesBuildFusService {
 
     @get:Input
     abstract val baseName: Property<String>
@@ -233,7 +235,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             shouldUseEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
-            konanPropertiesService
+            konanPropertiesService,
+            buildFusService
         )
 
     @TaskAction

@@ -56,6 +56,12 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     WASM_IR_INCREMENTAL(OR, SAFE),
 
+    //Garbage collector
+    ENABLED_NOOP_GC(OR, SAFE),
+    ENABLED_STWMS_GC(OR, SAFE),
+    ENABLED_PMCS_GC(OR, SAFE),
+    ENABLED_CMS_GC(OR, SAFE),
+
     //Build reports
     FILE_BUILD_REPORT(OR, SAFE),
     BUILD_SCAN_BUILD_REPORT(OR, SAFE),
@@ -95,6 +101,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 11
+        const val VERSION = 12
     }
 }
