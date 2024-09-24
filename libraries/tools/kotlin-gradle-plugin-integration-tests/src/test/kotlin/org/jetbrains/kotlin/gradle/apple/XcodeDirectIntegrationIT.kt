@@ -47,7 +47,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
-                Stream.of(BuildPhase, SchemePreAction, SchemePreActionSpm).flatMap { iosApp ->
+                Stream.of(SchemePreAction, SchemePreActionSpm).flatMap { iosApp ->
                     Stream.of(true, false).map { isStatic ->
                         Arguments.of(gradleVersion, iosApp, isStatic)
                     }

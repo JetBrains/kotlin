@@ -131,6 +131,14 @@ private fun Project.registerSymbolicLinkTask(
     }
 }
 
+private fun Project.registerCreateBuildSystemDirectory(
+    builtProductsDir: Provider<File>,
+): TaskProvider<*> {
+    return locateOrRegisterTask<CreateBuildSystemDirectory>("createBuildSystemDirectory") {
+        it.buildSystemDirectory.set(builtProductsDir)
+    }
+}
+
 private fun Project.registerDsymArchiveTask(
     frameworkCopyTaskName: String,
     dsymPath: Provider<File>?,
@@ -221,10 +229,14 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
+    val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
+    val createBuildSystemDirectory = registerCreateBuildSystemDirectory(builtProductsDir)
+
     val symbolicLinkTask = registerSymbolicLinkTask(
         frameworkCopyTaskName = assembleTask.taskProvider.name,
-        builtProductsDir = builtProductsDir(frameworkTaskName, environment),
+        builtProductsDir = builtProductsDir
     )
+    symbolicLinkTask.dependsOn(createBuildSystemDirectory)
     symbolicLinkTask.configure { task ->
         assembleTask.frameworkPath?.let { task.frameworkPath.set(it) }
         assembleTask.dsymPath?.let { task.dsymPath.set(it) }
