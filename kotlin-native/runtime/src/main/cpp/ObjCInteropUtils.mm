@@ -66,7 +66,6 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
 
   auto encoding = CFStringGetFastestEncoding(immutableCopyOrSameStr);
   switch (encoding) {
-    // TODO? if UTF-8, could check character values...doesn't seem like CFString has that API though
     case kCFStringEncodingASCII:
     case kCFStringEncodingNonLossyASCII:
     case kCFStringEncodingISOLatin1:

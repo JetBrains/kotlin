@@ -33,9 +33,22 @@ internal actual external fun String.nativeLastIndexOf(ch: Char, fromIndex: Int):
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
-@GCUnsafeCall("Kotlin_String_lastIndexOfString")
-@Escapes.Nothing
-internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
+internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int {
+    val count = length
+    val otherCount = str.length
+    if (fromIndex < 0 || otherCount > count) return -1
+
+    var start = fromIndex.coerceAtMost(count - otherCount)
+    if (otherCount == 0) return start
+
+    val firstChar = str[0]
+    while (true) {
+        val candidate = nativeLastIndexOf(firstChar, start)
+        if (candidate == -1) return -1
+        if (unsafeRangeEquals(candidate, str, 0, otherCount)) return candidate
+        start = candidate - 1
+    }
+}
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
