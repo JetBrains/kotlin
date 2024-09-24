@@ -1601,6 +1601,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("directJavaActualization_enumWithFun.kt")
+    public void testDirectJavaActualization_enumWithFun() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_enumWithFun.kt");
+    }
+
+    @Test
     @TestMetadata("directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt")
     public void testDirectJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt");
@@ -1610,6 +1616,24 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("directJavaActualization_funInterface_fakeOverrideInJava.kt")
     public void testDirectJavaActualization_funInterface_fakeOverrideInJava() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_funInterface_fakeOverrideInJava.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_functionModifiers.kt")
+    public void testDirectJavaActualization_functionModifiers() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_functionModifiers.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_getterInActual.kt")
+    public void testDirectJavaActualization_getterInActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_getterInActual.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_injectEmptySuperclass.kt")
+    public void testDirectJavaActualization_injectEmptySuperclass() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_injectEmptySuperclass.kt");
     }
 
     @Test
@@ -1637,15 +1661,39 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("directJavaActualization_overloadedMethods.kt")
+    public void testDirectJavaActualization_overloadedMethods() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_overloadedMethods.kt");
+    }
+
+    @Test
     @TestMetadata("directJavaActualization_requiresOptIn.kt")
     public void testDirectJavaActualization_requiresOptIn() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_requiresOptIn.kt");
     }
 
     @Test
+    @TestMetadata("directJavaActualization_sealedClass.kt")
+    public void testDirectJavaActualization_sealedClass() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_sealedClass.kt");
+    }
+
+    @Test
     @TestMetadata("directJavaActualization_simple.kt")
     public void testDirectJavaActualization_simple() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_simple.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_visibilityModifiers.kt")
+    public void testDirectJavaActualization_visibilityModifiers() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_visibilityModifiers.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_withTypeParameter.kt")
+    public void testDirectJavaActualization_withTypeParameter() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_withTypeParameter.kt");
     }
   }
 
