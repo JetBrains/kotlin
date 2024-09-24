@@ -32,7 +32,8 @@ class SwiftExportXCIT : KGPBaseTest() {
                 buildXcodeProject(
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",
-                    buildMode = XcodeBuildMode.TEST
+                    action = XcodeBuildAction.Test,
+                    appendToProperties = { "kotlin.experimental.swift-export.enabled=true" }
                 )
             }
         }

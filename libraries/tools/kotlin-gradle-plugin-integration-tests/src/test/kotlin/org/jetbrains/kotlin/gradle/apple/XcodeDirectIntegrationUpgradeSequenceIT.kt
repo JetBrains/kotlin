@@ -62,7 +62,7 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
             xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
             scheme = "iosAppTests",
             destination = "id=${simulatorUdid}",
-            buildMode = XcodeBuildMode.TEST,
+            action = XcodeBuildAction.Test,
             testRunEnvironment = mapOf(
                 "EXPECTED_TEST_VALUE" to expectedValue
             ),

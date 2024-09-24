@@ -13,9 +13,12 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.test.assertEquals
 
-internal enum class XcodeBuildMode {
-    BUILD,
-    TEST
+internal sealed class XcodeBuildAction(
+    val action: String,
+) {
+    object Build : XcodeBuildAction("build")
+    object Test : XcodeBuildAction("test")
+    class Archive(val archivePath: String) : XcodeBuildAction("archive")
 }
 
 internal fun TestProject.buildXcodeProject(
@@ -24,7 +27,7 @@ internal fun TestProject.buildXcodeProject(
     configuration: String = "Debug",
     destination: String = "generic/platform=iOS Simulator",
     sdk: String = "iphonesimulator",
-    buildMode: XcodeBuildMode = XcodeBuildMode.BUILD,
+    action: XcodeBuildAction = XcodeBuildAction.Build,
     testRunEnvironment: Map<String, String> = emptyMap(),
     buildSettingOverrides: Map<String, String> = emptyMap(),
     expectedExitCode: Int = 0,
@@ -37,7 +40,7 @@ internal fun TestProject.buildXcodeProject(
         configuration = configuration,
         sdk = sdk,
         destination = destination,
-        buildMode = buildMode,
+        action = action,
         buildSettingOverrides = buildSettingOverrides,
         testRunEnvironment = testRunEnvironment,
         expectedExitCode = expectedExitCode,
@@ -53,7 +56,7 @@ internal fun TestProject.xcodebuild(
     sdk: String? = null,
     arch: String? = null,
     destination: String? = null,
-    buildMode: XcodeBuildMode = XcodeBuildMode.BUILD,
+    action: XcodeBuildAction = XcodeBuildAction.Build,
     testRunEnvironment: Map<String, String> = emptyMap(),
     buildSettingOverrides: Map<String, String> = emptyMap(),
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
@@ -75,6 +78,7 @@ internal fun TestProject.xcodebuild(
             }
 
             add("xcodebuild")
+            add(action.action)
             "-project" set xcodeproj
             "-workspace" set workspace
             "-scheme" set scheme
@@ -84,15 +88,21 @@ internal fun TestProject.xcodebuild(
             "-destination" set destination
             "-derivedDataPath" set derivedDataPath
 
-            buildSettingOverrides.forEach {
-                it.key eq it.value
+            when (action) {
+                is XcodeBuildAction.Build -> {}
+                is XcodeBuildAction.Test -> {
+                    // Disable parallel testing to output stdout/stderr from tests to xcodebuild
+                    add("-parallel-testing-enabled")
+                    add("NO")
+                }
+                is XcodeBuildAction.Archive -> {
+                    add("-archivePath")
+                    add(action.archivePath)
+                }
             }
 
-            if (buildMode == XcodeBuildMode.TEST) {
-                // Disable parallel testing to output stdout/stderr from tests to xcodebuild
-                add("-parallel-testing-enabled")
-                add("NO")
-                add("test")
+            buildSettingOverrides.forEach {
+                it.key eq it.value
             }
         },
         workingDir = workingDir,
