@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.writeText
 import kotlin.streams.toList
 import kotlin.test.assertTrue
 
@@ -365,6 +367,30 @@ class FusStatisticsIT : KGPBaseTest() {
                     "KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED=true",
                     "KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED=true",
                     "KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED=true",
+                )
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @GradleTest
+    fun testWasmIncrementalStatisticCollection(gradleVersion: GradleVersion) {
+        project(
+            "new-mpp-wasm-test", gradleVersion
+        ) {
+            gradleProperties.writeText("kotlin.incremental.wasm=true")
+
+            buildGradleKts.modify {
+                it
+                    .replace("wasmJs {", "wasmJs {\nbinaries.executable()")
+                    .replace("<JsEngine>", "nodejs")
+            }
+
+            build("compileDevelopmentExecutableKotlinWasmJs", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+                assertFileContains(
+                    fusStatisticsPath,
+                    "WASM_IR_INCREMENTAL=true",
                 )
             }
         }

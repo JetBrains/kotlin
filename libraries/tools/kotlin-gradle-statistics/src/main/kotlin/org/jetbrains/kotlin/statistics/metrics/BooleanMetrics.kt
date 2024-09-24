@@ -54,6 +54,8 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     JS_IR_INCREMENTAL(OR, SAFE),
 
+    WASM_IR_INCREMENTAL(OR, SAFE),
+
     //Build reports
     FILE_BUILD_REPORT(OR, SAFE),
     BUILD_SCAN_BUILD_REPORT(OR, SAFE),
@@ -93,6 +95,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 10
+        const val VERSION = 11
     }
 }

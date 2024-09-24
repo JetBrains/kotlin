@@ -15,11 +15,11 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinWasmIrLinkMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
@@ -134,6 +134,10 @@ abstract class KotlinJsIrLink @Inject constructor(
         if (!isWasmPlatform) {
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
+            }
+        } else {
+            buildFusService.orNull?.reportFusMetrics {
+                CompileKotlinWasmIrLinkMetrics.collectMetrics(incrementalWasm, it)
             }
         }
     }

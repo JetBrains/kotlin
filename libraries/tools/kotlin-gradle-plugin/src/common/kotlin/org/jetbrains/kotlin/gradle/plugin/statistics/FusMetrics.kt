@@ -226,6 +226,16 @@ internal object CompileKotlinJsIrLinkMetrics : FusMetrics {
     }
 }
 
+internal object CompileKotlinWasmIrLinkMetrics : FusMetrics {
+    internal fun collectMetrics(
+        incrementalWasm: Boolean,
+        metricsConsumer: StatisticsValuesConsumer,
+    ) {
+        metricsConsumer.report(BooleanMetrics.WASM_IR_INCREMENTAL, incrementalWasm)
+    }
+}
+
+
 internal object KotlinMetadataConfigurationMetrics : FusMetrics {
     internal fun collectMetrics(metricContainer: MetricContainer) {
         metricContainer.put(BooleanMetrics.ENABLED_HMPP, true)
