@@ -9,7 +9,7 @@ package kotlin.text
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
 
@@ -46,7 +46,7 @@ public actual inline fun Char.lowercase(): String = toString().asDynamic().toLow
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
 
