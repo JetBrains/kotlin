@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -147,6 +147,9 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
  * Implementation note: the current reading value is stored as a [Long] number of nanoseconds,
  * thus it's capable to represent a time range of approximately ±292 years.
  * Should the reading value overflow as the result of [plusAssign] operation, an [IllegalStateException] is thrown.
+ *
+ * @sample samples.time.MeasureTime.explicitMeasureTimeSample
+ * @sample samples.time.MeasureTime.explicitMeasureTimedValueSample
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalTime::class)
