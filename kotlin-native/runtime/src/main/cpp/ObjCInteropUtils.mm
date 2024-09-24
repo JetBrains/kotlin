@@ -70,12 +70,12 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
     case kCFStringEncodingASCII:
     case kCFStringEncodingNonLossyASCII:
     case kCFStringEncodingISOLatin1:
-      result = CreateUninitializedLatin1String(length, OBJ_RESULT);
+      result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
       CFStringGetBytes(immutableCopyOrSameStr, {0, length}, encoding, '?', false,
         reinterpret_cast<UInt8*>(StringHeader::of(result)->data()), length, nullptr);
       break;
     default:
-      result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+      result = CreateUninitializedString(StringEncoding::kUTF16, length, OBJ_RESULT);
       CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
         reinterpret_cast<UniChar*>(StringHeader::of(result)->data()));
       break;
