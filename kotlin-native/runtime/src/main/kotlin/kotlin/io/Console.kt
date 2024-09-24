@@ -72,4 +72,6 @@ public actual external fun readlnOrNull(): String?
  */
 @GCUnsafeCall("Kotlin_io_Console_readLine")
 @Escapes.Nothing
+@Deprecated("Use `readln()` instead of `readLine()!!`, and `readlnOrNull()` instead of `readLine()`.")
+@DeprecatedSinceKotlin(warningSince = "2.1")
 public external fun readLine(): String?
