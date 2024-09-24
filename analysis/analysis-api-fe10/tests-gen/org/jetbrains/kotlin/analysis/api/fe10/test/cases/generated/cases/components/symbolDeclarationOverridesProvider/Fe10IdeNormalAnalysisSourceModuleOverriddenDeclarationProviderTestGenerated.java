@@ -100,9 +100,21 @@ public class Fe10IdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestG
   }
 
   @Test
+  @TestMetadata("intersectionOverride3.kt")
+  public void testIntersectionOverride3() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverride3.kt");
+  }
+
+  @Test
   @TestMetadata("intersectionOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testIntersectionOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverrideWithImplicitTypeInsideAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("intersectionOverrideWithSubstitution.kt")
+  public void testIntersectionOverrideWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverrideWithSubstitution.kt");
   }
 
   @Test
@@ -115,6 +127,12 @@ public class Fe10IdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestG
   @TestMetadata("javaAccessors.kt")
   public void testJavaAccessors() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/javaAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("linkedHashSet.kt")
+  public void testLinkedHashSet() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/linkedHashSet.kt");
   }
 
   @Test

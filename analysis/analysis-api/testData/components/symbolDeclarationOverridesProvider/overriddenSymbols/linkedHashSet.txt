@@ -1,0 +1,3 @@
+ALL:
+DIRECT:
+  java/util/LinkedHashSet.add(p0: E!): Boolean
