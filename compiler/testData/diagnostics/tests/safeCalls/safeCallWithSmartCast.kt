@@ -6,7 +6,7 @@ class C {
 
 fun test(с: C?, a: Any) {
     с?.x = if (a is String) 0 else throw Exception();
-    <!DEBUG_INFO_SMARTCAST!>a<!>.<!DEPRECATION!>toUpperCase<!>()
+    <!DEBUG_INFO_SMARTCAST!>a<!>.uppercase()
 }
 
 

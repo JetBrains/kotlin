@@ -251,7 +251,7 @@ public actual fun String.substring(startIndex: Int, endIndex: Int): String =
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toUpperCase(): String = uppercase()
 
 /**
@@ -269,7 +269,7 @@ public actual fun String.uppercase(): String = uppercaseImpl()
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toLowerCase(): String = lowercase()
 
 /**

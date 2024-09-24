@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
     for (resource in object {}.javaClass.classLoader.getResources("META-INF/MANIFEST.MF")) {
         val manifest = resource.openStream().use(::Manifest).mainAttributes
         val title = manifest.getValue(Attributes.Name.IMPLEMENTATION_TITLE) ?: continue
-        if ("kotlin" !in title.toLowerCase()) continue
+        if ("kotlin" !in title.lowercase()) continue
 
         implementationTitles.add(title)
         versionValues[resource] = manifest.getValue(KOTLIN_VERSION)

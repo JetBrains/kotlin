@@ -5,7 +5,7 @@ fun box() = expectThrowableMessage {
             == null ||
             (
                 text.length == 5 &&
-                    text.toLowerCase() == text
+                    text.lowercase() == text
                 )
     )
 }

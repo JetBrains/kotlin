@@ -129,7 +129,7 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(Locale.getDefault())", "java.util.Locale"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
@@ -150,7 +150,7 @@ public actual inline fun String.uppercase(): String = (this as java.lang.String)
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(Locale.getDefault())", "java.util.Locale"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
@@ -654,7 +654,7 @@ public actual fun String.regionMatches(thisOffset: Int, other: String, otherOffs
  * Returns a copy of this string converted to lower case using the rules of the specified locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(locale)"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toLowerCase(locale: java.util.Locale): String = lowercase(locale)
 
@@ -675,7 +675,7 @@ public inline fun String.lowercase(locale: Locale): String = (this as java.lang.
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(locale)"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(locale: java.util.Locale): String = uppercase(locale)
 
@@ -763,8 +763,7 @@ public fun String.capitalize(locale: Locale): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(Locale.getDefault()) }", "java.util.Locale"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).lowercase(Locale.getDefault()) + substring(1) else this
 }
 
 /**

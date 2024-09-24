@@ -220,7 +220,7 @@ private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, o
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toUpperCase(): String = uppercaseImpl()
 
 /**
@@ -239,7 +239,7 @@ public actual fun String.uppercase(): String = uppercaseImpl()
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toLowerCase(): String = lowercaseImpl()
 
 /**
@@ -282,8 +282,7 @@ private external fun toCharArray(string: String, destination: CharArray, destina
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).uppercase() + substring(1) else this
 }
 
 /**
@@ -295,8 +294,7 @@ public actual fun String.capitalize(): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).lowercase() + substring(1) else this
 }
 
 /**

@@ -1,8 +1,8 @@
 ---
-assert((text.length == 1 || text.toLowerCase() == text) && text.length == 1)
-        |    |      |       |    |             |  |
-        |    |      |       |    |             |  Hello
-        |    |      |       |    |             false
+assert((text.length == 1 || text.lowercase() == text) && text.length == 1)
+        |    |      |       |    |           |  |
+        |    |      |       |    |           |  Hello
+        |    |      |       |    |           false
         |    |      |       |    hello
         |    |      |       Hello
         |    |      false
