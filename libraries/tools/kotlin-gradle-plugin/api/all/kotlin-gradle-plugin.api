@@ -2239,9 +2239,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsages {
 	public static final field KOTLIN_API Ljava/lang/String;
 	public static final field KOTLIN_CINTEROP Ljava/lang/String;
 	public static final field KOTLIN_COMMONIZED_CINTEROP Ljava/lang/String;
-	public static final field KOTLIN_LOCAL_METADATA Ljava/lang/String;
 	public static final field KOTLIN_METADATA Ljava/lang/String;
-	public static final field KOTLIN_PSM_METADATA Ljava/lang/String;
 	public static final field KOTLIN_RESOURCES Ljava/lang/String;
 	public static final field KOTLIN_RESOURCES_JS Ljava/lang/String;
 	public static final field KOTLIN_RUNTIME Ljava/lang/String;

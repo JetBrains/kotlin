@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_PROJECT_SHARED_USAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MetadataJsonSerialisationTool
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
@@ -108,6 +110,7 @@ internal class GranularMetadataTransformation(
         val projectStructureMetadataResolvableConfiguration: LazyResolvedConfiguration?,
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
+        val sourceSetsMetadataSharedDataProvider: KotlinProjectSharedDataProvider<SourceSetToClassDirMap>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             build = project.currentBuild,
@@ -121,6 +124,11 @@ internal class GranularMetadataTransformation(
             kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.let { LazyResolvedConfiguration(it) },
             objects = project.objects,
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
+            sourceSetsMetadataSharedDataProvider = project.kotlinSecondaryVariantsDataSharing.consume(
+                SOURCE_SETS_DATA_SHARING_KEY,
+                kotlinSourceSet.internal.resolvableMetadataConfiguration,
+                SourceSetToClassDirMap::class.java
+            )
         )
     }
 
@@ -285,7 +293,7 @@ internal class GranularMetadataTransformation(
 
         val metadataProvider = when (mppDependencyMetadataExtractor) {
             is AbstractProjectMppDependencyProjectStructureMetadataExtractor -> {
-                val sourceSetMetadataOutputs = extractSourceSetMetadataOutputs(compositeMetadataArtifact, mppDependencyMetadataExtractor)
+                val sourceSetMetadataOutputs = extractSourceSetMetadataOutputs(mppDependencyMetadataExtractor, dependency)
                 ProjectMetadataProvider(
                     sourceSetMetadataOutputs = sourceSetMetadataOutputs
                 )
@@ -312,14 +320,15 @@ internal class GranularMetadataTransformation(
     }
 
     private fun extractSourceSetMetadataOutputs(
-        compositeMetadataArtifact: ResolvedArtifactResult,
         mppDependencyMetadataExtractor: AbstractProjectMppDependencyProjectStructureMetadataExtractor,
+        dependency: ResolvedDependencyResult,
     ): Map<String, SourceSetMetadataOutputs> {
         return if (params.kotlinKmpProjectIsolationEnabled) {
-            val sourceSetsMetadataOutputsJson = compositeMetadataArtifact.file.readText()
-            MetadataJsonSerialisationTool.fromJson(sourceSetsMetadataOutputsJson)
-                .entries
-                .associate { (sourceSetName, classDir) ->
+            val sourceSetToClassDirMap = params.sourceSetsMetadataSharedDataProvider.getProjectDataFromDependencyOrNull(dependency)
+                ?: error("There is no source set to class directory mapping for the $dependency dependency.")
+            sourceSetToClassDirMap
+                .map
+                .entries.associate { (sourceSetName, classDir) ->
                     sourceSetName to SourceSetMetadataOutputs(params.objects.fileCollection().from(classDir))
                 }
         } else {

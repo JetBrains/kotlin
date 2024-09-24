@@ -23,13 +23,12 @@ object KotlinUsages {
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
 
+    internal const val KOTLIN_PROJECT_SHARED_USAGE = "kotlin-project-shared-data"
+
     // This type is required to distinguish metadata jar configuration from a psm secondary variant.
     // At the same time, disambiguation and compatibility rules should count them as equivalent
     // to be possible to apply a transform actions chain to `kotlin-metadata` artifact to get psm.
-    const val KOTLIN_PSM_METADATA = "kotlin-psm-metadata"
-
-    // This type is required to distinguish metadata jar configuration from a source sets secondary variant.
-    const val KOTLIN_LOCAL_METADATA = "kotlin-local-metadata"
+    internal const val KOTLIN_PSM_METADATA = "kotlin-psm-metadata"
 
     /**
      * Platform CInterop usage:
@@ -137,7 +136,7 @@ object KotlinUsages {
             ) {
                 compatible()
             }
-            if (consumerValue?.name == KOTLIN_LOCAL_METADATA &&
+            if (consumerValue?.name == KOTLIN_PROJECT_SHARED_USAGE &&
                 (producerValue?.name == KOTLIN_METADATA || producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
             ) {
                 compatible()
@@ -201,9 +200,9 @@ object KotlinUsages {
                 // Prefer Kotlin psm metadata, but if there's no such variant then accept the candidate order as for kotlin metadata
                 closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PSM_METADATA) + commonCandidateList)
             }
-            if (consumerValue?.name == KOTLIN_LOCAL_METADATA) {
-                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_LOCAL_METADATA) + commonCandidateList)
-            }
+//            if (consumerValue?.name == KOTLIN_PROJECT_SHARED_USAGE) {
+//                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PROJECT_SHARED_USAGE) + commonCandidateList)
+//            }
         }
 
         private fun MultipleCandidatesDetails<Usage>.closestMatchToFirstAppropriateCandidate(acceptedProducerValues: List<String>) {

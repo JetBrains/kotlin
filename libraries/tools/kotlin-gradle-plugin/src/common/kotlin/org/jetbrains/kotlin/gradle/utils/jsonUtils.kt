@@ -5,13 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.*
+import java.io.File
+import java.lang.reflect.Type
 
 internal object JsonUtils {
-    internal val gson: Gson by lazy { GsonBuilder().setLenient().setPrettyPrinting().serializeNulls().create() }
+    internal val gson: Gson by lazy {
+        GsonBuilder()
+            .setLenient()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .registerTypeHierarchyAdapter(File::class.java, FileAdapter)
+            .create()
+    }
 
     internal fun <K, V> toMap(jsonText: String): Map<K, V> {
         return gson.fromJson<Map<K, V>>(jsonText, Map::class.java)
+    }
+
+
+    private object FileAdapter : JsonSerializer<File>, JsonDeserializer<File> {
+        override fun serialize(src: File, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+            return JsonPrimitive(src.absolutePath)
+        }
+
+        override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): File? {
+            return json?.asString?.let { absolutePath -> File(absolutePath) }
+        }
     }
 }

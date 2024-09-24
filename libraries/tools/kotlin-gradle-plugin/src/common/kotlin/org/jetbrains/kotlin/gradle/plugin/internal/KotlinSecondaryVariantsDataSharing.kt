@@ -15,6 +15,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -41,12 +42,12 @@ internal interface KotlinShareableDataAsSecondaryVariant
  * Service to share configuration state between Kotlin Projects as Configuration Secondary Variants
  */
 internal class KotlinSecondaryVariantsDataSharing(
-    private val project: Project
+    private val project: Project,
 ) {
-    fun <T: KotlinShareableDataAsSecondaryVariant> shareDataFromProvider(
+    fun <T : KotlinShareableDataAsSecondaryVariant> shareDataFromProvider(
         key: String,
         outgoingConfiguration: Configuration,
-        dataProvider: Provider<T>
+        dataProvider: Provider<T>,
     ) {
         val taskName = lowerCamelCaseName("export", key, "for", outgoingConfiguration.name)
         val task = project.tasks.register(taskName, ExportKotlinProjectDataTask::class.java) { task ->
@@ -59,10 +60,20 @@ internal class KotlinSecondaryVariantsDataSharing(
             task.outputFile.set(project.layout.buildDirectory.file("kotlin/kotlin-project-shared-data/$fileName"))
         }
 
-        val fileFromTask = task.flatMap { it.outputFile }
+        shareDataFromExistingTask(key, outgoingConfiguration, task.flatMap { it.outputFile })
+    }
+
+    fun shareDataFromExistingTask(
+        key: String,
+        outgoingConfiguration: Configuration,
+        taskOutputProvider: Provider<RegularFile>,
+        taskDependencies: List<Any> = emptyList(),
+    ) {
+
         outgoingConfiguration.outgoing.variants.create(key) { variant ->
-            variant.artifact(fileFromTask) { artifact ->
+            variant.artifact(taskOutputProvider) { artifact ->
                 artifact.type = key
+                artifact.builtBy(taskDependencies)
             }
             variant.attributes.configureAttributes(key)
         }

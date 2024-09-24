@@ -84,9 +84,9 @@ private constructor(
     }
 
     private fun isCompositeProjectContainsExtractedPsm(metadataArtifact: ResolvedArtifactResult): Boolean {
-        // For some reason all attributes in variant hierarchy sometimes have value type String,
+        // For some reason, all attributes in variant hierarchy sometimes have value type String,
         // that is why just call .getAttribute(Usage.USAGE_ATTRIBUTE) will always return null.
-        // So we need at first to find the attribute with Usage.USAGE_ATTRIBUTE name and only after it get its value.
+        // So we need at first to find the attribute with Usage.USAGE_ATTRIBUTE name and only after it gets its value.
         val usageAttribute = metadataArtifact.variant
             .attributes
             .keySet()
@@ -98,7 +98,6 @@ private constructor(
 
         return metadataArtifact.variant.attributes.getAttribute(usageAttribute).toString() in listOf(
             KotlinUsages.KOTLIN_PSM_METADATA,
-            KotlinUsages.KOTLIN_LOCAL_METADATA
         )
     }
 

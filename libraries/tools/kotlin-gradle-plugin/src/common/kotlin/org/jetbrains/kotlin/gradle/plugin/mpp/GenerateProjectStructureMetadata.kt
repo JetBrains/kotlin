@@ -20,8 +20,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MetadataJsonSerialisationTool
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
+import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import java.io.File
 import javax.inject.Inject
 
@@ -76,8 +76,8 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
      * @param projectCoordinates Should contain resolved configuration with [KotlinProjectCoordinatesData] in artifacts
      */
     private fun ResolvedDependencyResult.moduleDependencyIdentifier(
-        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>
-    ): ModuleDependencyIdentifier = when(selected.id) {
+        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>,
+    ): ModuleDependencyIdentifier = when (selected.id) {
         is ProjectComponentIdentifier -> tryReadFromKotlinProjectCoordinatesData(projectCoordinates)
             ?: selected.moduleDependencyIdentifier()
         is ModuleComponentIdentifier -> selected.moduleDependencyIdentifier()
@@ -85,7 +85,7 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
     }
 
     private fun ResolvedDependencyResult.tryReadFromKotlinProjectCoordinatesData(
-        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>
+        projectCoordinates: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>,
     ): ModuleDependencyIdentifier? = projectCoordinates.getProjectDataFromDependencyOrNull(this)?.moduleId
 
     private fun ResolvedComponentResult.moduleDependencyIdentifier() = ModuleDependencyIdentifier(
@@ -120,7 +120,7 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
         resultFile.writeText(resultString)
 
         val metadataOutputsBySourceSet = sourceSetOutputs.get().associate { it.sourceSetName to it.metadataOutput.get() }
-        val metadataOutputsJson = MetadataJsonSerialisationTool.toJson(metadataOutputsBySourceSet)
+        val metadataOutputsJson = JsonUtils.gson.toJson(SourceSetToClassDirMap(metadataOutputsBySourceSet))
         sourceSetMetadataOutputsFile.get().asFile.writeText(metadataOutputsJson)
     }
 

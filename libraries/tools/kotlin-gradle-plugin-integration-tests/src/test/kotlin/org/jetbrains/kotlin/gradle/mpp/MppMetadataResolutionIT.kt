@@ -96,7 +96,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                     "Expected no unresolved configurations, but found ${unresolvedConfigurations.size}: $unresolvedConfigurations",
                 )
 
-                buildResult.assertOutputContains(">> :commonMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX --> sample-lib/build/internal/kmp/source-set-metadata-locations.json")
+                buildResult.assertOutputContains(">> :commonMainResolvable$METADATA_CONFIGURATION_NAME_SUFFIX --> sample-lib-metadata-1.0.jar")
             }
         }
     }
