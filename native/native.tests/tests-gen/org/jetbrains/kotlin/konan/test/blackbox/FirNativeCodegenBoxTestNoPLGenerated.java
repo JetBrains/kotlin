@@ -4999,6 +4999,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("parallelHierarchy.kt")
+      public void testParallelHierarchy() {
+        runTest("compiler/testData/codegen/box/casts/parallelHierarchy.kt");
+      }
+
+      @Test
       @TestMetadata("toNativePointers.kt")
       public void testToNativePointers() {
         runTest("compiler/testData/codegen/box/casts/toNativePointers.kt");
