@@ -19,10 +19,15 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
+import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.JVM_FULL_RUNTIME
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import java.io.File
@@ -236,6 +241,44 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
+    }
+
+    /*
+     * This test checks the correct work of caches after clean.
+     * Let's imagine that we have `module2` and it depends on `module1`.
+     * We change the function name in `Base` class of `module1` -- this counted as removal and adding new function
+     * Such change leads to removing any mentions in caches of `module2` (which depends on `module1`)
+     * In fact during the compilation of `module1` it will open caches of `module2`
+     * So if we also have changed facet configuration of `module2` - it will be marked for recompilation and will try to clean its caches.
+     * Such `clean` action of opened maps will lead to "storage is already closed" exception if maps are not reopened properly
+     */
+    fun testRebuildAfterCachesOpened() {
+        assertTrue(IncrementalCompilation.isEnabledForJvm())
+
+        // Init and rebuild
+        initProject(JVM_FULL_RUNTIME)
+        rebuildAllModules()
+
+        // Change facet of Derived module and change function name of Base class in Base module
+        val facet = KotlinFacetSettings()
+        facet.useProjectSettings = false
+        facet.compilerArguments = K2JVMCompilerArguments()
+        findModule("module2").let {
+            (facet.compilerArguments as K2JVMCompilerArguments).lambdas = null // "class" value was here before from iml file
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        // Change foo() to bar()
+        val newContent = """
+            open class Base {
+                fun bar() = "boo"
+            }
+        """.trimIndent()
+        checkWhen(createChangeAction("module1/src/Base.kt", newContent), null, null)
     }
 
     private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
