@@ -25,7 +25,7 @@ public var nullableNothingVariable: Swift.Never? {
         return { __root___nullableNothingVariable_get(); return nil; }()
     }
     set {
-        return __root___nullableNothingVariable_set__TypesOfArguments__Optional_Swift_Never___()
+        return __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___()
     }
 }
 public var value: Swift.Never {
@@ -52,7 +52,7 @@ public func meaningOfLife(
 public func meaningOfLife(
     input: Swift.Never?
 ) -> Swift.String {
-    return __root___meaningOfLife__TypesOfArguments__Optional_Swift_Never___()
+    return __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___()
 }
 public func meaningOfLife(
     p: Swift.Never
@@ -62,7 +62,7 @@ public func meaningOfLife(
 public func nullableNothingInput(
     input: Swift.Never?
 ) -> Swift.Void {
-    return __root___nullableNothingInput__TypesOfArguments__Optional_Swift_Never___()
+    return __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___()
 }
 public func nullableNothingOutput() -> Swift.Never? {
     return { __root___nullableNothingOutput(); return nil; }()

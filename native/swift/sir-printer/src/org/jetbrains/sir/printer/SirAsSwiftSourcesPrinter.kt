@@ -403,8 +403,8 @@ private val SirParameter.swiftRender
             type.swiftRender
 
 private val SirType.swiftRender: String
-    get() = if (this is SirNominalType && typeDeclaration == SirSwiftModule.optional) {
-        typeArguments.first().swiftRender + "?"
+    get() = if (this is SirOptionalType) {
+        wrappedType.swiftRender + "?"
     } else {
         swiftName
     }

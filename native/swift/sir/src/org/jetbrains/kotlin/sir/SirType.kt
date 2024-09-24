@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 sealed interface SirType
 
-class SirNominalType(
+open class SirNominalType(
     val typeDeclaration: SirNamedDeclaration,
     val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
 ) : SirType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
+        if (other != null && (this::class != other::class || other is SirOptionalType)) return false
 
         other as SirNominalType
 
@@ -31,6 +31,15 @@ class SirNominalType(
         result = 31 * result + (parent?.hashCode() ?: 0)
         return result
     }
+}
+
+class SirOptionalType(type: SirType): SirNominalType(
+    typeDeclaration = SirSwiftModule.optional,
+    typeArguments = listOf(type)
+) {
+    val wrappedType: SirType = super.typeArguments.single()
+
+    override fun equals(other: Any?): Boolean = super.equals(other)
 }
 
 class SirExistentialType(
@@ -60,4 +69,4 @@ class SirErrorType(val reason: String) : SirType
  */
 data object SirUnsupportedType : SirType
 
-fun SirType.optional(): SirNominalType = SirNominalType(SirSwiftModule.optional, listOf(this))
+fun SirType.optional(): SirNominalType = SirOptionalType(this)

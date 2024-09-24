@@ -23,15 +23,15 @@ public fun __root___meaningOfLife__TypesOfArguments__Swift_Int32__(input: Int): 
     return Unit
 }
 
-@ExportedBridge("__root___meaningOfLife__TypesOfArguments__Optional_Swift_Never___")
-public fun __root___meaningOfLife__TypesOfArguments__Optional_Swift_Never___(): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___")
+public fun __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___(): kotlin.native.internal.NativePtr {
     val __input = null
     val _result = meaningOfLife(__input)
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___nullableNothingInput__TypesOfArguments__Optional_Swift_Never___")
-public fun __root___nullableNothingInput__TypesOfArguments__Optional_Swift_Never___(): Unit {
+@ExportedBridge("__root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___")
+public fun __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___(): Unit {
     val __input = null
     nullableNothingInput(__input)
 }
@@ -48,8 +48,8 @@ public fun __root___nullableNothingVariable_get(): Unit {
     return Unit
 }
 
-@ExportedBridge("__root___nullableNothingVariable_set__TypesOfArguments__Optional_Swift_Never___")
-public fun __root___nullableNothingVariable_set__TypesOfArguments__Optional_Swift_Never___(): Unit {
+@ExportedBridge("__root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___")
+public fun __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___(): Unit {
     val __newValue = null
     nullableNothingVariable = __newValue
 }
