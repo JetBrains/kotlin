@@ -80,8 +80,8 @@ struct FixedLengthUnitStringData {
     struct Iterator {
         using difference_type = size_t;
         using value_type = KChar;
-        using pointer = const KChar*;
-        using reference = const KChar&;
+        using pointer = void;
+        using reference = void;
         using iterator_category = std::bidirectional_iterator_tag;
 
         const unit* p_;
