@@ -32,6 +32,7 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("project with buildSrc should be compatible with project isolation")
     @JvmGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_2) // FIXME: KT-71711
     @GradleTest
     fun testProjectIsolationWithBuildSrc(gradleVersion: GradleVersion) {
         project(
