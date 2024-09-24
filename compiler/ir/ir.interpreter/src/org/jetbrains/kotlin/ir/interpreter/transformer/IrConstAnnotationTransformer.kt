@@ -32,9 +32,19 @@ internal abstract class IrConstAnnotationTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrConstTransformer(
-    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
 ) {
+    private val constTransformer = IrConstTransformer(
+        interpreter,
+        irFile,
+        mode,
+        checker,
+        evaluatedConstTracker,
+        inlineConstTracker,
+        onWarning,
+        onError,
+        suppressExceptions
+    )
+
     abstract fun visitAnnotations(element: IrElement)
 
     protected fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
@@ -49,7 +59,7 @@ internal abstract class IrConstAnnotationTransformer(
             val arg = annotation.getValueArgument(i) ?: continue
             annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
         }
-        saveInConstTracker(annotation)
+        constTransformer.saveInConstTracker(annotation)
     }
 
     protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
@@ -80,7 +90,9 @@ internal abstract class IrConstAnnotationTransformer(
                 transformAnnotation(this)
                 this
             }
-            canBeInterpreted(this) -> interpret(this, failAsError = true).convertToConstIfPossible(expectedType)
+            constTransformer.canBeInterpreted(this) -> constTransformer
+                .interpret(this, failAsError = true)
+                .convertToConstIfPossible(expectedType)
             else -> error("Cannot evaluate IR expression in annotation:\n ${this.dump()}")
         }
     }

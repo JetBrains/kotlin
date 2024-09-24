@@ -88,7 +88,7 @@ private fun IrFile.preprocessForConstTransformer(
     return preprocessedFile
 }
 
-internal abstract class IrConstTransformer(
+internal class IrConstTransformer(
     private val interpreter: IrInterpreter,
     private val irFile: IrFile,
     private val mode: EvaluationMode,
@@ -119,7 +119,7 @@ internal abstract class IrConstTransformer(
         return this
     }
 
-    protected fun canBeInterpreted(expression: IrExpression): Boolean {
+    fun canBeInterpreted(expression: IrExpression): Boolean {
         return try {
             expression.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
         } catch (e: Throwable) {
@@ -131,7 +131,7 @@ internal abstract class IrConstTransformer(
         }
     }
 
-    protected fun interpret(expression: IrExpression, failAsError: Boolean): IrExpression {
+    fun interpret(expression: IrExpression, failAsError: Boolean): IrExpression {
         val result = try {
             interpreter.interpret(expression, irFile)
         } catch (e: Throwable) {
@@ -151,7 +151,7 @@ internal abstract class IrConstTransformer(
         return if (failAsError) result.reportIfError(expression) else result.warningIfError(expression)
     }
 
-    protected fun saveInConstTracker(expression: IrExpression) {
+    fun saveInConstTracker(expression: IrExpression) {
         evaluatedConstTracker?.save(
             expression.startOffset, expression.endOffset, irFile.nameWithPackage,
             constant = if (expression is IrErrorExpression) ErrorValue.create(expression.description) else expression.toConstantValue()
