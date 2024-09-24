@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -97,7 +96,6 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
         ) = with(extensionStorage) {
             StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr))
             FirExtensionRegistrarAdapter.registerExtension(FirNoArgExtensionRegistrar(annotations))
-            ExpressionCodegenExtension.registerExtension(CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
             IrGenerationExtension.registerExtension(NoArgIrGenerationExtension(annotations, invokeInitializers))
         }
     }
