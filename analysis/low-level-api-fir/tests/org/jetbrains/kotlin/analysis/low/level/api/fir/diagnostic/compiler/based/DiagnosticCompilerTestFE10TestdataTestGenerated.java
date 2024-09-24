@@ -35554,6 +35554,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("noErrorInsideDelegatedConstructorCallOfAnonymousObject.kt")
+        public void testNoErrorInsideDelegatedConstructorCallOfAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/noErrorInsideDelegatedConstructorCallOfAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("properties.kt")
         public void testProperties() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/properties.kt");
