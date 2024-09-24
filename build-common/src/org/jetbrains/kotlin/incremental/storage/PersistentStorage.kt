@@ -46,9 +46,22 @@ interface PersistentStorage<KEY, VALUE> : Closeable {
     /** Writes any remaining in-memory changes to [storageFile]. */
     fun flush()
 
-    /** Writes any remaining in-memory changes to [storageFile] ([flush]) and closes this map. */
+    /**
+     * Writes any remaining in-memory changes to [storageFile] ([flush]) and closes this map.
+     * Also, it nullifies wrapped map instance, so nobody will try to use the closed map instance.
+     *
+     * Note that after close action wrapped map instance should be recreated
+     * */
     override fun close()
 
+    /**
+     * Closes map instance if it was opened.
+     * Nullifies map instance, so nobody will try to use the closed map instance.
+     * Clean all map-files on disk.
+     * Designed to be thread-safe for concurrent access.
+     *
+     * Note that after clean action wrapped mapinstance should be recreated
+     */
     fun clean()
 }
 
