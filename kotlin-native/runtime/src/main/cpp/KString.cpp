@@ -388,7 +388,7 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
     auto* from = &cstring[0];
     auto* to = CharArrayAddressOfElementAt(toArray, position);
     while (*from) {
-        *to++ = *from++;
+        *to++ = static_cast<KChar>(*from++); // always ASCII
     }
     return from - cstring;
 }
