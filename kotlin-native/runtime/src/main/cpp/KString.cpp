@@ -19,6 +19,7 @@
 #include <limits>
 #include <string.h>
 #include <string>
+#include <optional>
 
 #include "KAssert.h"
 #include "Exceptions.h"
@@ -66,13 +67,7 @@ auto encodingAware(KConstRef string1, KConstRef string2, F&& impl) {
 }
 
 bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
-    // TODO: there are easy vectorized ways to do this check REALLY FAST, will std::all_of use them?..
-    return std::all_of(utf8, utf8 + lengthBytes, [](char c) { return c >= 0; });
-}
-
-template <typename String1, typename String2>
-constexpr bool isSameEncoding(String1&& a, String2&& b) {
-    return std::is_same_v<std::decay_t<String1>, std::decay_t<String2>>;
+    return !std::any_of(utf8, utf8 + lengthBytes, [](char c) { return c & 0x80; });
 }
 
 template <typename String, typename It>
@@ -247,7 +242,7 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
             ThrowOutOfMemoryError();
         }
 
-        if (isSameEncoding(thiz, other) &&
+        if (thiz.encoding == other.encoding &&
             // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
             // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
             (thiz.encoding == StringEncoding::kUTF16 || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
@@ -266,7 +261,6 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
 }
 
 static bool Kotlin_CharArray_isLatin1(KConstRef thiz, KInt start, KInt size) {
-    // TODO: vectorize?
     return std::all_of(
         CharArrayAddressOfElementAt(thiz->array(), start),
         CharArrayAddressOfElementAt(thiz->array(), start + size),
@@ -304,7 +298,7 @@ extern "C" OBJ_GETTER(Kotlin_String_toCharArray, KConstRef string, KRef destinat
 extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex, KInt endIndex) {
     return encodingAware(thiz, [=](auto thiz) {
         if (startIndex < 0 || static_cast<uint32_t>(endIndex) > thiz.sizeInChars() || startIndex > endIndex) {
-            // TODO: is it correct exception?
+            // Kotlin/JVM uses StringIndexOutOfBounds, but Native doesn't have it and this is close enough.
             ThrowArrayIndexOutOfBoundsException();
         }
 
@@ -344,7 +338,7 @@ extern "C" KInt Kotlin_String_compareTo(KConstRef thiz, KConstRef other) {
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
         auto begin1 = thiz.begin(), end1 = thiz.end();
         auto begin2 = other.begin(), end2 = other.end();
-        if constexpr (isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
             auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
             return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
         } else {
@@ -389,16 +383,35 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
     auto* from = &cstring[0];
     auto* to = CharArrayAddressOfElementAt(toArray, position);
     while (*from) {
-        *to++ = *from++;
+        *to++ = static_cast<KChar>(*from++); // always ASCII
     }
     return from - cstring;
 }
 
+static std::optional<KInt> Kotlin_String_cachedHashCode(KConstRef thiz) {
+    auto header = StringHeader::of(thiz);
+    if (header->size() == 0) return 0;
+    if (kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire) & StringHeader::HASHCODE_COMPUTED) {
+        // The condition only enforces an ordering with the first thread to write the hash code,
+        // so if two thread concurrently computed the hash, an atomic read is needed to prevent a data race.
+        // The value is always the same, though, so which write is observed is irrelevant.
+        return kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    }
+    return {};
+}
+
 extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
+    if (thiz == other) return true;
     if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
-    // TODO: if hash code is computed and unequal, then strings are also unequal
-    return thiz == other || encodingAware(thiz, other, [=](auto thiz, auto other) {
-        if constexpr (isSameEncoding(thiz, other)) {
+
+    if (auto thizHash = Kotlin_String_cachedHashCode(thiz)) {
+        if (auto otherHash = Kotlin_String_cachedHashCode(other)) {
+            if (*thizHash != *otherHash) return false;
+        }
+    }
+
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        if constexpr (thiz.encoding == other.encoding) {
             return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
         } else {
             return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
@@ -406,7 +419,7 @@ extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     });
 }
 
-// Bounds checks is are performed on Kotlin side
+// Bounds checks are performed on Kotlin side
 extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOffset, KConstRef other, KInt otherOffset, KInt length) {
     return length == 0 || encodingAware(thiz, other, [=](auto thiz, auto other) {
         auto begin1 = thiz.begin() + thizOffset;
@@ -415,20 +428,21 @@ extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOff
         // and then compare the known fixed range, or to decode characters one by one and count while comparing?
         auto end1 = begin1 + length;
         auto end2 = begin2 + length;
-        if constexpr (!isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
+            // Assuming only one "canonical" encoding, can byte-compare encoded values.
+            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
+            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
+                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
+                : isInSurrogatePair(other, begin2);
+            if (startsWithUnequalLowSurrogate) return false;
+            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
+                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
+                : isInSurrogatePair(other, end2);
+            if (endsWithUnequalHighSurrogate) return false;
+            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+        } else {
             return std::equal(begin1, end1, begin2, end2);
         }
-        // Assuming only one "canonical" encoding, can byte-compare encoded values.
-        // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
-        bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
-            ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
-            : isInSurrogatePair(other, begin2);
-        if (startsWithUnequalLowSurrogate) return false;
-        bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
-            ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
-            : isInSurrogatePair(other, end2);
-        if (endsWithUnequalHighSurrogate) return false;
-        return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
     });
 }
 
@@ -483,7 +497,7 @@ extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KIn
 
         auto start = thiz.begin() + unsignedIndex, end = thiz.end();
         auto patternStart = other.begin(), patternEnd = other.end();
-        if constexpr (isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
             auto shift = unsignedIndex;
             while (start != end) {
                 if (isInSurrogatePair(thiz, start)) {
@@ -508,52 +522,21 @@ extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KIn
     });
 }
 
-// TODO: this is basically equivalent to a pure Kotlin version...is there a faster way to implement this?
-extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other, KInt fromIndex) {
-    KInt count = Kotlin_String_getStringLength(thiz);
-    KInt otherCount = Kotlin_String_getStringLength(other);
-
-    if (fromIndex < 0 || otherCount > count) {
-        return -1;
+extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
+    if (auto cached = Kotlin_String_cachedHashCode(thiz)) {
+        return *cached;
     }
-    if (otherCount == 0) {
-        return fromIndex < count ? fromIndex : count;
-    }
-
-    KInt start = std::min(fromIndex, count - otherCount);
-    KChar firstChar = Kotlin_String_get(other, 0);
-    while (true) {
-        KInt candidate = Kotlin_String_lastIndexOfChar(thiz, firstChar, start);
-        if (candidate == -1) return -1;
-        if (Kotlin_String_unsafeRangeEquals(thiz, candidate, other, 0, otherCount)) return candidate;
-        start = candidate - 1;
-    }
-}
-
-extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    auto header = StringHeader::of(thiz);
-    if (header->size() == 0) return 0;
-
-    auto flags = kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire);
-    if (flags & StringHeader::HASHCODE_COMPUTED) {
-        // The condition only enforces an ordering with the first thread to write the hash code,
-        // so if two thread concurrently computed the hash, an atomic read is needed to prevent a data race.
-        // The value is always the same, though, so which write is observed is irrelevant.
-        return kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
-    }
-
     KInt result = encodingAware(thiz, [](auto thiz) {
         if constexpr (thiz.encoding == StringEncoding::kUTF16) {
             return polyHash(thiz.sizeInUnits(), thiz.begin().ptr());
         } else {
-            // TODO: faster specific implementations?..
+            // TODO: faster specific implementations
             return polyHash_naive(thiz.begin(), thiz.end());
         }
     });
-
-    auto nonConst = const_cast<StringHeader*>(header);
-    kotlin::std_support::atomic_ref{nonConst->hashCode_}.store(result, std::memory_order_relaxed);
-    kotlin::std_support::atomic_ref{nonConst->flags_}.fetch_or(StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
+    auto header = StringHeader::of(thiz);
+    kotlin::std_support::atomic_ref{header->hashCode_}.store(result, std::memory_order_relaxed);
+    kotlin::std_support::atomic_ref{header->flags_}.fetch_or(StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
     return result;
 }
 
@@ -600,11 +583,11 @@ static std::string to_string_impl(const KChar* it, const KChar* end) noexcept(mo
 template <KStringConversionMode>
 static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcept {
     std::string result;
-    result.resize((end - it) + std::count_if(it, end, [](uint8_t c) { return c >= 0x80; }));
+    result.resize((end - it) + std::count_if(it, end, [](uint8_t c) { return c & 0x80; }));
     auto out = result.begin();
     while (it != end) {
         auto latin1 = *it++;
-        if (latin1 >= 0x80) {
+        if (latin1 & 0x80) {
             *out++ = 0xC0 | (latin1 >> 6);
             *out++ = latin1 & 0xBF;
         } else {
