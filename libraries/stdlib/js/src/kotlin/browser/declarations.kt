@@ -13,7 +13,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
     replaceWith = ReplaceWith("window", "kotlinx.browser.window")
 )
 @LowPriorityInOverloadResolution
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 public external val window: Window
 
 @Deprecated(
@@ -21,7 +21,7 @@ public external val window: Window
     replaceWith = ReplaceWith("document", "kotlinx.browser.document")
 )
 @LowPriorityInOverloadResolution
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 public external val document: Document
 
 @Deprecated(
@@ -29,7 +29,7 @@ public external val document: Document
     replaceWith = ReplaceWith("localStorage", "kotlinx.browser.localStorage")
 )
 @LowPriorityInOverloadResolution
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 public external val localStorage: Storage
 
 @Deprecated(
@@ -37,6 +37,6 @@ public external val localStorage: Storage
     replaceWith = ReplaceWith("sessionStorage", "kotlinx.browser.sessionStorage")
 )
 @LowPriorityInOverloadResolution
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 public external val sessionStorage: Storage
 

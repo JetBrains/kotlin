@@ -21,7 +21,7 @@ import kotlinx.dom.createElement as newCreateElement
     message = "This API is moved to another package, use 'kotlinx.dom.createElement' instead.",
     replaceWith = ReplaceWith("this.createElement(name, init)", "kotlinx.dom.createElement")
 )
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Document.createElement(name: String, noinline init: Element.() -> Unit): Element = this.newCreateElement(name, init)
 
@@ -35,7 +35,7 @@ public inline fun Document.createElement(name: String, noinline init: Element.()
     message = "This API is moved to another package, use 'kotlinx.dom.appendElement' instead.",
     replaceWith = ReplaceWith("this.appendElement(name, init)", "kotlinx.dom.appendElement")
 )
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "2.1")
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Element.appendElement(name: String, noinline init: Element.() -> Unit): Element = this.newAppendElement(name, init)
 
