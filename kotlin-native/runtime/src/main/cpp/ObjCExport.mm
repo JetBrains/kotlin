@@ -120,8 +120,8 @@ extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str
   auto header = StringHeader::of(str);
   auto encoding = header->encoding();
   auto nsEncoding =
-    encoding == StringHeader::ENCODING_UTF16 ? NSUTF16LittleEndianStringEncoding :
-    encoding == StringHeader::ENCODING_LATIN1 ? NSISOLatin1StringEncoding :
+    encoding == StringEncoding::kUTF16 ? NSUTF16LittleEndianStringEncoding :
+    encoding == StringEncoding::kLatin1 ? NSISOLatin1StringEncoding :
     NSASCIIStringEncoding; // invalid value, not sure what to do
   if (str->permanent()) {
     return [[NSString alloc] initWithBytesNoCopy:header->data()

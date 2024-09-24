@@ -13,23 +13,33 @@
 
 namespace {
 
+enum class StringEncoding : uint8_t {
+    kUTF16 = 0,
+    kLatin1 = 1,
+};
+
+// Strings are effectively this:
+//     class String {
+//         private val hashCode_: Int
+//         private val flags_: Short
+//         private val data_: CharArray
+//     }
+// In order to avoid allocating a separate object for the data array, all other fields are packed
+// into it at the beginning, so a String's ObjHeader is also an ArrayHeader, and the space taken
+// up by other fields is counted in its length.
 struct StringHeader {
     ARRAY_HEADER_FIELDS
-    int32_t hashCode_;
+    int32_t hashCode_; // if ArrayHeader has padding, this will go into it instead of the array's data
     uint16_t flags_;
     char data_[];
 
     enum {
         IGNORE_LAST_BYTE = 1 << 0,
         HASHCODE_COMPUTED = 1 << 1,
-
         ENCODING_OFFSET = 12,
-        ENCODING_UTF16 = 0,
-        ENCODING_LATIN1 = 1,
-        // ENCODING_UTF8 = 2 ?
     };
 
-    ALWAYS_INLINE int encoding() const { return flags_ >> ENCODING_OFFSET; }
+    ALWAYS_INLINE StringEncoding encoding() const { return static_cast<StringEncoding>(flags_ >> ENCODING_OFFSET); }
 
     ALWAYS_INLINE char *data() { return data_; }
     ALWAYS_INLINE const char *data() const { return data_; }
@@ -46,6 +56,61 @@ struct StringHeader {
 static_assert(offsetof(StringHeader, data_) >= sizeof(ArrayHeader));
 static_assert((offsetof(StringHeader, data_) - sizeof(ArrayHeader)) % 2 == 0);
 
+template <StringEncoding encoding>
+struct StringData;
+
+template <StringEncoding encoding_, typename unit_>
+struct FixedLengthUnitStringData {
+    using unit = unit_;
+    static constexpr const StringEncoding encoding = encoding_;
+    static constexpr bool canEncode(KChar c) { return c <= std::numeric_limits<unit>::max(); }
+
+    struct Iterator {
+        using difference_type = size_t;
+        using value_type = KChar;
+        using pointer = const KChar*;
+        using reference = const KChar&;
+        using iterator_category = std::bidirectional_iterator_tag;
+
+        const unit* p_;
+
+        const unit* ptr() const { return p_; }
+        KChar operator*() const { return *p_; }
+        Iterator& operator++() { ++p_; return *this; };
+        Iterator& operator--() { --p_; return *this; };
+        Iterator operator++(int) { return {p_++}; };
+        Iterator operator--(int) { return {p_--}; };
+        Iterator operator+(size_t offset) const { return {p_ + offset}; }
+        bool operator==(const Iterator& other) const { return p_ == other.p_; }
+        bool operator!=(const Iterator& other) const { return p_ != other.p_; }
+        size_t operator-(const Iterator& other) const { return p_ - other.p_; }
+    };
+
+    const unit* data_;
+    const size_t size_;
+
+    FixedLengthUnitStringData(const StringHeader* header) :
+        data_(reinterpret_cast<const unit*>(header->data())),
+        size_(header->size() / sizeof(unit))
+    {}
+
+    Iterator begin() const { return {data_}; }
+    Iterator end() const { return {data_ + size_}; }
+    Iterator at(const unit* ptr) const { return {ptr}; }
+    size_t sizeInUnits() const { return size_; }
+    size_t sizeInChars() const { return size_; }
+};
+
+template <>
+struct StringData<StringEncoding::kUTF16> : FixedLengthUnitStringData<StringEncoding::kUTF16, KChar> {
+    using FixedLengthUnitStringData::FixedLengthUnitStringData;
+};
+
+template <>
+struct StringData<StringEncoding::kLatin1> : FixedLengthUnitStringData<StringEncoding::kLatin1, uint8_t> {
+    using FixedLengthUnitStringData::FixedLengthUnitStringData;
+};
+
 } // namespace
 
 extern "C" {
@@ -54,9 +119,7 @@ OBJ_GETTER(CreateStringFromCString, const char* cstring);
 OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t length);
 OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t length);
 OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length);
-
-OBJ_GETTER(CreateUninitializedUtf16String, uint32_t length);
-OBJ_GETTER(CreateUninitializedLatin1String, uint32_t length);
+OBJ_GETTER(CreateUninitializedString, StringEncoding encoding, uint32_t length);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);
