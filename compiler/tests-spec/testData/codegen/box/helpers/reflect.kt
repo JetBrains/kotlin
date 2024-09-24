@@ -2,10 +2,11 @@
 // WITH_REFLECT
 // FULL_JDK
 
-<!PACKAGE!>
+<?PACKAGE?>
 
 import kotlin.reflect.*
 import kotlin.reflect.full.*
+import java.lang.Class
 
 fun checkAnnotation(className: String, annotationName: String) =
     Class.forName(className).annotations.find { it.annotationClass.qualifiedName == annotationName } != null

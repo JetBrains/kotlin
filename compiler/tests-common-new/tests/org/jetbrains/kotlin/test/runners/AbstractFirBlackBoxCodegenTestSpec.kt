@@ -6,44 +6,46 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.SPEC_HELPERS
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTestBase
+import org.jetbrains.kotlin.test.services.PackageNamePreprocessor
 import org.jetbrains.kotlin.test.services.sourceProviders.SpecHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractFirDiagnosticTestSpecBase(parser: FirParser) : AbstractFirDiagnosticTestBase(parser) {
+abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : AbstractFirBlackBoxCodegenTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            baseFirSpecDiagnosticTestConfiguration()
+            baseFirSpecBlackBoxCodegenTestConfiguration()
         }
     }
 }
 
-abstract class AbstractFirPsiDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.Psi)
-abstract class AbstractFirLightTreeDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.LightTree) {
+open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
     }
 }
 
-fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration(baseDir: String = ".") {
+private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration(baseDir: String = ".") {
     defaultDirectives {
         +SPEC_HELPERS
         +WITH_STDLIB
+        +WITH_REFLECT
+        +FULL_JDK
     }
-
-    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("diagnostics", baseDir))
+    useSourcePreprocessor(::PackageNamePreprocessor)
+    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box", baseDir))
 
     useAfterAnalysisCheckers(
-        ::FirTestDataConsistencyHandler,
         ::FirFailingTestSuppressor,
+        ::BlackBoxCodegenSuppressor,
     )
-
-    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }

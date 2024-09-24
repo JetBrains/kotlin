@@ -24,7 +24,7 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
         private const val CODEGEN_BOX_TESTDATA_PATH = "$SPEC_TESTDATA_PATH/codegen/box"
         private const val HELPERS_PATH = "$CODEGEN_BOX_TESTDATA_PATH/helpers"
-        private const val HELPERS_PACKAGE_VARIABLE = "<!PACKAGE!>"
+        private const val HELPERS_PACKAGE_VARIABLE = "<?PACKAGE?>"
     }
 
     private fun addPackageDirectiveToHelperFile(helperContent: String, packageName: String?) =
