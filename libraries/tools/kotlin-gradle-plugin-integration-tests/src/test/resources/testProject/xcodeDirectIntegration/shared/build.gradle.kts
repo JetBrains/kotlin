@@ -11,6 +11,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
+            isStatic = <is_static>
             baseName = "shared"
         }
     }
