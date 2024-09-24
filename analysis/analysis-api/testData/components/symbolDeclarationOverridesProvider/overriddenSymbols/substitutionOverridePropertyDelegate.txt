@@ -2,3 +2,4 @@ ALL:
   test/Foo.obj: String
 DIRECT:
   test/Foo.obj: String
+INTERSECTION:

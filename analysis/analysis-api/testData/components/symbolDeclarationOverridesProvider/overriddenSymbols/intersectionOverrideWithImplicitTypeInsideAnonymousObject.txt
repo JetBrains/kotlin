@@ -3,3 +3,4 @@ ALL:
   /D.foo(x: F): Unit
 DIRECT:
   /C.foo(x: T): Unit
+INTERSECTION:

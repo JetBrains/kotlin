@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbol
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.name
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,11 +27,20 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 val symbol = getCallableSymbol(mainFile, testServices)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
+
+                // K1 doesn't support this
+                val intersectionOverriddenSymbols = if (configurator.frontendKind == FrontendKind.Fe10)
+                    emptyList()
+                else
+                    symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
+
                 buildString {
                     appendLine("ALL:")
                     allOverriddenSymbols.forEach { appendLine("  $it") }
                     appendLine("DIRECT:")
                     directlyOverriddenSymbols.forEach { appendLine("  $it") }
+                    appendLine("INTERSECTION:")
+                    intersectionOverriddenSymbols.forEach { appendLine("  $it") }
                 }
             }
         }

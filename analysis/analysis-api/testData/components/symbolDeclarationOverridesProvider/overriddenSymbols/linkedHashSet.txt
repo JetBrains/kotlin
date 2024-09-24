@@ -6,3 +6,5 @@ ALL:
 DIRECT:
   java/util/HashSet.add(p0: E): Boolean
   kotlin/collections/MutableSet.add(element: E): Boolean
+INTERSECTION:
+  java/util/LinkedHashSet.add(p0: E!): Boolean

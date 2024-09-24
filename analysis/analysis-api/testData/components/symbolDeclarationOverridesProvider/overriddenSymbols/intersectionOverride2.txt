@@ -4,3 +4,4 @@ ALL:
 DIRECT:
   /C.foo(x: String): Unit
   /D.foo(x: String): Unit
+INTERSECTION:

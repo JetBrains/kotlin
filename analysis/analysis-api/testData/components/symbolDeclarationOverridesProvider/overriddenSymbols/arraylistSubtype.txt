@@ -5,3 +5,4 @@ ALL:
   kotlin/collections/Collection.size: Int
 DIRECT:
   java/util/ArrayList.size: Int
+INTERSECTION:

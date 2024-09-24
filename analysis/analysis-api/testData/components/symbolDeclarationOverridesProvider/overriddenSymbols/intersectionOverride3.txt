@@ -5,3 +5,6 @@ ALL:
 DIRECT:
   /B.foo(x: Int): Unit
   /C.foo(x: Int): Unit
+INTERSECTION:
+  /B.foo(x: Int): Unit
+  /C.foo(x: Int): Unit

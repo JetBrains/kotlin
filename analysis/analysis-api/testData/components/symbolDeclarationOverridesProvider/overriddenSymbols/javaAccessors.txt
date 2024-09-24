@@ -3,3 +3,4 @@ ALL:
   /C.x: Int
 DIRECT:
   /B.x: Int
+INTERSECTION:
