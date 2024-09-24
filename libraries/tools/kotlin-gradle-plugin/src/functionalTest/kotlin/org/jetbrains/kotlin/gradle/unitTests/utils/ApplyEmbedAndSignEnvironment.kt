@@ -15,6 +15,8 @@ fun Project.applyEmbedAndSignEnvironment(
     archs: String,
     builtProductsDirectory: String = layout.buildDirectory.dir("products").getFile().canonicalPath,
     targetBuildDirectory: String = layout.buildDirectory.dir("buildDir").getFile().canonicalPath,
+    dwarfDsymFolderPath: String? = null,
+    action: String = "build",
 ) {
     extensions.extraProperties.set(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.CONFIGURATION",
@@ -47,5 +49,13 @@ fun Project.applyEmbedAndSignEnvironment(
     extensions.extraProperties.set(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.ENABLE_USER_SCRIPT_SANDBOXING",
         "NO"
+    )
+    extensions.extraProperties.set(
+        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.DWARF_DSYM_FOLDER_PATH",
+        dwarfDsymFolderPath,
+    )
+    extensions.extraProperties.set(
+        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.ACTION",
+        action
     )
 }

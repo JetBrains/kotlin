@@ -44,7 +44,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
             )
 
-            build("assembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
+            build("assembleDebugAppleFrameworkForXcodeIosArm64", "symbolicLinkToAssembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
                 assertSymlinkInProjectPointsToProjectPath(
                     "shared/build/builtProductsDir/sdk.framework",
@@ -65,7 +65,7 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             build("clean")
 
-            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
+            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64", "symbolicLinkToAssembleCustomDebugAppleFrameworkForXcodeIosArm64",  environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64")
                 assertSymlinkInProjectPointsToProjectPath(
                     "shared/build/builtProductsDir/lib.framework",
@@ -81,6 +81,7 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             build(
                 "assembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64",
+                "symbolicLinkToAssembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64",
                 "-Pkotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir=false",
                 environmentVariables = environmentVariables
             ) {
@@ -110,7 +111,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "ARCHS" to "arm64 x86_64",
                 "TARGET_BUILD_DIR" to "no use",
                 "FRAMEWORKS_FOLDER_PATH" to "no use",
-                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/xcode-frameworks/Release/iphonesimulator").toString(),
+                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
             )
             build("assembleReleaseAppleFrameworkForXcode", environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosSimulatorArm64")
@@ -145,7 +146,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                 "TARGET_BUILD_DIR" to testBuildDir.toString(),
                 "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
-                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/xcode-frameworks/debug/macosx").toString(),
+                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeMacosX64")
@@ -378,7 +379,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to "no use",
                 "FRAMEWORKS_FOLDER_PATH" to "no use",
-                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/xcode-frameworks/debug/iphoneos123").toString(),
+                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
             )
 
             subProject("shared").buildGradleKts.modify {

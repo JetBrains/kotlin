@@ -61,6 +61,24 @@ internal class XcodeEnvironment(private val project: Project) {
     val userScriptSandboxingEnabled: Boolean
         get() = readEnvVariable("ENABLE_USER_SCRIPT_SANDBOXING") == "YES"
 
+    enum class Action {
+        // xcodebuild archive
+        install,
+        // xcodebuild build/test/etc
+        other,
+    }
+
+    val action: Action?
+        get() = readEnvVariable("ACTION")?.let {
+            when (it) {
+                "install" -> Action.install
+                else -> Action.other
+            }
+        }
+
+    val dwarfDsymFolderPath: String?
+        get() = readEnvVariable("DWARF_DSYM_FOLDER_PATH")
+
     private fun readEnvVariable(name: String): String? {
         return project.extensions.extraProperties.getOrNull("$XCODE_ENVIRONMENT_OVERRIDE_KEY.$name") as? String ?: System.getenv(name)
     }

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.nio.file.Path
+import java.util.*
 import kotlin.io.path.exists
 import kotlin.test.assertEquals
 
@@ -121,6 +123,10 @@ internal fun TestProject.prepareForXcodebuild() {
             it.append("test_fixes_version=${KOTLIN_VERSION}")
             buildOptions.konanDataDir?.let { konanDataDir ->
                 it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+            }
+            if (gradleVersion >= GradleVersion.version("8.0.0")) {
+                it.append("org.gradle.unsafe.configuration-cache=true")
+                it.append("org.gradle.unsafe.configuration-cache-problems=${buildOptions.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
             }
         }
 

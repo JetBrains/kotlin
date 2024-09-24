@@ -72,6 +72,11 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
             buildXcodeProject(
                 xcodeproj = projectPath.resolve("iosApp$BuildPhase/iosApp.xcodeproj"),
                 action = XcodeBuildAction.Archive(archivePath.toFile().path),
+                destination = "generic/platform=iOS",
+                buildSettingOverrides = mapOf(
+                    // Disable signing. We are building the device but don't have an identity in the Keychain
+                    "CODE_SIGN_IDENTITY" to "",
+                )
             )
 
             // Sanity check
@@ -88,13 +93,14 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
                 assertDirectoryExists(frameworkPath)
                 assert(!frameworkPath.isSymbolicLink()) { "${frameworkPath} is a symbolic link" }
                 assertDirectoryExists(dsymPath)
-                assert(dsymPath.isSymbolicLink()) { "${dsymPath} is a symbolic link" }
+                assert(!dsymPath.isSymbolicLink()) { "${dsymPath} is a symbolic link" }
 
                 fun dumpUuid(binary: File): List<String> {
                     return runProcess(listOf("otool", "-l", binary.path), projectPath.toFile())
                         .output.lines().filter { it.contains("uuid") }
                 }
 
+                // Framework and the dSYM binary must have identical UUID
                 val frameworkUuids = dumpUuid(frameworkPath.resolve("shared").toFile())
                 val dsymUuids = dumpUuid(dsymPath.resolve("Contents/Resources/DWARF/shared").toFile())
 
@@ -108,10 +114,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
-                Stream.of(
-//                    true,
-                    false,
-                ).map { isStatic ->
+                Stream.of(true, false).map { isStatic ->
                     Arguments.of(gradleVersion, isStatic)
                 }
             }
