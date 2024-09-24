@@ -155,20 +155,20 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val module = myProject.modules[0]
         assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
 
         checkWhen(
-            del("src/main.kt"),
+            createDeleteAction("src/main.kt"),
             pathsToCompile = null,
             pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt")
         )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
     }
 
     fun testManyFilesForPackage() {
@@ -177,10 +177,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val module = myProject.modules[0]
         assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
-            touch("src/Bar.kt"),
+            createTouchAction("src/Bar.kt"),
             arrayOf("src/Bar.kt"),
             arrayOf(
                 klass("kotlinProject", "foo.Bar"),
@@ -190,15 +190,15 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         )
 
         checkWhen(
-            del("src/main.kt"),
+            createDeleteAction("src/main.kt"),
             pathsToCompile = null,
             pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt")
         )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
-            touch("src/Bar.kt"), null,
+            createTouchAction("src/Bar.kt"), null,
             arrayOf(
                 klass("kotlinProject", "foo.Bar"),
                 packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),

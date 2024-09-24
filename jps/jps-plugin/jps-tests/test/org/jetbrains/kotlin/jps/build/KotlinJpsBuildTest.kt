@@ -115,7 +115,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testKotlinProject() {
         doTest()
 
-        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+        checkWhen(createTouchAction("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
     fun testSourcePackagePrefix() {
@@ -173,7 +173,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         checkWhen(
-            touch("src/foo.kt"), null,
+            createTouchAction("src/foo.kt"), null,
             arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
         )
     }
@@ -186,11 +186,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
 
         checkWhen(
-            touch("src/foo.kt"), null,
+            createTouchAction("src/foo.kt"), null,
             arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
         )
         checkWhen(
-            touch("src/module2/src/foo.kt"), null,
+            createTouchAction("src/module2/src/foo.kt"), null,
             arrayOf(klass("module2", "Foo"), module("module2"))
         )
     }
@@ -203,15 +203,15 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
+            checkWhen(createTouchAction("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("src/foo.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/foo.kt"), null, allClasses)
         }
 
-        checkWhen(touch("src/Excluded.kt"), null, NOTHING)
-        checkWhen(touch("src/dir/YetAnotherExcluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/Excluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/dir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
     fun testExcludeFolderNonRecursivelyUsingCompilerSettings() {
@@ -222,17 +222,17 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
-            checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Bar")))
+            checkWhen(createTouchAction("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
+            checkWhen(createTouchAction("src/dir/subdir/bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Bar")))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("src/foo.kt"), null, allClasses)
-            checkWhen(touch("src/dir/subdir/bar.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/foo.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/dir/subdir/bar.kt"), null, allClasses)
         }
 
-        checkWhen(touch("src/dir/Excluded.kt"), null, NOTHING)
-        checkWhen(touch("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/dir/Excluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
     fun testExcludeFolderRecursivelyUsingCompilerSettings() {
@@ -243,33 +243,33 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
+            checkWhen(createTouchAction("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("src/foo.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/foo.kt"), null, allClasses)
         }
 
-        checkWhen(touch("src/exclude/Excluded.kt"), null, NOTHING)
-        checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING)
-        checkWhen(touch("src/exclude/subdir/Excluded.kt"), null, NOTHING)
-        checkWhen(touch("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/exclude/Excluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/exclude/YetAnotherExcluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/exclude/subdir/Excluded.kt"), null, NOTHING)
+        checkWhen(createTouchAction("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
     fun testKotlinProjectTwoFilesInOnePackage() {
         doTest()
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
-            checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
+            checkWhen(createTouchAction("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
+            checkWhen(createTouchAction("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("src/test1.kt"), null, allClasses)
-            checkWhen(touch("src/test2.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/test1.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/test2.kt"), null, allClasses)
         }
 
-        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
+        checkWhen(arrayOf(createDeleteAction("src/test1.kt"), createDeleteAction("src/test2.kt")), NOTHING,
                   arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
                           packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
                           module("kotlinProject")))
@@ -352,13 +352,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
-            checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
+            checkWhen(createTouchAction("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
+            checkWhen(createTouchAction("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("src/kt2.kt"), null, allClasses)
-            checkWhen(touch("module2/src/kt1.kt"), null, allClasses)
+            checkWhen(createTouchAction("src/kt2.kt"), null, allClasses)
+            checkWhen(createTouchAction("module2/src/kt1.kt"), null, allClasses)
         }
     }
 
@@ -375,13 +375,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-            checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+            checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+            checkWhen(createTouchAction("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
         }
         else {
             val allClasses = myProject.outputPaths()
-            checkWhen(touch("module1/src/a.kt"), null, allClasses)
-            checkWhen(touch("module2/src/b.kt"), null, allClasses)
+            checkWhen(createTouchAction("module1/src/a.kt"), null, allClasses)
+            checkWhen(createTouchAction("module2/src/b.kt"), null, allClasses)
         }
     }
 
@@ -397,13 +397,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-            checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+            checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+            checkWhen(createTouchAction("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
         }
         else {
             val allProductionClasses = myProject.outputPaths(tests = false)
-            checkWhen(touch("module1/src/a.kt"), null, allProductionClasses)
-            checkWhen(touch("module2/src/b.kt"), null, allProductionClasses)
+            checkWhen(createTouchAction("module1/src/a.kt"), null, allProductionClasses)
+            checkWhen(createTouchAction("module2/src/b.kt"), null, allProductionClasses)
         }
     }
 
@@ -602,7 +602,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             }
         }
 
-        touch("src/Bar.kt").apply()
+        createTouchAction("src/Bar.kt").apply()
         buildCustom(canceledStatus, TestProjectBuilderLogger(), buildResult)
         assertCanceled(buildResult)
     }
@@ -681,11 +681,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
 
         if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
+            checkWhen(createTouchAction("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
         }
         else {
             val allClasses = findModule("kotlinProject").outputFilesPaths()
-            checkWhen(touch("src/utils.kt"), null, allClasses.toTypedArray())
+            checkWhen(createTouchAction("src/utils.kt"), null, allClasses.toTypedArray())
         }
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
@@ -1054,7 +1054,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertTrue("The build has been canceled" == list.last().messageText)
     }
 
-    private fun findModule(name: String): JpsModule {
+    protected fun findModule(name: String): JpsModule {
         for (module in myProject.modules) {
             if (module.name == name) {
                 return module
@@ -1120,30 +1120,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     private val JpsModule.testsOut: File
         get() = outDir(forTests = true)
 
-    private fun JpsModule.outDir(forTests: Boolean) =
-            JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
+    private fun JpsModule.outDir(forTests: Boolean) = JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
 
-    protected enum class Operation {
-        CHANGE,
-        DELETE
-    }
+    protected fun createTouchAction(path: String): Action = TouchAction(File(workDir, path).absolutePath)
 
-    protected fun touch(path: String): Action = Action(Operation.CHANGE, path)
+    protected fun createDeleteAction(path: String): Action = DeleteAction(File(workDir, path).absolutePath)
 
-    protected fun del(path: String): Action = Action(Operation.DELETE, path)
-
-    // TODO inline after KT-3974 will be fixed
-    protected fun touch(file: File): Unit = change(file.absolutePath)
-
-    protected inner class Action constructor(private val operation: Operation, private val path: String) {
-        fun apply() {
-            val file = File(workDir, path)
-            when (operation) {
-                Operation.CHANGE ->
-                    touch(file)
-                Operation.DELETE ->
-                    assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
-            }
-        }
-    }
+    protected fun createChangeAction(path: String, content: String): Action = ChangeAction(File(workDir, path).absolutePath, content)
 }
