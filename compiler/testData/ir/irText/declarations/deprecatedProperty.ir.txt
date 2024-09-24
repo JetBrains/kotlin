@@ -92,17 +92,17 @@ FILE fqName:<root> fileName:/deprecatedProperty.kt
   PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
     annotations:
       Deprecated(message = "", replaceWith = <null>, level = <null>)
-    FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:private [static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testLateinitVar> visibility:public modality:FINAL <> () returnType:kotlin.Any
       correspondingProperty: PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testLateinitVar> (): kotlin.Any declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]' type=kotlin.Any origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:private [static]' type=kotlin.Any origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testLateinitVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Any) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Any declared in <root>.<set-testLateinitVar>' type=kotlin.Any origin=null
   PROPERTY name:testExtVal visibility:public modality:FINAL [val]
     annotations:

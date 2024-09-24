@@ -505,7 +505,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     private val FirProperty.fieldVisibility: Visibility
         get() = when {
             hasExplicitBackingField -> backingField?.visibility ?: status.visibility
-            isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation(session) -> status.visibility
             origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility

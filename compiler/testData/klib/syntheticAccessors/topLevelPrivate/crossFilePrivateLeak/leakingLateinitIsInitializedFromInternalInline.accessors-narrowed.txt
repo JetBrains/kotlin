@@ -10,7 +10,7 @@ private lateinit var o: String?
     /* TARGET declaration */ private fun <set-o>(<set-?>: String)
         /* TARGET use-site */ #o = <set-?>
 public lateinit var k: String?
-    /* TARGET declaration */ public /* static field */ field k: String?
+    /* TARGET declaration */ private /* static field */ field k: String?
     public fun <get-k>(): String
         val tmp: String? = #k
             /* TARGET use-site */ #k

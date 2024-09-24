@@ -266,7 +266,6 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     private val PropertyDescriptor.fieldVisibility: DescriptorVisibility
         get() = declarationGenerator.context.extensions.computeFieldVisibility(this)
             ?: when {
-                isLateInit -> setter?.visibility ?: visibility
                 isConst -> visibility
                 else -> DescriptorVisibilities.PRIVATE
             }

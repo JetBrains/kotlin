@@ -2,20 +2,20 @@ FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
-      FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Number
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:public' type=kotlin.Number origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Number origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Number) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-b>' type=<root>.A origin=null
             value: GET_VAR '<set-?>: kotlin.Number declared in <root>.A.<set-b>' type=kotlin.Number origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]

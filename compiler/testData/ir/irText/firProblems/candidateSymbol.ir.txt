@@ -3,20 +3,20 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>
     TYPE_PARAMETER name:E index:0 variance: superTypes:[<root>.FirSymbolOwner<E of <root>.AbstractFirBasedSymbol>; <root>.FirDeclaration] reified:false
     PROPERTY name:fir visibility:public modality:FINAL [lateinit,var]
-      FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fir> visibility:public modality:FINAL <> ($this:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>) returnType:E of <root>.AbstractFirBasedSymbol
         correspondingProperty: PROPERTY name:fir visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-fir> (): E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:public' type=E of <root>.AbstractFirBasedSymbol origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:private' type=E of <root>.AbstractFirBasedSymbol origin=null
               receiver: GET_VAR '<this>: <root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> declared in <root>.AbstractFirBasedSymbol.<get-fir>' type=<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fir> visibility:public modality:FINAL <> ($this:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>, <set-?>:E of <root>.AbstractFirBasedSymbol) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:fir visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>
         VALUE_PARAMETER name:<set-?> index:0 type:E of <root>.AbstractFirBasedSymbol
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> declared in <root>.AbstractFirBasedSymbol.<set-fir>' type=<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> origin=null
             value: GET_VAR '<set-?>: E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol.<set-fir>' type=E of <root>.AbstractFirBasedSymbol origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> [primary]

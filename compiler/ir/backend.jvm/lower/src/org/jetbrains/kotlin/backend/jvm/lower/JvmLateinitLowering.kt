@@ -48,6 +48,8 @@ internal class JvmLateinitLowering(private val context: JvmBackendContext) : Fil
                 }
 
                 declaration.type = declaration.type.makeNullable()
+                val property = declaration.correspondingPropertySymbol!!.owner
+                declaration.visibility = property.setter?.visibility ?: property.visibility
             }
 
             declaration.transformChildrenVoid()

@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
     PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
       overridden:
         public abstract classifierStorage: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents
-      FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrComponentsStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
         overridden:
@@ -97,14 +97,14 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrComponentsStorage
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-classifierStorage> (): <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponentsStorage'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:public' type=<root>.Fir2IrClassifierStorage origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:private' type=<root>.Fir2IrClassifierStorage origin=null
               receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<get-classifierStorage>' type=<root>.Fir2IrComponentsStorage origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrComponentsStorage, <set-?>:<root>.Fir2IrClassifierStorage) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrComponentsStorage
         VALUE_PARAMETER name:<set-?> index:0 type:<root>.Fir2IrClassifierStorage
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<set-classifierStorage>' type=<root>.Fir2IrComponentsStorage origin=null
             value: GET_VAR '<set-?>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponentsStorage.<set-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
     CONSTRUCTOR visibility:public <> (session:<root>.FirSession) returnType:<root>.Fir2IrComponentsStorage [primary]

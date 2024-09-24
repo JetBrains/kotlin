@@ -43,8 +43,7 @@ internal class IrFieldValidator(
     // TODO: Some backing fields inherit their visibility from their corresponding properties.
     //   We disable validation for such properties until KT-71243 is resolved.
     private val IrField.isExemptFromValidation: Boolean
-        get() = correspondingPropertySymbol?.owner?.isLateinit == true ||
-                correspondingPropertySymbol?.owner?.isConst == true ||
+        get() = correspondingPropertySymbol?.owner?.isConst == true ||
                 hasAnnotation(JVM_FIELD_CLASS_ID)
 
     override fun visitField(declaration: IrField) {
