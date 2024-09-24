@@ -72,12 +72,6 @@ object JsStandardClassIds {
 
         @JvmField
         val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
-
-        @JvmField
-        val JsNoImpl = "noImpl".callableId(BASE_JS_PACKAGE)
-
-        @JvmField
-        val definedExternallyPropertyNames = setOf(JsNoImpl, JsDefinedExternally)
     }
 }
 

@@ -14347,10 +14347,6 @@ final val kotlin.js/kotlin // kotlin.js/kotlin|@kotlin.js.JsClass<0:0>{0§<kotli
     final fun <#A1: kotlin/Any> (kotlin.js/JsClass<#A1>).<get-kotlin>(): kotlin.reflect/KClass<#A1> // kotlin.js/kotlin.<get-kotlin>|<get-kotlin>@kotlin.js.JsClass<0:0>(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
-final val kotlin.js/noImpl // kotlin.js/noImpl|{}noImpl[0]
-    final fun <get-noImpl>(): kotlin/Nothing // kotlin.js/noImpl.<get-noImpl>|<get-noImpl>(){}[0]
-
-// Targets: [js]
 final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
     final fun <get-undefined>(): kotlin/Nothing? // kotlin.js/undefined.<get-undefined>|<get-undefined>(){}[0]
 

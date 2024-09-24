@@ -106,7 +106,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
     }
 
     override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean {
-        return callableId in JsStandardClassIds.Callables.definedExternallyPropertyNames
+        return callableId == JsStandardClassIds.Callables.JsDefinedExternally
     }
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean {

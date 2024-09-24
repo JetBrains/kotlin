@@ -35,8 +35,7 @@ class JsExternalChecker(
     private val allowUnsignedTypes: Boolean
 ) : DeclarationChecker {
     companion object {
-        val DEFINED_EXTERNALLY_PROPERTY_NAMES = JsStandardClassIds.Callables.definedExternallyPropertyNames
-            .map { it.asSingleFqName().toUnsafe() }
+        val DEFINED_EXTERNALLY_PROPERTY_NAME = JsStandardClassIds.Callables.JsDefinedExternally.asSingleFqName().toUnsafe()
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -282,6 +281,6 @@ class JsExternalChecker(
     private fun KtExpression.isDefinedExternallyExpression(bindingContext: BindingContext): Boolean {
         val descriptor = getResolvedCall(bindingContext)?.resultingDescriptor as? PropertyDescriptor ?: return false
         val container = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-        return DEFINED_EXTERNALLY_PROPERTY_NAMES.any { container.fqNameUnsafe == it.parent() && descriptor.name == it.shortName() }
+        return DEFINED_EXTERNALLY_PROPERTY_NAME.let { container.fqNameUnsafe == it.parent() && descriptor.name == it.shortName() }
     }
 }
