@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.incremental.createDirectory
 import java.io.File
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import javax.inject.Inject
 /**
  * When running Gradle in PreAction scripts we sometimes have to create BUILT_PRODUCTS_DIR if build system didn't create it
  */
-abstract class CreateBuildSystemDirectory @Inject constructor(
+@DisableCachingByDefault(because = "This task only copies files")
+internal abstract class CreateBuildSystemDirectory @Inject constructor(
     private val execOperations: ExecOperations,
 ) : DefaultTask() {
 
