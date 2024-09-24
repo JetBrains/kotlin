@@ -22,8 +22,6 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import kotlin.test.assertIs
 
-@FirPipeline
-@Tag("frontend-fir")
 @Tag("cinterop")
 abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTest() {
 
