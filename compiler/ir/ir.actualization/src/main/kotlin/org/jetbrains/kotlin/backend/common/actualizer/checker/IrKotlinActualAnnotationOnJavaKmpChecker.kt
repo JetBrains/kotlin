@@ -58,7 +58,7 @@ private fun checkAnnotationRecursive(
     if (actual is IrClass) {
         for (member in actual.declarations) {
             if (!member.isFakeOverride && (member is IrFunction || member is IrClass || member is IrProperty) &&
-                !member.isInterfaceConstructor(actual) // In Java, annotations are interfaces, and they can't have constructors.
+                !member.isAnnotationConstructor(actual) // In Java, annotations are interfaces, and they can't have constructors.
             ) {
                 checkAnnotationRecursive(member, expectActualMap, diagnosticsReporter, topLevelExpect)
             }
@@ -66,4 +66,4 @@ private fun checkAnnotationRecursive(
     }
 }
 
-private fun IrDeclaration.isInterfaceConstructor(parent: IrClass): Boolean = parent.isAnnotationClass && this is IrConstructor
+private fun IrDeclaration.isAnnotationConstructor(parent: IrClass): Boolean = parent.isAnnotationClass && this is IrConstructor
