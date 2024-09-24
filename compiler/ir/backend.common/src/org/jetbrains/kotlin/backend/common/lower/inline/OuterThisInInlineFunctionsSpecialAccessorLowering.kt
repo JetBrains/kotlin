@@ -121,7 +121,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(
         }
     }
 
-    private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
+    private inner class Transformer(irFile: IrFile) : IrTransformer<TransformerData?>() {
         val generatedOuterThisAccessors = irFile::generatedOuterThisAccessors.getOrSetIfNull(::GeneratedOuterThisAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {

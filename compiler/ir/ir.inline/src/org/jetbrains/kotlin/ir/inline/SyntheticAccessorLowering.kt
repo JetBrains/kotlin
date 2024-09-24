@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -152,7 +152,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
 
     private class TransformerData(val currentInlineFunction: IrFunction)
 
-    private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
+    private inner class Transformer(irFile: IrFile) : IrTransformer<TransformerData?>() {
         val generatedAccessors = irFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {

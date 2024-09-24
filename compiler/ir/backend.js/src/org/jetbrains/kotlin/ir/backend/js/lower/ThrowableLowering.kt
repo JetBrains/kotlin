@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isNullableString
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 
 class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunction: IrSimpleFunctionSymbol) : BodyLoweringPass {
@@ -58,7 +58,7 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             }
         }
 
-    inner class Transformer : IrElementTransformer<IrDeclarationParent> {
+    inner class Transformer : IrTransformer<IrDeclarationParent>() {
         private val anyConstructor = context.irBuiltIns.anyClass.constructors.first()
 
         override fun visitClass(declaration: IrClass, data: IrDeclarationParent) = super.visitClass(declaration, declaration)

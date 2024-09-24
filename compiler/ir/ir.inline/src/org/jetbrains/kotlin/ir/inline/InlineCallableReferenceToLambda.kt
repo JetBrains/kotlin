@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 
 private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
@@ -45,7 +45,7 @@ fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == Lowere
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
     protected val inlineFunctionResolver: InlineFunctionResolver,
-) : FileLoweringPass, IrElementTransformer<IrDeclarationParent?> {
+) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
     }

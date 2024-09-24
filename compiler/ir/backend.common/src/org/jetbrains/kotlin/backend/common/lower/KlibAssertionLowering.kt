@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -47,7 +47,7 @@ abstract class KlibAssertionWrapperLowering(val context: CommonBackendContext) :
         irFile.transformChildren(Transformer(), irFile.symbol)
     }
 
-    private inner class Transformer : IrElementTransformer<IrSymbol> {
+    private inner class Transformer : IrTransformer<IrSymbol>() {
         override fun visitElement(element: IrElement, data: IrSymbol): IrElement {
             return super.visitElement(element, if (element is IrSymbolOwner) element.symbol else data)
         }

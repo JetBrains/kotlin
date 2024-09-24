@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Since JS does not support multiple catch blocks by default we should replace them with similar `when` statement, so
@@ -57,7 +57,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
     private val nothingType = context.irBuiltIns.nothingType
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transform(object : IrElementTransformer<IrDeclarationParent> {
+        irBody.transform(object : IrTransformer<IrDeclarationParent>() {
 
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
                 val parent = (declaration as? IrDeclarationParent) ?: data

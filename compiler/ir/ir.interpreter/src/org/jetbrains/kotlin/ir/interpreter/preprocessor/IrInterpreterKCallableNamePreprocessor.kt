@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 // Note: this class still will not allow us to evaluate things like `A()::a.name + `A()::b.name`.
 // This code will be optimized but not completely turned into "ab" result.
-class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
+class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
         if (!expression.isKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
 

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-interface IrInterpreterPreprocessor: IrElementTransformer<IrInterpreterPreprocessorData> {
+abstract class IrInterpreterPreprocessor : IrTransformer<IrInterpreterPreprocessorData>() {
     fun preprocess(file: IrFile, data: IrInterpreterPreprocessorData): IrFile {
         return file.transform(this, data)
     }
