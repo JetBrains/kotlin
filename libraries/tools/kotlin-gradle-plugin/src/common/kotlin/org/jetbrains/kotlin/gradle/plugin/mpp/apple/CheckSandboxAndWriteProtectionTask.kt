@@ -18,8 +18,7 @@ import java.nio.file.Files
 @DisableCachingByDefault(because = "We are checking only file permissions")
 internal abstract class CheckSandboxAndWriteProtectionTask : DefaultTask(), UsesKotlinToolingDiagnostics {
 
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Input
     abstract val builtProductsDir: Property<File>
 
     @get:Input
