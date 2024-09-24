@@ -6126,13 +6126,6 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun equals-impl0 (JJ)Z
 	public static final fun getAbsoluteValue-UwyO8pc (J)J
 	public static final fun getHoursComponent-impl (J)I
-	public static final synthetic fun getInDays-impl (J)D
-	public static final synthetic fun getInHours-impl (J)D
-	public static final synthetic fun getInMicroseconds-impl (J)D
-	public static final synthetic fun getInMilliseconds-impl (J)D
-	public static final synthetic fun getInMinutes-impl (J)D
-	public static final synthetic fun getInNanoseconds-impl (J)D
-	public static final synthetic fun getInSeconds-impl (J)D
 	public static final fun getInWholeDays-impl (J)J
 	public static final fun getInWholeHours-impl (J)J
 	public static final fun getInWholeMicroseconds-impl (J)J
@@ -6161,8 +6154,6 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun toInt-impl (JLkotlin/time/DurationUnit;)I
 	public static final fun toIsoString-impl (J)Ljava/lang/String;
 	public static final fun toLong-impl (JLkotlin/time/DurationUnit;)J
-	public static final synthetic fun toLongMilliseconds-impl (J)J
-	public static final synthetic fun toLongNanoseconds-impl (J)J
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (J)Ljava/lang/String;
 	public static final fun toString-impl (JLkotlin/time/DurationUnit;I)Ljava/lang/String;
@@ -6173,57 +6164,15 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 
 public final class kotlin/time/Duration$Companion {
 	public final fun convert (DLkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)D
-	public final synthetic fun days-UwyO8pc (D)J
-	public final synthetic fun days-UwyO8pc (I)J
-	public final synthetic fun days-UwyO8pc (J)J
 	public final fun getINFINITE-UwyO8pc ()J
 	public final fun getZERO-UwyO8pc ()J
-	public final synthetic fun hours-UwyO8pc (D)J
-	public final synthetic fun hours-UwyO8pc (I)J
-	public final synthetic fun hours-UwyO8pc (J)J
-	public final synthetic fun microseconds-UwyO8pc (D)J
-	public final synthetic fun microseconds-UwyO8pc (I)J
-	public final synthetic fun microseconds-UwyO8pc (J)J
-	public final synthetic fun milliseconds-UwyO8pc (D)J
-	public final synthetic fun milliseconds-UwyO8pc (I)J
-	public final synthetic fun milliseconds-UwyO8pc (J)J
-	public final synthetic fun minutes-UwyO8pc (D)J
-	public final synthetic fun minutes-UwyO8pc (I)J
-	public final synthetic fun minutes-UwyO8pc (J)J
-	public final synthetic fun nanoseconds-UwyO8pc (D)J
-	public final synthetic fun nanoseconds-UwyO8pc (I)J
-	public final synthetic fun nanoseconds-UwyO8pc (J)J
 	public final fun parse-UwyO8pc (Ljava/lang/String;)J
 	public final fun parseIsoString-UwyO8pc (Ljava/lang/String;)J
 	public final fun parseIsoStringOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
 	public final fun parseOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
-	public final synthetic fun seconds-UwyO8pc (D)J
-	public final synthetic fun seconds-UwyO8pc (I)J
-	public final synthetic fun seconds-UwyO8pc (J)J
 }
 
 public final class kotlin/time/DurationKt {
-	public static final synthetic fun getDays (D)J
-	public static final synthetic fun getDays (I)J
-	public static final synthetic fun getDays (J)J
-	public static final synthetic fun getHours (D)J
-	public static final synthetic fun getHours (I)J
-	public static final synthetic fun getHours (J)J
-	public static final synthetic fun getMicroseconds (D)J
-	public static final synthetic fun getMicroseconds (I)J
-	public static final synthetic fun getMicroseconds (J)J
-	public static final synthetic fun getMilliseconds (D)J
-	public static final synthetic fun getMilliseconds (I)J
-	public static final synthetic fun getMilliseconds (J)J
-	public static final synthetic fun getMinutes (D)J
-	public static final synthetic fun getMinutes (I)J
-	public static final synthetic fun getMinutes (J)J
-	public static final synthetic fun getNanoseconds (D)J
-	public static final synthetic fun getNanoseconds (I)J
-	public static final synthetic fun getNanoseconds (J)J
-	public static final synthetic fun getSeconds (D)J
-	public static final synthetic fun getSeconds (I)J
-	public static final synthetic fun getSeconds (J)J
 	public static final fun toDuration (DLkotlin/time/DurationUnit;)J
 	public static final fun toDuration (ILkotlin/time/DurationUnit;)J
 	public static final fun toDuration (JLkotlin/time/DurationUnit;)J
