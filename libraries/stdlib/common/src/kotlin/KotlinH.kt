@@ -83,14 +83,28 @@ public expect fun Float.toRawBits(): Int
 public expect fun Float.Companion.fromBits(bits: Int): Float
 
 
-// from lazy.kt
-
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * and the default thread-safety mode [LazyThreadSafetyMode.SYNCHRONIZED].
+ * The lock used is both platform- and implementation- specific detail.
+ *
+ * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
+ *
+ * @sample samples.lazy.LazySamples.lazySample
+ */
 public expect fun <T> lazy(initializer: () -> T): Lazy<T>
 
 /**
- * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * and thread-safety [mode].
  *
- * The [mode] parameter is ignored. */
+ * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
+ *
+ * For [LazyThreadSafetyMode.SYNCHRONIZED], the lock used is both platform- and implementation- specific detail.
+ *
+ * @sample samples.lazy.LazySamples.lazySynchronizedSample
+ * @sample samples.lazy.LazySamples.lazySafePublicationSample
+ */
 public expect fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T>
 
 /**

@@ -14,11 +14,12 @@ import kotlin.native.concurrent.*
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
- * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
+ * the returned instance as it may cause accidental deadlock. This behavior might be changed in the future.
+ *
+ * @sample samples.lazy.LazySamples.lazySample
  */
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
-
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -26,9 +27,8 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
- * Note that when the [LazyThreadSafetyMode.SYNCHRONIZED] mode is specified the returned instance uses itself
- * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
+ * @sample samples.lazy.LazySamples.lazySynchronizedSample
+ * @sample samples.lazy.LazySamples.lazySafePublicationSample
  */
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
@@ -45,9 +45,6 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
  * The returned instance uses the specified [lock] object to synchronize on.
- * When the [lock] is not specified the instance uses itself to synchronize on,
- * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
  */
 @Suppress("UNUSED_PARAMETER")
 @Deprecated("Synchronization on Any? object is not supported.", ReplaceWith("lazy(initializer)"))

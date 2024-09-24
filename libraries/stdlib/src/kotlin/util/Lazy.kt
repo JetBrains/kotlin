@@ -14,17 +14,21 @@ import kotlin.reflect.KProperty
  * Represents a value with lazy initialization.
  *
  * To create an instance of [Lazy] use the [lazy] function.
+ *
+ * @sample samples.lazy.LazySamples.lazySample
  */
 public interface Lazy<out T> {
     /**
-     * Gets the lazily initialized value of the current Lazy instance.
-     * Once the value was initialized it must not change during the rest of lifetime of this Lazy instance.
+     * Gets the lazily initialized value of the current `Lazy` instance.
+     * Once the value was initialized it must not change during the rest of lifetime of this `Lazy` instance.
+     *
+     * @sample samples.lazy.LazySamples.lazyExplicitSample
      */
     public val value: T
 
     /**
-     * Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
-     * Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
+     * Returns `true` if a value for this `Lazy` instance has been already initialized, and `false` otherwise.
+     * Once this function has returned `true` it stays `true` for the rest of lifetime of this `Lazy` instance.
      */
     public fun isInitialized(): Boolean
 }
@@ -39,28 +43,41 @@ public fun <T> lazyOf(value: T): Lazy<T> = InitializedLazyImpl(value)
  *
  * This extension allows to use instances of Lazy for property delegation:
  * `val property: String by lazy { initializer }`
+ *
+ * @sample samples.lazy.LazySamples.lazySample
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Lazy<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
 /**
- * Specifies how a [Lazy] instance synchronizes initialization among multiple threads.
+ * Specifies how a [Lazy] instance synchronizes initialization and publication among multiple threads.
+ * On platforms with no notion of synchronization and threads (JS and WASM), all modes are considered equal
+ * to the default implementation.
+ *
+ * @see lazy
  */
 public enum class LazyThreadSafetyMode {
 
     /**
-     * Locks are used to ensure that only a single thread can initialize the [Lazy] instance.
+     * Uses a lock to ensure that only a single thread can initialize a [Lazy] instance,
+     * and ensures that initialized value is visible by all threads.
+     * The lock used is both platform- and implementation- specific detail.
+     *
+     * @sample samples.lazy.LazySamples.lazySynchronizedSample
      */
     SYNCHRONIZED,
 
     /**
-     * Initializer function can be called several times on concurrent access to uninitialized [Lazy] instance value,
-     * but only the first returned value will be used as the value of [Lazy] instance.
+     * Initializer function can be called several times on concurrent access to an uninitialized [Lazy] instance value,
+     * but only one computed value will be used as the value of a [Lazy] instance and will be visible by all threads.
+     *
+     * @sample samples.lazy.LazySamples.lazySafePublicationSample
      */
     PUBLICATION,
 
     /**
-     * No locks are used to synchronize an access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
+     * No locks are used to synchronize access and initialization of a [Lazy] instance value.
+     * If the instance is accessed from multiple threads, its behavior is unspecified.
      *
      * This mode should not be used unless the [Lazy] instance is guaranteed never to be initialized from more than one thread.
      */
