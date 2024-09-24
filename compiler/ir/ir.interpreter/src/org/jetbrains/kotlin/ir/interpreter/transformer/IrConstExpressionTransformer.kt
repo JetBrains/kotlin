@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.createGetField
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,7 +33,7 @@ internal abstract class IrConstExpressionTransformer(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
-) : IrElementTransformer<IrConstExpressionTransformer.Data> {
+) : IrTransformer<IrConstExpressionTransformer.Data>() {
     internal data class Data(val inConstantExpression: Boolean = false)
 
     private val constTransformer = IrConstTransformer(
