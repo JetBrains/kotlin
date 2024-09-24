@@ -220,7 +220,7 @@ library {
       public final fun <@test/AnnoFunctionTypeParameter T#0 /* T */> f(x: test/B<@test/AnnoClassUsageTypeParameter kotlin/Int>): kotlin/Unit
 
       // signature: test/varargWithCustomAndExtensionFunctionTypeAnnotation|-1232918933172190415[0]
-      public final fun varargWithCustomAndExtensionFunctionTypeAnnotation(vararg v: @test/AnnoType kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @kotlin/ExtensionFunctionType @test/AnnoType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
+      public final fun varargWithCustomAndExtensionFunctionTypeAnnotation(vararg v: @kotlin/ExtensionFunctionType @test/AnnoType kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @kotlin/ExtensionFunctionType @test/AnnoType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
 
       // signature: test/varargWithCustomTypeAnnotationOnInt|-8671106892442509905[0]
       public final fun varargWithCustomTypeAnnotationOnInt(vararg v: @test/AnnoType kotlin/Int /* kotlin/IntArray */): kotlin/Unit
@@ -232,7 +232,7 @@ library {
       public final fun varargWithCustomTypeAnnotationOnParam(vararg v: @test/AnnoType test/Param /* kotlin/Array<out @test/AnnoType test/Param> */): kotlin/Unit
 
       // signature: test/varargWithExtensionFunctionTypeAnnotation|1919546537069024950[0]
-      public final fun varargWithExtensionFunctionTypeAnnotation(vararg v: kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
+      public final fun varargWithExtensionFunctionTypeAnnotation(vararg v: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit> /* kotlin/Array<out @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>> */): kotlin/Unit
 
       // signature: test/extProp|-6867325556440293248[0]
       @test/AnnoPropertyExtensionReceiver

@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
-    override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
+    override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? {
+        if (other == null || other === this) return this
+        return CustomAnnotationTypeAttribute((annotations.toSet() + other.annotations.toSet()).toList())
+    }
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 

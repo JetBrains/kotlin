@@ -853,8 +853,12 @@ class FirElementSerializer private constructor(
         }
 
         if (parameter.isVararg) {
-            val varargElementType = parameter.returnTypeRef.coneType.varargElementType()
-                .withAttributes(parameter.returnTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = false))
+            val attributesFromCustomAnnotations =
+                parameter.returnTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = false)
+            val elementType = parameter.returnTypeRef.coneType.varargElementType()
+            val allAttributes = elementType.attributes.union(attributesFromCustomAnnotations)
+            val varargElementType = elementType
+                .withAttributes(allAttributes)
             if (useTypeTable()) {
                 builder.varargElementTypeId = typeId(varargElementType)
             } else {

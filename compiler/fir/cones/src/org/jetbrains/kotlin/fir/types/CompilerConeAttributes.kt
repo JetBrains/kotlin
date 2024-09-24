@@ -60,7 +60,7 @@ object CompilerConeAttributes {
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
         val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
-        override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
+        override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = this
         override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
         override fun add(other: ExtensionFunctionType?): ExtensionFunctionType = this
 
