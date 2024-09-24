@@ -21,11 +21,6 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
     final override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
 
-    abstract val transformerSuperClass: ClassRef<PositionTypeParameterRef>
-
-    override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(transformerSuperClass.withArgs(visitorDataType))
-
     override fun printMethodsForElement(element: Element) {
         printer.run {
             val elementParameterName = element.visitorParameterName

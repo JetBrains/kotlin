@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
-import org.jetbrains.kotlin.ir.generator.Packages.descriptors
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
 import org.jetbrains.kotlin.ir.generator.Packages.symbols
 import org.jetbrains.kotlin.ir.generator.Packages.symbolsImpl
@@ -35,9 +34,12 @@ val anyType = type<Any>()
 val elementBaseType = type(tree, "IrElementBase", TypeKind.Class)
 val statementOriginType = type(exprs, "IrStatementOrigin")
 val elementVisitorType = type(visitors, "IrElementVisitor")
+val irVisitorType = type(visitors, "IrVisitor", TypeKind.Class)
+val irVisitorVoidType = type(visitors, "IrVisitorVoid", TypeKind.Class)
 val elementVisitorVoidType = type(visitors, "IrElementVisitorVoid")
 val elementTransformerType = type(visitors, "IrElementTransformer")
 val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", TypeKind.Class)
+val irTransformerType = type(visitors, "IrTransformer", TypeKind.Class)
 val typeVisitorType = type(visitors, "IrTypeVisitor", TypeKind.Class)
 val typeVisitorVoidType = type(visitors, "IrTypeVisitorVoid", TypeKind.Class)
 val irTypeType = type(types, "IrType")

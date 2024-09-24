@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
+import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
+import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 
 internal fun Element.getTransformExplicitType(): Element {
@@ -16,3 +19,10 @@ internal fun Element.getTransformExplicitType(): Element {
             }
         } ?: this
 }
+
+internal fun ImportCollecting.deprecatedVisitorInterface(newAbstractClass: ClassRef<*>) =
+    """
+    ## DEPRECATED
+    This interface is deprecated and will be removed soon.
+    Please use the [${newAbstractClass.render()}] abstract class instead.
+    """.trimIndent()

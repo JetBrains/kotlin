@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
+import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.utils.withIndent
@@ -22,8 +23,8 @@ internal class TransformerVoidPrinter(
     override val visitorType: ClassRef<*>,
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {
 
-    override val transformerSuperClass: ClassRef<PositionTypeParameterRef>
-        get() = elementTransformerType
+    override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
+        get() = listOf(irTransformerType.withArgs(visitorDataType), elementTransformerType.withArgs(visitorDataType))
 
     // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
     private val Element.isPackageFragment: Boolean

@@ -7,16 +7,8 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
-import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.elementVisitorType
-import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
-import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
-import org.jetbrains.kotlin.ir.generator.irTypeType
+import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -54,7 +46,7 @@ internal open class TypeVisitorPrinter(
     }
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
+        get() = listOf(irVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(resultTypeVariable, dataTypeVariable)
