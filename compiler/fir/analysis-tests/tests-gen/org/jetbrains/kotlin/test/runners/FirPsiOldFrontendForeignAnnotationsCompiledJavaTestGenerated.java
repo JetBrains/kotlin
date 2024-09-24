@@ -687,6 +687,18 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/default.kt");
       }
 
+      @Test
+      @TestMetadata("WhenStrict.kt")
+      public void testWhenStrict() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenStrict.kt");
+      }
+
+      @Test
+      @TestMetadata("WhenWarn.kt")
+      public void testWhenWarn() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenWarn.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode")
       @TestDataPath("$PROJECT_ROOT")

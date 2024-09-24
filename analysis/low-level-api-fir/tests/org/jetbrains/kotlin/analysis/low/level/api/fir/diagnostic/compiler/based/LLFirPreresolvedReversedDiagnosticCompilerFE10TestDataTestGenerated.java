@@ -44223,6 +44223,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("ExhaustivePlatformAnnotated.kt")
+      public void testExhaustivePlatformAnnotated() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustivePlatformAnnotated.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustivePlatformBoolean.kt")
       public void testExhaustivePlatformBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustivePlatformBoolean.kt");
