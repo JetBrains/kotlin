@@ -136,11 +136,6 @@ object KotlinUsages {
             ) {
                 compatible()
             }
-            if (consumerValue?.name == KOTLIN_PROJECT_SHARED_USAGE &&
-                (producerValue?.name == KOTLIN_METADATA || producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
-            ) {
-                compatible()
-            }
         }
     }
 
@@ -200,9 +195,6 @@ object KotlinUsages {
                 // Prefer Kotlin psm metadata, but if there's no such variant then accept the candidate order as for kotlin metadata
                 closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PSM_METADATA) + commonCandidateList)
             }
-//            if (consumerValue?.name == KOTLIN_PROJECT_SHARED_USAGE) {
-//                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PROJECT_SHARED_USAGE) + commonCandidateList)
-//            }
         }
 
         private fun MultipleCandidatesDetails<Usage>.closestMatchToFirstAppropriateCandidate(acceptedProducerValues: List<String>) {
