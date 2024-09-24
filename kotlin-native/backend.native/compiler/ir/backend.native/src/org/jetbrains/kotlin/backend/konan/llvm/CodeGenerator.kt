@@ -326,7 +326,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             val targetName = if (irFunction.isExported())
                 irFunction.computeSymbolName()
             else
-                irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
+                irFunction.computePrivateSymbolName()
             val proto = LlvmFunctionProto(
                     name = "$targetName-trampoline",
                     signature = LlvmFunctionSignature(irFunction, this),

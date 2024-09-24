@@ -9,6 +9,7 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.qualifyInternalName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -138,51 +139,6 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
-    class Namer(val prefix: String) {
-        private val names = mutableMapOf<IrDeclaration, Name>()
-        private val counts = mutableMapOf<FqName, Int>()
-
-        fun getName(parent: FqName, declaration: IrDeclaration): Name {
-            return names.getOrPut(declaration) {
-                val count = counts.getOrDefault(parent, 0) + 1
-                counts[parent] = count
-                Name.identifier(prefix + count)
-            }
-        }
-    }
-
-    private val objectNamer = Namer("object-")
-
-    private fun getLocalName(parent: FqName, declaration: IrDeclaration): Name {
-        if (declaration.isAnonymousObject) {
-            return objectNamer.getName(parent, declaration)
-        }
-
-        return declaration.getNameWithAssert()
-    }
-
-    private fun getFqName(declaration: IrDeclaration): FqName {
-        val parent = declaration.parent
-        val parentFqName = when (parent) {
-            is IrPackageFragment -> parent.packageFqName
-            is IrDeclaration -> getFqName(parent)
-            else -> error(parent)
-        }
-
-        val localName = getLocalName(parentFqName, declaration)
-        return parentFqName.child(localName)
-    }
-
-    /**
-     * Produces the name to be used for non-exported LLVM declarations corresponding to [declaration].
-     *
-     * Note: since these declarations are going to be private, the name is only required not to clash with any
-     * exported declarations.
-     */
-    private fun qualifyInternalName(declaration: IrDeclaration): String {
-        return getFqName(declaration).asString() + "#internal"
-    }
-
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -250,7 +206,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
-        val internalName = qualifyInternalName(declaration)
+        val internalName = declaration.qualifyInternalName()
 
         val fields =
             if (context.config.packFields)
@@ -363,7 +319,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
-        val internalName = qualifyInternalName(irClass)
+        val internalName = irClass.qualifyInternalName()
 
         val isExported = irClass.isExported()
         val classInfoSymbolName = if (isExported) {
@@ -412,7 +368,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             )
         } else {
             // Fields are module-private, so we use internal name:
-            val name = "kvar:" + qualifyInternalName(declaration)
+            val name = "kvar:" + declaration.qualifyInternalName()
             val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())

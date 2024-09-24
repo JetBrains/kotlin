@@ -6,13 +6,13 @@
 class A {
 
     // CHECK-DEBUG: define ptr @"kfun:A#internalInlineMethod(){}kotlin.String"
-    // CHECK-DEBUG: call void @"kfun:A.<no name provided>#<init>(){}"
+    // CHECK-DEBUG: call void @"kfun:A.object-1.<init>#internal"
     internal inline fun internalInlineMethod() = object {
         fun run() = "OK"
     }.run()
 
     // CHECK: define ptr @"kfun:A#publicMethod(){}kotlin.String"
-    // CHECK-COUNT-2: call void @"kfun:A.<no name provided>#<init>(){}"
+    // CHECK-COUNT-2: call void @"kfun:A.object-1.<init>#internal"
     fun publicMethod() = internalInlineMethod() + internalInlineMethod()
 }
 
@@ -20,7 +20,7 @@ class A {
 // FILE: main.kt
 fun box(): String {
     // Test that the local class is extracted and reused in each inline function call site
-    // CHECK-COUNT-2: call void @"kfun:A.<no name provided>#<init>(){}"
+    // CHECK-COUNT-2: call void @"kfun:A.object-1.<init>#internal"
     A().internalInlineMethod().let {
         if (it != "OK") return it
     }

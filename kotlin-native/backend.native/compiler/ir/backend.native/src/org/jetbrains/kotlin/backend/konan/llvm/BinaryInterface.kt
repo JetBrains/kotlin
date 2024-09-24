@@ -16,14 +16,18 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getNameWithAssert
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 
@@ -47,16 +51,18 @@ object KonanBinaryInterface {
         get() {
             require(isExported(this)) { "Asked for symbol name for a private function ${render()}" }
 
-            return funSymbolNameImpl(null)
+            return funSymbolNameImpl()
         }
 
     val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
 
     val IrClass.typeInfoSymbolName: String get() = typeInfoSymbolNameImpl(null)
 
-    fun IrFunction.privateSymbolName(containerName: String?): String = funSymbolNameImpl(containerName)
+    fun IrFunction.privateSymbolName(containerName: String?): String = withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".${qualifyInternalName()}")
+            ?: qualifyInternalName())
 
-    fun IrClass.privateTypeInfoSymbolName(containerName: String?): String = typeInfoSymbolNameImpl(containerName)
+    fun IrClass.privateTypeInfoSymbolName(containerName: String?): String = withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".${qualifyInternalName()}")
+            ?: qualifyInternalName())
 
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
         check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
@@ -68,7 +74,7 @@ object KonanBinaryInterface {
         this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
                 ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
 
-    private fun IrFunction.funSymbolNameImpl(containerName: String?): String {
+    private fun IrFunction.funSymbolNameImpl(): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
                 return it
@@ -80,11 +86,8 @@ object KonanBinaryInterface {
             return name // no wrapping currently required
         }
 
-        val mangle = mangler.run {
-            if (containerName != null) signatureString(compatibleMode = true)
-            else mangleString(compatibleMode = true)
-        }
-        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        val mangle = mangler.run { mangleString(compatibleMode = true) }
+        return withPrefix(MANGLE_FUN_PREFIX, mangle)
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {
@@ -97,6 +100,54 @@ object KonanBinaryInterface {
     private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
         val fqName = fqNameForIrSerialization.toString()
         return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
+    }
+
+
+
+    /**
+     * Produces the name to be used for non-exported LLVM declarations corresponding to [IrDeclaration].
+     *
+     * Note: since these declarations are going to be private, the name is only required not to clash with any
+     * exported declarations.
+     */
+     fun IrDeclaration.qualifyInternalName(): String {
+        return getFqName(this).asString() + "#internal"
+    }
+
+
+    class Namer(val prefix: String) {
+        private val names = mutableMapOf<IrDeclaration, Name>()
+        private val counts = mutableMapOf<FqName, Int>()
+
+        fun getName(parent: FqName, declaration: IrDeclaration): Name {
+            return names.getOrPut(declaration) {
+                val count = counts.getOrDefault(parent, 0) + 1
+                counts[parent] = count
+                Name.identifier(prefix + count)
+            }
+        }
+    }
+
+    private val objectNamer = Namer("object-")
+
+    private fun getLocalName(parent: FqName, declaration: IrDeclaration): Name {
+        if (declaration.isAnonymousObject) {
+            return objectNamer.getName(parent, declaration)
+        }
+
+        return declaration.getNameWithAssert()
+    }
+
+    private fun getFqName(declaration: IrDeclaration): FqName {
+        val parent = declaration.parent
+        val parentFqName = when (parent) {
+            is IrPackageFragment -> parent.packageFqName
+            is IrDeclaration -> getFqName(parent)
+            else -> error(parent)
+        }
+
+        val localName = getLocalName(parentFqName, declaration)
+        return parentFqName.child(localName)
     }
 }
 
@@ -138,7 +189,7 @@ fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.id
 
 fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
-fun IrFunction.computePrivateSymbolName(containerName: String?) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
+fun IrFunction.computePrivateSymbolName(containerName: String? = null) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
 
 fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
