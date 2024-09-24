@@ -41,7 +41,6 @@ object AndroidConst {
     //TODO FqName / ClassId
 
     val VIEW_FQNAME = "android.view.View"
-    val VIEWSTUB_FQNAME = "android.view.ViewStub"
 
     val ACTIVITY_FQNAME = "android.app.Activity"
     val FRAGMENT_FQNAME = "android.app.Fragment"
