@@ -18,6 +18,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -27,8 +29,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
@@ -37,29 +37,22 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KotlinCodeFragmentImportModificationListener
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 
 /**
  * This service is responsible for processing incoming [PsiElement] changes to reflect them on FIR tree.
  *
- * For local changes (in-block modification), this service will do all required work.
+ * For local changes (in-block modification), this service will do all required work
+ * and publish [LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION].
  *
  * In case of non-local changes (out-of-block modification), this service will publish event to
  * [KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
  *
  * @see getNonLocalReanalyzableContainingDeclaration
  * @see KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
+ * @see LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION
  * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
  * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService
  */
@@ -219,8 +212,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 this is KaElementModificationType.ElementRemoved &&
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
-    private fun inBlockModification(declaration: KtAnnotated, ktModule: KaModule) {
-        val resolveSession = ktModule.getFirResolveSession(project)
+    private fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
+        val resolveSession = module.getFirResolveSession(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
             is KtDeclaration -> declaration.resolveToFirSymbol(resolveSession).fir
@@ -230,6 +223,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             )
         }
 
+        // 1. Invalidate FIR
         invalidateAfterInBlockModification(firDeclaration)
         declaration.hasFirBody = false
 
@@ -241,14 +235,16 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             withEntry("session", resolveSession) { it.toString() }
         }
 
-        val fileStructure = moduleSession.moduleComponents
+        // 2. Invalidate caches
+        moduleSession.moduleComponents
             .fileStructureCache
             .getCachedFileStructure(declaration.containingKtFile)
-            ?: return // we do not have a cache for this file
+            ?.invalidateElement(declaration)
 
-        fileStructure.invalidateElement(declaration)
-
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION).onModification(ktModule)
+        // 3. Publish event
+        project.analysisMessageBus
+            .syncPublisher(LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION)
+            .afterModification(declaration, module)
     }
 
     private fun outOfBlockModification(element: PsiElement) {
