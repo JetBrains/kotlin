@@ -18,7 +18,7 @@ template <typename Unit>
 void checkContentsEquality(const char* ascii, const Unit* expected) {
     auto actual = CreatePermanentStringFromCString(ascii);
     auto header = StringHeader::of(actual);
-    EXPECT_THAT(header->encoding(), sizeof(Unit) == 1 ? StringHeader::ENCODING_LATIN1 : StringHeader::ENCODING_UTF16);
+    EXPECT_THAT(header->encoding(), sizeof(Unit) == 1 ? StringEncoding::kLatin1 : StringEncoding::kUTF16);
     size_t size = header->size() / sizeof(Unit);
     EXPECT_THAT(size, std::char_traits<Unit>::length(expected));
     const Unit* data = reinterpret_cast<const Unit*>(header->data());
