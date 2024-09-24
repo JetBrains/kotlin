@@ -5616,6 +5616,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/casts/objectToPrimitiveWithAssertion.kt");
     }
 
+    @TestMetadata("parallelHierarchy.kt")
+    public void testParallelHierarchy() {
+      runTest("compiler/testData/codegen/box/casts/parallelHierarchy.kt");
+    }
+
     @TestMetadata("unitAsAny.kt")
     public void testUnitAsAny() {
       runTest("compiler/testData/codegen/box/casts/unitAsAny.kt");
