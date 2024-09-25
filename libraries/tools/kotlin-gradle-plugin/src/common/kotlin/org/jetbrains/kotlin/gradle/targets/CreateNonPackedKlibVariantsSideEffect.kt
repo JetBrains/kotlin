@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropApiElementsConfigurationName
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
 internal val CreateNonPackedKlibVariantsSideEffect = KotlinTargetSideEffect { target ->
     when (target) {
@@ -27,11 +28,18 @@ internal val CreateNonPackedKlibVariantsSideEffect = KotlinTargetSideEffect { ta
 private fun KotlinJsIrTarget.createJsKlibSecondaryVariants() {
     val apiElements = project.configurations.getByName(apiElementsConfigurationName)
     val secondaryApiVariant = createSecondaryKlibVariant(project, apiElements)
-    secondaryApiVariant.artifact(compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.map { it.klibDirectory.get() })
+    val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
+    secondaryApiVariant.registerKlibArtifact(
+        mainCompilation.compileTaskProvider.map { it.klibDirectory.get() },
+        mainCompilation.compilationName
+    )
 
     val runtimeElements = project.configurations.getByName(runtimeElementsConfigurationName)
     val secondaryRuntimeVariant = createSecondaryKlibVariant(project, runtimeElements)
-    secondaryRuntimeVariant.artifact(compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.map { it.klibDirectory.get() })
+    secondaryRuntimeVariant.registerKlibArtifact(
+        mainCompilation.compileTaskProvider.map { it.klibDirectory.get() },
+        mainCompilation.compilationName
+    )
 }
 
 private fun KotlinNativeTarget.createNativeKlibSecondaryVariants() {
@@ -39,7 +47,10 @@ private fun KotlinNativeTarget.createNativeKlibSecondaryVariants() {
     val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
     // main non-packed artifact
     val secondaryMainVariant = createSecondaryKlibVariant(project, apiElements)
-    secondaryMainVariant.artifact(mainCompilation.compileTaskProvider.map { it.klibDirectory.get() })
+    secondaryMainVariant.registerKlibArtifact(
+        mainCompilation.compileTaskProvider.map { it.klibDirectory.get() },
+        mainCompilation.compilationName
+    )
 
     // cinterop non-packed artifacts
     val cinteropApiElements = project.configurations.getByName(cInteropApiElementsConfigurationName(this))
@@ -47,8 +58,16 @@ private fun KotlinNativeTarget.createNativeKlibSecondaryVariants() {
     mainCompilation.cinterops.configureEach { cinterop ->
         val cInteropTask = project.locateTask<CInteropProcess>(cinterop.interopProcessingTaskName)
             ?: error("${cinterop.interopProcessingTaskName} not found during registration of secondary variants")
-        secondaryMainVariant.artifact(cInteropTask.map { it.klibDirectory.get() })
-        secondaryCinteropVariant.artifact(cInteropTask.map { it.klibDirectory.get() })
+        secondaryMainVariant.registerKlibArtifact(
+            cInteropTask.map { it.klibDirectory.get() },
+            mainCompilation.compilationName,
+            cinterop.classifier
+        )
+        secondaryCinteropVariant.registerKlibArtifact(
+            cInteropTask.map { it.klibDirectory.get() },
+            mainCompilation.compilationName,
+            cinterop.classifier
+        )
     }
 }
 

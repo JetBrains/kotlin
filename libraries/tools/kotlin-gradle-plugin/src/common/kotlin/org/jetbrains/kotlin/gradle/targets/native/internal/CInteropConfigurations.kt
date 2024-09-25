@@ -35,19 +35,14 @@ internal fun createCInteropApiElementsKlibArtifact(
     val project = compilation.project
     val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    val (packTask, packedArtifactFile) = if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+    val packedArtifactFile = if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
         // the default artifact should be compressed
         val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
-        packTask to packTask.map { it.archiveFile.get().asFile }
+        packTask.map { it.archiveFile.get().asFile }
     } else {
-        interopTask to interopTask.flatMap { it.klibFile }
+        interopTask.flatMap { it.klibFile }
     }
-    project.artifacts.add(configuration.name, packedArtifactFile) { artifact ->
-        artifact.extension = "klib"
-        artifact.type = "klib"
-        artifact.classifier = settings.classifier
-        artifact.builtBy(packTask)
-    }
+    configuration.outgoing.registerKlibArtifact(packedArtifactFile, settings.classifier)
 }
 
 internal fun Project.locateOrCreateCInteropDependencyConfiguration(
