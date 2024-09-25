@@ -38,7 +38,10 @@ fun buildProject(
     .builder()
     .apply(projectBuilder)
     .build()
-    .also { disableDownloadingKonanFromMavenCentral(it) }
+    .also {
+        disableDownloadingKonanFromMavenCentral(it)
+        it.enableDependencyVerification(false)
+    }
     .apply(configureProject)
     .let { it as ProjectInternal }
 
