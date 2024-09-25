@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 
 class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
 
@@ -111,8 +111,11 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
          */
         private fun resolveKotlinLibrariesWithProperDefaults(module: TestModule, testServices: TestServices): List<KotlinLibrary> {
             val directDependencies = getTransitivesAndFriendsPaths(module, testServices)
-            val nativeTarget = NativeEnvironmentConfigurator.hostTarget()
-            val nativeDistributionKlibPath = NativeEnvironmentConfigurator.distributionKlibPath().absolutePath
+
+            val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
+
+            val nativeTarget = nativeEnvironmentConfigurator.nativeTarget
+            val nativeDistributionKlibPath = nativeEnvironmentConfigurator.distributionKlibPath().absolutePath
             val logger = testServices.compilerConfigurationProvider.getCompilerConfiguration(module).getLogger(treatWarningsAsErrors = true)
 
             val libraryResolver = KonanLibraryProperResolver(

@@ -16,7 +16,13 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
 
     val WITH_KOTLIN_JVM_ANNOTATIONS by directive("Add kotlin-annotations-jvm.jar to classpath")
 
-    val WITH_PLATFORM_LIBS by directive("Add platform libs to classpath")
+    /** See also [org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.getRuntimePathsForModule] */
+    val WITH_PLATFORM_LIBS by directive(
+        """
+            Add all available Kotlin/Native platform libs for the Kotlin/Native target in effect to the classpath.
+            The Kotlin/Native target is determined by the NativeEnvironmentConfigurator class.
+        """.trimIndent()
+    )
 
     val DISABLE_TYPEALIAS_EXPANSION by directive("Disables automatic expansion of aliased types in type resolution")
 }
