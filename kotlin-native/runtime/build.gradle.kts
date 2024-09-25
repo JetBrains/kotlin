@@ -559,12 +559,12 @@ tasks.named("clean", Delete::class) {
 
 val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
-    description = "Build the Kotlin/Native standard library '$name'"
+    description = "Build the Kotlin/Native standard library"
 
+    // Requires Native distribution with the compiler JARs.
     this.compilerDistribution.set(nativeDistribution)
     dependsOn(":kotlin-native:distCompiler")
 
-    this.konanTarget.set(HostManager.host)
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
     )
@@ -589,6 +589,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common",
+            "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
     ))
 
     val common by sourceSets.creating {
@@ -617,28 +618,6 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
 val nativeStdlib by tasks.registering(Sync::class) {
     from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
-
-    val allPossibleTargets = project.extensions.getByType<PlatformManager>().targetValues.map { it.name }
-    val kotlinVersion = kotlinVersion
-    eachFile {
-        if (name == "manifest") {
-            // Stdlib is a common library that doesn't depend on anything target-specific.
-            // The current compiler can't create a library with manifest file that lists all targets.
-            // So, add all targets to the manifest file.
-            KFile(file.absolutePath).run {
-                val props = loadProperties()
-                props[KLIB_PROPERTY_NATIVE_TARGETS] = allPossibleTargets.joinToString(separator = " ")
-
-                // Check that we didn't get other than the requested version from cache, previous build or due to some other build issue
-                val versionFromManifest = props[KLIB_PROPERTY_COMPILER_VERSION]
-                check(versionFromManifest == kotlinVersion) {
-                    "Manifest file ($this) processing: $versionFromManifest was found while $kotlinVersion was expected"
-                }
-
-                saveProperties(props)
-            }
-        }
-    }
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets

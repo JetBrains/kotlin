@@ -7,47 +7,60 @@ package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import javax.inject.Inject
+
+private abstract class KonanCompileAction : WorkAction<KonanCompileAction.Parameters> {
+    interface Parameters : WorkParameters {
+        val isolatedClassLoaderService: Property<KonanCliRunnerIsolatedClassLoadersService>
+        val compilerClasspath: ConfigurableFileCollection
+        val args: ListProperty<String>
+    }
+
+    override fun execute() = with(parameters) {
+        isolatedClassLoaderService.get().getClassLoader(compilerClasspath.files).runKonanTool(
+                toolName = "konanc",
+                args = args.get(),
+                useArgFile = true,
+        )
+    }
+}
 
 /**
  * A task compiling the target library using Kotlin/Native compiler
  */
 @CacheableTask
-abstract class KonanCompileTask @Inject constructor(
+open class KonanCompileTask @Inject constructor(
         private val objectFactory: ObjectFactory,
+        private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
-    // Changing the compiler version must rebuild the library.
-    @get:Input
-    protected val buildNumber = project.properties["kotlinVersion"] ?: error("kotlinVersion property is not specified in the project")
-
-    @get:Input
-    abstract val konanTarget: Property<KonanTarget>
-
     @get:OutputDirectory
-    abstract val outputDirectory: DirectoryProperty
+    val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     @get:Input
-    abstract val extraOpts: ListProperty<String>
+    val extraOpts: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
-    @get:Internal
+    @get:Internal("Depends only upon the compiler classpath, because compiles into klib only")
     val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
 
-    @get:Input
-    val compilerDistributionPath: Provider<String> = compilerDistribution.map { it.root.asFile.absolutePath }
+    @get:Classpath
+    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -71,8 +84,6 @@ abstract class KonanCompileTask @Inject constructor(
             add(outputDirectory.asFile.get().canonicalPath)
             add("-produce")
             add("library")
-            add("-target")
-            add(konanTarget.get().visibleName)
 
             addAll(extraOpts.get())
             add(sourceSets.joinToString(",", prefix = "-Xfragments=") { it.name })
@@ -84,15 +95,16 @@ abstract class KonanCompileTask @Inject constructor(
                     }
                 }
             }
-            add(fragmentSources.joinToString(",", prefix="-Xfragment-sources="))
+            add(fragmentSources.joinToString(",", prefix = "-Xfragment-sources="))
 
             sourceSets.flatMap { it.files }.mapTo(this) { it.absolutePath }
         }
 
-        isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files).runKonanTool(
-                toolName = "konanc",
-                args = args,
-                useArgFile = true,
-        )
+        val workQueue = workerExecutor.noIsolation()
+        workQueue.submit(KonanCompileAction::class.java) {
+            this.isolatedClassLoaderService.set(this@KonanCompileTask.isolatedClassLoadersService)
+            this.compilerClasspath.from(this@KonanCompileTask.compilerClasspath)
+            this.args.addAll(args)
+        }
     }
 }
