@@ -101,21 +101,15 @@ class PSICallResolver(
         resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        val isBinaryRemOperator = isBinaryRemOperator(context.call)
-
         val kotlinCallKind = resolutionKind.toKotlinCallKind()
         val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, name, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val expectedType = calculateExpectedType(context)
-        var result = kotlinCallResolver.resolveAndCompleteCall(
+        val result = kotlinCallResolver.resolveAndCompleteCall(
             scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates
         )
-
-        if (isBinaryRemOperator && (result.isEmpty() || result.areAllInapplicable())) {
-            result = resolveToDeprecatedMod(name, context, kotlinCallKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
-        }
 
         if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, kotlinCallKind, kotlinCall)) {
             return OverloadResolutionResultsImpl.nameNotFound()
@@ -177,24 +171,6 @@ class PSICallResolver(
         // Mostly, we approximate captured or some other internal types that don't live longer than resolve for a call,
         // so it's quite useless to preserve cache for longer time
         typeApproximator.clearCache()
-    }
-
-    private fun resolveToDeprecatedMod(
-        remOperatorName: Name,
-        context: BasicCallResolutionContext,
-        kotlinCallKind: KotlinCallKind,
-        tracingStrategy: TracingStrategy,
-        scopeTower: ImplicitScopeTower,
-        resolutionCallbacks: KotlinResolutionCallbacksImpl,
-        expectedType: UnwrappedType?
-    ): CallResolutionResult {
-        val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
-        val callWithDeprecatedName = toKotlinCall(
-            context, kotlinCallKind, context.call, deprecatedName, tracingStrategy, isSpecialFunction = false
-        )
-        return kotlinCallResolver.resolveAndCompleteCall(
-            scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
-        )
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =

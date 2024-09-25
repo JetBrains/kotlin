@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -62,7 +59,7 @@ class OperatorCallChecker : CallChecker {
         val isConventionOperator = element is KtOperationReferenceExpression && element.isConventionOperator()
 
         if (isConventionOperator) {
-            checkModConvention(functionDescriptor, context.languageVersionSettings, context.trace, reportOn)
+            checkModConvention(functionDescriptor, context.trace, reportOn)
         }
 
         if (isConventionOperator || element is KtArrayAccessExpression) {
@@ -101,19 +98,19 @@ fun FunctionDescriptor.isOperatorMod(): Boolean {
 }
 
 private fun checkModConvention(
-    descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
-    diagnosticHolder: DiagnosticSink, modifier: PsiElement
+    descriptor: FunctionDescriptor,
+    diagnosticHolder: DiagnosticSink,
+    modifier: PsiElement
 ) {
     if (!descriptor.isOperatorMod()) return
 
-    warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
+    warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier)
 }
 
 private fun warnAboutDeprecatedOrForbiddenMod(
     descriptor: FunctionDescriptor,
     diagnosticHolder: DiagnosticSink,
-    reportOn: PsiElement,
-    languageVersionSettings: LanguageVersionSettings
+    reportOn: PsiElement
 ) {
     val diagnosticFactory = Errors.FORBIDDEN_BINARY_MOD_AS_REM
     val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]

@@ -172,8 +172,6 @@ class NewResolutionOldInference(
             context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, implicitsResolutionFilter, callResolver, candidateInterceptor
         )
 
-        val isBinaryRemOperator = isBinaryRemOperator(context.call)
-
         val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, detailedReceiver, context)
 
         if (context.collectAllCandidates) {
@@ -182,21 +180,6 @@ class NewResolutionOldInference(
 
         var candidates =
             towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference, name = name)
-
-        // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
-        val emptyOrInapplicableCandidates = candidates.isEmpty() ||
-                candidates.all { it.resultingApplicability.isInapplicable }
-        if (isBinaryRemOperator && emptyOrInapplicableCandidates) {
-            val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
-            val processorForDeprecatedName =
-                kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
-            candidates = towerResolver.runResolve(
-                scopeTower,
-                processorForDeprecatedName,
-                useOrder = kind != ResolutionKind.CallableReference,
-                name = deprecatedName
-            )
-        }
 
         candidates = candidateInterceptor.interceptResolvedCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
 

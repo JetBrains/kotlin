@@ -155,15 +155,6 @@ fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
     return false
 }
 
-fun isBinaryRemOperator(call: Call): Boolean {
-    val callElement = call.callElement as? KtBinaryExpression ?: return false
-    val operator = callElement.operationToken
-    if (operator !is KtToken) return false
-
-    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true) ?: return false
-    return name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.keys
-}
-
 fun isConventionCall(call: Call): Boolean {
     if (call is CallTransformer.CallForImplicitInvoke) return true
     val callElement = call.callElement
