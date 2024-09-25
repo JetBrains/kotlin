@@ -43,7 +43,7 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile.parentFile, task.inputFileProperty.get().asFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
