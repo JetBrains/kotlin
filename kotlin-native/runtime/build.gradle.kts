@@ -624,17 +624,17 @@ val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 cacheableTargetNames.forEach { targetName ->
     tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-        notCompatibleWithConfigurationCache("project used in execution time")
-        target = targetName
-        originalKlib.fileProvider(nativeStdlib.map { it.destinationDir })
-        klibUniqName = "stdlib"
-        cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
-
         val dist = nativeDistribution
+
+        // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
         this.compilerDistribution.set(dist)
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
-        // stdlib cache links in runtime modules from the K/N distribution.
-        inputs.dir(dist.map { it.runtime(targetName) })
+        inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
+
+        this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
+        this.target.set(targetName)
+        // This path is used in `:kotlin-native:${targetName}StdlibCache`
+        this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC/$KOTLIN_NATIVE_STDLIB_NAME-cache"))
     }
 }
 

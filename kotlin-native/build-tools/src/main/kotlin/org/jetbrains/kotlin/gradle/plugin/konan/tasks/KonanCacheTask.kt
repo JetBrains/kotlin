@@ -6,96 +6,96 @@
 package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
-import java.io.File
-import java.util.*
 import javax.inject.Inject
 
-enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
-    STATIC(CompilerOutputKind.STATIC_CACHE),
-    DYNAMIC(CompilerOutputKind.DYNAMIC_CACHE)
+private abstract class KonanCacheAction : WorkAction<KonanCacheAction.Parameters> {
+    interface Parameters : WorkParameters {
+        val isolatedClassLoaderService: Property<KonanCliRunnerIsolatedClassLoadersService>
+        val compilerClasspath: ConfigurableFileCollection
+        val args: ListProperty<String>
+    }
+
+    override fun execute() = with(parameters) {
+        isolatedClassLoaderService.get().getClassLoader(compilerClasspath.files).runKonanTool(
+                toolName = "konanc",
+                args = args.get(),
+                useArgFile = true,
+        )
+    }
 }
 
-abstract class KonanCacheTask @Inject constructor(
+@CacheableTask
+open class KonanCacheTask @Inject constructor(
         objectFactory: ObjectFactory,
+        private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
     @get:InputDirectory
-    abstract val originalKlib: DirectoryProperty
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val klib: DirectoryProperty = objectFactory.directoryProperty()
 
     @get:Input
-    lateinit var klibUniqName: String
-
-    @get:Input
-    lateinit var cacheRoot: String
-
-    @get:Input
-    lateinit var target: String
-
-    @get:Internal
-    // TODO: Reuse NativeCacheKind from Big Kotlin plugin when it is available.
-    val cacheDirectory: File
-        get() = File("$cacheRoot/$target-g$cacheKind")
+    val target: Property<String> = objectFactory.property(String::class.java)
 
     @get:OutputDirectory
-    val cacheFile: File
-        get() = cacheDirectory.resolve(if (makePerFileCache) "${klibUniqName}-per-file-cache" else "${klibUniqName}-cache")
+    val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
-    @get:Input
-    var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
-
-    @get:Input
-    var makePerFileCache: Boolean = false
-
-    @get:Internal
+    @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
     val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
 
-    @get:Input
-    /** Path to a compiler distribution that is used to build this cache. */
-    val compilerDistributionPath: Provider<File> = compilerDistribution.map { it.root.asFile }
+    @get:Classpath
+    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
 
-    @get:Input
-    var cachedLibraries: Map<File, File> = emptyMap()
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val codegenLibs = compilerDistribution.map { it.nativeLibs }
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val konanProperties = compilerDistribution.map { it.konanProperties }
 
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
 
     @TaskAction
     fun compile() {
-        // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
-        cacheFile.prepareAsOutput()
+        outputDirectory.get().asFile.prepareAsOutput()
 
-        val konanHome = compilerDistributionPath.get().absolutePath
-        val additionalCacheFlags = PlatformManager(konanHome).let {
-            it.targetByName(target).let(it::loader).additionalCacheFlags
+        val args = buildList {
+            add("-g")
+            add("-target")
+            add(target.get())
+            add("-produce")
+            add("static_cache")
+            add("-Xadd-cache=${klib.get().asFile.absolutePath}")
+            add("-Xcache-directory=${outputDirectory.get().asFile.parentFile.absolutePath}")
+            PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
+                addAll(platform(targetByName(target.get())).additionalCacheFlags)
+            }
         }
-        require(originalKlib.isPresent)
-        val args = mutableListOf(
-            "-g",
-            "-target", target,
-            "-produce", cacheKind.outputKind.name.lowercase(Locale.getDefault()),
-            "-Xadd-cache=${originalKlib.asFile.get().absolutePath}",
-            "-Xcache-directory=${cacheDirectory.absolutePath}"
-        )
-        if (makePerFileCache)
-            args += "-Xmake-per-file-cache"
-        args += additionalCacheFlags
-        args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-
-        isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files).runKonanTool(
-                toolName = "konanc",
-                args = args,
-                useArgFile = true,
-        )
+        val workQueue = workerExecutor.noIsolation()
+        workQueue.submit(KonanCacheAction::class.java) {
+            this.isolatedClassLoaderService.set(this@KonanCacheTask.isolatedClassLoadersService)
+            this.compilerClasspath.from(this@KonanCacheTask.compilerClasspath)
+            this.args.addAll(args)
+        }
     }
 }
