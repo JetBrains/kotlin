@@ -448,16 +448,16 @@ abstract class KgpTestJvmArgs @Inject constructor(
     abstract val mavenRepoLocal: Property<String>
 
     @get:Nested
-    val jdk8Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_1_8)
+    val jdk8Launcher: Provider<JavaLauncher> = javaLauncherFor(JDK_1_8)
 
     @get:Nested
-    val jdk11Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_11_0)
+    val jdk11Launcher: Provider<JavaLauncher> = javaLauncherFor(JDK_11_0)
 
     @get:Nested
-    val jdk17Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_17_0)
+    val jdk17Launcher: Provider<JavaLauncher> = javaLauncherFor(JDK_17_0)
 
     @get:Nested
-    val jdk21Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_21_0)
+    val jdk21Launcher: Provider<JavaLauncher> = javaLauncherFor(JDK_21_0)
 
     @get:InputDirectory
     @get:PathSensitive(RELATIVE)
@@ -477,10 +477,10 @@ abstract class KgpTestJvmArgs @Inject constructor(
 
         // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.
         // Names should follow "jdk\\d+Home" regex where number is a major JDK version.
-        sysProp("jdk8Home", jdk8Provider.getInstallationPath())
-        sysProp("jdk11Home", jdk11Provider.getInstallationPath())
-        sysProp("jdk17Home", jdk17Provider.getInstallationPath())
-        sysProp("jdk21Home", jdk21Provider.getInstallationPath())
+        sysProp("jdk8Home", jdk8Launcher.getInstallationPath())
+        sysProp("jdk11Home", jdk11Launcher.getInstallationPath())
+        sysProp("jdk17Home", jdk17Launcher.getInstallationPath())
+        sysProp("jdk21Home", jdk21Launcher.getInstallationPath())
 
         sysProp("compileTestKotlinOutputDir", compileTestKotlinOutputDir.get().asFile.absoluteFile.invariantSeparatorsPath)
     }
