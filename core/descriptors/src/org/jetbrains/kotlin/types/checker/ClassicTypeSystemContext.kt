@@ -185,9 +185,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     @OptIn(ObsoleteTypeKind::class)
     override fun KotlinTypeMarker.isNotNullTypeParameter(): Boolean = this is NotNullTypeParameter
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
-        require(this is SimpleType, this::errorMessage)
-        return this.isMarkedNullable
+    override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
+        return this is SimpleType && this.isMarkedNullable
     }
 
     override fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker {

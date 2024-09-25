@@ -405,9 +405,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker
     fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker
 
-    fun SimpleTypeMarker.isMarkedNullable(): Boolean
-    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
-        this is SimpleTypeMarker && isMarkedNullable()
+    fun KotlinTypeMarker.isMarkedNullable(): Boolean
 
     fun RigidTypeMarker.withNullability(nullable: Boolean): RigidTypeMarker
     fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker

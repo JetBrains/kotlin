@@ -133,7 +133,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this as? ConeDefinitelyNotNullType
     }
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
+    override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
         require(this is ConeKotlinType)
         return fullyExpandedType(session).isMarkedNullable
     }
