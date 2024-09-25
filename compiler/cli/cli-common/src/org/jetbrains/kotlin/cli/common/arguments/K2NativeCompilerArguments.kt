@@ -283,7 +283,8 @@ The default value is 1."""
     var purgeUserLibs: Boolean = false
 
     @Argument(
-        value = "-Xwrite-dependencies-of-produced-klib-to=",
+        value = "-Xwrite-dependencies-of-produced-klib-to",
+        valueDescription = "<path>",
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path"
     )
     var writeDependenciesOfProducedKlibTo: String? = null
