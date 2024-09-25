@@ -938,6 +938,10 @@ project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
 project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
 
+project(':plugins:fir-plugin-prototype').projectDir = "$rootDir/plugins/plugin-sandbox" as File
+project(':plugins:fir-plugin-prototype:plugin-annotations').projectDir = "$rootDir/plugins/plugin-sandbox/plugin-annotations" as File
+project(':plugins:fir-plugin-prototype:fir-plugin-ic-test').projectDir = "$rootDir/plugins/plugin-sandbox/fir-plugin-ic-test" as File
+
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
 if (buildProperties.isKotlinNativeEnabled) {

@@ -79,13 +79,13 @@
         <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
         <option value="$PROJECT_DIR$/plugins/allopen/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData" />
-        <option value="$PROJECT_DIR$/plugins/fir-plugin-prototype/testData" />
         <option value="$PROJECT_DIR$/plugins/imports-dumper/testData" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-base/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-cli/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/noarg/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData" />
         <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/lombok/testData" />
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />

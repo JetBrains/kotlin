@@ -384,7 +384,7 @@
 /plugins/assign-plugin/ "Kotlin Frontend"
 /plugins/atomicfu/ "Kotlin Libraries"
 /plugins/compose/ Compose
-/plugins/fir-plugin-prototype/ "Kotlin Frontend"
+/plugins/plugin-sandbox/ "Kotlin Frontend"
 /plugins/imports-dumper/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt3/ "Kotlin JVM"
