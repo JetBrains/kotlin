@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCommonChecker
@@ -30,17 +34,22 @@ fun IrElement.transformConst(
     suppressExceptions: Boolean = false,
 ): IrElement {
     val checker = IrInterpreterCommonChecker()
-    val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(
-        interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+
+    val constEvaluationContext = IrConstEvaluationContext(
+        interpreter,
+        irFile,
+        mode,
+        checker,
+        evaluatedConstTracker,
+        inlineConstTracker,
+        onWarning,
+        onError,
+        suppressExceptions,
     )
 
-    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
-        interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    )
-
-    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
-        interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-    )
+    val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(constEvaluationContext)
+    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(constEvaluationContext)
+    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(constEvaluationContext)
 
     return this.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data()).apply {
         irConstDeclarationAnnotationTransformer.visitAnnotations(this)
@@ -59,9 +68,11 @@ fun IrFile.runConstOptimizations(
 
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker,
-        { _, _, _ -> }, { _, _, _ -> },
-        suppressExceptions
+        IrConstEvaluationContext(
+            interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker,
+            { _, _, _ -> }, { _, _, _ -> },
+            suppressExceptions
+        )
     )
     preprocessedFile.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data())
 }

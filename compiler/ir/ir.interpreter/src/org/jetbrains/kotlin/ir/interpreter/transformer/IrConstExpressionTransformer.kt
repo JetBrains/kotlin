@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.createGetField
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -24,29 +22,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal abstract class IrConstExpressionTransformer(
-    interpreter: IrInterpreter,
-    irFile: IrFile,
-    mode: EvaluationMode,
-    checker: IrInterpreterChecker,
-    evaluatedConstTracker: EvaluatedConstTracker?,
-    inlineConstTracker: InlineConstTracker?,
-    onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    suppressExceptions: Boolean,
+    private val context: IrConstEvaluationContext,
 ) : IrTransformer<IrConstExpressionTransformer.Data>() {
     internal data class Data(val inConstantExpression: Boolean = false)
-
-    private val context = IrConstEvaluationContext(
-        interpreter,
-        irFile,
-        mode,
-        checker,
-        evaluatedConstTracker,
-        inlineConstTracker,
-        onWarning,
-        onError,
-        suppressExceptions
-    )
 
     override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
         // It is useless to visit default accessor, and if we do that, we could render excess information for `IrGetField`

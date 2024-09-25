@@ -25,19 +25,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
  * This transformer will visit all expressions and will evaluate only those that are necessary.
  * By "necessary" we mean expressions that are used in `const val`, inside annotations and js() call arguments.
  */
-internal class IrConstOnlyNecessaryTransformer(
-    interpreter: IrInterpreter,
-    irFile: IrFile,
-    mode: EvaluationMode,
-    checker: IrInterpreterChecker,
-    evaluatedConstTracker: EvaluatedConstTracker?,
-    inlineConstTracker: InlineConstTracker?,
-    onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    suppressExceptions: Boolean,
-) : IrConstExpressionTransformer(
-    interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-) {
+internal class IrConstOnlyNecessaryTransformer(context: IrConstEvaluationContext) : IrConstExpressionTransformer(context) {
     private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
