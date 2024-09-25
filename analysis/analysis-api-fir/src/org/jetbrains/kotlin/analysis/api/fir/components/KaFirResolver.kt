@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
+import org.jetbrains.kotlin.analysis.utils.collections.ConcurrentMapBasedCache
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -173,9 +174,9 @@ internal class KaFirResolver(
      * without the containing session being invalidated is
      * [in-block modification][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService].
      */
-    private val cache: CachedValue<ConcurrentHashMap<KtElement, Any>> by lazy {
+    private val cache: CachedValue<ConcurrentMapBasedCache<KtElement, KaCallInfo?>> by lazy {
         softCachedValue(project, LLFirInBlockModificationTracker.getInstance(project)) {
-            ConcurrentHashMap<KtElement, Any>()
+            ConcurrentMapBasedCache<KtElement, KaCallInfo?>(ConcurrentHashMap())
         }
     }
 
@@ -197,8 +198,8 @@ internal class KaFirResolver(
                 }
             )
             check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-            ktCallInfos.singleOrNull() ?: NULL_VALUE
-        } as? KaCallInfo
+            ktCallInfos.singleOrNull()
+        }
     }
 
     override fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
@@ -1558,5 +1559,3 @@ internal class KaFirResolver(
             ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token))
     }
 }
-
-private val NULL_VALUE: Any = Any()
