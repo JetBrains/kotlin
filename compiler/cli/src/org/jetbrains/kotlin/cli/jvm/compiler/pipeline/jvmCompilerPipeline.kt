@@ -177,8 +177,6 @@ fun generateCodeFromIr(
         input.configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY]
     ).onIndependentPartCompilationEnd(
         createOutputFilesFlushingCallbackIfPossible(input.configuration)
-    ).isIrBackend(
-        true
     ).jvmBackendClassResolver(
         FirJvmBackendClassResolver(input.components)
     ).diagnosticReporter(

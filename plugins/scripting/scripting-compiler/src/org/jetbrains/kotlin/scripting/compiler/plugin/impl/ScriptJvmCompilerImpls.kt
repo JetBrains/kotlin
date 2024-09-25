@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -32,8 +31,8 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -285,11 +284,7 @@ private fun generate(
         KotlinCodegenFacade.compileCorrectFiles(
             sourceFiles,
             it,
-            if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
-                JvmIrCodegenFactory(
-                    kotlinCompilerConfiguration,
-                    kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
-                ) else DefaultCodegenFactory
+            JvmIrCodegenFactory(kotlinCompilerConfiguration, kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG)),
         )
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticsReporter,

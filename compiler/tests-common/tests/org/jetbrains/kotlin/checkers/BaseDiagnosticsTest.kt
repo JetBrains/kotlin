@@ -249,13 +249,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 ktFile,
                 markDynamicCalls,
                 dynamicCallDescriptors,
-                DiagnosticsRenderingConfiguration(
-                    platform = null,
-                    withNewInference,
-                    languageVersionSettings,
-                    // When using JVM IR, binding context is empty at the end of compilation, so debug info markers can't be computed.
-                    environment.configuration.getBoolean(JVMConfigurationKeys.IR),
-                ),
+                DiagnosticsRenderingConfiguration(platform = null, withNewInference, languageVersionSettings),
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,
                 this.diagnosedRangesToDiagnosticNames

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.platform.isCommon
@@ -29,8 +28,8 @@ class ClassicDiagnosticReporter(private val testServices: TestServices) {
             platform = null,
             withNewInference = module.languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
             languageVersionSettings = module.languageVersionSettings,
-            skipDebugInfoDiagnostics = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-                .getBoolean(JVMConfigurationKeys.IR)
+            // When using JVM IR, binding context is empty at the end of compilation, so debug info markers can't be computed.
+            skipDebugInfoDiagnostics = true,
         )
     }
 

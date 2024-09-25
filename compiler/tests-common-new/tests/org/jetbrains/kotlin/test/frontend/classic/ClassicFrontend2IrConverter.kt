@@ -67,8 +67,7 @@ class ClassicFrontend2IrConverter(
         val state = GenerationState.Builder(
             project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             configuration
-        ).isIrBackend(true)
-            .ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
+        ).ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
             .diagnosticReporter(DiagnosticReporterFactory.createReporter(messageCollector))
             .build()
 

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -78,12 +77,7 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isNotEmpty()) {
-            registerNoArgComponents(
-                this,
-                annotations,
-                configuration.getBoolean(JVMConfigurationKeys.IR),
-                configuration.getBoolean(INVOKE_INITIALIZERS),
-            )
+            registerNoArgComponents(this, annotations, configuration.getBoolean(INVOKE_INITIALIZERS))
         }
     }
 
@@ -91,10 +85,9 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
         fun registerNoArgComponents(
             extensionStorage: ExtensionStorage,
             annotations: List<String>,
-            useIr: Boolean,
             invokeInitializers: Boolean
-        ) = with(extensionStorage) {
-            StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr))
+        ): Unit = with(extensionStorage) {
+            StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr = true))
             FirExtensionRegistrarAdapter.registerExtension(FirNoArgExtensionRegistrar(annotations))
             IrGenerationExtension.registerExtension(NoArgIrGenerationExtension(annotations, invokeInitializers))
         }
