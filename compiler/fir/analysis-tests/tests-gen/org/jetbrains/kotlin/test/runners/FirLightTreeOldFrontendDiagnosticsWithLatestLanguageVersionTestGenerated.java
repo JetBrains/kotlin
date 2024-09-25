@@ -30399,6 +30399,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("redeclarationInsideObjectExpression.kt")
+      public void testRedeclarationInsideObjectExpression() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/redeclarationInsideObjectExpression.kt");
+      }
+
+      @Test
       @TestMetadata("RedeclarationMainInFile.kt")
       public void testRedeclarationMainInFile() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInFile.kt");
