@@ -20,7 +20,7 @@ class KotlinNativeToolchainIT : KGPBaseTest() {
     fun checkCommonizeNativeDistributionWithPlatform(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-66750-with-subproject", gradleVersion) {
             val buildOptions = defaultBuildOptions.disableIsolatedProjects()
-            build(":commonizeNativeDistribution", buildOptions = buildOptions)
+            build("commonizeNativeDistribution", buildOptions = buildOptions)
         }
     }
 

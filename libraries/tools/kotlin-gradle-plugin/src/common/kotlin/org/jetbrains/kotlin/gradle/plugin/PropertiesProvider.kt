@@ -546,7 +546,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() {
             val mode = enumProperty<KmpIsolatedProjectsSupport>(
                 PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
-                KmpIsolatedProjectsSupport.AUTO
+                KmpIsolatedProjectsSupport.ENABLE
             )
 
             return when (mode) {

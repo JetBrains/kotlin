@@ -35,12 +35,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
         project("differentClassloaders", gradleVersion) {
             setupDifferentClassloadersProject()
 
-            buildAndFail("publish", "-PmppProjectDependency=true") {
+            build("publish", "-PmppProjectDependency=true") {
                 assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
             }
 
             // check that the message is also printed on subsequent builds
-            buildAndFail("publish", "-PmppProjectDependency=true") {
+            build("publish", "-PmppProjectDependency=true") {
                 assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
             }
         }

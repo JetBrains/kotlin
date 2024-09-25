@@ -10,6 +10,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
@@ -437,8 +438,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to setOf("com.example.thirdparty" to "third-party-lib"),
-                    "linuxAndJsMain" to emptySet(),
+                    "jvmAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib", "com.example.thirdparty" to "third-party-lib"),
+                    "linuxAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib"),
                     "commonMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib")
                 )
             )
@@ -490,10 +491,17 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
 
+
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to emptySet(),
-                    "linuxAndJsMain" to emptySet(),
+                    "jvmAndJsMain" to setOf(
+                        "org.jetbrains.kotlin" to "kotlin-stdlib",
+                        "com.example.foo" to "my-lib-foo"
+                    ),
+                    "linuxAndJsMain" to setOf(
+                        "org.jetbrains.kotlin" to "kotlin-stdlib",
+                        "com.example.foo" to "my-lib-foo"
+                    ),
                     "commonMain" to setOf(
                         "org.jetbrains.kotlin" to "kotlin-stdlib",
                         "com.example.foo" to "my-lib-foo"

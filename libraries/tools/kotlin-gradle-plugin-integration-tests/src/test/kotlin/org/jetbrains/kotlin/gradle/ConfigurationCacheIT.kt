@@ -97,11 +97,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val (commonizeNativeDistributionTask, cleanNativeDistributionCommonizationTask) = if (kmpIsolatedProjectsSupportEnabled) {
-                ":lib:commonizeNativeDistribution" to ":lib:cleanNativeDistributionCommonization"
-            } else {
-                ":commonizeNativeDistribution" to ":cleanNativeDistributionCommonization"
-            }
+            val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
+            val cleanNativeDistributionCommonizationTask = ":lib:cleanNativeDistributionCommonization"
 
             build(":lib:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(commonizeNativeDistributionTask)
