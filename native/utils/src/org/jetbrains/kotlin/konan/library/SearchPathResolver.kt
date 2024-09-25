@@ -26,7 +26,7 @@ fun defaultResolver(
     logger = logger
 )
 
-internal class KonanLibraryProperResolver(
+class KonanLibraryProperResolver(
     directLibs: List<String>,
     override val target: KonanTarget,
     distributionKlib: String?,

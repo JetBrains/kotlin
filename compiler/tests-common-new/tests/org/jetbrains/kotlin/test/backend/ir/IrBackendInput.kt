@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -134,6 +135,12 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
      * Note: For the classic frontend both [firMangler] and [metadataSerializer] are null.
      * The latter is because the Native backend uses
      * [org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer] which serializes a whole module.
+     *
+     * @property usedLibrariesForManifest - The list of dependency libraries that should be written to the produced KLIB
+     *   manifest's `depends=` property. This list includes:
+     *   - direct dependencies (ones that were explicitly specified by `// MODULE` test directives in test data)
+     *   - and "default" dependencies (anything that is implicitly added by the Kotlin/Native compiler, ex: stdlib & platform libraries),
+     *     BUT only if such libraries were actually used during the compilation.
      */
     class NativeBackendInput(
         override val irModuleFragment: IrModuleFragment,
@@ -142,5 +149,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>?,
+        val usedLibrariesForManifest: List<KotlinLibrary>,
     ) : IrBackendInput()
 }

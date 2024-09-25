@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,6 +20,9 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         private val nativeHome
             get() = System.getProperty("kotlin.internal.native.test.nativeHome")
                 ?: error("No nativeHome provided. Are you sure the test are executed within :native:native.tests?")
+
+        fun distributionKlibPath(): File = File(nativeHome, "klib")
+        fun hostTarget(): KonanTarget = HostManager.host
 
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             val result = mutableListOf<String>()

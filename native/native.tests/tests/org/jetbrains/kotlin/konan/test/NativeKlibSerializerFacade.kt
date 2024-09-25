@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.*
@@ -53,11 +52,7 @@ abstract class AbstractNativeKlibSerializerFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
-        val dependencies = resolveLibraries(configuration, dependencyPaths, knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER))
-            .map { it.library }
-
-        val serializerOutput = serialize(configuration, dependencies, module, inputArtifact)
+        val serializerOutput = serialize(configuration, inputArtifact.usedLibrariesForManifest, module, inputArtifact)
 
         val outputArtifact = BinaryArtifacts.KLib(getKlibArtifactFile(testServices, module.name), inputArtifact.diagnosticReporter)
 
@@ -80,21 +75,20 @@ abstract class AbstractNativeKlibSerializerFacade(
             manifestProperties = null,
         )
 
-        updateTestConfiguration(configuration, dependencyPaths, module, outputArtifact)
+        updateTestConfiguration(configuration, module, outputArtifact)
 
         return outputArtifact
     }
 
     protected abstract fun serialize(
         configuration: CompilerConfiguration,
-        dependencies: List<KotlinLibrary>,
+        usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeBackendInput,
     ): SerializerOutput<KotlinLibrary>
 
     protected open fun updateTestConfiguration(
         configuration: CompilerConfiguration,
-        dependencyPaths: List<String>,
         module: TestModule,
         outputArtifact: BinaryArtifacts.KLib
     ) = Unit
@@ -109,7 +103,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
 
     override fun serialize(
         configuration: CompilerConfiguration,
-        dependencies: List<KotlinLibrary>,
+        usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeBackendInput,
     ): SerializerOutput<KotlinLibrary> {
@@ -140,17 +134,18 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         return SerializerOutput(
             serializedMetadata,
             serializerIr,
-            neededLibraries = dependencies,
+            neededLibraries = usedLibrariesForManifest,
         )
     }
 
     override fun updateTestConfiguration(
         configuration: CompilerConfiguration,
-        dependencyPaths: List<String>,
         module: TestModule,
         outputArtifact: BinaryArtifacts.KLib
     ) {
         val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
+
+        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
 
         val library = resolveLibraries(
             configuration, dependencyPaths + outputArtifact.outputFile.path,
@@ -177,7 +172,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
 class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNativeKlibSerializerFacade(testServices) {
     override fun serialize(
         configuration: CompilerConfiguration,
-        dependencies: List<KotlinLibrary>,
+        usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeBackendInput,
     ) = serializeModuleIntoKlib(
@@ -187,7 +182,7 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         inputArtifact.diagnosticReporter,
         CompatibilityMode.CURRENT,
         cleanFiles = emptyList(),
-        dependencies,
+        usedLibrariesForManifest,
         createModuleSerializer = {
                 irDiagnosticReporter,
                 irBuiltIns,
