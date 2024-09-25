@@ -17,25 +17,24 @@ interface GradleBuildScriptInjection {
 private const val marker = "// MARKER: GradleBuildScriptInjections Enabled"
 
 fun GradleProject.enableBuildScriptInjectionsIfNecessary() {
-    val injectionClasses = System.getProperty("buildGradleKtsInjectionsClasspath")
-        ?: error("Missing required system property 'buildGradleKtsInjectionsClasspath'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
+    val compileTestKotlinOutputDir = System.getProperty("compileTestKotlinOutputDir")
+        ?: error("Missing required system property 'compileTestKotlinOutputDir'")
 
     if (buildGradle.exists()) {
         if (buildGradle.readText().contains(marker)) return
         buildGradle.modify {
-            it.insertBlockToBuildScriptAfterImports("""
-            $marker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                dependencies {
-                    classpath(project.files('$escapedInjectionClasses'))
+            it.insertBlockToBuildScriptAfterImports(
+                """
+                $marker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    dependencies {
+                        classpath(project.files('$compileTestKotlinOutputDir'))
+                    }
                 }
-            }
-            
-        """.trimIndent())
+
+                """.trimIndent()
+            )
         }
         return
     }
@@ -44,17 +43,19 @@ fun GradleProject.enableBuildScriptInjectionsIfNecessary() {
         if (buildGradleKts.readText().contains(marker)) return
 
         buildGradleKts.modify {
-            it.insertBlockToBuildScriptAfterPluginsAndImports("""
-            $marker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                val files = project.files("$escapedInjectionClasses")
-                dependencies {
-                    classpath(files)
+            it.insertBlockToBuildScriptAfterPluginsAndImports(
+                """
+                $marker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    val files = project.files("$compileTestKotlinOutputDir")
+                    dependencies {
+                        classpath(files)
+                    }
                 }
-            }
 
-            """.trimIndent())
+                """.trimIndent()
+            )
         }
         return
     }
@@ -74,7 +75,7 @@ annotation class BuildGradleKtsInjectionScope
 
 @BuildGradleKtsInjectionScope
 class GradleBuildScriptInjectionContext(
-    val project: Project
+    val project: Project,
 ) {
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
     val dependencies get() = project.dependencies

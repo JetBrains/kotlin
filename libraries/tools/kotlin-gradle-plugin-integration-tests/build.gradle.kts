@@ -1,7 +1,8 @@
+import JdkMajorVersion.*
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
 
@@ -23,7 +24,8 @@ kotlin {
     }
 }
 
-val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
+val kotlinGradlePluginTest: Provider<SourceSetOutput> =
+    project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
     testImplementation(project(":kotlin-gradle-plugin")) {
@@ -118,10 +120,10 @@ dependencies {
     testCompileOnly(libs.intellij.asm)
 }
 
-val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
-    ?: project.rootDir
-        .resolve(".kotlin")
-        .resolve("konan-for-gradle-tests").absolutePath
+val konanDataDir: Provider<Directory> =
+    layout.projectDirectory
+        .dir(providers.systemProperty("konanDataDirForIntegrationTests"))
+        .orElse(rootProject.layout.projectDirectory.dir(".kotlin/konan-for-gradle-tests"))
 
 tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
@@ -148,57 +150,99 @@ val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
 val prepareNativeBundleForGradleIT by tasks.registering {
     description = "This task adds dependency on :kotlin-native:install"
 
-    if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
-        // Build full Kotlin Native bundle
-        dependsOn(":kotlin-native:install")
-    }
+    val isKotlinNativeEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled
+    onlyIf("Kotlin Native is enabled") { isKotlinNativeEnabled }
+
+    val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    onlyIf("not running on TeamCity") { !isTeamcityBuild }
+
+    val useKotlinNativeLocalDistForTests = project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+    onlyIf("useKotlinNativeLocalDistributionForTests is enabled") { useKotlinNativeLocalDistForTests }
+
+    // Build full Kotlin Native bundle
+    dependsOn(":kotlin-native:install")
 }
 
 val createProvisionedOkFiles by tasks.registering {
-
     description = "This task creates `provisioned.ok` file for each preconfigured k/n native bundle." +
             "Kotlin/Native bundle can be prepared in two ways:" +
             "`prepareNativeBundleForGradleIT` task for local environment and `Compiler Dist: full bundle` build for CI environment."
 
     mustRunAfter(prepareNativeBundleForGradleIT)
 
-    val konanDistributions = File(konanDataDir)
+    val konanDataDir = konanDataDir
+    outputs.dir(konanDataDir).withPropertyName("konanDataDir")
 
     doLast {
-        konanDistributions
+        konanDataDir.get().asFile
             .walkTopDown().maxDepth(1)
-            .filter { file -> file != konanDistributions }
+            .filter { file -> file != konanDataDir }
             .filter { file -> file.isDirectory }
-            .toSet()
             .forEach {
                 File(it, "provisioned.ok").createNewFile()
             }
     }
 }
 
+abstract class KgpNativeTestJvmArgs : CommandLineArgumentProvider {
+
+    @get:Input
+    abstract val kotlinNativeFromMasterEnabled: Property<Boolean>
+
+    @get:Input
+    abstract val isTeamcityBuild: Property<Boolean>
+
+    @get:Input
+    @get:Optional
+    abstract val kotlinNativeVersion: Property<String>
+
+    @get:InputDirectory
+    @get:Optional
+    @get:PathSensitive(RELATIVE)
+    abstract val konanDataDir: DirectoryProperty
+
+    @get:InputDirectory
+    @get:Optional
+    @get:PathSensitive(RELATIVE)
+    abstract val konanDataDirForIntegrationTests: DirectoryProperty
+
+    @get:Input
+    @get:Optional
+    abstract val kotlinNativeVersionForGradleIT: Property<String>
+
+    override fun asArguments(): Iterable<String> = buildList {
+        fun sysProp(name: String, value: String) {
+            add("-D$name=$value")
+        }
+
+        if (kotlinNativeFromMasterEnabled.get() && kotlinNativeVersion.isPresent) {
+            sysProp("kotlinNativeVersion", kotlinNativeVersion.get())
+            sysProp("konanDataDirForIntegrationTests", konanDataDir.get().asFile.absoluteFile.invariantSeparatorsPath)
+        }
+
+        if (isTeamcityBuild.get()) {
+            kotlinNativeVersionForGradleIT.orNull?.let { sysProp("kotlinNativeVersion", it) }
+            sysProp("konanDataDirForIntegrationTests", konanDataDir.get().asFile.absoluteFile.invariantSeparatorsPath)
+        }
+    }
+}
+
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
+    val konanDataDir = konanDataDir
     val kotlinNativeFromMasterEnabled =
         project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
-
-    //add native bundle dependencies for local test run
-    if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(prepareNativeBundleForGradleIT)
-    }
-
-    // Providing necessary properties for running tests with k/n built from master on the local environment
     val defaultSnapshotVersion = project.kotlinBuildProperties.defaultSnapshotVersion
-    if (kotlinNativeFromMasterEnabled && defaultSnapshotVersion != null) {
-        systemProperty("kotlinNativeVersion", defaultSnapshotVersion)
-        systemProperty("konanDataDirForIntegrationTests", konanDataDir)
-    }
 
-    // Providing necessary properties for running tests with k/n built from master on the TeamCity
-    if (project.kotlinBuildProperties.isTeamcityBuild) {
-        System.getProperty("kotlinNativeVersionForGradleIT")?.let {
-            systemProperty("kotlinNativeVersion", it)
-        }
-        systemProperty("konanDataDirForIntegrationTests", konanDataDir)
-    }
+    jvmArgumentProviders.add(objects.newInstance(KgpNativeTestJvmArgs::class).apply {
+        this.kotlinNativeFromMasterEnabled = kotlinNativeFromMasterEnabled
+
+        // Providing necessary properties for running tests with k/n built from master on the local environment
+        this.kotlinNativeVersion = defaultSnapshotVersion
+        this.konanDataDir = konanDataDir
+
+        // Providing necessary properties for running tests with k/n built from master on the TeamCity
+        this.kotlinNativeVersionForGradleIT = providers.systemProperty("kotlinNativeVersionForGradleIT")
+    })
     dependsOn(createProvisionedOkFiles)
 }
 
@@ -231,36 +275,41 @@ val gradleVersions = listOf(
     "8.10",
 )
 
-if (project.kotlinBuildProperties.isTeamcityBuild) {
-    val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
-    val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
-    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
+val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
+val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
-    junitTags.forEach { junitTag ->
-        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
-        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
-            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
-                group = gradleVersionTaskGroup
-                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
-                maxParallelForks = maxParallelTestForks
+junitTags.forEach { junitTag ->
+    val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
 
-                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-                if (junitTag in requiresKotlinNative) {
-                    applyKotlinNativeFromCurrentBranchIfNeeded()
-                }
+    val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+        tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+            group = gradleVersionTaskGroup
+            description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+            maxParallelForks = maxParallelTestForks
 
-                useJUnitPlatform {
-                    includeTags(junitTag)
-                    excludeTags(*(junitTags - junitTag).toTypedArray())
-                }
+            enabled = project.kotlinBuildProperties.isTeamcityBuild
+
+            inputs.property("gradleVersion", gradleVersion)
+            systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+            systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+            if (junitTag in requiresKotlinNative) {
+                applyKotlinNativeFromCurrentBranchIfNeeded()
+            }
+
+            useJUnitPlatform {
+                includeTags(junitTag)
+                excludeTags.addAll(junitTags - junitTag)
             }
         }
+    }
 
-        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
-            group = gradleVersionTaskGroup
-            dependsOn(tasksByGradleVersion)
-        }
+    tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+        group = gradleVersionTaskGroup
+        dependsOn(tasksByGradleVersion)
+
+        enabled = project.kotlinBuildProperties.isTeamcityBuild
     }
 }
 
@@ -361,7 +410,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
     }
 }
 
-tasks.named<Task>("check") {
+tasks.check {
     dependsOn(
         jvmTestsTask,
         jsTestsTask,
@@ -374,13 +423,86 @@ tasks.named<Task>("check") {
     )
 }
 
+abstract class KgpTestJvmArgs @Inject constructor(
+    private val javaToolchainService: JavaToolchainService,
+) : CommandLineArgumentProvider {
+
+    @get:Input
+    abstract val kotlinVersion: Property<String>
+
+    @get:Input
+    abstract val runnerGradleVersion: Property<String>
+
+    @get:Input
+    abstract val composeSnapshotVersion: Property<String>
+
+    @get:Input
+    abstract val composeSnapshotId: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val installCocoapods: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val mavenRepoLocal: Property<String>
+
+    @get:Nested
+    val jdk8Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_1_8)
+
+    @get:Nested
+    val jdk11Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_11_0)
+
+    @get:Nested
+    val jdk17Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_17_0)
+
+    @get:Nested
+    val jdk21Provider: Provider<JavaLauncher> = javaLauncherFor(JDK_21_0)
+
+    @get:InputDirectory
+    @get:PathSensitive(RELATIVE)
+    abstract val compileTestKotlinOutputDir: DirectoryProperty
+
+    override fun asArguments(): Iterable<String> = buildList {
+        fun sysProp(name: String, value: String) {
+            add("-D$name=$value")
+        }
+
+        sysProp("kotlinVersion", kotlinVersion.get())
+        sysProp("runnerGradleVersion", runnerGradleVersion.get())
+        sysProp("composeSnapshotVersion", composeSnapshotVersion.get())
+        sysProp("composeSnapshotId", composeSnapshotId.get())
+        installCocoapods.orNull?.let { sysProp("installCocoapods", it) }
+        mavenRepoLocal.orNull?.let { sysProp("maven.repo.local", it) }
+
+        // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.
+        // Names should follow "jdk\\d+Home" regex where number is a major JDK version.
+        sysProp("jdk8Home", jdk8Provider.getInstallationPath())
+        sysProp("jdk11Home", jdk11Provider.getInstallationPath())
+        sysProp("jdk17Home", jdk17Provider.getInstallationPath())
+        sysProp("jdk21Home", jdk21Provider.getInstallationPath())
+
+        sysProp("compileTestKotlinOutputDir", compileTestKotlinOutputDir.get().asFile.absoluteFile.invariantSeparatorsPath)
+    }
+
+    private fun javaLauncherFor(version: JdkMajorVersion): Provider<JavaLauncher> =
+        javaToolchainService.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(version.majorVersion))
+        }
+
+    companion object {
+        private fun Provider<JavaLauncher>.getInstallationPath(): String =
+            get().metadata.installationPath.asFile.absoluteFile.invariantSeparatorsPath
+    }
+}
+
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
 
     val noTestProperty = project.providers.gradleProperty("noTest")
-    onlyIf { !noTestProperty.isPresent }
+    onlyIf("tests are not disabled by 'noTest' property") { !noTestProperty.isPresent }
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
@@ -391,46 +513,28 @@ tasks.withType<Test>().configureEach {
     dependsOn(":kotlin-dom-api-compat:install")
     dependsOn(cleanUserHomeKonanDir)
 
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
-    systemProperty("runnerGradleVersion", gradle.gradleVersion)
-    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
-    systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
-
-    val installCocoapods = project.findProperty("installCocoapods") as String?
-    if (installCocoapods != null) {
-        systemProperty("installCocoapods", installCocoapods)
-    }
-
-    // Gradle 8.10 requires running on at least JDK 17
-    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)).disallowChanges()
-
-    val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
-    val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
-    val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
-    val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
-
-    val compileTestDestination = kotlin.target
+    val testCompileOutputDir = kotlin.target
         .compilations[KotlinCompilation.TEST_COMPILATION_NAME]
-        .compileTaskProvider
-        .flatMap { task ->
+        .compileTaskProvider.flatMap { task ->
             (task as KotlinJvmCompile).destinationDirectory
         }
-    doFirst {
-        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
-    }
 
-    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
-    // names should follow "jdk\\d+Home" regex where number is a major JDK version
-    doFirst {
-        systemProperty("jdk8Home", jdk8Provider.get())
-        systemProperty("jdk11Home", jdk11Provider.get())
-        systemProperty("jdk17Home", jdk17Provider.get())
-        systemProperty("jdk21Home", jdk21Provider.get())
-        if (mavenLocalRepo != null) {
-            systemProperty("maven.repo.local", mavenLocalRepo)
+    dependsOn(tasks.compileTestKotlin)
+
+    jvmArgumentProviders.add(
+        objects.newInstance<KgpTestJvmArgs>().apply {
+            this.kotlinVersion = provider { rootProject.extra["kotlinVersion"] as String }
+            this.runnerGradleVersion = gradle.gradleVersion
+            this.composeSnapshotVersion = composeRuntimeSnapshot.versions.snapshot.version
+            this.composeSnapshotId = composeRuntimeSnapshot.versions.snapshot.id
+            this.installCocoapods = provider { project.findProperty("installCocoapods") as String? }
+            this.mavenRepoLocal = project.providers.systemProperty("maven.repo.local")
+            this.compileTestKotlinOutputDir = testCompileOutputDir
         }
-    }
+    )
+
+    // Gradle 8.10 requires running on at least JDK 17
+    javaLauncher.value(project.getToolchainLauncherFor(JDK_17_0)).disallowChanges()
 
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
