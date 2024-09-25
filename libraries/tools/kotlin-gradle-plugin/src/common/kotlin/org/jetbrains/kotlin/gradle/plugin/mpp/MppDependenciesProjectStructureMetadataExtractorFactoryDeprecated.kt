@@ -37,7 +37,7 @@ private constructor(
         metadataArtifact: ResolvedArtifactResult,
         dependency: ResolvedDependencyResult,
         diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
-        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
+        resolvedPsmConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner
 

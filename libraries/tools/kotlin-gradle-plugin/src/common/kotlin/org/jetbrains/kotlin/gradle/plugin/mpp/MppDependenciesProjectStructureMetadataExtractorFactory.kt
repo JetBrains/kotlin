@@ -28,7 +28,7 @@ internal interface IMppDependenciesProjectStructureMetadataExtractorFactory {
         metadataArtifact: ResolvedArtifactResult,
         dependency: ResolvedDependencyResult,
         diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
-        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
+        resolvedPsmConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor?
 }
 
@@ -40,82 +40,45 @@ private constructor(
         metadataArtifact: ResolvedArtifactResult,
         dependency: ResolvedDependencyResult,
         diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
-        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
+        resolvedPsmConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor? {
         val moduleId = metadataArtifact.variant.owner
 
-        return if (moduleId is ProjectComponentIdentifier) {
-            if (moduleId in currentBuild) {
-                val projectStructureMetadataFileForCurrentModuleId =
-                    getProjectStructureMetadataFileForCurrentModuleId(resolvedMetadataConfiguration, moduleId)
-                        ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
+        val psmFile = findPsmFileOrNull(resolvedPsmConfiguration, moduleId)
 
-                ProjectMppDependencyProjectStructureMetadataExtractor(
-                    projectPath = moduleId.projectPath,
-                    projectStructureMetadataFile = projectStructureMetadataFileForCurrentModuleId
-                )
-            } else {
-
-                if (isCompositeProjectContainsExtractedPsm(metadataArtifact)) {
-                    /*
-                    For MPP projects starting from 2.1.0, we have consumable/resolvable configurations to get PSM
-                    Such an approach prevents project-isolation violations.
-                    */
-                    getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(resolvedMetadataConfiguration, moduleId)
-                } else {
-                    diagnosticsCollector.report(
-                        KotlinToolingDiagnostics.ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion(
-                            dependency = dependency.requested.toString(),
-                            includedProjectPath = moduleId.buildTreePathCompat
-                        ),
-                        reportOnce = true,
-                        key = dependency.requested.toString()
-                    )
-                    return null
-                }
-            }
-        } else {
-            if (isCompositeProjectContainsExtractedPsm(metadataArtifact)) {
-                getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(resolvedMetadataConfiguration, moduleId)
-            } else {
-                JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
-            }
-        }
-    }
-
-    private fun isCompositeProjectContainsExtractedPsm(metadataArtifact: ResolvedArtifactResult): Boolean {
-        // For some reason, all attributes in variant hierarchy sometimes have value type String,
-        // that is why just call .getAttribute(Usage.USAGE_ATTRIBUTE) will always return null.
-        // So we need at first to find the attribute with Usage.USAGE_ATTRIBUTE name and only after it gets its value.
-        val usageAttribute = metadataArtifact.variant
-            .attributes
-            .keySet()
-            .singleOrNull { attribute -> attribute.name == Usage.USAGE_ATTRIBUTE.name }
-
-        if (null == usageAttribute) {
-            return false
+        // Dependency was resolved to Included Build of old Kotlin
+        if (psmFile == null && moduleId is ProjectComponentIdentifier && moduleId !in currentBuild) {
+            diagnosticsCollector.report(
+                KotlinToolingDiagnostics.ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion(
+                    dependency = dependency.requested.toString(),
+                    includedProjectPath = moduleId.buildTreePathCompat
+                ),
+                reportOnce = true,
+                key = dependency.requested.toString()
+            )
+            return null
         }
 
-        return metadataArtifact.variant.attributes.getAttribute(usageAttribute).toString() in listOf(
-            KotlinUsages.KOTLIN_PSM_METADATA,
-        )
-    }
+        //  Dependency was resolved to local project
+        if (psmFile == null && moduleId is ProjectComponentIdentifier && moduleId in currentBuild) {
+            error("Project structure metadata not found for project '${moduleId.projectPath}'")
+        }
 
-    private fun getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(
-        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
-        moduleId: ComponentIdentifier,
-    ): ProjectMppDependencyProjectStructureMetadataExtractor {
-        val projectStructureMetadataFileForCurrentModuleId =
-            getProjectStructureMetadataFileForCurrentModuleId(resolvedMetadataConfiguration, moduleId)
+        /** If, for some reason, [org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataTransformAction]
+         * didn't work, Fallback to JAR */
+        if (psmFile == null) {
+            JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
+        }
+
         return ProjectMppDependencyProjectStructureMetadataExtractor(
-            projectStructureMetadataFile = projectStructureMetadataFileForCurrentModuleId
+            projectStructureMetadataFile = psmFile
         )
     }
 
-    private fun getProjectStructureMetadataFileForCurrentModuleId(
-        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
+    private fun findPsmFileOrNull(
+        resolvedPsmConfiguration: LazyResolvedConfiguration?,
         moduleId: ComponentIdentifier?,
-    ) = resolvedMetadataConfiguration?.resolvedArtifacts
+    ) = resolvedPsmConfiguration?.resolvedArtifacts
         ?.filter { it.id.componentIdentifier == moduleId }
         ?.map { it.file }
         ?.singleOrNull()
