@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -50,7 +50,7 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
     protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>
 
-    protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary>
+    protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary>
     protected abstract val klibFactories: KlibMetadataFactories
 
     final override val additionalServices: List<ServiceRegistrationData>
@@ -82,8 +82,12 @@ abstract class AbstractFir2IrResultsConverter(
 
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 
-        val libraries = resolveLibraries(module, compilerConfiguration)
-        val (dependencies, builtIns) = loadResolvedLibraries(libraries, compilerConfiguration.languageVersionSettings, testServices)
+        val libraries: List<KotlinLibrary> = resolveLibraries(module, compilerConfiguration)
+        val (dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?) = loadModuleDescriptors(
+            libraries,
+            compilerConfiguration.languageVersionSettings,
+            testServices
+        )
 
         val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(compilerConfiguration, diagnosticReporter)
 
@@ -127,21 +131,21 @@ abstract class AbstractFir2IrResultsConverter(
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput
 
-    private fun loadResolvedLibraries(
-        resolvedLibraries: List<KotlinResolvedLibrary>,
+    private fun loadModuleDescriptors(
+        libraries: List<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
         testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        return resolvedLibraries.map { resolvedLibrary ->
-            testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryFile.absolutePath) {
+        return libraries.map { library ->
+            testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
                 // TODO: check safety of the approach of creating a separate storage manager per library
                 val storageManager = LockBasedStorageManager("ModulesStructure")
 
                 val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                    resolvedLibrary.library,
+                    library,
                     languageVersionSettings,
                     storageManager,
                     builtInsModule,
@@ -151,10 +155,10 @@ abstract class AbstractFir2IrResultsConverter(
                 dependencies += moduleDescriptor
                 moduleDescriptor.setDependencies(ArrayList(dependencies))
 
-                Pair(moduleDescriptor, resolvedLibrary.library)
-            }.also {
-                val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
-                if (isBuiltIns) builtInsModule = it.builtIns
+                Pair(moduleDescriptor, library)
+            }.also { moduleDescriptor ->
+                val isBuiltIns = library.unresolvedDependencies.isEmpty()
+                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
             }
         } to builtInsModule
     }

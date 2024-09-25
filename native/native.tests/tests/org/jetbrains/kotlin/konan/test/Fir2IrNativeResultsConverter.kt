@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.AbstractFir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -42,12 +42,12 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> =
         { emptyList() }
 
-    override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
+    override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
         return resolveLibraries(
             compilerConfiguration,
             getAllNativeDependenciesPaths(module, testServices),
             knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-        )
+        ).map { it.library }
     }
 
     override val klibFactories: KlibMetadataFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
