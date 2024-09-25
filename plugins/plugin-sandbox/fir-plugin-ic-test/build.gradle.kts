@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    testApi(project(":plugins:fir-plugin-prototype"))
+    testApi(project(":plugins:plugin-sandbox"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit.jupiter.api)
@@ -47,8 +47,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
     workingDir = rootDir
     useJUnitPlatform()
-    dependsOn(":plugins:fir-plugin-prototype:jar")
-    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:distAnnotations")
+    dependsOn(":plugins:plugin-sandbox:jar")
+    dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
 }
 
 testsJar()

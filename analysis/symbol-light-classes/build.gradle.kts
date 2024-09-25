@@ -36,7 +36,7 @@ sourceSets {
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
-    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:distAnnotations")
+    dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
     workingDir = rootDir
     useJUnitPlatform()
 }

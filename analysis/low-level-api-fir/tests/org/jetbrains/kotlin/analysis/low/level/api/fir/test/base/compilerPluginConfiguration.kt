@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 
 private object CompilerPluginsDirectives : SimpleDirectivesContainer() {
     val WITH_FIR_TEST_COMPILER_PLUGIN by directive(
-        description = "Configure test compiler plugin from :plugins:fir-plugin-prototype module",
+        description = "Configure test compiler plugin from :plugins:plugin-sandbox module",
         applicability = DirectiveApplicability.Global
     )
 }

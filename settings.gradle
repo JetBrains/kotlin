@@ -214,9 +214,9 @@ include ":plugins:plugins-interactions-testing"
 
 include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
-        ":plugins:fir-plugin-prototype",
-        ":plugins:fir-plugin-prototype:plugin-annotations",
-        ":plugins:fir-plugin-prototype:fir-plugin-ic-test",
+        ":plugins:plugin-sandbox",
+        ":plugins:plugin-sandbox:plugin-annotations",
+        ":plugins:plugin-sandbox:fir-plugin-ic-test",
         ":kotlin-metadata",
         ":kotlin-metadata-jvm",
         ":kotlinx-metadata-klib",
@@ -937,10 +937,6 @@ project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripti
 project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting/scripting-ide-common" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
 project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
-
-project(':plugins:fir-plugin-prototype').projectDir = "$rootDir/plugins/plugin-sandbox" as File
-project(':plugins:fir-plugin-prototype:plugin-annotations').projectDir = "$rootDir/plugins/plugin-sandbox/plugin-annotations" as File
-project(':plugins:fir-plugin-prototype:fir-plugin-ic-test').projectDir = "$rootDir/plugins/plugin-sandbox/fir-plugin-ic-test" as File
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")

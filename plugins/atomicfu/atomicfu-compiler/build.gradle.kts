@@ -88,7 +88,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
-    testApi(project(":plugins:fir-plugin-prototype"))
+    testApi(project(":plugins:plugin-sandbox"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
 

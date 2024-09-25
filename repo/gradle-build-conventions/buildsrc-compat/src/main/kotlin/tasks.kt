@@ -326,8 +326,8 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 
     dependencies {
-        firPluginJvmAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
-        firPluginJsAnnotations(project(":plugins:fir-plugin-prototype:plugin-annotations")) { isTransitive = false }
+        firPluginJvmAnnotations(project(":plugins:plugin-sandbox:plugin-annotations")) { isTransitive = false }
+        firPluginJsAnnotations(project(":plugins:plugin-sandbox:plugin-annotations")) { isTransitive = false }
     }
 
     testTask.configure {
