@@ -48,8 +48,7 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker(MppCheckerKind.Comm
         val replacement = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[declaration.name] ?: return
 
         val diagnostic = if (
-            declaration.symbol.callableId.packageName.isSubpackageOf(StandardClassIds.BASE_KOTLIN_PACKAGE) ||
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod)
+            declaration.symbol.callableId.packageName.isSubpackageOf(StandardClassIds.BASE_KOTLIN_PACKAGE)
         ) {
             FirErrors.DEPRECATED_BINARY_MOD
         } else {

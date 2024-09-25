@@ -54,9 +54,7 @@ object OperatorModifierChecker {
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values) {
-                val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor) &&
-                    languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod)
-                )
+                val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor))
                     Errors.FORBIDDEN_BINARY_MOD
                 else
                     Errors.DEPRECATED_BINARY_MOD

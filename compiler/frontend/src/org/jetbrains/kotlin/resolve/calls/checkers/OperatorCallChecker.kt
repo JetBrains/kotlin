@@ -115,11 +115,7 @@ private fun warnAboutDeprecatedOrForbiddenMod(
     reportOn: PsiElement,
     languageVersionSettings: LanguageVersionSettings
 ) {
-    val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod))
-        Errors.FORBIDDEN_BINARY_MOD_AS_REM
-    else
-        Errors.DEPRECATED_BINARY_MOD_AS_REM
-
+    val diagnosticFactory = Errors.FORBIDDEN_BINARY_MOD_AS_REM
     val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
     diagnosticHolder.report(diagnosticFactory.on(reportOn, descriptor, newNameConvention!!.asString()))
 }
