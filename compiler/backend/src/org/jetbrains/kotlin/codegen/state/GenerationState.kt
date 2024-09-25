@@ -120,10 +120,6 @@ class GenerationState private constructor(
         fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
             apply { jvmBackendClassResolver = v }
 
-        var isIrBackend: Boolean = configuration.getBoolean(JVMConfigurationKeys.IR)
-        fun isIrBackend(v: Boolean) =
-            apply { isIrBackend = v }
-
         var ignoreErrors: Boolean = false
         fun ignoreErrors(v: Boolean): Builder =
             apply { ignoreErrors = v }
@@ -146,7 +142,7 @@ class GenerationState private constructor(
                 project, builderFactory, module, bindingContext, configuration,
                 generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
-                jvmBackendClassResolver, isIrBackend, ignoreErrors,
+                jvmBackendClassResolver, isIrBackend = true, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
                 isIncrementalCompilation
             ).also {

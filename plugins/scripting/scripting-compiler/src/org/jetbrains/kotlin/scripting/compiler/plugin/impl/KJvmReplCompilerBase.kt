@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -134,8 +132,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val isIr = context.environment.configuration.getBoolean(JVMConfigurationKeys.IR)
-
                 val codegenDiagnosticsCollector = SimpleDiagnosticsCollector { message, severity ->
                     messageCollector.report(severity, message)
                 }
@@ -148,11 +144,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     compilationState.environment.configuration
                 ).diagnosticReporter(codegenDiagnosticsCollector)
 
-                val generationState = if (isIr) {
-                    generateWithBackendIr(compilationState, sourceFiles, genStateBuilder)
-                } else {
-                    generateWithOldBackend(snippetKtFile, sourceFiles, genStateBuilder)
-                }
+                val generationState = generateWithBackendIr(compilationState, sourceFiles, genStateBuilder)
 
                 if (codegenDiagnosticsCollector.hasErrors) {
                     val scriptDiagnostics = codegenDiagnosticsCollector.scriptDiagnostics(snippet)
@@ -183,21 +175,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 }
             }
         }.last()
-
-    private fun generateWithOldBackend(
-        snippetKtFile: KtFile,
-        sourceFiles: List<KtFile>,
-        prebuiltState: GenerationState.Builder,
-    ): GenerationState {
-        val generationState = prebuiltState.build().also { generationState ->
-            generationState.scriptSpecific.earlierScriptsForReplInterpreter = state.history.map { it.item }
-            generationState.beforeCompile()
-            generationState.oldBEInitTrace(sourceFiles)
-        }
-        KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
-
-        return generationState
-    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun generateWithBackendIr(

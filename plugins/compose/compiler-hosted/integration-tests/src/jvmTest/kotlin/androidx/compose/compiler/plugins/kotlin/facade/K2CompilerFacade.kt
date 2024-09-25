@@ -224,8 +224,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             irModuleFragment.descriptor,
             NoScopeRecordCliBindingTrace(project).bindingContext,
             configuration
-        ).isIrBackend(
-            true
         ).jvmBackendClassResolver(
             FirJvmBackendClassResolver(components)
         ).build()

@@ -110,8 +110,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
             fir2IrResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, compilerConfiguration
-        ).isIrBackend(
-            true
         ).jvmBackendClassResolver(
             FirJvmBackendClassResolver(fir2IrResult.components)
         ).diagnosticReporter(

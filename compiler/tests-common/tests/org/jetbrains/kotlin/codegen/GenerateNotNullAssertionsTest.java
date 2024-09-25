@@ -42,7 +42,6 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, disableCallAssertions);
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, disableParamAssertions);
-        configuration.put(JVMConfigurationKeys.IR, getBackend().isIR());
 
         myEnvironment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

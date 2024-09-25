@@ -106,7 +106,6 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
         ): KotlinCompilerFacade {
             val configuration = CompilerConfiguration().apply {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
-                put(JVMConfigurationKeys.IR, true)
                 put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
                 put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)

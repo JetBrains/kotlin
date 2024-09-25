@@ -76,9 +76,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
             CompilerConfigurationKey.create("friend module paths");
 
-    public static final CompilerConfigurationKey<Boolean> IR =
-            CompilerConfigurationKey.create("IR");
-
     public static final CompilerConfigurationKey<Boolean> USE_PSI_CLASS_FILES_READING =
             CompilerConfigurationKey.create("use a slower (PSI-based) class files reading implementation");
 

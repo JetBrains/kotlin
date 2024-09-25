@@ -105,7 +105,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             analysisResult.bindingContext,
             analysisResult.files,
             environment.configuration
-        ).isIrBackend(true).codegenFactory(codegenFactory).build()
+        ).codegenFactory(codegenFactory).build()
 
         state.beforeCompile()
 

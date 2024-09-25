@@ -7,15 +7,11 @@ package org.jetbrains.kotlin.kotlinp.jvm.test
 
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
-import kotlin.metadata.jvm.KotlinClassMetadata
-import kotlin.metadata.jvm.KotlinModuleMetadata
-import kotlin.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
@@ -27,6 +23,9 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 import kotlin.test.fail
 
 private const val IGNORE_K1_DIRECTIVE = "// IGNORE K1"
@@ -111,7 +110,6 @@ private fun compileAndPrintAllFiles(
 private fun compile(file: File, disposable: Disposable, tmpdir: File, useK2: Boolean, forEachOutputFile: (File) -> Unit) {
     val content = file.readText()
     val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-    configuration.put(JVMConfigurationKeys.IR, true)
     configuration.put(CommonConfigurationKeys.USE_FIR, useK2)
     AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
     val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
