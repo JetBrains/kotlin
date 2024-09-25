@@ -1402,25 +1402,6 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object UnsupportedTargetShortcutError : ToolingDiagnosticFactory(ERROR) {
-        operator fun invoke(shortcutName: String, explicitTargets: String, trace: Throwable) = build(throwable = trace) {
-            title("'$shortcutName' Target Shortcut Deprecated and Unsupported")
-                .description {
-                    """
-                    The $shortcutName target shortcut is deprecated and no longer supported.
-                    Please explicitly declare your targets using:
-                    
-                    """.trimIndent() + explicitTargets
-                }
-                .solution {
-                    "Please remove the $shortcutName target shortcut and explicitly declare your targets."
-                }
-                .documentationLink(URI("https://kotl.in/6ixl2f")) { url ->
-                    "For a complete list of supported targets, refer to the documentation: $url"
-                }
-        }
-    }
-
     object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(componentName: String, publicationName: String) = build(throwable = Throwable()) {
             title("Android Publication '$publicationName' Misconfigured for Variant '$componentName'")

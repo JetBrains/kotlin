@@ -40,7 +40,6 @@ constructor(
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
-    KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
     KotlinPublishingDsl,
     HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,

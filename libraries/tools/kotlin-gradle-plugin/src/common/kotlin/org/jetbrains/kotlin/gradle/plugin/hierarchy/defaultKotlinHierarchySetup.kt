@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.hierarchy
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace.Companion.nativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackDependsOnUsageDetected
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackIllegalTargetNames
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.requiredStage
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
