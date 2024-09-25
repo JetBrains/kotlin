@@ -162,7 +162,7 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
     val declarationConflictingSymbols: HashMap<D, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 }
 
-fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirRegularClassSymbol) {
+fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirClassSymbol<*>) {
     val otherDeclarations = mutableMapOf<String, MutableSet<FirBasedSymbol<*>>>()
     val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
     val declaredMemberScope = klass.declaredMemberScope(context)

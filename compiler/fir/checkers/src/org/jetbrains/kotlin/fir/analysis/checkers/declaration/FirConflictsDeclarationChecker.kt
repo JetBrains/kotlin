@@ -66,7 +66,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 checkFile(declaration, inspector, context)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
             }
-            is FirRegularClass -> {
+            is FirClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
                     checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
                 }
