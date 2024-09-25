@@ -70,11 +70,6 @@ bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
     return std::all_of(utf8, utf8 + lengthBytes, [](char c) { return c >= 0; });
 }
 
-template <typename String1, typename String2>
-constexpr bool isSameEncoding(String1&& a, String2&& b) {
-    return std::is_same_v<std::decay_t<String1>, std::decay_t<String2>>;
-}
-
 template <typename String, typename It>
 bool isInSurrogatePair(String&& string, It&& it) {
     return string.at(it.ptr()) != it;
@@ -246,7 +241,7 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
             ThrowOutOfMemoryError();
         }
 
-        if (isSameEncoding(thiz, other) &&
+        if (thiz.encoding == other.encoding &&
             // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
             // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
             (thiz.encoding == StringEncoding::kUTF16 || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
@@ -343,7 +338,7 @@ extern "C" KInt Kotlin_String_compareTo(KConstRef thiz, KConstRef other) {
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
         auto begin1 = thiz.begin(), end1 = thiz.end();
         auto begin2 = other.begin(), end2 = other.end();
-        if constexpr (isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
             auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
             return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
         } else {
@@ -397,7 +392,7 @@ extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
     // TODO: if hash code is computed and unequal, then strings are also unequal
     return thiz == other || encodingAware(thiz, other, [=](auto thiz, auto other) {
-        if constexpr (isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
             return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
         } else {
             return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
@@ -414,20 +409,21 @@ extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOff
         // and then compare the known fixed range, or to decode characters one by one and count while comparing?
         auto end1 = begin1 + length;
         auto end2 = begin2 + length;
-        if constexpr (!isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
+            // Assuming only one "canonical" encoding, can byte-compare encoded values.
+            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
+            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
+                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
+                : isInSurrogatePair(other, begin2);
+            if (startsWithUnequalLowSurrogate) return false;
+            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
+                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
+                : isInSurrogatePair(other, end2);
+            if (endsWithUnequalHighSurrogate) return false;
+            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+        } else {
             return std::equal(begin1, end1, begin2, end2);
         }
-        // Assuming only one "canonical" encoding, can byte-compare encoded values.
-        // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
-        bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
-            ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
-            : isInSurrogatePair(other, begin2);
-        if (startsWithUnequalLowSurrogate) return false;
-        bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
-            ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
-            : isInSurrogatePair(other, end2);
-        if (endsWithUnequalHighSurrogate) return false;
-        return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
     });
 }
 
@@ -482,7 +478,7 @@ extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KIn
 
         auto start = thiz.begin() + unsignedIndex, end = thiz.end();
         auto patternStart = other.begin(), patternEnd = other.end();
-        if constexpr (isSameEncoding(thiz, other)) {
+        if constexpr (thiz.encoding == other.encoding) {
             auto shift = unsignedIndex;
             while (start != end) {
                 if (isInSurrogatePair(thiz, start)) {
