@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES
-// DONT_RUN_GENERATED_CODE: JS
 
 import helpers.*
 import kotlin.coroutines.*

@@ -1,6 +1,5 @@
 // LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
 // Flag above doesn't matter cause 1 default value is passed explicitly in tail recursion call
-// DONT_RUN_GENERATED_CODE: JS
 
 var counter = 0
 fun inc() = counter++

@@ -1,5 +1,5 @@
 // KT-16549
-// IGNORE_BACKEND: JVM, JS
+// IGNORE_BACKEND: JVM
 
 class TailInline {
     private inline fun act(action: () -> Unit) {

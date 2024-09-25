@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, JS
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 inline fun checkNPE(body: () -> Unit) {
     var throwed = false

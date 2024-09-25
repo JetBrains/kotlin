@@ -6,7 +6,7 @@
 // FIR status: not supported in JVM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JVM, JS
+// IGNORE_BACKEND: JVM
 
 import kotlin.reflect.KProperty
 

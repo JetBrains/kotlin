@@ -3,7 +3,7 @@
 // KT-64692
 
 // test data differs - no getOrDefault in AbstractMap for non-jvm.
-// IGNORE_BACKEND: NATIVE, JS, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
 
 class MyMap : AbstractMap<Int, Int>() {
     override val entries = emptySet<Map.Entry<Int, Int>>()

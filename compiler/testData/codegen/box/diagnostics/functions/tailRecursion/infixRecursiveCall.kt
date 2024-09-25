@@ -1,7 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
-// DONT_RUN_GENERATED_CODE: JS
-
 tailrec infix fun Int.foo(x: Int) {
     if (x == 0) return
     val xx = x - 1
