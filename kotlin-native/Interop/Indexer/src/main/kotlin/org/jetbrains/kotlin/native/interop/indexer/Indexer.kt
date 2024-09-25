@@ -95,10 +95,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         object Protocol : DeclarationID()
     }
 
-    private inner class LocatableDeclarationRegistry<D : LocatableDeclaration> {
+    private open inner class LocatableDeclarationRegistry<D : LocatableDeclaration> {
         private val all = mutableMapOf<DeclarationID, D>()
 
         val included = mutableListOf<D>()
+
+        protected open fun shouldBeIncluded(declaration: D, headerId: HeaderId): Boolean =
+                !library.headerExclusionPolicy.excludeAll(headerId)
 
         inline fun getOrPut(cursor: CValue<CXCursor>, create: () -> D) = getOrPut(cursor, create, configure = {})
 
@@ -110,7 +113,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 all[key] = value
 
                 val headerId = getHeaderId(getContainingFile(cursor))
-                if (!library.headerExclusionPolicy.excludeAll(headerId)) {
+                if (shouldBeIncluded(value, headerId)) {
                     // This declaration is used, and thus should be included:
                     included.add(value)
                 }
@@ -120,6 +123,63 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
         }
 
+    }
+
+    private inner class ObjCClassOrProtocolRegistry<D : ObjCClassOrProtocol> : LocatableDeclarationRegistry<D>() {
+        override fun shouldBeIncluded(declaration: D, headerId: HeaderId): Boolean {
+            if (!declaration.isForwardDeclaration) {
+                return super.shouldBeIncluded(declaration, headerId)
+            }
+
+            /*
+            Objective-C forward declarations tend to be tricky.
+            TL;DR: treating them as always included workarounds a few quirks in libclang and cinterop "separate compilation"
+            (e.g. `HeaderExclusionPolicy` and `Imports`).
+            On the other hand, this is absolutely safe, because forward declarations can be safely redeclared
+            in different cinterop klibs without side effects.
+            See detailed explanation below.
+            */
+            return true
+
+            /*
+            There are a few problems with Objective-C forward declarations.
+
+            1.
+            libclang indexer ignores forward declarations in system headers, and there is no way to configure that.
+            Technically, it is supposed to ignore only references:
+            https://github.com/Kotlin/llvm-project/blob/e3ca3c13204b52534ee555031b099657f253b1bb/clang/lib/Index/IndexingContext.cpp#L422
+            But Objective-C forward declarations are treated as references:
+            https://github.com/Kotlin/llvm-project/blob/75e16fd2c656fb7d27e6edc46dc1a63ff8323999/clang/lib/Index/IndexDecl.cpp#L432
+            The behavior can be changed using C++ API, but this is not available through libclang C API:
+            https://github.com/Kotlin/llvm-project/blob/d8d780bff4b23834a9ee8981f6a1193d181891aa/clang/include/clang/Index/IndexingOptions.h#L28
+            https://github.com/Kotlin/llvm-project/blob/1b5110b59f85e7c9824bcc299b002ec933758932/clang/tools/libclang/Indexing.cpp#L424
+
+            2.
+            There are forward declarations that are provided by "builtins" (i.e. when containing `CXFile` is `null`).
+            For example, `@class Protocol`.
+            But builtins aren't indexed like regular headers -- indexing just doesn't traverse such declarations.
+            So, even though a forward declaration is "declared" in builtins, it doesn't get added to the native index
+            of a library that "includes" builtins (unless there are references from regular headers).
+            Moreover, within platform libraries, "builtins" are included in `platform.posix`, which is configured as
+            a C library. So when indexing it, libclang simply won't provide an Objective-C forward declaration in any case.
+
+
+            `super.shouldBeIncluded` assumes that if the declaration is reported as declared in an imported header,
+            then it should have been indexed as a part of that native index. But with both cases, this doesn't happen,
+            so such forward declarations aren't added to any index at all.
+            As a result, cinterop produces klibs that refer to this forward declaration, but don't declare it
+            (i.e., don't list them in `includedForwardDeclarations` manifest property).
+            The compiler then just has an unresolved reference. That's what happened in https://youtrack.jetbrains.com/issue/KT-71435
+            (case 2, to be specific).
+
+            Instead, we can just treat all Obj-C forward declarations as always included. This is pretty safe:
+            forward declarations are simply listed in cinterop klib manifests, instructing the compiler to synthesize
+            them when requested. Having a forward declaration listed in two klibs instead of one has no side effect at all.
+
+            The only side effect of this hack is: if the declaration is referenced but never declared, synthesize the declaration
+            anyway. Which is exactly the problematic case.
+            */
+        }
     }
 
     internal fun getHeaderId(file: CXFile?): HeaderId = getHeaderId(this.library, file)
@@ -136,10 +196,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private val enumRegistry = LocatableDeclarationRegistry<EnumDefImpl>()
 
     override val objCClasses: List<ObjCClass> get() = objCClassRegistry.included
-    private val objCClassRegistry = LocatableDeclarationRegistry<ObjCClassImpl>()
+    private val objCClassRegistry = ObjCClassOrProtocolRegistry<ObjCClassImpl>()
 
     override val objCProtocols: List<ObjCProtocol> get() = objCProtocolRegistry.included
-    private val objCProtocolRegistry = LocatableDeclarationRegistry<ObjCProtocolImpl>()
+    private val objCProtocolRegistry = ObjCClassOrProtocolRegistry<ObjCProtocolImpl>()
 
     override val objCCategories: Collection<ObjCCategory> get() = objCCategoryById.included
     private val objCCategoryById = LocatableDeclarationRegistry<ObjCCategoryImpl>()

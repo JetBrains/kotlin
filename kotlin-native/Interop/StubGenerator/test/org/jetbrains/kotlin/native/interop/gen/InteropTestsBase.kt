@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
-import org.jetbrains.kotlin.native.interop.indexer.HeaderId
-import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
-import org.jetbrains.kotlin.native.interop.indexer.Location
-import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
+import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
 import org.junit.Rule
 import kotlin.test.*
@@ -75,8 +72,23 @@ abstract class InteropTestsBase {
         return org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(library, verbose = false)
     }
 
+    protected fun buildNativeIndex(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): IndexerResult =
+            buildNativeIndex(buildNativeLibraryFrom(defFile, headersDirectory, imports), verbose = false)
+
     protected fun mockImports(dependencyIndex: IndexerResult, packageName: String = "dependencyLibrary"): Imports {
-        return ImportsMock(dependencyIndex.index.includedHeaders.associateWith { packageName })
+        return mockImports(dependencyIndex to packageName)
+    }
+
+    protected fun mockImports(vararg dependencies: Pair<IndexerResult, String>): Imports {
+        val headerToPackage = buildMap<HeaderId, String> {
+            dependencies.forEach { (dependency, packageName) ->
+                dependency.index.includedHeaders.forEach { headerId ->
+                    put(headerId, packageName)
+                }
+            }
+        }
+
+        return ImportsMock(headerToPackage)
     }
 
     /**

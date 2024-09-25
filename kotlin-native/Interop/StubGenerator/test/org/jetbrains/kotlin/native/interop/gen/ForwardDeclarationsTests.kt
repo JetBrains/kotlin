@@ -61,12 +61,14 @@ class ForwardDeclarationsTests : InteropTestsBase() {
 
         main.index.objCClasses.assertHasOnlyForward(
                 "ImportedClassUsed", "IncludedClassUsed", "IncludedClassUnused",
-                "MainClassUsed", "MainClassUnused", "DependencyAndMainClass"
+                "MainClassUsed", "MainClassUnused", "DependencyAndMainClass",
+                "DependencyClassUsed", // This is imprecise, but still safe.
         )
 
         main.index.objCProtocols.assertHasOnlyForward(
                 "ImportedProtocolUsed", "IncludedProtocolUsed", "IncludedProtocolUnused",
-                "MainProtocolUsed", "MainProtocolUnused", "DependencyAndMainProtocol"
+                "MainProtocolUsed", "MainProtocolUnused", "DependencyAndMainProtocol",
+                "DependencyProtocolUsed", // This is imprecise, but still safe.
         )
     }
 
@@ -99,5 +101,45 @@ class ForwardDeclarationsTests : InteropTestsBase() {
 
         main.index.objCClasses.assertHasOnlyNonForward("Class1", "Class2", "Class3", "Class4")
         main.index.objCProtocols.assertHasOnlyNonForward("Protocol1", "Protocol2", "Protocol3", "Protocol4")
+    }
+
+    @Test
+    fun `KT-71435 objcnames classes Protocol`() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+
+        val files = testFiles()
+
+        val posixDefFile = files.file("posix.def", """
+            headers = stdint.h
+            """.trimIndent()
+        )
+        val posixIndex = buildNativeIndex(posixDefFile, files.directory)
+
+        val objcDefFile = files.file("objc.def", """
+            headers = objc/objc.h
+            headerFilter = objc/**
+            language = Objective-C
+            """.trimIndent()
+        )
+        val objcIndex = buildNativeIndex(objcDefFile, files.directory, mockImports(posixIndex to "posix"))
+
+        files.file("user.h", """
+            #import <objc/objc.h>
+            void foo(Protocol *protocol);
+            """.trimIndent()
+        )
+
+        val userDefFile = files.file("user.def", """
+            language = Objective-C
+            headers = user.h
+            """.trimIndent()
+        )
+        val userIndex = buildNativeIndex(userDefFile, files.directory, mockImports(posixIndex to "posix", objcIndex to "objc"))
+
+        val classes = posixIndex.index.objCClasses + objcIndex.index.objCClasses + userIndex.index.objCClasses
+        // It should be at least somewhere:
+        val protocol = classes.find { it.name == "Protocol" }
+        assertNotNull(protocol)
+        assertTrue(protocol.isForwardDeclaration)
     }
 }
