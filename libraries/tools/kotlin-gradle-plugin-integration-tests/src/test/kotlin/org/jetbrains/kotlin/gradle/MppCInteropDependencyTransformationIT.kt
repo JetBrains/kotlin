@@ -9,10 +9,13 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
+import org.jetbrains.kotlin.gradle.util.TaskInstantiationTrackingBuildService
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -448,6 +451,32 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
         build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode) {
             assertTasksUpToDate(":p2:transformCommonMainCInteropDependenciesMetadata")
+        }
+    }
+
+    @DisplayName("KT-71328: no tasks instantiated at execution time during CInterop GMT")
+    @TestMetadata("kt-71328")
+    @GradleTest
+    fun testNoTasksInstantiatedAtExecutionTimeCinteropGmt(gradleVersion: GradleVersion) {
+        // configuration cache may hide the problem,
+        // especially from Gradle 8.0 as it started to serialize the state even before the first execution
+        // so disabling it in this test is mandatory
+        val buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+        project("kt-71328", gradleVersion, buildOptions = buildOptions) {
+            val projectsToApply = listOf(this, subProject("lib"))
+            for (testProject in projectsToApply) {
+                testProject.buildScriptInjection {
+                    TaskInstantiationTrackingBuildService.trackInstantiationInProject(project)
+                }
+            }
+            if (gradleVersion < GradleVersion.version("8.4")) {
+                build(":transformNativeMainCInteropDependenciesMetadata")
+            } else {
+                // fixme: KT-71764
+                buildAndFail(":transformNativeMainCInteropDependenciesMetadata") {
+                    assertOutputContains("The following tasks were instantiated at execution time: [:lib:allMetadataJar, :lib:commonizeCInterop]")
+                }
+            }
         }
     }
 }
