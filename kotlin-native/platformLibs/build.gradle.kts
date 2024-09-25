@@ -70,11 +70,13 @@ enabledTargets(platformManager).forEach { target ->
             group = BasePlugin.BUILD_GROUP
             description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
-            this.compilerDistribution.set(nativeDistribution)
-            dependsOn(":kotlin-native:${targetName}CrossDist")
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
-            this.konanTarget.set(target)
+            // Requires Native distribution with compiler JARs and stdlib klib.
+            this.compilerDistribution.set(nativeDistribution)
+            dependsOn(":kotlin-native:distStdlib")
+
+            this.target.set(targetName)
             this.outputDirectory.set(
                     layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${df.name}")
             )
@@ -91,9 +93,9 @@ enabledTargets(platformManager).forEach { target ->
             )
             if (target.family.isAppleFamily) {
                 // Platform Libraries for Apple targets use modules. Use shared cache for them.
-                this.compilerOpts.addAll(
-                        "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
-                )
+                // Keep the path relative to hit the build cache.
+                val fmodulesCache = project.layout.buildDirectory.dir("clangModulesCache").get().asFile.toRelativeString(project.layout.projectDirectory.asFile)
+                this.extraOpts.addAll("-compiler-option", "-fmodules-cache-path=$fmodulesCache")
             }
 
             usesService(compilePlatformLibsSemaphore)
