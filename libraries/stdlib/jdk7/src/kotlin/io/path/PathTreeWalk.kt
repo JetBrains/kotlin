@@ -17,7 +17,6 @@ import java.nio.file.attribute.BasicFileAttributes
  * If the file located by this path is not a directory, the walker iterates only it.
  * If the file located by this path does not exist, the walker iterates nothing, i.e. it's equivalent to an empty sequence.
  */
-@ExperimentalPathApi
 internal class PathTreeWalk(
     private val start: Path,
     private val options: Array<out PathWalkOption>

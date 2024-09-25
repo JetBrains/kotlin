@@ -15,8 +15,8 @@ import java.nio.file.attribute.BasicFileAttributes
 /**
  * The builder to provide implementation of the file visitor that [fileVisitor] builds.
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public sealed interface FileVisitorBuilder {
     /**
      * Overrides the corresponding function of the built file visitor with the provided [function].
@@ -51,7 +51,6 @@ public sealed interface FileVisitorBuilder {
 }
 
 
-@ExperimentalPathApi
 internal class FileVisitorBuilderImpl : FileVisitorBuilder {
     private var onPreVisitDirectory: ((Path, BasicFileAttributes) -> FileVisitResult)? = null
     private var onVisitFile: ((Path, BasicFileAttributes) -> FileVisitResult)? = null

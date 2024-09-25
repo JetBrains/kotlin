@@ -1063,8 +1063,8 @@ public inline fun URI.toPath(): Path =
  *   * [SecurityException] if a security manager is installed and the traversal reaches an entry whose access is not permitted.
  *   * [IOException] if any errors arise while opening a directory.
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)
 
 /**
@@ -1078,8 +1078,8 @@ public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeW
  *
  * @see Files.walkFileTree
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MAX_VALUE, followLinks: Boolean = false): Unit {
     val options = if (followLinks) setOf(FileVisitOption.FOLLOW_LINKS) else setOf()
     Files.walkFileTree(this, options, maxDepth, visitor)
@@ -1121,8 +1121,8 @@ public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MA
  * @see Path.visitFileTree
  * @see fileVisitor
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun Path.visitFileTree(
     maxDepth: Int = Int.MAX_VALUE,
     followLinks: Boolean = false,
@@ -1172,8 +1172,8 @@ public fun Path.visitFileTree(
  * }
  * ```
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public fun fileVisitor(builderAction: FileVisitorBuilder.() -> Unit): FileVisitor<Path> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return FileVisitorBuilderImpl().apply(builderAction).build()

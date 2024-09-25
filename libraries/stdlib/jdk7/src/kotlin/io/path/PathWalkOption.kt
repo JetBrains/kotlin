@@ -13,8 +13,8 @@ import java.nio.file.Path
  *
  * Note that this enumeration is not exhaustive and new cases might be added in the future.
  */
-@ExperimentalPathApi
-@SinceKotlin("1.7")
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
 public enum class PathWalkOption {
     /** Visits directories as well. */
     INCLUDE_DIRECTORIES,
