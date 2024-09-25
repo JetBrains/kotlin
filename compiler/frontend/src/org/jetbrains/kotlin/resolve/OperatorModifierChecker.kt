@@ -46,9 +46,6 @@ object OperatorModifierChecker {
         val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
             when {
-                functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.keys ->
-                    checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
-
                 functionDescriptor.name == OperatorNameConventions.PROVIDE_DELEGATE ->
                     checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
 
@@ -56,9 +53,7 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.CustomEqualsInValueClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
-            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&
-                languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-            ) {
+            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values) {
                 val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor) &&
                     languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod)
                 )

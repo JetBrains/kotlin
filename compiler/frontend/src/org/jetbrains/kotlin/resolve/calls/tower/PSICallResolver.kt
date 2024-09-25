@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
@@ -103,10 +102,9 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
-        val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
 
         val kotlinCallKind = resolutionKind.toKotlinCallKind()
-        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
+        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, name, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
@@ -115,8 +113,7 @@ class PSICallResolver(
             scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates
         )
 
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
+        if (isBinaryRemOperator && (result.isEmpty() || result.areAllInapplicable())) {
             result = resolveToDeprecatedMod(name, context, kotlinCallKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
         }
 
@@ -198,11 +195,6 @@ class PSICallResolver(
         return kotlinCallResolver.resolveAndCompleteCall(
             scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
         )
-    }
-
-    private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        return if (isBinaryRemOperator && !shouldUseOperatorRem) OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!! else name
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =

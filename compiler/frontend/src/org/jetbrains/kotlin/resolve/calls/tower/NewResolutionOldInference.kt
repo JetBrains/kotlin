@@ -172,26 +172,21 @@ class NewResolutionOldInference(
             context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, implicitsResolutionFilter, callResolver, candidateInterceptor
         )
 
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
-        val nameToResolve = if (isBinaryRemOperator && !shouldUseOperatorRem)
-            OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!!
-        else
-            name
 
-        val processor = kind.createTowerProcessor(this, nameToResolve, tracing, scopeTower, detailedReceiver, context)
+        val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, detailedReceiver, context)
 
         if (context.collectAllCandidates) {
-            return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor, nameToResolve))
+            return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor, name))
         }
 
         var candidates =
-            towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference, name = nameToResolve)
+            towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference, name = name)
 
         // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
         val emptyOrInapplicableCandidates = candidates.isEmpty() ||
                 candidates.all { it.resultingApplicability.isInapplicable }
-        if (isBinaryRemOperator && shouldUseOperatorRem && emptyOrInapplicableCandidates) {
+        if (isBinaryRemOperator && emptyOrInapplicableCandidates) {
             val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
             val processorForDeprecatedName =
                 kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
@@ -206,7 +201,7 @@ class NewResolutionOldInference(
         candidates = candidateInterceptor.interceptResolvedCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
 
         if (candidates.isEmpty()) {
-            if (reportAdditionalDiagnosticIfNoCandidates(context, nameToResolve, kind, scopeTower, detailedReceiver)) {
+            if (reportAdditionalDiagnosticIfNoCandidates(context, name, kind, scopeTower, detailedReceiver)) {
                 return OverloadResolutionResultsImpl.nameNotFound()
             }
         }
