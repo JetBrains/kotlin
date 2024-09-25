@@ -47,6 +47,16 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
     }
 }
 
+abstract class FirModulePrivateVisibilityChecker : FirSessionComponent {
+    abstract fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean
+
+    open class Standard(private val session: FirSession) : FirModulePrivateVisibilityChecker() {
+        override fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
+            return session.moduleData == declaration.moduleData
+        }
+    }
+}
+
 abstract class FirVisibilityChecker : FirSessionComponent {
     @NoMutableState
     object Default : FirVisibilityChecker() {
@@ -209,7 +219,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerLookupTag = symbol.getOwnerLookupTag()
-                if (declaration.moduleData == session.moduleData) {
+                if (session.modulePrivateVisibilityChecker.canSeePrivateDeclaration(declaration)) {
                     when {
                         ownerLookupTag == null -> {
                             // Top-level: visible in file
@@ -471,6 +481,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 }
 
 val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
+val FirSession.modulePrivateVisibilityChecker: FirModulePrivateVisibilityChecker by FirSession.sessionComponentAccessor()
 val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
 
 fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {

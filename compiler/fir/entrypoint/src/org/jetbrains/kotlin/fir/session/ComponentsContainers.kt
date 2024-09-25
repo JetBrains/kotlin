@@ -110,6 +110,7 @@ fun FirSession.registerCliCompilerOnlyComponents() {
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
+    register(FirModulePrivateVisibilityChecker::class, FirModulePrivateVisibilityChecker.Standard(this))
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))

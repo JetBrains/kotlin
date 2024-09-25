@@ -80,6 +80,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveDanglingFileReference
     }
 
     @Test
+    @TestMetadata("classPrivateConstructorParameter.kt")
+    public void testClassPrivateConstructorParameter() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/classPrivateConstructorParameter.kt");
+    }
+
+    @Test
     @TestMetadata("classTypeParameter.kt")
     public void testClassTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/classTypeParameter.kt");
