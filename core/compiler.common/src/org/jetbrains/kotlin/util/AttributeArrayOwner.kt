@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  *   from components in [ComponentArrayOwner]
  */
 abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
-    arrayMap: ArrayMap<T>
+    arrayMap: ArrayMap<T>,
 ) : AbstractArrayMapOwner<K, T>() {
     final override var arrayMap: ArrayMap<T> = arrayMap
         private set
@@ -29,12 +29,24 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
         val id = typeRegistry.getId(keyQualifiedName)
         when (arrayMap.size) {
             0 -> {
+                val map = arrayMap
+                if (map !is EmptyArrayMap) {
+                    throw IllegalStateException(buildDiagnosticMessage(map, expectedSize = 0, expectedImplementation = "EmptyArrayMap"))
+                }
                 arrayMap = OneElementArrayMap(value, id)
                 return
             }
 
             1 -> {
-                val map = arrayMap as OneElementArrayMap<T>
+                val mapSnapshot = arrayMap
+                val map = try {
+                    mapSnapshot as OneElementArrayMap<T>
+                } catch (e: ClassCastException) {
+                    throw IllegalStateException(
+                        buildDiagnosticMessage(mapSnapshot, expectedSize = 1, expectedImplementation = "OneElementArrayMap"),
+                        /*cause=*/e
+                    )
+                }
                 if (map.index == id) {
                     arrayMap = OneElementArrayMap(value, id)
                     return
@@ -46,6 +58,23 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
         }
 
         arrayMap[id] = value
+    }
+
+    private fun buildDiagnosticMessage(map: ArrayMap<T>, expectedSize: Int, expectedImplementation: String): String {
+        return buildString {
+            appendLine("Race condition happened, the size of ArrayMap is $expectedSize but it isn't an `$expectedImplementation`")
+            appendLine("Type: ${map::class.java}")
+            val content = buildString {
+                val services = typeRegistry.allValuesThreadUnsafeForRendering()
+                appendLine("[")
+                map.mapIndexed { index, value ->
+                    val service = services.entries.firstOrNull { it.value == index }
+                    appendLine("  $service[$index]: $value")
+                }
+                appendLine("]")
+            }
+            appendLine("Content: $content")
+        }
     }
 
     protected fun removeComponent(tClass: KClass<out K>) {
