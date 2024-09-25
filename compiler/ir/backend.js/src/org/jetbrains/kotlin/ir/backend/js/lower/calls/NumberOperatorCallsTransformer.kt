@@ -77,7 +77,6 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(type, OperatorNames.SUB, withLongCoercion(::transformSub))
             add(type, OperatorNames.MUL, withLongCoercion(::transformMul))
             add(type, OperatorNames.DIV, withLongCoercion(::transformDiv))
-            add(type, OperatorNames.MOD, withLongCoercion(::transformRem))
             add(type, OperatorNames.REM, withLongCoercion(::transformRem))
         }
     }

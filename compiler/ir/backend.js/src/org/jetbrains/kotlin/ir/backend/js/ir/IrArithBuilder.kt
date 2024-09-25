@@ -32,7 +32,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     fun sub(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SUB, l, r)
     fun mul(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.MUL, l, r)
     fun div(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.DIV, l, r)
-    fun mod(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.MOD, l, r)
+    fun rem(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.REM, l, r)
     fun and(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.AND, l, r)
     fun or(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.OR, l, r)
     fun shl(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SHL, l, r)
