@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesS
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
 /**
@@ -100,6 +101,8 @@ internal fun Project.registerKotlinPluginExtensions() {
             } else {
                 register(project, GlobalProjectStructureMetadataStorageSetupAction)
             }
+
+            register(project, NativeToolchainProjectSetupAction)
         }
 
     }

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
@@ -375,9 +376,8 @@ constructor(
             // For KT-66452 we need to get rid of invocation of 'Task.project'.
             // That is why we moved setting this property to task registration
             // and added convention for backwards compatibility.
-            project.provider {
-                KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
-            })
+            NoopKotlinNativeProvider(project)
+        )
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",

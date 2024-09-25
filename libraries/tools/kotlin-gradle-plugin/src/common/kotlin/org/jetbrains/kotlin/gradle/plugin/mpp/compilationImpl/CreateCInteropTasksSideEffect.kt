@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -48,9 +48,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                     "of target '${it.konanTarget.name}'."
             it.enabled = compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation()
             it.definitionFile.set(params.settings.definitionFile)
-            it.kotlinNativeProvider.set(project.provider {
-                KotlinNativeProvider(project, it.konanTarget, it.kotlinNativeBundleBuildService)
-            })
+            it.kotlinNativeProvider.set(it.chooseKotlinNativeProvider(project, it.konanTarget))
 
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)

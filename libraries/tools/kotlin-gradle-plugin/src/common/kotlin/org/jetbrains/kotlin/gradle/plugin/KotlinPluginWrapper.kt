@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingSt
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
-import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
@@ -51,8 +50,6 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnab
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
@@ -84,10 +81,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         addKotlinCompilerConfiguration(project)
-
-        if (project.nativeProperties.isToolchainEnabled.get()) {
-            addKotlinNativeBundleConfiguration(project)
-        }
 
         project.configurations.maybeCreateResolvable(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
@@ -186,11 +179,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
             CommonizerTargetAttribute.setupAttributesMatchingStrategy(this)
             CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
-        }
-
-        if (project.nativeProperties.isToolchainEnabled.get()) {
-            KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(this)
-            KotlinNativeBundleArtifactFormat.setupTransform(project)
         }
     }
 

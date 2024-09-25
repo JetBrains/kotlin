@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
@@ -130,7 +132,7 @@ internal abstract class NativeDistributionCommonizerTask
             // That is why we moved setting this property to task registration
             // and added convention for backwards compatibility.
             project.provider {
-                KotlinNativeProvider(
+                KotlinNativeFromToolchainProvider(
                     project,
                     commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
                     kotlinNativeBundleBuildService,
@@ -173,7 +175,11 @@ internal abstract class NativeDistributionCommonizerTask
         outputs.upToDateWhen {
             // upToDateWhen executes after configuration phase, but before inputs are calculated,
             // that is why we need to get k/n bundle before commonizerCache.isUpToDate here
-            kotlinNativeProvider.get().kotlinNativeBundleVersion.get()
+            when (val kotlinNativeProvider = kotlinNativeProvider.get()) {
+                is KotlinNativeFromToolchainProvider -> kotlinNativeProvider.kotlinNativeBundleVersion.get()
+                is NoopKotlinNativeProvider ->
+                    logger.error("Unexpected Kotlin/Native provider: $kotlinNativeProvider during commonization task. Please report an issue: https://kotl.in/issue")
+            }
             commonizerCache.isUpToDate(commonizerTargets)
         }
     }

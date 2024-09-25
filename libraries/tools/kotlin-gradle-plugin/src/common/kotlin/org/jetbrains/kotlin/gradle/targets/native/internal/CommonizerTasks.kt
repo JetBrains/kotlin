@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -195,7 +195,7 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 customJvmArgs.set(addCommonizerTaskToProject.kotlinPropertiesProvider.commonizerJvmArgs)
                 kotlinNativeProvider.set(
                     addCommonizerTaskToProject.provider {
-                        KotlinNativeProvider(
+                        KotlinNativeFromToolchainProvider(
                             addCommonizerTaskToProject,
                             commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
                             kotlinNativeBundleBuildService,

@@ -8,9 +8,12 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.targets
 import kotlin.test.Test
+import kotlin.test.assertNull
 
 class KotlinJvmFunctionalTest {
     @Test
@@ -36,5 +39,18 @@ class KotlinJvmFunctionalTest {
         }
 
         project.evaluate()
+    }
+
+    @Test
+    fun `KT-66750 - check that disabled native toolchain flag in subproject does not affect root project`() {
+        val project = buildProjectWithJvm(preApplyCode = {
+            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
+            project.extraProperties.set("kotlin.native.toolchain.enabled", "true")
+        })
+
+        project.evaluate()
+
+        val kotlinNativeConfiguration = project.configurations.findByName(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME)
+        assertNull(kotlinNativeConfiguration, "Kotlin Native bundle configuration should not be created")
     }
 }
