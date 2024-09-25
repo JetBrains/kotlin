@@ -95,7 +95,7 @@ internal fun Project.registerKotlinPluginExtensions() {
 
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
-                register(project, MetadataApiElementsSecondaryVariantsSetupAction)
+                register(project, ExportCommonSourceSetsMetadataLocations)
                 register(project, ExportRootModuleCoordinates)
                 register(project, ExportTargetPublicationCoordinates)
             } else {

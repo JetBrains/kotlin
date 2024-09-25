@@ -48,6 +48,7 @@ internal class KotlinSecondaryVariantsDataSharing(
         key: String,
         outgoingConfiguration: Configuration,
         dataProvider: Provider<T>,
+        taskDependencies: List<Any> = emptyList(),
     ) {
         val taskName = lowerCamelCaseName("export", key, "for", outgoingConfiguration.name)
         val task = project.tasks.register(taskName, ExportKotlinProjectDataTask::class.java) { task ->
@@ -58,12 +59,13 @@ internal class KotlinSecondaryVariantsDataSharing(
             taskOutputData.set(dataProvider)
 
             task.outputFile.set(project.layout.buildDirectory.file("kotlin/kotlin-project-shared-data/$fileName"))
+            task.dependsOn(taskDependencies)
         }
 
         shareDataFromExistingTask(key, outgoingConfiguration, task.flatMap { it.outputFile })
     }
 
-    fun shareDataFromExistingTask(
+    private fun shareDataFromExistingTask(
         key: String,
         outgoingConfiguration: Configuration,
         taskOutputProvider: Provider<RegularFile>,

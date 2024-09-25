@@ -21,7 +21,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
-import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import java.io.File
 import javax.inject.Inject
 
@@ -69,9 +68,6 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
 
     private val kmpIsolatedProjectsSupport: Boolean = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
 
-    @get:Nested
-    internal abstract val sourceSetOutputs: ListProperty<SourceSetMetadataOutput>
-
     /**
      * @param projectCoordinates Should contain resolved configuration with [KotlinProjectCoordinatesData] in artifacts
      */
@@ -118,18 +114,6 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
 
         val resultString = actualProjectStructureMetadata.toJson()
         resultFile.writeText(resultString)
-
-        val metadataOutputsBySourceSet = sourceSetOutputs.get().associate { it.sourceSetName to it.metadataOutput.get() }
-        val metadataOutputsJson = JsonUtils.gson.toJson(SourceSetToClassDirMap(metadataOutputsBySourceSet))
-        sourceSetMetadataOutputsFile.get().asFile.writeText(metadataOutputsJson)
     }
-
-    internal data class SourceSetMetadataOutput(
-        @get:Input
-        val sourceSetName: String,
-        @get:Input
-        @get:Optional
-        val metadataOutput: Provider<File>,
-    )
 }
 

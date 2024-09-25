@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.*
-import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.AttributeContainer
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_PROJECT_SHARED_USAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -110,7 +108,7 @@ internal class GranularMetadataTransformation(
         val projectStructureMetadataResolvableConfiguration: LazyResolvedConfiguration?,
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
-        val sourceSetsMetadataSharedDataProvider: KotlinProjectSharedDataProvider<SourceSetToClassDirMap>,
+        val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             build = project.currentBuild,
@@ -121,14 +119,11 @@ internal class GranularMetadataTransformation(
             projectData = if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) emptyMap<String, ProjectData>() else project.allProjectsData,
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets,
             projectStructureMetadataResolvableConfiguration =
-            kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.let { LazyResolvedConfiguration(it) },
+                kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.let { LazyResolvedConfiguration(it) },
             objects = project.objects,
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
-            sourceSetsMetadataSharedDataProvider = project.kotlinSecondaryVariantsDataSharing.consume(
-                SOURCE_SETS_DATA_SHARING_KEY,
-                kotlinSourceSet.internal.resolvableMetadataConfiguration,
-                SourceSetToClassDirMap::class.java
-            )
+            sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
+                .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration)
         )
     }
 
@@ -324,13 +319,11 @@ internal class GranularMetadataTransformation(
         dependency: ResolvedDependencyResult,
     ): Map<String, SourceSetMetadataOutputs> {
         return if (params.kotlinKmpProjectIsolationEnabled) {
-            val sourceSetToClassDirMap = params.sourceSetsMetadataSharedDataProvider.getProjectDataFromDependencyOrNull(dependency)
+            val sourceSetMetadataLocations = params.sourceSetMetadataLocationsOfProjectDependencies.getProjectDataFromDependencyOrNull(dependency)
                 ?: error("There is no source set to class directory mapping for the $dependency dependency.")
-            sourceSetToClassDirMap
-                .map
-                .entries.associate { (sourceSetName, classDir) ->
-                    sourceSetName to SourceSetMetadataOutputs(params.objects.fileCollection().from(classDir))
-                }
+            sourceSetMetadataLocations.locationBySourceSetName.mapValues { (_, classDir) ->
+                SourceSetMetadataOutputs(params.objects.fileCollection().from(classDir))
+            }
         } else {
             params.projectData[mppDependencyMetadataExtractor.projectPath]?.sourceSetMetadataOutputs
                 ?.getOrThrow() ?: error("Unexpected project path '${mppDependencyMetadataExtractor.projectPath}'")
