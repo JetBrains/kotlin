@@ -44,6 +44,7 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
             checkAllKotlinFieldsArePrivate = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
                     !context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+            checkVarargTypes = true,
         )
 }
 
@@ -56,6 +57,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : CommonBackend
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
             checkVisibilities = false, // TODO: Enable checking visibilities (KT-69516)
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
+            checkVarargTypes = true,
         )
 }
 
@@ -70,7 +72,8 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
             checkCrossFileFieldUsage = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
             checkTypeParameterScopes = false,
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
-            checkInlineFunctionUseSites = checkInlineFunctionCallSites
+            checkInlineFunctionUseSites = checkInlineFunctionCallSites,
+            checkVarargTypes = true,
         )
 }
 

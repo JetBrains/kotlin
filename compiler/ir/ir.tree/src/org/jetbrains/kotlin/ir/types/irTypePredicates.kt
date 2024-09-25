@@ -110,6 +110,11 @@ val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignatur
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }
 
+val unsignedArrayTypesSignatures: Map<UnsignedType, IdSignature.CommonSignature> =
+    UnsignedType.entries.associateWith {
+        getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
+    }
+
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
     classFqNameEquals(declaration, fqName.toSafe())
 
