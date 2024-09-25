@@ -360,6 +360,10 @@ enum class LanguageFeature(
     ForbidProjectionsInAnnotationProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-70002
     ForbidJvmAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-25861
 
+    // 2.3
+
+    ForbidCompanionInLocalInnerClass(KOTLIN_2_3, kind = BUG_FIX),
+
     // End of 2.* language features --------------------------------------------------
 
     ExpectActualClasses(sinceVersion = null), // KT-62885

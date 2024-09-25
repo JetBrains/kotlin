@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -25,12 +26,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Local enums / objects / companion objects are handled with different diagnostic codes.
-        if ((declaration.classKind.isSingleton || declaration.classKind == ClassKind.ENUM_CLASS) && declaration.isLocal) return
+        // Exception is companion of local inner class.
+        val isCompanion = declaration.isCompanion
+        if (!isCompanion && (declaration.classKind.isSingleton || declaration.classKind == ClassKind.ENUM_CLASS) && declaration.isLocal) return
         val containingDeclaration = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+
+        if (isCompanion && !containingDeclaration.isInner) return
 
         // Since 1.3, enum entries can contain inner classes only.
         // Companion objects are reported with code WRONG_MODIFIER_CONTAINING_DECLARATION instead
-        if (containingDeclaration.classKind == ClassKind.ENUM_ENTRY && !declaration.isInner && !declaration.isCompanion) {
+        if (containingDeclaration.classKind == ClassKind.ENUM_ENTRY && !declaration.isInner && !isCompanion) {
             reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
             return
         }
@@ -38,7 +43,11 @@ object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         val containerIsLocal = containingDeclaration.effectiveVisibility == EffectiveVisibility.Local
 
         if (!declaration.isInner && (containingDeclaration.isInner || containerIsLocal || context.isInsideAnonymousObject)) {
-            reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+            if (declaration.isLocal && isCompanion) {
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description, context)
+            } else {
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+            }
         }
     }
 

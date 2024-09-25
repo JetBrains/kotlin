@@ -180,6 +180,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL.errorFactory) { firDiagnostic ->
+        NestedClassNotAllowedInLocalErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL.warningFactory) { firDiagnostic ->
+        NestedClassNotAllowedInLocalWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INCORRECT_CHARACTER_LITERAL) { firDiagnostic ->
         IncorrectCharacterLiteralImpl(
             firDiagnostic as KtPsiDiagnostic,

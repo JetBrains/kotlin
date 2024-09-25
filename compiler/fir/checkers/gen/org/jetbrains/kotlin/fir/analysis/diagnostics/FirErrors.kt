@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidCompanionInLocalInnerClass
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
@@ -165,6 +166,7 @@ object FirErrors {
     val DELEGATION_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val DELEGATION_NOT_TO_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_NOT_TO_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val NESTED_CLASS_NOT_ALLOWED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NESTED_CLASS_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
+    val NESTED_CLASS_NOT_ALLOWED_IN_LOCAL: KtDiagnosticFactoryForDeprecation1<String> = KtDiagnosticFactoryForDeprecation1("NESTED_CLASS_NOT_ALLOWED_IN_LOCAL", ForbidCompanionInLocalInnerClass, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val INCORRECT_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INCORRECT_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val EMPTY_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EMPTY_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

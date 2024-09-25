@@ -172,6 +172,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val declaration: String
     }
 
+    interface NestedClassNotAllowedInLocalError : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = NestedClassNotAllowedInLocalError::class
+        val declaration: String
+    }
+
+    interface NestedClassNotAllowedInLocalWarning : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = NestedClassNotAllowedInLocalWarning::class
+        val declaration: String
+    }
+
     interface IncorrectCharacterLiteral : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IncorrectCharacterLiteral::class
     }

@@ -189,6 +189,18 @@ internal class NestedClassNotAllowedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.NestedClassNotAllowed
 
+internal class NestedClassNotAllowedInLocalErrorImpl(
+    override val declaration: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.NestedClassNotAllowedInLocalError
+
+internal class NestedClassNotAllowedInLocalWarningImpl(
+    override val declaration: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.NestedClassNotAllowedInLocalWarning
+
 internal class IncorrectCharacterLiteralImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

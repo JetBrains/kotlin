@@ -83,6 +83,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NESTED_CLASS_NOT_ALLOWED by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("declaration")
         }
+        val NESTED_CLASS_NOT_ALLOWED_IN_LOCAL by deprecationError<KtNamedDeclaration>(
+            LanguageFeature.ForbidCompanionInLocalInnerClass,
+            PositioningStrategy.DECLARATION_NAME
+        ) {
+            parameter<String>("declaration")
+        }
         val INCORRECT_CHARACTER_LITERAL by error<PsiElement>()
         val EMPTY_CHARACTER_LITERAL by error<PsiElement>()
         val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL by error<PsiElement>()

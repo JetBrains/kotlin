@@ -6639,6 +6639,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("companionInInnerOfObjectExpressionAfter.kt")
+      public void testCompanionInInnerOfObjectExpressionAfter() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/companionInInnerOfObjectExpressionAfter.kt");
+      }
+
+      @Test
       @TestMetadata("companionObjectOfPrivateClassVisibility.kt")
       public void testCompanionObjectOfPrivateClassVisibility() {
         runTest("compiler/testData/diagnostics/tests/classObjects/companionObjectOfPrivateClassVisibility.kt");

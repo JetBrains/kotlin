@@ -1,6 +1,6 @@
 // LANGUAGE: -ForbidCompanionInLocalInnerClass
 val x = object {
     inner class D {
-        companion object
+        companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
     }
 }
