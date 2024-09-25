@@ -9,33 +9,11 @@ kotlin {
 }
 For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
 ----
-[KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
-Deprecated 'watchos()' shortcut was used:
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[watchosArm32Main, watchosArm32Test, watchosArm64Main, watchosArm64Test, watchosDeviceMain, watchosDeviceTest, watchosMain, watchosTest, watchosX64Main, watchosX64Test]
 
-  kotlin {
-      watchos()
-  }
-
-Please declare the required targets explicitly:
-
-  kotlin {
-      watchosX64()
-      watchosArm64()
-      watchosSimulatorArm64() /* <- Note: Was not previously applied */
-      /* ... */
-  }
-
-After that, replace `by getting` with static accessors:
-
-  sourceSets {
-      commonMain { ... }
-
-      watchosMain {
-          dependencies { ... }
-      }
-  }
-
-To suppress the 'Default Hierarchy Template' add
+Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
 

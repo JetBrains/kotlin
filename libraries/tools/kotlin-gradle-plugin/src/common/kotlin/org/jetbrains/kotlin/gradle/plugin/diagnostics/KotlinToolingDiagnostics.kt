@@ -563,45 +563,6 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected : ToolingDiagnosticFactory(WARNING) {
-        internal operator fun invoke(project: Project, trace: NativeTargetShortcutTrace) = build(
-            """
-                The Default Kotlin Hierarchy Template was not applied to '${project.displayName}':
-                Deprecated '${trace.shortcut}()' shortcut was used:
-                
-                  kotlin {
-                      ${trace.shortcut}()
-                  }
-                
-                Please declare the required targets explicitly:
-                
-                  kotlin {
-                      ${trace.shortcut}X64()
-                      ${trace.shortcut}Arm64()
-                      ${trace.shortcut}SimulatorArm64() /* <- Note: Was not previously applied */
-                      /* ... */
-                  }
-                
-                After that, replace `by getting` with static accessors:
-                
-                  sourceSets {
-                      commonMain { ... }
-                      
-                      ${trace.shortcut}Main {
-                          dependencies { ... }
-                      }
-                  }
-                
-                To suppress the 'Default Hierarchy Template' add
-                    '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
-                to your gradle.properties
-                
-                Learn more about hierarchy templates: https://kotl.in/hierarchy-template
-            """.trimIndent(),
-            throwable = trace
-        )
-    }
-
     object KotlinDefaultHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(project: Project, illegalTargetNamesUsed: Iterable<String>) = build(
             """

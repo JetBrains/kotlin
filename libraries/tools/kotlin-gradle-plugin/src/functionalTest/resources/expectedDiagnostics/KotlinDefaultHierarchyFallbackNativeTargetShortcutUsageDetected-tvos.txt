@@ -7,33 +7,11 @@ kotlin {
 }
 For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
 ----
-[KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
-Deprecated 'tvos()' shortcut was used:
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[tvosArm64Main, tvosArm64Test, tvosMain, tvosTest, tvosX64Main, tvosX64Test]
 
-  kotlin {
-      tvos()
-  }
-
-Please declare the required targets explicitly:
-
-  kotlin {
-      tvosX64()
-      tvosArm64()
-      tvosSimulatorArm64() /* <- Note: Was not previously applied */
-      /* ... */
-  }
-
-After that, replace `by getting` with static accessors:
-
-  sourceSets {
-      commonMain { ... }
-
-      tvosMain {
-          dependencies { ... }
-      }
-  }
-
-To suppress the 'Default Hierarchy Template' add
+Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
 
