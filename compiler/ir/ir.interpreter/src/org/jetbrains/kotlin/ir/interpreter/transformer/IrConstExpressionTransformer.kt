@@ -36,7 +36,7 @@ internal abstract class IrConstExpressionTransformer(
 ) : IrTransformer<IrConstExpressionTransformer.Data>() {
     internal data class Data(val inConstantExpression: Boolean = false)
 
-    private val constTransformer = IrConstTransformer(
+    private val context = IrConstEvaluationContext(
         interpreter,
         irFile,
         mode,
@@ -58,8 +58,8 @@ internal abstract class IrConstExpressionTransformer(
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
-        if (constTransformer.canBeInterpreted(expression)) {
-            return constTransformer.interpret(expression, failAsError = data.inConstantExpression)
+        if (context.canBeInterpreted(expression)) {
+            return context.interpret(expression, failAsError = data.inConstantExpression)
         }
         return super.visitCall(expression, data)
     }
@@ -69,16 +69,16 @@ internal abstract class IrConstExpressionTransformer(
         val expression = initializer?.expression ?: return declaration
         val getField = declaration.createGetField()
 
-        if (constTransformer.canBeInterpreted(getField)) {
-            initializer.expression = constTransformer.interpret(expression, failAsError = true)
+        if (context.canBeInterpreted(getField)) {
+            initializer.expression = context.interpret(expression, failAsError = true)
         }
 
         return super.visitField(declaration, data)
     }
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
-        if (constTransformer.canBeInterpreted(expression)) {
-            return constTransformer.interpret(expression, failAsError = data.inConstantExpression)
+        if (context.canBeInterpreted(expression)) {
+            return context.interpret(expression, failAsError = data.inConstantExpression)
         }
         return super.visitGetField(expression, data)
     }
@@ -89,7 +89,7 @@ internal abstract class IrConstExpressionTransformer(
         )
 
         fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression =
-            constTransformer.interpret(wrapInStringConcat(), failAsError = data.inConstantExpression)
+            context.interpret(wrapInStringConcat(), failAsError = data.inConstantExpression)
 
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst) value.toString() else ""
 
@@ -102,11 +102,11 @@ internal abstract class IrConstExpressionTransformer(
         for (next in transformed.arguments) {
             val last = folded.lastOrNull()
             when {
-                !constTransformer.canBeInterpreted(next.wrapInStringConcat()) -> {
+                !context.canBeInterpreted(next.wrapInStringConcat()) -> {
                     folded += next
                     buildersList.add(StringBuilder(next.getConstStringOrEmpty()))
                 }
-                last == null || !constTransformer.canBeInterpreted(last.wrapInStringConcat()) -> {
+                last == null || !context.canBeInterpreted(last.wrapInStringConcat()) -> {
                     val result = next.wrapInToStringConcatAndInterpret()
                     folded += result
                     buildersList.add(StringBuilder(result.getConstStringOrEmpty()))

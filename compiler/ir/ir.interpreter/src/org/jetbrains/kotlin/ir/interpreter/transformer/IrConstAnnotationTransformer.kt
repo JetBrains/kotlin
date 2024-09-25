@@ -33,7 +33,7 @@ internal abstract class IrConstAnnotationTransformer(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
 ) {
-    private val constTransformer = IrConstTransformer(
+    private val context = IrConstEvaluationContext(
         interpreter,
         irFile,
         mode,
@@ -59,7 +59,7 @@ internal abstract class IrConstAnnotationTransformer(
             val arg = annotation.getValueArgument(i) ?: continue
             annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
         }
-        constTransformer.saveInConstTracker(annotation)
+        context.saveInConstTracker(annotation)
     }
 
     protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
@@ -90,7 +90,7 @@ internal abstract class IrConstAnnotationTransformer(
                 transformAnnotation(this)
                 this
             }
-            constTransformer.canBeInterpreted(this) -> constTransformer
+            context.canBeInterpreted(this) -> context
                 .interpret(this, failAsError = true)
                 .convertToConstIfPossible(expectedType)
             else -> error("Cannot evaluate IR expression in annotation:\n ${this.dump()}")

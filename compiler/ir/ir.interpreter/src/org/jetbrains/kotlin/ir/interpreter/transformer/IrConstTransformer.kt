@@ -5,30 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
-import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCommonChecker
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterConstGetterPreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
-import org.jetbrains.kotlin.ir.interpreter.property
-import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 fun IrElement.transformConst(
     irFile: IrFile,
@@ -86,99 +75,6 @@ private fun IrFile.preprocessForConstTransformer(
         preprocessor.preprocess(file, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
     }
     return preprocessedFile
-}
-
-internal class IrConstTransformer(
-    private val interpreter: IrInterpreter,
-    private val irFile: IrFile,
-    private val mode: EvaluationMode,
-    private val checker: IrInterpreterChecker,
-    private val evaluatedConstTracker: EvaluatedConstTracker?,
-    private val inlineConstTracker: InlineConstTracker?,
-    private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
-    private val suppressExceptions: Boolean,
-) {
-    private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
-        if (this is IrErrorExpression) {
-            onWarning(irFile, original, this)
-            return original
-        }
-        return this
-    }
-
-    private fun IrExpression.reportIfError(original: IrExpression): IrExpression {
-        if (this is IrErrorExpression) {
-            onError(irFile, original, this)
-            return when (mode) {
-                // need to pass any const value to be able to get some bytecode and then report error
-                is EvaluationMode.OnlyIntrinsicConst -> IrConstImpl.constNull(startOffset, endOffset, type)
-                else -> original
-            }
-        }
-        return this
-    }
-
-    fun canBeInterpreted(expression: IrExpression): Boolean {
-        return try {
-            expression.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
-        } catch (e: Throwable) {
-            rethrowIntellijPlatformExceptionIfNeeded(e)
-            if (suppressExceptions) {
-                return false
-            }
-            throw AssertionError("Error occurred while optimizing an expression:\n${expression.dump()}", e)
-        }
-    }
-
-    fun interpret(expression: IrExpression, failAsError: Boolean): IrExpression {
-        val result = try {
-            interpreter.interpret(expression, irFile)
-        } catch (e: Throwable) {
-            rethrowIntellijPlatformExceptionIfNeeded(e)
-            if (suppressExceptions) {
-                return expression
-            }
-            throw AssertionError("Error occurred while optimizing an expression:\n${expression.dump()}", e)
-        }
-
-        saveInConstTracker(result)
-
-        if (result is IrConst) {
-            reportInlinedJavaConst(expression, result)
-        }
-
-        return if (failAsError) result.reportIfError(expression) else result.warningIfError(expression)
-    }
-
-    fun saveInConstTracker(expression: IrExpression) {
-        evaluatedConstTracker?.save(
-            expression.startOffset, expression.endOffset, irFile.nameWithPackage,
-            constant = if (expression is IrErrorExpression) ErrorValue.create(expression.description) else expression.toConstantValue()
-        )
-    }
-
-    private fun reportInlinedJavaConst(expression: IrExpression, result: IrConst) {
-        expression.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            private fun report(field: IrField) {
-                inlineConstTracker?.reportOnIr(irFile, field, result)
-            }
-
-            override fun visitGetField(expression: IrGetField) {
-                report(expression.symbol.owner)
-                super.visitGetField(expression)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                expression.symbol.owner.property?.backingField?.let { backingField -> report(backingField) }
-                super.visitCall(expression)
-            }
-        })
-    }
 }
 
 fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
