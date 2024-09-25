@@ -13,10 +13,9 @@ dependencies {
     testImplementation(project(":libraries:tools:abi-comparator"))
 
     testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.platform.suite)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.junit.platform.runner)
-    testImplementation(libs.junit.platform.suite.api)
-    runtimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     testImplementation(intellijCore())
 }
@@ -39,6 +38,7 @@ fun Project.codegenTest(
 ) {
     dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
 
     val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
     filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")

@@ -93,8 +93,7 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5" }
 junit-platform-commons = { module = "org.junit.platform:junit-platform-commons", version.ref = "junit-platform" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
-junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit-platform" }
-junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junit-platform" }
+junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
