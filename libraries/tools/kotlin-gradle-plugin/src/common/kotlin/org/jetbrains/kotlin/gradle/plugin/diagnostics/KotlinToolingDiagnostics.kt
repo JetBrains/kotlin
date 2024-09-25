@@ -642,7 +642,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    private val presetsDeprecationSeverity = ToolingDiagnostic.Severity.WARNING
+    private val presetsDeprecationSeverity = ToolingDiagnostic.Severity.ERROR
 
     object TargetFromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
         const val DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"

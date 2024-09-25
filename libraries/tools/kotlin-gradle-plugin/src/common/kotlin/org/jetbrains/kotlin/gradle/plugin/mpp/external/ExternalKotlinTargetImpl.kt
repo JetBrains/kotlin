@@ -54,7 +54,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     override val preset: Nothing? = null
 

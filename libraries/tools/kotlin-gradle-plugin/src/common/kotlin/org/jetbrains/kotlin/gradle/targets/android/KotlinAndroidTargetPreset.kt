@@ -36,7 +36,6 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
         project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
 
         return project.objects.newInstance(KotlinAndroidTarget::class.java, name, project, true).apply {
-            @Suppress("DEPRECATION")
             preset = this@KotlinAndroidTargetPreset
             project.dynamicallyApplyWhenAndroidPluginIsApplied({ this })
         }

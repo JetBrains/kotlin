@@ -79,9 +79,10 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     name: String = "js",
     configure: KotlinJsTargetDsl.() -> Unit
 ): KotlinJsTargetDsl {
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    @Suppress("UNCHECKED_CAST")
     return configureOrCreate(
         name,
+        @Suppress("DEPRECATION_ERROR")
         presets.getByName(
             "js"
         ) as InternalKotlinTargetPreset<KotlinJsTargetDsl>,

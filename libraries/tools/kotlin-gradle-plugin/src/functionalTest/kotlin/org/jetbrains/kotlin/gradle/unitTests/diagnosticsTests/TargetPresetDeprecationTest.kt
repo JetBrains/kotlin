@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION", "FunctionName")
+@file:Suppress("FunctionName")
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
@@ -20,6 +20,7 @@ class TargetPresetDeprecationTest {
     fun `targetFromPreset usage - emits TargetFromPreset diagnostic`() = checkDiagnostics(
         "PresetDeprecation-targetFromPreset"
     ) {
+        @Suppress("DEPRECATION_ERROR")
         targetFromPreset(presets.getByName("jvm"))
     }
 
@@ -28,6 +29,7 @@ class TargetPresetDeprecationTest {
         "PresetDeprecation-fromPreset"
     ) {
         targets {
+            @Suppress("DEPRECATION_ERROR")
             fromPreset(presets.getByName("jvm"), "jvm")
         }
     }
@@ -36,6 +38,7 @@ class TargetPresetDeprecationTest {
     fun `presets createTarget usage - emits CreateTarget diagnostic`() = checkDiagnostics(
         "PresetDeprecation-createTarget"
     ) {
+        @Suppress("DEPRECATION_ERROR")
         targets.add(presets.getByName("jvm").createTarget("jvm"))
     }
 

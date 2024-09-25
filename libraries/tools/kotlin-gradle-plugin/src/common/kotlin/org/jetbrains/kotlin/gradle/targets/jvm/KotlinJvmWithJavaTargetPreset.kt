@@ -31,7 +31,7 @@ class KotlinJvmWithJavaTargetPreset(
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        @Suppress("UNCHECKED_CAST", "DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
         val target = (project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,

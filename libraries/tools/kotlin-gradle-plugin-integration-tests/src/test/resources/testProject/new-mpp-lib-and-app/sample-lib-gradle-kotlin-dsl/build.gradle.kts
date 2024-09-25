@@ -14,7 +14,6 @@ version = "1.0"
 val shouldBeJs = true
 
 kotlin {
-    // Check the new preset functions:
     jvm("jvm6") { }
 
     if (shouldBeJs) {

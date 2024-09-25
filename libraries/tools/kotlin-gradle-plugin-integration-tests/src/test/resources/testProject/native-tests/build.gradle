@@ -20,10 +20,10 @@ repositories {
 
 kotlin {
     targets {
-        fromPreset(presets.<SingleNativeTarget>, 'host')
+        <SingleNativeTarget>('host')
 
-        fromPreset(presets.iosX64, 'ios')
-        fromPreset(presets.iosSimulatorArm64, 'iosArm64')
+        iosX64('ios')
+        iosSimulatorArm64('iosArm64')
 
         configure([findByName('host')]) {
             compilations.create("anotherTest")

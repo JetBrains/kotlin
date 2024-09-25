@@ -34,7 +34,6 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
-            @Suppress("DEPRECATION")
             preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)

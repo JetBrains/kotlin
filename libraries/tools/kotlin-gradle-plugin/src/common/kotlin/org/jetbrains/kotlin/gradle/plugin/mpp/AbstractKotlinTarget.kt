@@ -187,9 +187,9 @@ abstract class AbstractKotlinTarget(
     }
 
     @OptIn(DeprecatedTargetPresetApi::class)
-    @Deprecated(
+    @get:Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set

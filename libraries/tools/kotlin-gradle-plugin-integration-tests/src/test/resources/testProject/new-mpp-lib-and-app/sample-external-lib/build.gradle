@@ -7,18 +7,16 @@ group = "com.external.dependency"
 version = "1.2.3"
 
 kotlin {
-    // Check the new preset functions:
     jvm('jvm6') {}
     js('nodeJs')
     wasmJs()
-    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    jvm('jvm6') { println targetName } // access existing target
 
     targets {
-        // Also check that the old DSL (fromPreset) works:
-        fromPreset(presets.linuxX64, 'linux64')
+        linuxX64('linux64')
 
         // Check the DSL constructs in the Groovy DSL:
-        fromPreset(presets.jvm, 'jvm6') {
+        jvm('jvm6') {
             println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {

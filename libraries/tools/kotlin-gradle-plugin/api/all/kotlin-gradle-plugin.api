@@ -1669,6 +1669,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinTarge
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
+	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun isSourcesPublishable ()Z
 	public fun jvmToolchain (I)V
 	public fun jvmToolchain (Lorg/gradle/api/Action;)V
@@ -3124,6 +3125,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsTarget : or
 	public final fun getIrTarget ()Ljava/lang/Void;
 	public fun getName ()Ljava/lang/String;
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun jvmToolchain (I)V
 	public fun jvmToolchain (Lorg/gradle/api/Action;)V
 	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V

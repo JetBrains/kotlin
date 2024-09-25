@@ -16,7 +16,7 @@ internal interface InternalKotlinTargetPreset<T : KotlinTarget> : KotlinTargetPr
 
     @Deprecated(
         "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     override fun createTarget(name: String): T {
         val target = createTargetInternal(name)

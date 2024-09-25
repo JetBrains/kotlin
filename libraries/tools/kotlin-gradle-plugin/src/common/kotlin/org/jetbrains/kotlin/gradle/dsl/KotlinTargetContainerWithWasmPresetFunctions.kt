@@ -20,7 +20,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     ): KotlinWasmJsTargetDsl =
         configureOrCreate(
             name,
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             presets.getByName("wasmJs") as KotlinWasmTargetPreset,
             configure
         )
@@ -44,7 +44,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     ): KotlinWasmWasiTargetDsl =
         configureOrCreate(
             name,
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
             configure
         )

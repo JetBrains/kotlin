@@ -60,9 +60,9 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
     @OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
-    @Deprecated(
+    @get:Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     val preset: KotlinTargetPreset<out KotlinTarget>?
 

@@ -54,7 +54,6 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = name
-            @Suppress("DEPRECATION")
             preset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)

@@ -4,7 +4,6 @@
  */
 
 @file:OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
-@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
@@ -20,6 +19,7 @@ fun main() {
 
 private val parentInterface = KotlinTargetsContainerWithPresets::class
 
+@Suppress("DEPRECATION_ERROR")
 private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {

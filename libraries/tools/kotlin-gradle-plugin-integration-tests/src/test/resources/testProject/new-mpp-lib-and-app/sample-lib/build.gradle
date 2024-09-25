@@ -14,9 +14,8 @@ version = "1.0"
 def shouldBeJs = true
 
 kotlin {
-    // Check the new preset functions:
     jvm("jvm6") {}
-    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    jvm("jvm6") { println targetName } // access existing target
 
     if (shouldBeJs) {
         js("nodeJs") {
@@ -26,14 +25,13 @@ kotlin {
     }
 
     targets {
-        // Also check that the old DSL (fromPreset) works:
-        fromPreset(presets.linuxX64, 'linux64')
-        fromPreset(presets.mingwX64, 'mingw64')
-        fromPreset(presets.macosX64, 'macos64')
-        fromPreset(presets.macosArm64, 'macosArm64')
+        linuxX64('linux64')
+        mingwX64('mingw64')
+        macosX64('macos64')
+        macosArm64('macosArm64')
 
         // Check the DSL constructs in the Groovy DSL:
-        fromPreset(presets.jvm, 'jvm6') {
+        jvm('jvm6') {
             println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
