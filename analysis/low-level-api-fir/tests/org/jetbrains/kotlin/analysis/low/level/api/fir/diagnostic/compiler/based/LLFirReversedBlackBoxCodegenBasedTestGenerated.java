@@ -41407,18 +41407,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("remAssignmentOperation.kt")
-    public void testRemAssignmentOperation() {
-      runTest("compiler/testData/codegen/box/operatorConventions/remAssignmentOperation.kt");
-    }
-
-    @Test
-    @TestMetadata("remOverModOperation.kt")
-    public void testRemOverModOperation() {
-      runTest("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
-    }
-
-    @Test
     @TestMetadata("suspendOperators.kt")
     public void testSuspendOperators() {
       runTest("compiler/testData/codegen/box/operatorConventions/suspendOperators.kt");
@@ -55930,12 +55918,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         @TestMetadata("invoke.kt")
         public void testInvoke() {
           runTest("compiler/testData/codegen/box/sam/adapters/operators/invoke.kt");
-        }
-
-        @Test
-        @TestMetadata("legacyModOperator.kt")
-        public void testLegacyModOperator() {
-          runTest("compiler/testData/codegen/box/sam/adapters/operators/legacyModOperator.kt");
         }
 
         @Test

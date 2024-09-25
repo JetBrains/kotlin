@@ -9689,12 +9689,6 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     public void testUnaryOnIntPropertyAsStatement() {
       runTest("js/js.translator/testData/box/operatorOverloading/unaryOnIntPropertyAsStatement.kt");
     }
-
-    @Test
-    @TestMetadata("usingModInCaseModAssignNotAvailable.kt")
-    public void testUsingModInCaseModAssignNotAvailable() {
-      runTest("js/js.translator/testData/box/operatorOverloading/usingModInCaseModAssignNotAvailable.kt");
-    }
   }
 
   @Nested

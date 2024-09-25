@@ -29873,18 +29873,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
-    @TestMetadata("remAssignmentOperation.kt")
-    public void testRemAssignmentOperation() {
-      runTest("compiler/testData/codegen/box/operatorConventions/remAssignmentOperation.kt");
-    }
-
-    @Test
-    @TestMetadata("remOverModOperation.kt")
-    public void testRemOverModOperation() {
-      runTest("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
-    }
-
-    @Test
     @TestMetadata("suspendOperators.kt")
     public void testSuspendOperators() {
       runTest("compiler/testData/codegen/box/operatorConventions/suspendOperators.kt");

@@ -9582,12 +9582,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     public void testUnaryOnIntPropertyAsStatement() {
       runTest("js/js.translator/testData/box/operatorOverloading/unaryOnIntPropertyAsStatement.kt");
     }
-
-    @Test
-    @TestMetadata("usingModInCaseModAssignNotAvailable.kt")
-    public void testUsingModInCaseModAssignNotAvailable() {
-      runTest("js/js.translator/testData/box/operatorOverloading/usingModInCaseModAssignNotAvailable.kt");
-    }
   }
 
   @Nested

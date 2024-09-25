@@ -27383,39 +27383,9 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
-      @TestMetadata("DeprecatedModAssignOperatorConventions.kt")
-      public void testDeprecatedModAssignOperatorConventions() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/DeprecatedModAssignOperatorConventions.kt");
-      }
-
-      @Test
-      @TestMetadata("deprecatedModConvention.kt")
-      public void testDeprecatedModConvention() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/deprecatedModConvention.kt");
-      }
-
-      @Test
-      @TestMetadata("DeprecatedModOperatorConventions.kt")
-      public void testDeprecatedModOperatorConventions() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/DeprecatedModOperatorConventions.kt");
-      }
-
-      @Test
-      @TestMetadata("doNotResolveToInapplicableRem.kt")
-      public void testDoNotResolveToInapplicableRem() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/doNotResolveToInapplicableRem.kt");
-      }
-
-      @Test
       @TestMetadata("forbiddenModOperatorConvention.kt")
       public void testForbiddenModOperatorConvention() {
         runTest("compiler/testData/diagnostics/tests/operatorRem/forbiddenModOperatorConvention.kt");
-      }
-
-      @Test
-      @TestMetadata("modWithRemAssign.kt")
-      public void testModWithRemAssign() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/modWithRemAssign.kt");
       }
 
       @Test
@@ -27431,63 +27401,9 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
-      @TestMetadata("preferRemAsExtentionOverMod.kt")
-      public void testPreferRemAsExtentionOverMod() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/preferRemAsExtentionOverMod.kt");
-      }
-
-      @Test
-      @TestMetadata("preferRemAsMemberOverMod.kt")
-      public void testPreferRemAsMemberOverMod() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/preferRemAsMemberOverMod.kt");
-      }
-
-      @Test
-      @TestMetadata("preferRemFromCompanionObjectOverRem.kt")
-      public void testPreferRemFromCompanionObjectOverRem() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/preferRemFromCompanionObjectOverRem.kt");
-      }
-
-      @Test
-      @TestMetadata("preferRemOverModInLocalFunctions.kt")
-      public void testPreferRemOverModInLocalFunctions() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/preferRemOverModInLocalFunctions.kt");
-      }
-
-      @Test
-      @TestMetadata("preferRemWithImplicitReceivers.kt")
-      public void testPreferRemWithImplicitReceivers() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/preferRemWithImplicitReceivers.kt");
-      }
-
-      @Test
-      @TestMetadata("prefereRemAsExtensionOverMemberMod.kt")
-      public void testPrefereRemAsExtensionOverMemberMod() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/prefereRemAsExtensionOverMemberMod.kt");
-      }
-
-      @Test
       @TestMetadata("remAndRemAssignAmbiguity.kt")
       public void testRemAndRemAssignAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/operatorRem/remAndRemAssignAmbiguity.kt");
-      }
-
-      @Test
-      @TestMetadata("remWithModAndModAssign.kt")
-      public void testRemWithModAndModAssign() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/remWithModAndModAssign.kt");
-      }
-
-      @Test
-      @TestMetadata("remWithModAssign.kt")
-      public void testRemWithModAssign() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/remWithModAssign.kt");
-      }
-
-      @Test
-      @TestMetadata("resolveModIfRemIsHidden.kt")
-      public void testResolveModIfRemIsHidden() {
-        runTest("compiler/testData/diagnostics/tests/operatorRem/resolveModIfRemIsHidden.kt");
       }
     }
 
