@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
+import org.jetbrains.kotlin.plugin.sandbox.ExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.plugin.sandbox.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
