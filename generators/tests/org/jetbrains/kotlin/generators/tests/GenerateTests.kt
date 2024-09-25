@@ -178,7 +178,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
+        testGroup("plugins/plugin-sandbox/fir-plugin-ic-test/tests-gen", "plugins/plugin-sandbox/fir-plugin-ic-test/testData") {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
@@ -220,7 +220,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/fir-plugin-prototype/tests-gen", "plugins/fir-plugin-prototype/testData") {
+        testGroup("plugins/plugin-sandbox/tests-gen", "plugins/plugin-sandbox/testData") {
             testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics")
             }

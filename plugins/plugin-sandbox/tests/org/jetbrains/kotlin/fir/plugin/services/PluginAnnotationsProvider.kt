@@ -46,7 +46,7 @@ class PluginRuntimeAnnotationsProvider(testServices: TestServices) : RuntimeClas
 }
 
 
-private const val ANNOTATIONS_JAR_DIR = "plugins/fir-plugin-prototype/plugin-annotations/build/libs/"
+private const val ANNOTATIONS_JAR_DIR = "plugins/plugin-sandbox/plugin-annotations/build/libs/"
 private val JVM_ANNOTATIONS_JAR_FILTER = createFilter("plugin-annotations-jvm", ".jar")
 private val JS_ANNOTATIONS_KLIB_FILTER = createFilter("plugin-annotations-js", ".klib")
 
@@ -62,7 +62,7 @@ private fun findJsLib(): File {
 private fun findLib(platform: String, extension: String, filter: FilenameFilter): File {
     return findLibFromProperty(platform, extension)
         ?: findLibByPath(filter)
-        ?: error("Lib with annotations does not exist. Please run :plugins:fir-plugin-prototype:plugin-annotations:distAnnotations or specify firPluginAnnotations.path system property")
+        ?: error("Lib with annotations does not exist. Please run :plugins:plugin-sandbox:plugin-annotations:distAnnotations or specify firPluginAnnotations.path system property")
 }
 
 private fun createFilter(pattern: String, extension: String): FilenameFilter {
