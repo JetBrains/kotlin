@@ -95,10 +95,10 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.target = from.target
     to.temporaryFilesDir = from.temporaryFilesDir
     to.testDumpOutputPath = from.testDumpOutputPath
-    to.usedKlibDependenciesFilePath = from.usedKlibDependenciesFilePath
     to.verifyBitCode = from.verifyBitCode
     to.verifyCompiler = from.verifyCompiler
     to.workerExceptionHandling = from.workerExceptionHandling
+    to.writeDependenciesOfProducedKlibTo = from.writeDependenciesOfProducedKlibTo
 
     return to
 }

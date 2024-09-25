@@ -107,7 +107,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     put(PURGE_USER_LIBS, arguments.purgeUserLibs)
 
-    putIfNotNull(USED_KLIB_DEPENDENCIES_PATH, arguments.usedKlibDependenciesFilePath)
+    putIfNotNull(WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, arguments.writeDependenciesOfProducedKlibTo)
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")

@@ -294,8 +294,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val purgeUserLibs: Boolean
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
 
-    internal val usedKlibDependenciesPath
-        get() = configuration.get(KonanConfigKeys.USED_KLIB_DEPENDENCIES_PATH)
+    internal val writeDependenciesOfProducedKlibTo
+        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
 
     internal val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true

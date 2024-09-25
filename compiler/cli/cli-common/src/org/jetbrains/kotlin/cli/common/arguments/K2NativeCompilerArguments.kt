@@ -283,10 +283,10 @@ The default value is 1."""
     var purgeUserLibs: Boolean = false
 
     @Argument(
-        value = "-Xused-klib-dependencies-file-path",
+        value = "-Xwrite-dependencies-of-produced-klib-to=",
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path"
     )
-    var usedKlibDependenciesFilePath: String? = null
+    var writeDependenciesOfProducedKlibTo: String? = null
 
     @Argument(value = "-Xruntime", deprecatedName = "--runtime", valueDescription = "<path>", description = "Override the standard 'runtime.bc' location.")
     var runtimeFile: String? = null

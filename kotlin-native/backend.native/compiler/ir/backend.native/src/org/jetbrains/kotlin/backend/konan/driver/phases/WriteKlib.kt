@@ -66,7 +66,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val linkDependencies = if (context.config.metadataKlib) emptyList()
     else input.serializerOutput.neededLibraries
 
-    config.usedKlibDependenciesPath?.let { path ->
+    config.writeDependenciesOfProducedKlibTo?.let { path ->
         val usedDependenciesFile = File(path)
         usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.canonicalPath })
     }
