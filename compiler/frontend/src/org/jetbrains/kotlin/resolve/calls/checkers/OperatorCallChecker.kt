@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class OperatorCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -94,7 +95,7 @@ class OperatorCallChecker : CallChecker {
 }
 
 fun FunctionDescriptor.isOperatorMod(): Boolean {
-    return this.isOperator && name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.values
+    return this.isOperator && name in OperatorNameConventions.MOD_OPERATORS_REPLACEMENT
 }
 
 private fun checkModConvention(
@@ -113,6 +114,6 @@ private fun warnAboutDeprecatedOrForbiddenMod(
     reportOn: PsiElement
 ) {
     val diagnosticFactory = Errors.FORBIDDEN_BINARY_MOD_AS_REM
-    val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
+    val newNameConvention = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[descriptor.name]
     diagnosticHolder.report(diagnosticFactory.on(reportOn, descriptor, newNameConvention!!.asString()))
 }

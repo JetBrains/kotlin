@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.types.expressions.OperatorConventions.REM_TO_MOD_OPERATION_NAMES
 import org.jetbrains.kotlin.util.CheckResult
 import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -53,13 +52,13 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.CustomEqualsInValueClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
-            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values) {
+            if (functionDescriptor.name in OperatorNameConventions.MOD_OPERATORS_REPLACEMENT.keys) {
                 val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor))
                     Errors.FORBIDDEN_BINARY_MOD
                 else
                     Errors.DEPRECATED_BINARY_MOD
 
-                val newNameConvention = REM_TO_MOD_OPERATION_NAMES.inverse()[functionDescriptor.name]
+                val newNameConvention = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[functionDescriptor.name]
                 diagnosticHolder.report(diagnosticFactory.on(modifier, functionDescriptor, newNameConvention!!.asString()))
             }
 
