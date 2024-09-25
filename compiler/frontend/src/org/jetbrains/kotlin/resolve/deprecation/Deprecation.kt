@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -147,24 +146,6 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
 
     internal fun additionalMessage() =
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
-}
-
-internal data class DeprecatedOperatorMod(
-    val languageVersionSettings: LanguageVersionSettings,
-    val currentDeprecation: DescriptorBasedDeprecationInfo
-) : DescriptorBasedDeprecationInfo() {
-    override val deprecationLevel: DeprecationLevelValue
-        get() = when (languageVersionSettings.apiVersion) {
-            ApiVersion.KOTLIN_1_1, ApiVersion.KOTLIN_1_2 -> WARNING
-            ApiVersion.KOTLIN_1_3 -> ERROR
-            else -> ERROR
-        }
-
-    override val message: String?
-        get() = currentDeprecation.message
-
-    override val target: DeclarationDescriptor
-        get() = currentDeprecation.target
 }
 
 internal data class DeprecatedByVersionRequirement(
