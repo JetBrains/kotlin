@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -101,23 +100,13 @@ fun FunctionDescriptor.isOperatorMod(): Boolean {
     return this.isOperator && name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.values
 }
 
-fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVersionSettings): Boolean {
-    return true
-}
-
 private fun checkModConvention(
     descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
     diagnosticHolder: DiagnosticSink, modifier: PsiElement
 ) {
     if (!descriptor.isOperatorMod()) return
 
-    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
-        if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-            warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
-        }
-    } else {
-        warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
-    }
+    warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
 }
 
 private fun warnAboutDeprecatedOrForbiddenMod(

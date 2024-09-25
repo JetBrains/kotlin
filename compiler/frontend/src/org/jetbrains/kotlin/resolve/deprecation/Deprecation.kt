@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -154,12 +153,6 @@ internal data class DeprecatedOperatorMod(
     val languageVersionSettings: LanguageVersionSettings,
     val currentDeprecation: DescriptorBasedDeprecationInfo
 ) : DescriptorBasedDeprecationInfo() {
-    init {
-        assert(shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-            "Deprecation created for mod that shouldn't have any deprecations; languageVersionSettings: $languageVersionSettings"
-        }
-    }
-
     override val deprecationLevel: DeprecationLevelValue
         get() = when (languageVersionSettings.apiVersion) {
             ApiVersion.KOTLIN_1_1, ApiVersion.KOTLIN_1_2 -> WARNING
