@@ -1,6 +1,7 @@
 [UnsupportedTargetShortcutError | ERROR] The ios() target shortcut is deprecated and no longer supported.
 Please explicitly declare your targets using:
 kotlin {
+    iosX64()
     iosArm64()
     iosSimulatorArm64()
 }

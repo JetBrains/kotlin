@@ -248,18 +248,23 @@ private enum class UnsupportedTargetShortcut {
     fun declareTargets() = when (this) {
         IOS -> """
         kotlin {
+            iosX64()
             iosArm64()
             iosSimulatorArm64()
         }
         """.trimIndent()
         WATCHOS -> """
         kotlin {
+            watchosX64()
+            watchosArm64()
             watchosDeviceArm64()
             watchosSimulatorArm64()
+            watchosArm32()
         }
         """.trimIndent()
         TVOS -> """
         kotlin {
+            tvosX64()
             tvosArm64()
             tvosSimulatorArm64()
         }

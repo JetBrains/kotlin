@@ -1,6 +1,7 @@
 [UnsupportedTargetShortcutError | ERROR] The tvos() target shortcut is deprecated and no longer supported.
 Please explicitly declare your targets using:
 kotlin {
+    tvosX64()
     tvosArm64()
     tvosSimulatorArm64()
 }

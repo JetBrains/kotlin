@@ -1,8 +1,11 @@
 [UnsupportedTargetShortcutError | ERROR] The watchos() target shortcut is deprecated and no longer supported.
 Please explicitly declare your targets using:
 kotlin {
+    watchosX64()
+    watchosArm64()
     watchosDeviceArm64()
     watchosSimulatorArm64()
+    watchosArm32()
 }
 For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
 ----
