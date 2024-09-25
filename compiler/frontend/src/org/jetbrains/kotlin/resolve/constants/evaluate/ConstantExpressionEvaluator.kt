@@ -380,7 +380,7 @@ class ConstantExpressionEvaluator(
 }
 
 private val DIVISION_OPERATION_NAMES =
-    listOf(OperatorNameConventions.DIV, OperatorNameConventions.REM, OperatorNameConventions.MOD)
+    listOf(OperatorNameConventions.DIV, OperatorNameConventions.REM)
         .map(Name::asString)
         .toSet()
 

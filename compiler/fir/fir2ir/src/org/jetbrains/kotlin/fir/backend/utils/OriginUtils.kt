@@ -90,7 +90,6 @@ private val nameToOperationConventionOrigin: Map<Name, IrStatementOrigin> = mapO
     OperatorNameConventions.MINUS to IrStatementOrigin.MINUS,
     OperatorNameConventions.TIMES to IrStatementOrigin.MUL,
     OperatorNameConventions.DIV to IrStatementOrigin.DIV,
-    OperatorNameConventions.MOD to IrStatementOrigin.PERC,
     OperatorNameConventions.REM to IrStatementOrigin.PERC,
     OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE,
     OperatorNameConventions.RANGE_UNTIL to IrStatementOrigin.RANGE_UNTIL,

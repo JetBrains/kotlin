@@ -58,14 +58,14 @@ object OperatorNameConventions {
 
     @JvmField val TIMES = Name.identifier("times")
     @JvmField val DIV = Name.identifier("div")
-    @JvmField val MOD = Name.identifier("mod")
+    private val MOD = Name.identifier("mod")
     @JvmField val REM = Name.identifier("rem")
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
     @JvmField val RANGE_UNTIL = Name.identifier("rangeUntil")
 
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")
-    @JvmField val MOD_ASSIGN = Name.identifier("modAssign")
+    private val MOD_ASSIGN = Name.identifier("modAssign")
     @JvmField val REM_ASSIGN = Name.identifier("remAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
@@ -87,10 +87,10 @@ object OperatorNameConventions {
     val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT, INV)
 
     @JvmField
-    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, RANGE_UNTIL)
+    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, REM, RANGE_TO, RANGE_UNTIL)
 
     @JvmField
-    val SIMPLE_BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM)
+    val SIMPLE_BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, REM)
 
     @JvmField
     val BITWISE_OPERATION_NAMES = setOf(AND, OR, XOR, INV, SHL, SHR, USHR)
@@ -102,7 +102,7 @@ object OperatorNameConventions {
     val ALL_BINARY_OPERATION_NAMES = BINARY_OPERATION_NAMES + BITWISE_OPERATION_NAMES + setOf(EQUALS, CONTAINS, COMPARE_TO)
 
     @JvmField
-    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
+    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
 
     @JvmField
     val DELEGATED_PROPERTY_OPERATORS = setOf(GET_VALUE, SET_VALUE, PROVIDE_DELEGATE)

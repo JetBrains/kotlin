@@ -710,7 +710,6 @@ internal class KaFe10Resolver(
             OperatorNameConventions.TIMES,
             OperatorNameConventions.DIV,
             OperatorNameConventions.REM,
-            OperatorNameConventions.MOD,
         )
 
         private val callArgErrors = setOf(
