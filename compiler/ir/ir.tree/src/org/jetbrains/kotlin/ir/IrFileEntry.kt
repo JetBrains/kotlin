@@ -34,6 +34,9 @@ interface IrFileEntry {
 abstract class AbstractIrFileEntry : IrFileEntry {
     protected abstract val lineStartOffsets: IntArray
 
+    /* Used for serialization of IR */
+    fun getLineStartOffsetsForSerialization(): Iterable<Int> = lineStartOffsets.asIterable()
+
     override fun getLineNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_LINE_NUMBER
         val index = lineStartOffsets.binarySearch(offset)

@@ -1283,7 +1283,7 @@ open class IrFileSerializer(
 
     private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry = ProtoFileEntry.newBuilder()
         .setName(entry.matchAndNormalizeFilePath())
-        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsets.asIterable()) }
+        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
         .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false

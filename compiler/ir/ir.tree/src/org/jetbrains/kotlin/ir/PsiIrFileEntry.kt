@@ -29,8 +29,6 @@ class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
 
     override fun toString(): String = getRecognizableName()
 
-    fun getLineOffsets() = lineStartOffsets.copyOf()
-
     fun findPsiElement(irElement: IrElement): PsiElement? {
         var psiElement = fileViewProvider.findElementAt(irElement.startOffset)
         while (psiElement != null) {

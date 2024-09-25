@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import java.io.File
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
@@ -229,30 +228,6 @@ val IrDeclaration.isLocal: Boolean
 val IrDeclaration.module get() = this.descriptor.module
 
 const val SYNTHETIC_OFFSET = -2
-
-val File.lineStartOffsets: IntArray
-    get() {
-        // TODO: could be incorrect, if file is not in system's line terminator format.
-        // Maybe use (0..document.lineCount - 1)
-        //                .map { document.getLineStartOffset(it) }
-        //                .toIntArray()
-        // as in PSI.
-        val separatorLength = System.lineSeparator().length
-        val buffer = mutableListOf<Int>()
-        var currentOffset = 0
-        this.forEachLine { line ->
-            buffer.add(currentOffset)
-            currentOffset += line.length + separatorLength
-        }
-        buffer.add(currentOffset)
-        return buffer.toIntArray()
-    }
-
-val IrFileEntry.lineStartOffsets: IntArray
-    get() = when (this) {
-        is PsiIrFileEntry -> this.getLineOffsets()
-        else -> File(name).let { if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0) }
-    }
 
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
