@@ -33,6 +33,7 @@ data class IrValidatorConfig(
     val checkCrossFileFieldUsage: Boolean = false,
     val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
+    val checkVarargTypes: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 
@@ -76,6 +77,9 @@ private class IrValidator(
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
+        }
+        if (config.checkVarargTypes) {
+            declaration.acceptVoid(IrVarargTypesValidator(elementChecker.irBuiltIns, declaration, config, reportError))
         }
         config.checkInlineFunctionUseSites?.let {
             declaration.acceptVoid(NoInlineFunctionUseSitesValidator(declaration, reportError, it))
