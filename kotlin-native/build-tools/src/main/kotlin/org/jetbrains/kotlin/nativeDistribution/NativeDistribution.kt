@@ -70,6 +70,18 @@ class NativeDistribution(val root: Directory) {
         get() = root.dir("konan/platformDef")
 
     /**
+     * Directory with misc tools.
+     */
+    val tools: Directory
+        get() = root.dir("tools")
+
+    /**
+     * Directory with Swift Export support.
+     */
+    val swiftExport: Directory
+        get() = root.dir("konan/swift_export")
+
+    /**
      * Directory with all platform libs KLIBs for a specific [target].
      */
     fun platformLibs(target: String): Directory = root.dir("klib/platform/$target")

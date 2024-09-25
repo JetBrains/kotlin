@@ -6,6 +6,7 @@
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -80,11 +81,23 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
     }
 }
 
-
-val nativelibs = project.tasks.create<Copy>("nativelibs") {
+val nativelibs by tasks.registering(Sync::class) {
     val callbacksSolib = solib("callbacks")
     dependsOn(callbacksSolib)
 
     from(layout.buildDirectory.dir(callbacksSolib))
     into(layout.buildDirectory.dir("nativelibs"))
+}
+
+val nativeLibs by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+artifacts {
+    add(nativeLibs.name, nativelibs)
 }

@@ -122,6 +122,8 @@ dependencies {
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
     nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
+    nativeLibs project(path: ':kotlin-native:Interop:Indexer', configuration: 'nativeLibs')
+    nativeLibs project(path: ':kotlin-native:Interop:Runtime', configuration: 'nativeLibs')
     use(RepoDependencies) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
     }
@@ -185,9 +187,9 @@ tasks.register("distSources") {
     dependsOn(distNativeSources)
 }
 
-tasks.register("shadowJar", ShadowJar) {
+def shadowJar = tasks.register("shadowJar", ShadowJar) {
     mergeServiceFiles()
-    destinationDirectory.set(nativeDistribution.map { it.compilerJars })
+    destinationDirectory.set(layout.buildDirectory)
     archiveBaseName.set("kotlin-native")
     archiveVersion.set("")
     archiveClassifier.set("")
@@ -200,7 +202,7 @@ tasks.register("shadowJar", ShadowJar) {
     }
 }
 
-tasks.register("distCompiler", Copy) {
+tasks.register("distCompiler") {
     // Workaround: make distCompiler no-op if we are using custom dist:
     // the dist is already in place and has the compiler, so we don't have to
     // build and copy the compiler to dist.
@@ -210,94 +212,16 @@ tasks.register("distCompiler", Copy) {
     if (!UtilsKt.isDefaultNativeHome(project)) {
         enabled = false
     } else {
-        dependsOn ':kotlin-native:shadowJar'
-        dependsOn configurations.embeddableJar
+        dependsOn 'distNativeLibs'
+        dependsOn 'distCompilerJars'
+        dependsOn 'distTools'
+        dependsOn 'distBin'
+        dependsOn 'distSwiftExport'
+        dependsOn 'distKonanProperties'
     }
-
-    into(nativeDistribution.map { it.root })
-
-    from(configurations.nativeLibs) {
-        into('konan/nativelib')
-    }
-
-    from(configurations.trove4j_jar) {
-        include "trove4j*.jar"
-        rename "trove4j(.*).jar", "trove4j.jar"
-
-        into("konan/lib")
-        fileMode(0644)
-    }
-
-    from(configurations.embeddableJar) {
-        rename {
-            "kotlin-native-compiler-embeddable.jar"
-        }
-        into("konan/lib")
-        fileMode(0644)
-    }
-
-    from(project(':kotlin-native:Interop').file('Indexer/build/nativelibs')) {
-        into('konan/nativelib')
-    }
-
-    from(project(':kotlin-native:Interop').file('Runtime/build/nativelibs')) {
-        into('konan/nativelib')
-    }
-
-    from(project(':kotlin-native:libllvmext').file('build/libs/llvmext/shared')) {
-        into('konan/nativelib')
-    }
-
-    from(project(':kotlin-native:llvmDebugInfoC').file('build/libs/debugInfo/shared')) {
-        into('konan/nativelib')
-    }
-
-    from(project(':kotlin-native:llvmDebugInfoC').file('src/scripts/konan_lldb.py')) {
-        into('tools')
-    }
-
-    from(project(':kotlin-native:utilities').file('env_blacklist')) {
-        into('tools')
-    }
-
-    from(file('cmd')) {
-        fileMode(0755)
-        into('bin')
-        if (!PlatformInfo.isWindows()) {
-            exclude('**/*.bat')
-        }
-    }
-
-    from(project.file('konan')) {
-        into('konan')
-        exclude('**/*.properties')
-    }
-
-    from(configurations.objcExportApi) {
-        into('konan/swift_export/kotlin_runtime')
-        fileMode(0644)
-    }
-
-    from(project.file('konan')) {
-        into('konan')
-        include('**/*.properties')
-        filter(ReplaceTokens, tokens: [compilerVersion: kotlinVersion])
-        // Set LLVM variant that will be used by default in the distribution.
-        // `user` - smaller, includes only necessary components.
-        // `dev` - bigger, includes (almost) every possible component. Use this one,
-        //          if your feature requires component that is not a part of user distribution (yet).
-        // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
-        String llvmVariant = 'user'
-        filter(ReplaceTokens,
-                beginToken: '$',
-                endToken: '',
-                tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
-        )
-    }
-    delete('konan/experimentalTargetsEnabled')
 }
 
-tasks.register("distDef", Copy) {
+tasks.register("distDef", Sync) {
     into(nativeDistribution.map { it.platformLibsDefinitions })
     dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
@@ -313,7 +237,7 @@ tasks.register("listDist", Exec) {
     commandLine 'find', nativeDistribution.get().root
 }
 
-tasks.register("distRuntime", Copy) {
+tasks.register("distRuntime") {
     dependsOn "${hostName}CrossDistRuntime"
 }
 
@@ -323,13 +247,87 @@ tasks.register("distStdlibCache") {
     }
 }
 
-tasks.register("distStdlib", Copy) {
+tasks.register("distStdlib", Sync) {
     from(project(":kotlin-native:runtime")
             .tasks
             .named("nativeStdlib")
             .map { it.outputs.files }
     )
     into(nativeDistribution.map { it.stdlib })
+}
+
+tasks.register("distNativeLibs", Sync) {
+    from(configurations.nativeLibs)
+    into(nativeDistribution.map { it.nativeLibs })
+}
+
+tasks.register("distCompilerJars", Sync) {
+    from(shadowJar.map { it.archiveFile })
+    from(configurations.trove4j_jar) {
+        include "trove4j*.jar"
+        rename "trove4j(.*).jar", "trove4j.jar"
+        fileMode(0644)
+    }
+    from(configurations.embeddableJar) {
+        rename {
+            "kotlin-native-compiler-embeddable.jar"
+        }
+        fileMode(0644)
+    }
+
+    into(nativeDistribution.map { it.compilerJars })
+}
+
+tasks.register("distTools", Sync) {
+    from(project(':kotlin-native:llvmDebugInfoC').file('src/scripts/konan_lldb.py'))
+    from(project(':kotlin-native:utilities').file('env_blacklist'))
+
+    into(nativeDistribution.map { it.tools })
+}
+
+tasks.register("distBin", Sync) {
+    from(file('cmd')) {
+        fileMode(0755)
+        if (!PlatformInfo.isWindows()) {
+            exclude('**/*.bat')
+        }
+    }
+
+    into(nativeDistribution.map { it.bin })
+}
+
+tasks.register("distSwiftExport", Sync) {
+    from(configurations.objcExportApi) {
+        into('kotlin_runtime')
+        fileMode(0644)
+    }
+    into(nativeDistribution.map { it.swiftExport })
+}
+
+// This task moves files into konan subfolder of the root distribution folder. Other tasks
+// move into other subfolders of that folder; so this cannot be made Sync.
+tasks.register("distKonanProperties", Copy) {
+    from(project.file('konan')) {
+        exclude('**/*.properties')
+    }
+
+    from(project.file('konan')) {
+        include('**/*.properties')
+        filter(ReplaceTokens, tokens: [compilerVersion: kotlinVersion])
+        // Set LLVM variant that will be used by default in the distribution.
+        // `user` - smaller, includes only necessary components.
+        // `dev` - bigger, includes (almost) every possible component. Use this one,
+        //          if your feature requires component that is not a part of user distribution (yet).
+        // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
+        String llvmVariant = 'user'
+        filter(ReplaceTokens,
+                beginToken: '$',
+                endToken: '',
+                tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
+        )
+    }
+
+    into(nativeDistribution.map { it.konanProperties.asFile.parentFile })
 }
 
 tasks.register("crossDistRuntime") {
@@ -345,7 +343,7 @@ tasks.register("crossDistStdlibCache") {
 }
 
 targetList.each { target ->
-    tasks.register("${target}CrossDistBitcodeCopy", Copy) {
+    tasks.register("${target}CrossDistBitcodeCopy", Sync) {
         def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
             attributes {
                 attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, new TargetWithSanitizer(platformManager.targetByName(target), null))
@@ -359,11 +357,9 @@ targetList.each { target ->
         }
     }
 
-    tasks.register("${target}CrossDistRuntime", Copy) {
+    tasks.register("${target}CrossDistRuntime") {
         dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
-
-        into(nativeDistribution.map { it.stdlib.dir("default") })
     }
 
     tasks.register("${target}PlatformLibs") {
@@ -374,7 +370,7 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        tasks.register("${target}StdlibCache", Copy) {
+        tasks.register("${target}StdlibCache", Sync) {
             dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
 

@@ -614,8 +614,8 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     dependsOn(":prepare:build.version:writeStdlibVersion")
 }
 
-val stdlibTask = tasks.register<Copy>("nativeStdlib") {
-    from(stdlibBuildTask.map { it.outputs.files })
+val nativeStdlib by tasks.registering(Sync::class) {
+    from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
     val allPossibleTargets = project.extensions.getByType<PlatformManager>().targetValues.map { it.name }
@@ -647,7 +647,7 @@ cacheableTargetNames.forEach { targetName ->
     tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
         notCompatibleWithConfigurationCache("project used in execution time")
         target = targetName
-        originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
+        originalKlib.fileProvider(nativeStdlib.map { it.destinationDir })
         klibUniqName = "stdlib"
         cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
