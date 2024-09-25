@@ -312,42 +312,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("writeSignature", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrLoadJavaTest> {
-                model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava", targetBackend = TargetBackend.JVM_IR)
-                model(
-                    "loadJava/compiledJavaAndKotlin",
-                    extension = "txt",
-                    testMethod = "doTestCompiledJavaAndKotlin",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "loadJava/compiledJavaIncludeObjectMethods",
-                    extension = "java",
-                    testMethod = "doTestCompiledJavaIncludeObjectMethods",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin", targetBackend = TargetBackend.JVM_IR)
-                model(
-                    "loadJava/compiledKotlinWithStdlib",
-                    testMethod = "doTestCompiledKotlinWithStdlib",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "loadJava/javaAgainstKotlin",
-                    extension = "txt",
-                    testMethod = "doTestJavaAgainstKotlin",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "loadJava/kotlinAgainstCompiledJavaWithKotlin",
-                    extension = "kt",
-                    testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin",
-                    recursive = false,
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
             }

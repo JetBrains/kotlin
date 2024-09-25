@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -56,12 +58,18 @@ import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdapto
 /*
     The generated test compares package descriptors loaded from kotlin sources and read from compiled java.
 */
-public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
+public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements FrontendBackendConfiguration {
     // There are two modules in each test case (sources and dependencies), so we should render declarations from both of them
     public static final Configuration
             COMPARATOR_CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.renderDeclarationsFromOtherModules(true);
 
     protected boolean withForeignAnnotations() { return false; }
+
+    @Override
+    @NotNull
+    public TargetBackend getBackend() {
+        return TargetBackend.JVM_IR;
+    }
 
     protected void doTestCompiledJava(@NotNull String javaFileName) {
         try {
@@ -80,10 +88,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
 
-        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(), newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getClasspath(),
-                                                       Collections.emptyList()), EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
+        CompilerConfiguration configuration =
+                newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getClasspath(), Collections.emptyList());
+        configureIrFir(configuration);
+        KotlinCoreEnvironment environment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
         configureEnvironment(environment);
 
@@ -152,7 +161,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File txtFile = getTxtFileFromKtFile(ktFileName);
 
         CompilerConfiguration configuration = newConfiguration(configurationKind, getJdkKind(), getClasspath(), Collections.emptyList());
-        updateConfiguration(configuration);
+        configureIrFir(configuration);
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
@@ -217,8 +226,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void configureEnvironment(KotlinCoreEnvironment environment) {}
 
-    public void updateConfiguration(@NotNull CompilerConfiguration configuration) {}
-
     protected void doTestJavaAgainstKotlin(String expectedFileName) {
         try {
             doTestJavaAgainstKotlinImpl(expectedFileName);
@@ -235,7 +242,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         FileUtil.copyDir(sourcesDir, new File(tmpdir, "test"), pathname -> pathname.getName().endsWith(".java"));
 
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind());
-        updateConfiguration(configuration);
+        configureIrFir(configuration);
         ContentRootsKt.addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
         JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);
@@ -273,12 +280,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), librarySrc),
                 libraryOut,
                 getTestRootDisposable(),
-                null
+                null,
+                configuration -> {
+                    configureIrFir(configuration);
+                    return Unit.INSTANCE;
+                }
         );
 
+        CompilerConfiguration configuration =
+                newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind(), getClasspath(libraryOut), Collections.emptyList());
+        configureIrFir(configuration);
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind(), getClasspath(libraryOut), Collections.emptyList()),
+                configuration,
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
         registerJavacIfNeeded(environment);

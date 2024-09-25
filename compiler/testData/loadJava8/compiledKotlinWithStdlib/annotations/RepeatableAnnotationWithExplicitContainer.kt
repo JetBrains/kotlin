@@ -1,5 +1,8 @@
 // FULL_JDK
 
+// NO_CHECK_SOURCE_VS_BINARY
+// If loaded from binaries, repeated annotations are placed in Anno.Container.
+
 package test
 
 @java.lang.annotation.Repeatable(Anno.Container::class)
