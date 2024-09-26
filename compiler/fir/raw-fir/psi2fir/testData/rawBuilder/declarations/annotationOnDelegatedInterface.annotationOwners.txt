@@ -3,5 +3,5 @@ owner -> FirRegularClassSymbol Some
 context -> FirRegularClassSymbol Some
 
 @Some(String(Anything))
-owner -> FirRegularClassSymbol Derived
+owner -> FirFieldSymbol /Derived.$$delegate_0
 context -> FirFieldSymbol /Derived.$$delegate_0

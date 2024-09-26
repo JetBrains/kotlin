@@ -940,28 +940,27 @@ open class PsiRawFirBuilder(
          */
         protected fun buildFieldForSupertypeDelegate(
             entry: KtDelegatedSuperTypeEntry,
-            type: FirTypeRef?,
+            type: FirTypeRef,
             fieldOrd: Int,
         ): FirField {
             val delegateSource = entry.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
 
-            val delegateExpression = buildOrLazyExpression(delegateSource) {
-                { entry.delegateExpression }
-                    .toFirExpression("Should have delegate")
-            }
             return buildField {
                 source = delegateSource
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(fieldOrd)
                 symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))
-                returnTypeRef = type ?: withContainerSymbol(symbol) {
-                    entry.typeReference.toFirOrErrorType()
+                returnTypeRef = type
+                withContainerSymbol(symbol) {
+                    initializer = buildOrLazyExpression(delegateSource) {
+                        { entry.delegateExpression }
+                            .toFirExpression("Should have delegate")
+                    }
                 }
 
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
-                initializer = delegateExpression
                 dispatchReceiverType = currentDispatchReceiverType()
             }
         }
@@ -993,10 +992,9 @@ open class PsiRawFirBuilder(
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         container.superTypeRefs += type
 
-                        /**
-                         * [FirAnnotationCall.containingDeclarationSymbol] have to be from [container], so we should calculate it here
-                         */
-                        val delegateField = buildFieldForSupertypeDelegate(superTypeListEntry, type, delegateFieldsMap.size)
+                        val delegateField = buildFieldForSupertypeDelegate(
+                            superTypeListEntry, type, delegateFieldsMap.size
+                        )
                         delegateFieldsMap[index] = delegateField.symbol
                     }
                 }

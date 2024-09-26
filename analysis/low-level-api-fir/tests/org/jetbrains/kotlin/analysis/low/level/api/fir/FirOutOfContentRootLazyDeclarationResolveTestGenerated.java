@@ -67,6 +67,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("annotationOnDelegatedInterface.kt")
+  public void testAnnotationOnDelegatedInterface() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationOnDelegatedInterface.kt");
+  }
+
+  @Test
   @TestMetadata("annotationOnLocalClass.kt")
   public void testAnnotationOnLocalClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationOnLocalClass.kt");

@@ -2106,17 +2106,13 @@ class LightTreeRawFirDeclarationBuilder(
         index: Int
     ): FirTypeRef {
         lateinit var firTypeRef: FirTypeRef
-        var firExpression: FirExpression? = null
+        var expressionNode: LighterASTNode? = null
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
-                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it, "Should have delegate")
+                else -> if (it.isExpression()) expressionNode = it
             }
         }
-
-        val calculatedFirExpression = firExpression ?: buildErrorExpression(
-            explicitDelegation.toFirSourceElement(), ConeSyntaxDiagnostic("Should have delegate")
-        )
 
         delegateFieldsMap.put(
             index,
@@ -2125,11 +2121,17 @@ class LightTreeRawFirDeclarationBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(delegateFieldsMap.size)
-                returnTypeRef = firTypeRef
                 symbol = FirFieldSymbol(CallableId(context.currentClassId, name))
+                returnTypeRef = firTypeRef
+                withContainerSymbol(symbol) {
+                    val errorReason = "Should have delegate"
+                    initializer = expressionNode?.let {
+                        expressionConverter.getAsFirExpression(it, errorReason)
+                    } ?: buildErrorExpression(explicitDelegation.toFirSourceElement(), ConeSyntaxDiagnostic(errorReason))
+                }
+
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
-                initializer = calculatedFirExpression
                 dispatchReceiverType = currentDispatchReceiverType()
             }.symbol
         )
