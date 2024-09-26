@@ -2,7 +2,7 @@
 // ISSUE: KT-58539
 
 // MODULE: common
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 @MyComposable
 expect fun ExpectComposable(
@@ -15,7 +15,7 @@ fun commonBox(): String {
 }
 
 // MODULE: platform()()(common)
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 @MyComposable
 actual fun ExpectComposable(

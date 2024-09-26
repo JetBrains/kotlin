@@ -27,7 +27,7 @@ FILE: module_a_classWithAllPropertiesConstructor.kt
             public get(): R|kotlin/String|
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/AllPropertiesConstructor|() public open class Base : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllPropertiesConstructor|() public open class Base : R|kotlin/Any| {
         public constructor(): R|Base| {
             super<R|kotlin/Any|>()
         }
@@ -41,7 +41,7 @@ FILE: module_a_classWithAllPropertiesConstructor.kt
     }
 Module: b
 FILE: Derived.kt
-    @R|org/jetbrains/kotlin/fir/plugin/AllPropertiesConstructor|() public final class Derived : R|Base| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllPropertiesConstructor|() public final class Derived : R|Base| {
         public constructor(): R|Derived| {
             super<R|Base|>()
         }

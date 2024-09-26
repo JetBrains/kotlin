@@ -6,7 +6,7 @@
 // MODULE: common
 package test
 
-import org.jetbrains.kotlin.fir.plugin.AddAnnotations
+import org.jetbrains.kotlin.plugin.sandbox.AddAnnotations
 import kotlin.reflect.KClass
 
 @AddAnnotations
@@ -17,7 +17,7 @@ class Some {
 // MODULE: platform()()(common)
 package test
 
-import org.jetbrains.kotlin.fir.plugin.AddAnnotations
+import org.jetbrains.kotlin.plugin.sandbox.AddAnnotations
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredFunctions

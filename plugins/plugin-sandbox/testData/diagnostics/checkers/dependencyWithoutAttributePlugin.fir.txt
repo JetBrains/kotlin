@@ -6,18 +6,18 @@ FILE: dependencyWithoutAttributePlugin.kt
     public final fun takeAny(x: R|kotlin/Number|): R|kotlin/Unit| {
     }
     public final fun test_1(positiveInt: R|@Positive kotlin/Int|, negativeInt: R|@Negative kotlin/Int|, someInt: R|kotlin/Int|): R|kotlin/Unit| {
-        R|org/jetbrains/kotlin/fir/plugin/consumePositiveInt|(R|<local>/positiveInt|)
-        R|org/jetbrains/kotlin/fir/plugin/consumePositiveInt|(R|<local>/negativeInt|)
-        R|org/jetbrains/kotlin/fir/plugin/consumePositiveInt|(R|<local>/someInt|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumePositiveInt|(R|<local>/positiveInt|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumePositiveInt|(R|<local>/negativeInt|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumePositiveInt|(R|<local>/someInt|)
     }
     public final fun test_2(): R|kotlin/Unit| {
-        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/producePositiveInt|()
+        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/plugin/sandbox/producePositiveInt|()
         R|/takePositive|(R|<local>/x|)
         R|/takeNegative|(R|<local>/x|)
         R|/takeAny|(R|<local>/x|)
     }
     public final fun test_3(): R|kotlin/Unit| {
-        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/produceBoxedPositiveInt|().R|SubstitutionOverride<org/jetbrains/kotlin/fir/plugin/Box.value: R|@Positive kotlin/Int|>|
+        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/plugin/sandbox/produceBoxedPositiveInt|().R|SubstitutionOverride<org/jetbrains/kotlin/plugin/sandbox/Box.value: R|@Positive kotlin/Int|>|
         R|/takePositive|(R|<local>/x|)
         R|/takeNegative|(R|<local>/x|)
         R|/takeAny|(R|<local>/x|)

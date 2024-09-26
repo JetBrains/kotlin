@@ -1,6 +1,6 @@
 // DUMP_IR
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun runUsual(block: () -> Unit) { block.invoke() }
 fun runComposable(block: @MyComposable () -> Unit) { block.invoke() }

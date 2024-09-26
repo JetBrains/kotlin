@@ -1,6 +1,6 @@
 package foo
 
-import org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+import org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 
 @MyInterfaceSupertype
 class SomeClass {

@@ -6,7 +6,7 @@ FILE: newSupertype.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
         public constructor(): R|foo/FinalClassWithOverride| {
             super<R|kotlin/Any|>()
         }
@@ -15,7 +15,7 @@ FILE: newSupertype.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
         public constructor(): R|foo/AnnotatedClassWithExplicitInheritance| {
             super<R|kotlin/Any|>()
         }

@@ -7,7 +7,7 @@ FILE: entityTypeSuperClass.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithImplicitAny : R|kotlin/Any|, R|foo/EntityType<foo/WithImplicitAny>| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/GeneratedEntityType|() public final class WithImplicitAny : R|kotlin/Any|, R|foo/EntityType<foo/WithImplicitAny>| {
         public constructor(): R|foo/WithImplicitAny| {
             super<R|kotlin/Any|>()
         }
@@ -15,7 +15,7 @@ FILE: entityTypeSuperClass.kt
     }
     public abstract interface Inter : R|kotlin/Any| {
     }
-    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithExplicitInterface : R|foo/Inter|, R|foo/EntityType<foo/WithExplicitInterface>| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/GeneratedEntityType|() public final class WithExplicitInterface : R|foo/Inter|, R|foo/EntityType<foo/WithExplicitInterface>| {
         public constructor(): R|foo/WithExplicitInterface| {
             super<R|foo/EntityType<foo/WithExplicitInterface>|>()
         }
@@ -27,7 +27,7 @@ FILE: entityTypeSuperClass.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithExplicitClass : R|foo/SomeClass|, R|foo/EntityType<foo/WithExplicitClass>| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/GeneratedEntityType|() public final class WithExplicitClass : R|foo/SomeClass|, R|foo/EntityType<foo/WithExplicitClass>| {
         public constructor(): R|foo/WithExplicitClass| {
             super<R|foo/SomeClass|>()
         }

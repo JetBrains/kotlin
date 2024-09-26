@@ -1,5 +1,5 @@
 
-import org.jetbrains.kotlin.fir.plugin.NestedClassAndMaterializeMember
+import org.jetbrains.kotlin.plugin.sandbox.NestedClassAndMaterializeMember
 
 @NestedClassAndMaterializeMember
 class Foo {

@@ -2,8 +2,8 @@
 // MODULE: dependency
 package dependency
 
-@org.jetbrains.kotlin.fir.plugin.ExternalClassWithNested
-@org.jetbrains.kotlin.fir.plugin.DummyFunction
+@org.jetbrains.kotlin.plugin.sandbox.ExternalClassWithNested
+@org.jetbrains.kotlin.plugin.sandbox.DummyFunction
 class Test
 
 

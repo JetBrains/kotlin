@@ -8,7 +8,7 @@
 // FILE: main.kt
 package test
 
-import org.jetbrains.kotlin.fir.plugin.CompanionWithFoo
+import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 @CompanionWithFoo
 class MyClass

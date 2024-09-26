@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.name.Name
 
 class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     companion object {
-        private val AllPublicClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("AllPublic"))
-        private val VisibilityClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), Name.identifier("Visibility"))
+        private val AllPublicClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("AllPublic"))
+        private val VisibilityClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("Visibility"))
 
         private val PublicName = Name.identifier("Public")
         private val InternalName = Name.identifier("Internal")

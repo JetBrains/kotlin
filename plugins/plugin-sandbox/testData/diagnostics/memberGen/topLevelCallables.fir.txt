@@ -1,7 +1,7 @@
 FILE: topLevelCallables.kt
     package foo
 
-    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class MySuperClass : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|() public final class MySuperClass : R|kotlin/Any| {
         public constructor(): R|foo/MySuperClass| {
             super<R|kotlin/Any|>()
         }

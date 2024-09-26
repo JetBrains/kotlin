@@ -97,7 +97,7 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
                     it.packageFqName?.asString() == "some"
         } ?: false
 
-    private val composableClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), FqName("MyComposable"), false)
+    private val composableClassId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), FqName("MyComposable"), false)
 
     private val composableSymbol = pluginContext.referenceClass(composableClassId)!!
 

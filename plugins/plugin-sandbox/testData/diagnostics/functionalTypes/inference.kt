@@ -1,5 +1,5 @@
 // INFERENCE_HELPERS
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun <T : suspend () -> Unit> suspendId(f: T): T = f
 fun <T : @MyComposable () -> Unit> composableId(f: T): T = f

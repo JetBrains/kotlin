@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import kotlin.reflect.*
 
 abstract <!CONFLICTING_INHERITED_MEMBERS!>class MyClass<!>: <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>KSuspendFunction0<Unit>, () -> Unit<!>

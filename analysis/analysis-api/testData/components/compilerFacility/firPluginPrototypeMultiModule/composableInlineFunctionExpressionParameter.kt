@@ -18,7 +18,7 @@ class B {
 // FILE: p3/bar.kt
 package p3
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import p2.A
 
 interface RowScope
@@ -28,7 +28,7 @@ inline fun Row(a: A, content: @MyComposable RowScope.() -> Unit) {
 }
 // MODULE: main(lib, lib2)
 // FILE: main.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import p2.A
 import p2.B
 import p3.Row

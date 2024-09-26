@@ -1,5 +1,5 @@
 FILE: classWithGeneratedMembersAndNestedClass.kt
-    @R|org/jetbrains/kotlin/fir/plugin/NestedClassAndMaterializeMember|() public final class Foo : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/NestedClassAndMaterializeMember|() public final class Foo : R|kotlin/Any| {
         public constructor(): R|Foo| {
             super<R|kotlin/Any|>()
         }

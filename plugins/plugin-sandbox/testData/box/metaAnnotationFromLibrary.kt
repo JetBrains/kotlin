@@ -1,5 +1,5 @@
 // MODULE: lib
-import org.jetbrains.kotlin.fir.plugin.AllOpen
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
 annotation class Open1
@@ -12,7 +12,7 @@ annotation class Open3
 
 // MODULE: main(lib)
 
-import org.jetbrains.kotlin.fir.plugin.AllOpen
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
 class Zero

@@ -3,7 +3,7 @@
 // FILE: main.kt
 package foo
 
-@org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+@org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 class F<caret>oo
 
 interface MyInterface

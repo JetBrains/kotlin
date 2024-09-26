@@ -1,7 +1,7 @@
 // FILE: test_NestedClassAndMaterializeMember.kt
 package test
 
-import org.jetbrains.kotlin.fir.plugin.NestedClassAndMaterializeMember
+import org.jetbrains.kotlin.plugin.sandbox.NestedClassAndMaterializeMember
 
 import test.MyClassWithNested.*
 
@@ -21,7 +21,7 @@ class MyClassWithNested
 // FILE: test_CompanionWithFoo.kt
 package test
 
-import org.jetbrains.kotlin.fir.plugin.CompanionWithFoo
+import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 import test.MyClassWithCompanion.*
 import test.MyClassWithCompanion.Companion

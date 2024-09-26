@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] serializable_starImport.kt
-    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] serializable_starImport.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPANION_GENERATION)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPANION_GENERATION)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final? [ResolvedTo(TYPES)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final? [ResolvedTo(TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(STATUS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(STATUS)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(CONTRACTS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(CONTRACTS)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             super<R|kotlin/Any|>()
         }

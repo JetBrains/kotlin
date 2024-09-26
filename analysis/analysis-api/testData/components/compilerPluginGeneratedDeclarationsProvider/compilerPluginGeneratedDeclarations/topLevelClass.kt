@@ -1,7 +1,7 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 package test
 
-@org.jetbrains.kotlin.fir.plugin.ExternalClassWithNested
+@org.jetbrains.kotlin.plugin.sandbox.ExternalClassWithNested
 class Test
 
 class RegularTopLevelClass

@@ -126,21 +126,21 @@ FILE fqName:<root> fileName:/serializer.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.A) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.A
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.A
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.B) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.B) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.B
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.B
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.C) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.C) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.C
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.C
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.D) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL <> ($this:<root>.FirstSerializer, x:<root>.D) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.D
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.D
       BLOCK_BODY
     FUN name:aFunction visibility:public modality:FINAL <> ($this:<root>.FirstSerializer) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.FirstSerializer
@@ -169,21 +169,21 @@ FILE fqName:<root> fileName:/serializer.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.A) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.A
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.A
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.B) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.B) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.B
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.B
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.C) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.C) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.C
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.C
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.D) returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL <> ($this:<root>.SecondSerializer, x:<root>.D) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.fir.plugin.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.D
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:x index:0 type:<root>.D
       BLOCK_BODY
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

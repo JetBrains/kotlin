@@ -1,2 +1,2 @@
-@org.jetbrains.kotlin.fir.plugin.MyComposable
-fun Foo(text: @org.jetbrains.kotlin.fir.plugin.MyComposable (() -> kotlin.Unit))
+@org.jetbrains.kotlin.plugin.sandbox.MyComposable
+fun Foo(text: @org.jetbrains.kotlin.plugin.sandbox.MyComposable (() -> kotlin.Unit))

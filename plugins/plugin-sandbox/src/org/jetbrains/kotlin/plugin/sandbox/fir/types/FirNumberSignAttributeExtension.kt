@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExtension(session) {
     companion object {
-        private val PACKAGE_FQN = FqName("org.jetbrains.kotlin.plugin.sandbox.fir")
+        private val PACKAGE_FQN = FqName("org.jetbrains.kotlin.plugin.sandbox")
         private val PositiveClassId = ClassId(PACKAGE_FQN, Name.identifier("Positive"))
         private val NegativeClassId = ClassId(PACKAGE_FQN, Name.identifier("Negative"))
     }

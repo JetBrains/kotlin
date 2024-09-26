@@ -2,7 +2,7 @@ Module: common
 FILE: module_common_annotationsGeneratedInBackend_mpp.kt
     package test
 
-    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddAnnotations|() public final class Some : R|kotlin/Any| {
         public constructor(): R|test/Some| {
             super<R|kotlin/Any|>()
         }
@@ -14,7 +14,7 @@ FILE: module_common_annotationsGeneratedInBackend_mpp.kt
 FILE: module_platform_annotationsGeneratedInBackend_mpp.kt
     package test
 
-    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Other : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddAnnotations|() public final class Other : R|kotlin/Any| {
         public constructor(): R|test/Other| {
             super<R|kotlin/Any|>()
         }
@@ -52,7 +52,7 @@ Module: platform
 FILE: module_common_annotationsGeneratedInBackend_mpp.kt
     package test
 
-    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddAnnotations|() public final class Some : R|kotlin/Any| {
         public constructor(): R|test/Some| {
             super<R|kotlin/Any|>()
         }
@@ -64,7 +64,7 @@ FILE: module_common_annotationsGeneratedInBackend_mpp.kt
 FILE: module_platform_annotationsGeneratedInBackend_mpp.kt
     package test
 
-    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Other : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddAnnotations|() public final class Other : R|kotlin/Any| {
         public constructor(): R|test/Other| {
             super<R|kotlin/Any|>()
         }

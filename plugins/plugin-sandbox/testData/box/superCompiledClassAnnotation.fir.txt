@@ -1,6 +1,6 @@
 Module: lib
 FILE: lib.kt
-    @R|org/jetbrains/kotlin/fir/plugin/AllOpen2|() public abstract interface Intf : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen2|() public abstract interface Intf : R|kotlin/Any| {
         public open fun intfMethod(): R|kotlin/Unit| {
         }
 

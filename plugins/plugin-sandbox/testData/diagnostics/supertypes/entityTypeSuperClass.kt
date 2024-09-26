@@ -1,6 +1,6 @@
 package foo
 
-import org.jetbrains.kotlin.fir.plugin.GeneratedEntityType
+import org.jetbrains.kotlin.plugin.sandbox.GeneratedEntityType
 
 open class EntityType<Self>
 

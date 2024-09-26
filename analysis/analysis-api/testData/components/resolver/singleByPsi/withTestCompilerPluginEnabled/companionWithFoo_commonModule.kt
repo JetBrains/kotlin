@@ -4,7 +4,7 @@
 // TARGET_PLATFORM: Common
 
 // FILE: myAnnotations.kt
-package org.jetbrains.kotlin.fir.plugin
+package org.jetbrains.kotlin.plugin.sandbox
 
 /**
  * IMPORTANT!
@@ -18,7 +18,7 @@ annotation class CompanionWithFoo
 // FILE: main.kt
 package test
 
-@org.jetbrains.kotlin.fir.plugin.CompanionWithFoo
+@org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 class WithGeneratedCompanion
 
 fun test() {

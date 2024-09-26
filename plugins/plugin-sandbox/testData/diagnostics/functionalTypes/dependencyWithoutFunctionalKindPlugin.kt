@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.*
+import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun consumeRegularFunction(block: () -> Unit) {}
 fun consumeSuspendFunction(block: suspend () -> Unit) {}

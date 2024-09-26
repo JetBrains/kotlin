@@ -5,7 +5,7 @@
 // TARGET_PLATFORM: Common
 
 // FILE: MyComposable.kt
-package org.jetbrains.kotlin.fir.plugin
+package org.jetbrains.kotlin.plugin.sandbox
 
 /**
  * IMPORTANT!
@@ -20,7 +20,7 @@ annotation class MyComposable
 // FILE: Common.kt
 package test
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 @MyComposable
 public fun Foo(text: @MyComposable () -> Unit) {}

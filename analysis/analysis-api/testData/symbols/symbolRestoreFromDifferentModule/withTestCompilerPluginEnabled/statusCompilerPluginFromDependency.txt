@@ -1,7 +1,7 @@
 Inital from Sources of main:
 KaNamedClassSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/AllOpen()
+    org/jetbrains/kotlin/plugin/sandbox/AllOpen()
       psi: KtAnnotationEntry
   ]
   classId: pack/Foo
@@ -32,7 +32,7 @@ KaNamedClassSymbol:
 Restored in Sources of restoreInContextOf:
 KaNamedClassSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/AllOpen()
+    org/jetbrains/kotlin/plugin/sandbox/AllOpen()
       psi: KtAnnotationEntry
   ]
   classId: pack/Foo

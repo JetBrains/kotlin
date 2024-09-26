@@ -1,5 +1,5 @@
 // FILE: Base_ShouldBeOpen.java
-import org.jetbrains.kotlin.fir.plugin.AllOpen2;
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen2;
 
 @AllOpen2
 public abstract class Base_ShouldBeOpen {
@@ -7,7 +7,7 @@ public abstract class Base_ShouldBeOpen {
 }
 
 // FILE: Intf.java
-import org.jetbrains.kotlin.fir.plugin.AllOpen2;
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen2;
 
 @AllOpen2
 public interface Intf {

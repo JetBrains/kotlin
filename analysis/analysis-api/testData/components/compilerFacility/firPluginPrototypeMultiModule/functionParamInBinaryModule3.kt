@@ -6,7 +6,7 @@
 // FILE: p3/foo.kt
 package p3
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 @MyComposable
 fun Scaffold(x: @MyComposable () -> (@MyComposable () -> Unit)) {
@@ -14,7 +14,7 @@ fun Scaffold(x: @MyComposable () -> (@MyComposable () -> Unit)) {
 
 // MODULE: main(lib)
 // FILE: main.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import p3.Scaffold
 
 @MyComposable

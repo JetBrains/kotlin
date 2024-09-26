@@ -1,7 +1,7 @@
 Inital from Sources of main:
-@org.jetbrains.kotlin.fir.plugin.AllOpen
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
 open class Foo
 
 Restored in Sources of restoreInContextOf:
-@org.jetbrains.kotlin.fir.plugin.AllOpen
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
 open class Foo

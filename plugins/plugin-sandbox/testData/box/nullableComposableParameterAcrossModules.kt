@@ -2,7 +2,7 @@
 
 // MODULE: a
 // FILE: a.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun RMenuItem(
     onClick: (() -> Unit)? = null,
@@ -11,7 +11,7 @@ fun RMenuItem(
 
 // MODULE: b(a)
 // FILE: b.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun bar(onClick: (() -> Unit)? = null) {
     RMenuItem(

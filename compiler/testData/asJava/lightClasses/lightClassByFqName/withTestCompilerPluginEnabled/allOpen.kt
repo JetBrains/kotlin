@@ -4,7 +4,7 @@
 // FILE: main.kt
 package test
 
-import org.jetbrains.kotlin.fir.plugin.AllOpen
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
 class BaseClass {
@@ -14,7 +14,7 @@ class BaseClass {
 }
 
 // FILE: AllOpen.kt
-package org.jetbrains.kotlin.fir.plugin
+package org.jetbrains.kotlin.plugin.sandbox
 
 /**
  * Imitates AllOpen annotation to trigger AllOpenMatcherBasedStatusTransformer

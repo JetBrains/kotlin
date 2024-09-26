@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.CoreSerializer
+import org.jetbrains.kotlin.plugin.sandbox.CoreSerializer
 
 @CoreSerializer
 object Serializer

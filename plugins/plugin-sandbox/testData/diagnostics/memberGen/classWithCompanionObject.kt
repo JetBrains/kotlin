@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.CompanionWithFoo
+import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 @CompanionWithFoo
 class SomeClass

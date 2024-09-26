@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.fir.plugin.Positive
-import org.jetbrains.kotlin.fir.plugin.Negative
+import org.jetbrains.kotlin.plugin.sandbox.Positive
+import org.jetbrains.kotlin.plugin.sandbox.Negative
 
 fun takePositive(x: @Positive Number) {}
 fun takeNegative(x: @Negative Number) {}

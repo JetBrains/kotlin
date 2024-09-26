@@ -1,6 +1,6 @@
 KaNamedClassSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/AllOpen()
+    org/jetbrains/kotlin/plugin/sandbox/AllOpen()
       psi: KtAnnotationEntry
   ]
   classId: pack/Foo

@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.AllOpen
+import org.jetbrains.kotlin.plugin.sandbox.AllOpen
 
 @AllOpen
 annotation class Open

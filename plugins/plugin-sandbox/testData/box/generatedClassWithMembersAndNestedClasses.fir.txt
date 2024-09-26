@@ -1,7 +1,7 @@
 FILE: generatedClassWithMembersAndNestedClasses.kt
     package bar
 
-    @R|org/jetbrains/kotlin/fir/plugin/ExternalClassWithNested|() public final class Foo : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/ExternalClassWithNested|() public final class Foo : R|kotlin/Any| {
         public constructor(): R|bar/Foo| {
             super<R|kotlin/Any|>()
         }

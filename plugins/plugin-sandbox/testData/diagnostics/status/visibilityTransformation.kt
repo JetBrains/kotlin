@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.fir.plugin.AllPublic
-import org.jetbrains.kotlin.fir.plugin.Visibility
+import org.jetbrains.kotlin.plugin.sandbox.AllPublic
+import org.jetbrains.kotlin.plugin.sandbox.Visibility
 
 @AllPublic(Visibility.Protected)
 class A {

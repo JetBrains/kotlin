@@ -24,7 +24,7 @@ FILE: main.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MetaSupertype|() public final class Zero : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MetaSupertype|() public final class Zero : R|kotlin/Any| {
         public constructor(): R|foo/Zero| {
             super<R|kotlin/Any|>()
         }
@@ -51,7 +51,7 @@ FILE: ann2.kt
 
     }
 FILE: ann1.kt
-    @R|org/jetbrains/kotlin/fir/plugin/MetaSupertype|() public final annotation class AddSupertype1 : R|kotlin/Annotation| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MetaSupertype|() public final annotation class AddSupertype1 : R|kotlin/Annotation| {
         public constructor(): R|AddSupertype1| {
             super<R|kotlin/Any|>()
         }

@@ -1,4 +1,4 @@
 package foo
 
-@org.jetbrains.kotlin.fir.plugin.TestTopLevelPrivateSuspendFun
+@org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun
 fun box(): String = "OK"

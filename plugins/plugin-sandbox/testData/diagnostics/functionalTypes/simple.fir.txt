@@ -1,7 +1,7 @@
 FILE: simple.kt
     public final fun runUsual(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun runComposable(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun runComposable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval l0: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
@@ -12,11 +12,11 @@ FILE: simple.kt
             ^ Unit
         }
 
-        lval l2: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval l2: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-        lval l3: R|some/MyComposableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval l3: R|some/MyComposableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
@@ -28,7 +28,7 @@ FILE: simple.kt
             ^@runUsual Unit
         }
         )
-        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@runUsual Unit
         }
         )
@@ -40,7 +40,7 @@ FILE: simple.kt
             ^@runComposable Unit
         }
         )
-        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@runComposable Unit
         }
         )

@@ -1,7 +1,7 @@
 Inital from Sources of main:
 KaNamedClassSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
+    org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype()
       psi: KtAnnotationEntry
   ]
   classId: foo/Foo
@@ -36,7 +36,7 @@ KaNamedClassSymbol:
 Restored in Sources of restoreInContextOf:
 KaNamedClassSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
+    org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype()
       psi: KtAnnotationEntry
   ]
   classId: foo/Foo

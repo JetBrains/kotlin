@@ -1,4 +1,4 @@
-@org.jetbrains.kotlin.fir.plugin.AllOpen()
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen()
 public class BaseClass /* test.BaseClass*/ {
   private int prop = 42 /* initializer type: int */;
 

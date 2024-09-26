@@ -1,7 +1,7 @@
 Inital from Sources of main:
-@org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+@org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 class Foo : foo.MyInterface
 
 Restored in Sources of restoreInContextOf:
-@org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+@org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 class Foo : foo.MyInterface

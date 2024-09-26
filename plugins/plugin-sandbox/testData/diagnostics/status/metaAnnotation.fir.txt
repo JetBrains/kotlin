@@ -18,7 +18,7 @@ FILE: first.kt
 
     }
 FILE: second.kt
-    @R|org/jetbrains/kotlin/fir/plugin/AllOpen|() public open annotation class Open : R|kotlin/Annotation| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open annotation class Open : R|kotlin/Annotation| {
         public constructor(): R|Open| {
             super<R|kotlin/Any|>()
         }

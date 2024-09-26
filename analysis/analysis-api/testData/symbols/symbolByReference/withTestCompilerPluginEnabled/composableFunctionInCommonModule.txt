@@ -1,6 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: [
-    org/jetbrains/kotlin/fir/plugin/MyComposable()
+    org/jetbrains/kotlin/plugin/sandbox/MyComposable()
       psi: KtAnnotationEntry
   ]
   callableId: test/Foo
@@ -53,7 +53,7 @@ KaNamedFunctionSymbol:
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [
-          org/jetbrains/kotlin/fir/plugin/MyComposable()
+          org/jetbrains/kotlin/plugin/sandbox/MyComposable()
             psi: KtAnnotationEntry
         ]
         typeArguments: [
@@ -62,7 +62,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Unit
         ]
-        type: @R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>
+        type: @R|org/jetbrains/kotlin/plugin/sandbox/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(Common.kt)
       getContainingJvmClassName: test.CommonKt

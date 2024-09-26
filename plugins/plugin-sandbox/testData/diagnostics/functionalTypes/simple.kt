@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun runUsual(block: () -> Unit) {}
 fun runComposable(block: @MyComposable () -> Unit) {}

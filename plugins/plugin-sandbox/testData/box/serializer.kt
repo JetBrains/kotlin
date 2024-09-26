@@ -1,7 +1,7 @@
 // DUMP_IR
 
-import org.jetbrains.kotlin.fir.plugin.CoreSerializer
-import org.jetbrains.kotlin.fir.plugin.MySerializable
+import org.jetbrains.kotlin.plugin.sandbox.CoreSerializer
+import org.jetbrains.kotlin.plugin.sandbox.MySerializable
 
 @CoreSerializer
 object FirstSerializer {

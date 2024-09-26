@@ -1,5 +1,5 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 package pack
 
-@org.jetbrains.kotlin.fir.plugin.AllOpen
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
 class F<caret>oo

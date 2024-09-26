@@ -1,6 +1,6 @@
 Module: lib
 FILE: module_lib_metaAnnotationFromLibrary.kt
-    @R|org/jetbrains/kotlin/fir/plugin/AllOpen|() public open annotation class Open1 : R|kotlin/Annotation| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open annotation class Open1 : R|kotlin/Annotation| {
         public constructor(): R|Open1| {
             super<R|kotlin/Any|>()
         }
@@ -20,7 +20,7 @@ FILE: module_lib_metaAnnotationFromLibrary.kt
     }
 Module: main
 FILE: module_main_metaAnnotationFromLibrary.kt
-    @R|org/jetbrains/kotlin/fir/plugin/AllOpen|() public open class Zero : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open class Zero : R|kotlin/Any| {
         public constructor(): R|Zero| {
             super<R|kotlin/Any|>()
         }

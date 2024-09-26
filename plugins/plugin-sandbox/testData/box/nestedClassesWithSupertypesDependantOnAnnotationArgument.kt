@@ -1,7 +1,7 @@
 // DUMP_IR
 // FIR_DUMP
 
-import org.jetbrains.kotlin.fir.plugin.AddNestedClassesBasedOnArgument
+import org.jetbrains.kotlin.plugin.sandbox.AddNestedClassesBasedOnArgument
 
 interface A {
     fun test(): String = "OK"

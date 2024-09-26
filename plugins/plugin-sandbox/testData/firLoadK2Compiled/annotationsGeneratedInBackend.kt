@@ -2,7 +2,7 @@
 // DUMP_KT_IR
 package test
 
-import org.jetbrains.kotlin.fir.plugin.AddAnnotations
+import org.jetbrains.kotlin.plugin.sandbox.AddAnnotations
 
 @AddAnnotations
 class Some(val x: Int) {

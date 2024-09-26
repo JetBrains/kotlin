@@ -4,5 +4,5 @@ package test
 
 import test.FirstTarget.*
 
-@org.jetbrains.kotlin.fir.plugin.MySerializable
+@org.jetbrains.kotlin.plugin.sandbox.MySerializable
 class <caret>FirstTarget

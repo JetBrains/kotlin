@@ -3,7 +3,7 @@
 interface A
 
 fun local() {
-    @org.jetbrains.kotlin.fir.plugin.AddNestedGeneratedClass
+    @org.jetbrains.kotlin.plugin.sandbox.AddNestedGeneratedClass
     interface Some
 
     Some.Gene<caret>rated

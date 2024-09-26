@@ -2,7 +2,7 @@
 package bar
 
 import foo.AllOpenGenerated
-import org.jetbrains.kotlin.fir.plugin.ExternalClassWithNested
+import org.jetbrains.kotlin.plugin.sandbox.ExternalClassWithNested
 
 @ExternalClassWithNested
 class Foo {

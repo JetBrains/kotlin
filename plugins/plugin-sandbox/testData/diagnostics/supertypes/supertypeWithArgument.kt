@@ -1,6 +1,6 @@
 package foo
 
-import org.jetbrains.kotlin.fir.plugin.SupertypeWithTypeArgument
+import org.jetbrains.kotlin.plugin.sandbox.SupertypeWithTypeArgument
 
 interface InterfaceWithArgument<T> {
     fun generate(): T = null!!

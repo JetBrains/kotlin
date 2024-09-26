@@ -1,13 +1,13 @@
 FILE: topLevelCallables.kt
     package foo
 
-    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class First : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|() public final class First : R|kotlin/Any| {
         public constructor(): R|foo/First| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class Second : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|() public final class Second : R|kotlin/Any| {
         public constructor(): R|foo/Second| {
             super<R|kotlin/Any|>()
         }

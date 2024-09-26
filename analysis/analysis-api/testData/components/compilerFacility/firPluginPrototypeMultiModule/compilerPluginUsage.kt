@@ -14,7 +14,7 @@ fun test() {
 
 // FILE: fragment.kt
 // CODE_FRAGMENT_KIND: BLOCK
-@org.jetbrains.kotlin.fir.plugin.AllOpen
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
 class Foo {
     fun call() {}
 }

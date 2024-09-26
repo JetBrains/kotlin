@@ -1,4 +1,4 @@
-KtNameReferenceExpression(123,132): 'dummyTest'
+KtNameReferenceExpression(127,136): 'dummyTest'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {

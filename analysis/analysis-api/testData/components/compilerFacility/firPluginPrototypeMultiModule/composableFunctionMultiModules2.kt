@@ -6,7 +6,7 @@
 // FILE: p3/foo.kt
 package p3
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun setContent(content: @MyComposable () -> Unit): Int {
     content()
@@ -15,7 +15,7 @@ fun setContent(content: @MyComposable () -> Unit): Int {
 
 // MODULE: main(lib)
 // FILE: main.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import p3.setContent
 
 fun test(): Int {

@@ -46,7 +46,7 @@ class AllOpenMatcherBasedStatusTransformer(session: FirSession) : FirStatusTrans
 
 class AllOpenPredicateMatcher(session: FirSession) : AbstractSimpleClassPredicateMatchingService(session) {
     companion object {
-        private val ALL_OPEN2 = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen2")
+        private val ALL_OPEN2 = FqName("org.jetbrains.kotlin.plugin.sandbox.AllOpen2")
     }
 
     override val predicate = DeclarationPredicate.create {

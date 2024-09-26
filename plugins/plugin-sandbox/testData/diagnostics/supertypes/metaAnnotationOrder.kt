@@ -5,7 +5,7 @@ import AddSupertype1
 import AddSupertype2
 import AddSupertype3
 
-import org.jetbrains.kotlin.fir.plugin.MetaSupertype
+import org.jetbrains.kotlin.plugin.sandbox.MetaSupertype
 
 interface MyInterface {
     fun foo() {}
@@ -39,7 +39,7 @@ annotation class AddSupertype3
 annotation class AddSupertype2
 
 // FILE: ann1.kt
-import org.jetbrains.kotlin.fir.plugin.MetaSupertype
+import org.jetbrains.kotlin.plugin.sandbox.MetaSupertype
 
 @MetaSupertype
 annotation class AddSupertype1

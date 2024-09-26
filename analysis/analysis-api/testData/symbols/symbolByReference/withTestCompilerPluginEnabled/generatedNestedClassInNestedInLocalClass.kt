@@ -2,7 +2,7 @@
 
 fun local() {
     interface Container {
-        @org.jetbrains.kotlin.fir.plugin.AddNestedGeneratedClass
+        @org.jetbrains.kotlin.plugin.sandbox.AddNestedGeneratedClass
         interface Some
     }
 

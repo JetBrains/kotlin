@@ -1,7 +1,7 @@
 FILE: topLevelPrivateSuspendFun.kt
     package foo
 
-    @R|org/jetbrains/kotlin/fir/plugin/TestTopLevelPrivateSuspendFun|() public final fun box(): R|kotlin/String| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/TestTopLevelPrivateSuspendFun|() public final fun box(): R|kotlin/String| {
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

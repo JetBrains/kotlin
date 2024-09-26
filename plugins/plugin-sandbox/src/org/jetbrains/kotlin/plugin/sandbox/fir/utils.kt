@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.plugin.sandbox.fir
 
 import org.jetbrains.kotlin.name.FqName
 
-fun String.fqn(): FqName = FqName("org.jetbrains.kotlin.fir.plugin.$this")
+fun String.fqn(): FqName = FqName("org.jetbrains.kotlin.plugin.sandbox.$this")

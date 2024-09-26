@@ -5,13 +5,13 @@ FILE: simple.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public abstract class AbstractClass : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public abstract class AbstractClass : R|kotlin/Any|, R|foo/MyInterface| {
         public constructor(): R|foo/AbstractClass| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
         public constructor(): R|foo/FinalClassWithOverride| {
             super<R|kotlin/Any|>()
         }
@@ -20,7 +20,7 @@ FILE: simple.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithoutOverride : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public final class FinalClassWithoutOverride : R|kotlin/Any|, R|foo/MyInterface| {
         public constructor(): R|foo/FinalClassWithoutOverride| {
             super<R|kotlin/Any|>()
         }
@@ -35,7 +35,7 @@ FILE: simple.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
         public constructor(): R|foo/AnnotatedClassWithExplicitInheritance| {
             super<R|kotlin/Any|>()
         }

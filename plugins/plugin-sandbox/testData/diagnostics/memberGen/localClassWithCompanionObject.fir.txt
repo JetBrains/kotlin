@@ -1,11 +1,11 @@
 FILE: localClassWithCompanionObject.kt
     public final fun context(): R|kotlin/Unit| {
-        @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
+        @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
             public constructor(): R|<local>/SomeClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class Nested : R|kotlin/Any| {
+            @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|() local final class Nested : R|kotlin/Any| {
                 public constructor(): R|<local>/SomeClass.Nested| {
                     super<R|kotlin/Any|>()
                 }

@@ -4,7 +4,7 @@
 // FULL_JDK
 
 // MODULE: a
-import org.jetbrains.kotlin.fir.plugin.AllPropertiesConstructor
+import org.jetbrains.kotlin.plugin.sandbox.AllPropertiesConstructor
 
 class A(val s: String)
 class B(val s: String)
@@ -18,7 +18,7 @@ open class Base {
 
 // MODULE: b(a)
 // FILE: Derived.kt
-import org.jetbrains.kotlin.fir.plugin.AllPropertiesConstructor
+import org.jetbrains.kotlin.plugin.sandbox.AllPropertiesConstructor
 
 @AllPropertiesConstructor
 class Derived : Base() {

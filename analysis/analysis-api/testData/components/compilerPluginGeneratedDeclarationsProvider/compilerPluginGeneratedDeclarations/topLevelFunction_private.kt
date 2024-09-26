@@ -1,5 +1,5 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 package test
 
-@org.jetbrains.kotlin.fir.plugin.TestTopLevelPrivateSuspendFun
+@org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun
 fun test() {}

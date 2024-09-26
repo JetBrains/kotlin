@@ -3,7 +3,7 @@
 // FILE: main.kt
 package pack
 
-@org.jetbrains.kotlin.fir.plugin.AllOpen
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
 class F<caret>oo
 
 // MODULE: restoreInContextOf(main)

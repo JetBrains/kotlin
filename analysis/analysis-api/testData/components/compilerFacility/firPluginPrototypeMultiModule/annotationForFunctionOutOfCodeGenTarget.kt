@@ -1,10 +1,10 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 // DUMP_IR
-// CHECK_CALLS_WITH_ANNOTATION: org.jetbrains.kotlin.fir.plugin.MyComposable
+// CHECK_CALLS_WITH_ANNOTATION: org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 // MODULE: main
 // FILE: main.kt
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 import p3.BookmarkButton
 
 @MyComposable
@@ -21,7 +21,7 @@ fun PostCardSimple(
 // FILE: utils/JetnewsIcons.kt
 package p3
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 @MyComposable
 fun BookmarkButton(

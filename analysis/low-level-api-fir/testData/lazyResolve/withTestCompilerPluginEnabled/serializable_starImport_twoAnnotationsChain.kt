@@ -7,7 +7,7 @@ import test.FirstTarget.*
 @NestedAnnotation
 annotation class OuterAnnotation
 
-@org.jetbrains.kotlin.fir.plugin.MySerializable
+@org.jetbrains.kotlin.plugin.sandbox.MySerializable
 @OuterAnnotation
 class FirstTarget {
 
@@ -15,7 +15,7 @@ class FirstTarget {
 
 }
 
-@org.jetbrains.kotlin.fir.plugin.CoreSerializer
+@org.jetbrains.kotlin.plugin.sandbox.CoreSerializer
 class Serializer
 
 val generatedMethodReference = Serializer::serialize<caret>FirstTarget

@@ -3,6 +3,6 @@
 // LANGUAGE_VERSION: 2.1
 package test
 
-import org.jetbrains.kotlin.fir.plugin.MyComposable
+import org.jetbrains.kotlin.plugin.sandbox.MyComposable
 
 fun runComposable(block: @MyComposable () -> Unit) {}
