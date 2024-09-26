@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.platform
 
 /**
- * A property annotated with [KaCachedService] stores a cached IntelliJ project or application service.
+ * A property annotated with [KaCachedService] stores a cached IntelliJ project or application service, or an object with a reference to
+ * such a service.
  *
  * Retrieving services via [Project.getService][com.intellij.openapi.project.Project.getService] and
  * [Application.getService][com.intellij.openapi.application.Application.getService] can have an impact on performance when called

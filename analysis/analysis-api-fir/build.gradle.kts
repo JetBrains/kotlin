@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(libs.caffeine)
+    implementation(libs.opentelemetry.api)
 
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
