@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(project: Project) {
-    register(FirCachesFactory::class, FirThreadSafeCachesFactory)
+    register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))

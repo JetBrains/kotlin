@@ -62,6 +62,17 @@ abstract class FirCachesFactory : FirSessionComponent {
     ): FirCache<K, V, CONTEXT>
 
     abstract fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V>
+
+    /**
+     * Creates a [FirLazyValue] which possibly references its value softly. If the referenced value is garbage-collected, it will be
+     * recomputed with the [createValue] function.
+     *
+     * The lazy value doesn't make any guarantees regarding the number of invocations of [createValue] or the threads it is invoked in.
+     *
+     * Whether the lazy value actually references its value softly depends on the cache factory implementation. The cache factory may create
+     * a lazy value which strongly references its value.
+     */
+    abstract fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V>
 }
 
 val FirSession.firCachesFactory: FirCachesFactory by FirSession.sessionComponentAccessor()

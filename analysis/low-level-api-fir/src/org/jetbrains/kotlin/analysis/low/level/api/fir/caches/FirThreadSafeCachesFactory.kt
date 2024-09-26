@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
-import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
+import java.util.concurrent.ConcurrentHashMap
 
-object FirThreadSafeCachesFactory : FirCachesFactory() {
+internal class FirThreadSafeCachesFactory(private val project: Project) : FirCachesFactory() {
     override fun <KEY : Any, VALUE, CONTEXT> createCache(createValue: (KEY, CONTEXT) -> VALUE): FirCache<KEY, VALUE, CONTEXT> =
         FirThreadSafeCache(createValue = createValue)
 
@@ -33,4 +34,7 @@ object FirThreadSafeCachesFactory : FirCachesFactory() {
 
     override fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V> =
         FirThreadSafeValue(createValue)
+
+    override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
+        LLFirSoftLazyValue(project, createValue)
 }
