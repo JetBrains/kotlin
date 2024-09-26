@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.ENUM_CLASS_SPECIAL_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -43,9 +42,7 @@ private fun checkAnnotationRecursive(
     diagnosticsReporter: IrDiagnosticReporter,
     topLevelExpect: IrClassSymbol
 ) {
-    val hasAnnotation = actual.hasAnnotation(StandardClassIds.Annotations.KotlinActual) ||
-            actual is IrProperty && (actual.parent as? IrClass)?.isAnnotationClass == true &&
-            actual.getter?.hasAnnotation(StandardClassIds.Annotations.KotlinActual) == true
+    val hasAnnotation = actual.hasAnnotation(StandardClassIds.Annotations.KotlinActual)
     val expect = expectActualMap.actualToDirectExpect[actual.symbol]
     if (hasAnnotation && expect == null) {
         diagnosticsReporter.reportJavaDirectActualWithoutExpect(actual, reportOn = topLevelExpect)
@@ -57,7 +54,7 @@ private fun checkAnnotationRecursive(
     }
     if (actual is IrClass) {
         for (member in actual.declarations) {
-            if (!member.isFakeOverride && (member is IrFunction || member is IrClass || member is IrProperty) &&
+            if (!member.isFakeOverride && (member is IrFunction || member is IrClass) &&
                 !member.isAnnotationConstructor(actual) // In Java, annotations are interfaces, and they can't have constructors.
             ) {
                 checkAnnotationRecursive(member, expectActualMap, diagnosticsReporter, topLevelExpect)
