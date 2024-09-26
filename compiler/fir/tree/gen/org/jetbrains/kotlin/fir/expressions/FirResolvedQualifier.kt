@@ -31,6 +31,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val relativeClassFqName: FqName?
     abstract val classId: ClassId?
     abstract val symbol: FirClassLikeSymbol<*>?
+    abstract val explicitParent: FirResolvedQualifier?
     abstract val isNullableLHSForCallableReference: Boolean
     abstract val resolvedToCompanionObject: Boolean
     abstract val canBeValue: Boolean

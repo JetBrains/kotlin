@@ -153,8 +153,16 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
+        // Only report an error on the outermost parent.
+        if (errorResolvedQualifier.explicitParent?.hasErrorOrParentWithError() == true) return
+
         val source = errorResolvedQualifier.source
         reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, data)
+    }
+
+    private fun FirResolvedQualifier.hasErrorOrParentWithError(): Boolean {
+        if (this is FirErrorResolvedQualifier) return true
+        return explicitParent?.hasErrorOrParentWithError() == true
     }
 
     override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {

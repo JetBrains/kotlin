@@ -124,7 +124,7 @@ fun FirResolvedQualifier.continueQualifier(
         qualifiedAccess.source,
         explicitReceiver = null,
         nestedClassSymbol,
-        extraNotFatalDiagnostics = this@continueQualifier.nonFatalDiagnostics,
+        extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
         session
     )
 
@@ -133,9 +133,10 @@ fun FirResolvedQualifier.continueQualifier(
         packageFqName = this@continueQualifier.packageFqName,
         relativeClassFqName = this@continueQualifier.relativeClassFqName?.child(name),
         symbol = nestedClassSymbol,
-        nonFatalDiagnostics = nonFatalDiagnostics + nonFatalDiagnosticsFromExpression.orEmpty(),
+        nonFatalDiagnostics = nonFatalDiagnostics,
         extraTypeArguments = this@continueQualifier.typeArguments,
-        candidate = candidate
+        candidate = candidate,
+        explicitParent = this,
     )
 }
 
@@ -162,6 +163,9 @@ private fun FqName.continueQualifierInPackage(
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = components.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+    val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
+    collector.processCandidate(symbol)
+    val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
         qualifiedAccess.source,
@@ -175,6 +179,7 @@ private fun FqName.continueQualifierInPackage(
         packageFqName = this@continueQualifierInPackage,
         relativeClassFqName = classId.relativeClassName,
         symbol = symbol,
+        candidate = candidate,
         nonFatalDiagnostics = nonFatalDiagnostics,
     )
 }
@@ -211,6 +216,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
     nonFatalDiagnostics: List<ConeDiagnostic>? = null,
     extraTypeArguments: List<FirTypeProjection>? = null,
     candidate: FirTypeCandidateCollector.TypeCandidate? = null,
+    explicitParent: FirResolvedQualifier? = null,
 ): QualifierResolutionResult {
     return QualifierResolutionResult(
         buildResolvedQualifierForClass(
@@ -221,7 +227,8 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
             typeArgumentsForQualifier = qualifiedAccess.typeArguments.applyIf(!extraTypeArguments.isNullOrEmpty()) { plus(extraTypeArguments.orEmpty()) },
             diagnostic = candidate?.diagnostic,
             nonFatalDiagnostics = nonFatalDiagnostics.orEmpty(),
-            annotations = qualifiedAccess.annotations
+            annotations = qualifiedAccess.annotations,
+            explicitParent = explicitParent,
         ),
         candidate?.applicability ?: CandidateApplicability.RESOLVED,
     )

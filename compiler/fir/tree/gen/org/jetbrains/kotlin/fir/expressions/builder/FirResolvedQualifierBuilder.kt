@@ -33,6 +33,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
+    override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLHSForCallableReference: Boolean = false
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
@@ -47,6 +48,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             packageFqName,
             relativeClassFqName,
             symbol,
+            explicitParent,
             isNullableLHSForCallableReference,
             canBeValue,
             isFullyQualified,

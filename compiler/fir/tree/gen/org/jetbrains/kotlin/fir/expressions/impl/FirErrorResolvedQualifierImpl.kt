@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -35,6 +36,7 @@ internal class FirErrorResolvedQualifierImpl(
     override val packageFqName: FqName,
     override val relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
+    override var explicitParent: FirResolvedQualifier?,
     override var isNullableLHSForCallableReference: Boolean,
     override var canBeValue: Boolean,
     override val isFullyQualified: Boolean,
@@ -51,11 +53,13 @@ internal class FirErrorResolvedQualifierImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        explicitParent?.accept(visitor, data)
         typeArguments.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifierImpl {
         transformAnnotations(transformer, data)
+        explicitParent = explicitParent?.transform(transformer, data)
         transformTypeArguments(transformer, data)
         return this
     }

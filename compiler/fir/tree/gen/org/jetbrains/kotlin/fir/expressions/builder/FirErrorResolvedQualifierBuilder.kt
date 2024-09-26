@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -33,6 +34,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
+    override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLHSForCallableReference: Boolean = false
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
@@ -48,6 +50,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             packageFqName,
             relativeClassFqName,
             symbol,
+            explicitParent,
             isNullableLHSForCallableReference,
             canBeValue,
             isFullyQualified,

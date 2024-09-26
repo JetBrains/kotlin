@@ -870,8 +870,14 @@ fun FirResolvedQualifier.isStandalone(
     if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this) return false
     val lastGetClass = context.getClassCalls.lastOrNull()
     if (lastGetClass?.argument === this) return false
+    if (isExplicitParentOfResolvedQualifier(context)) return false
 
     return true
+}
+
+fun FirResolvedQualifier.isExplicitParentOfResolvedQualifier(context: CheckerContext): Boolean {
+    val secondToLastElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
+    return secondToLastElement.let { it is FirResolvedQualifier && it.explicitParent == this }
 }
 
 fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =

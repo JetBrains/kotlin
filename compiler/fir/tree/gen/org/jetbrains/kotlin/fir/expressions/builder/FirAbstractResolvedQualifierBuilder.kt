@@ -30,6 +30,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var relativeClassFqName: FqName?
     abstract var classId: ClassId?
     abstract var symbol: FirClassLikeSymbol<*>?
+    abstract var explicitParent: FirResolvedQualifier?
     abstract var isNullableLHSForCallableReference: Boolean
     abstract var resolvedToCompanionObject: Boolean
     abstract var canBeValue: Boolean

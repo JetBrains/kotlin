@@ -8,8 +8,8 @@ KtNameReferenceExpression(99,104): 'coreR'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = test.pkg.R.string
-          symbol = <constructor>(): test.pkg.R.string
+          returnType = test.pkg.R
+          symbol = <constructor>(): test.pkg.R
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}

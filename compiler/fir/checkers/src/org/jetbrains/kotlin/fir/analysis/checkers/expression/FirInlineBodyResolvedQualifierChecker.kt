@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicitParentOfResolvedQualifier
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -17,7 +18,7 @@ object FirInlineBodyResolvedQualifierChecker : FirResolvedQualifierChecker(MppCh
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
         val accessedClass = expression.symbol ?: return
         val source = expression.source ?: return
-        if (accessedClass.isCompanion) {
+        if (accessedClass.isCompanion && !expression.isExplicitParentOfResolvedQualifier(context)) {
             inlineFunctionBodyContext.checkAccessedDeclaration(
                 source, expression, accessedClass, accessedClass.visibility, context, reporter,
             )

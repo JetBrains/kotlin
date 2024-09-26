@@ -620,8 +620,8 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = one.two.TopLevelObject.NestedObject
-          symbol = <constructor>(): one.two.TopLevelObject.NestedObject
+          returnType = one.two.TopLevelObject
+          symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
@@ -867,8 +867,8 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = one.two.TopLevelObject.NestedObject
-          symbol = <constructor>(): one.two.TopLevelObject.NestedObject
+          returnType = one.two.TopLevelObject
+          symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}

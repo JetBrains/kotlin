@@ -32,6 +32,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val relativeClassFqName: FqName?
     abstract override val classId: ClassId?
     abstract override val symbol: FirClassLikeSymbol<*>?
+    abstract override val explicitParent: FirResolvedQualifier?
     abstract override val isNullableLHSForCallableReference: Boolean
     abstract override val resolvedToCompanionObject: Boolean
     abstract override val canBeValue: Boolean

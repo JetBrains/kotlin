@@ -329,7 +329,8 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         typeArgumentsForQualifier,
         diagnostic,
         nonFatalDiagnostics,
-        annotations
+        annotations,
+        explicitParent = null,
     )
 }
 
@@ -342,11 +343,21 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic?,
     nonFatalDiagnostics: List<ConeDiagnostic>?,
     annotations: List<FirAnnotation>,
+    explicitParent: FirResolvedQualifier?
 ): FirResolvedQualifier {
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
     } else {
         FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
+    }
+
+    // If we resolve to some qualifier, the parent can't have implicitly resolved to the companion object.
+    // In a case like
+    // class Foo { companion object { class Bar } }
+    // Foo.Bar will be unresolved.
+    if (explicitParent?.resolvedToCompanionObject == true) {
+        explicitParent.replaceResolvedToCompanionObject(false)
+        explicitParent.resultType = session.builtinTypes.unitType.coneType
     }
 
     return builder.apply {
@@ -357,6 +368,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.symbol = symbol
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
+        this.explicitParent = explicitParent
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
