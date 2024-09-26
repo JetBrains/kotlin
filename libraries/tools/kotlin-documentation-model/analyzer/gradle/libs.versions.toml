@@ -145,6 +145,7 @@ kotest-datatest = { module = "io.kotest:kotest-framework-datatest" }
 kotest-junit5Runner = { module = "io.kotest:kotest-runner-junit5" }
 kotest-assertionsCore = { module = "io.kotest:kotest-assertions-core" }
 kotest-assertionsJson = { module = "io.kotest:kotest-assertions-json" }
+kotest-property = { module = "io.kotest:kotest-property" }
 
 [plugins]
 # Gradle Plugins that are applied directly to subprojects
