@@ -2,8 +2,6 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-@file:Suppress("SameParameterValue")
-
 package org.jetbrains.dokka
 
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -65,14 +63,18 @@ public class Timer internal constructor(startTime: Long, private val logger: Dok
     }
 
     public fun dump(prefix: String = "") {
-        logger?.info(prefix)
-        val namePad = steps.map { it.first.length }.maxOrNull() ?: 0
-        val timePad = steps.windowed(2).map { (p1, p2) -> p2.second - p1.second }.maxOrNull()?.toString()?.length ?: 0
-        steps.windowed(2).forEach { (p1, p2) ->
-            if (p1.first.isNotBlank()) {
-                logger?.info("${p1.first.padStart(namePad)}: ${(p2.second - p1.second).toString().padStart(timePad)}")
+        if (logger == null) return
+        val msg = buildString {
+            appendLine(prefix)
+            val namePad = steps.maxOfOrNull { it.first.length } ?: 0
+            val timePad = steps.windowed(2).maxOfOrNull { (p1, p2) -> p2.second - p1.second }?.toString()?.length ?: 0
+            steps.windowed(2).forEach { (p1, p2) ->
+                if (p1.first.isNotBlank()) {
+                    appendLine("${p1.first.padStart(namePad)}: ${(p2.second - p1.second).toString().padStart(timePad)}")
+                }
             }
         }
+        logger.info(msg)
     }
 }
 
@@ -82,8 +84,5 @@ private fun timed(logger: DokkaLogger? = null, block: Timer.() -> Unit): Timer =
             block()
         } catch (exit: GracefulGenerationExit) {
             report("Exiting Generation: ${exit.reason}")
-        } finally {
-            report("")
         }
     }
-
