@@ -2,7 +2,7 @@ fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ConcreteScopeOwner())
         // fixation of OTv is not required
-        when (otvOwner.provide()) { <!USELESS_IS_CHECK, USELESS_IS_CHECK!>is ConcreteScopeOwnerSubtype<!> -> Unit }
+        when (otvOwner.provide()) { is ConcreteScopeOwnerSubtype -> Unit }
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -12,7 +12,7 @@ fun test() {
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ConcreteScopeOwner())
         // fixation of OTv is not required
-        when (otvOwner.provide()) { <!USELESS_IS_CHECK, USELESS_IS_CHECK!>!is ConcreteScopeOwnerSubtype<!> -> Unit }
+        when (otvOwner.provide()) { !is ConcreteScopeOwnerSubtype -> Unit }
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -22,7 +22,7 @@ fun test() {
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(GenericScopeOwner<TypeArgument>())
         // fixation of OTv is not required
-        when (otvOwner.provide()) { <!USELESS_IS_CHECK, USELESS_IS_CHECK!>is GenericScopeOwnerSubtype<*><!> -> Unit }
+        when (otvOwner.provide()) { is GenericScopeOwnerSubtype<*> -> Unit }
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -32,32 +32,32 @@ fun test() {
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(GenericScopeOwner<TypeArgument>())
         // should fix OTv := ScopeOwner to acquire type arguments for GSOS type constructor via bare type inference
-        when (otvOwner.provide()) { <!USELESS_IS_CHECK, USELESS_IS_CHECK!>is <!NO_TYPE_ARGUMENTS_ON_RHS!>GenericScopeOwnerSubtype<!><!> -> Unit }
+        when (otvOwner.provide()) { is GenericScopeOwnerSubtype -> Unit }
         // expected: Interloper </: GenericScopeOwner<TypeArgument>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("GenericScopeOwner<TypeArgument>; Interloper")!>Interloper<!>)
     }
     // expected: GenericScopeOwner<TypeArgument>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("GenericScopeOwner<TypeArgument>")!>resultD<!>
 
     val resultE = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        when (Value) { <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE!>in<!> otvOwner.provide() -> Unit }
+        when (Value) { in otvOwner.provide() -> Unit }
         // expected: Interloper <: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultE<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultE<!>
 
     val resultF = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        when (Value) { <!TYPE_MISMATCH_IN_RANGE, UNRESOLVED_REFERENCE!>!in<!> otvOwner.provide() -> Unit }
+        when (Value) { !in otvOwner.provide() -> Unit }
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultF<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultF<!>
 
     val resultG = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())

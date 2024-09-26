@@ -53,7 +53,7 @@ fun <OT> pcla(lambda: (TypeVariableOwner<OT>) -> Unit): OT = null!!
 interface BaseType
 
 class ScopeOwner: BaseType {
-    override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: Any?): Boolean = null!!
+    override operator fun equals(other: Any?): Boolean = null!!
 }
 
 object Interloper: BaseType

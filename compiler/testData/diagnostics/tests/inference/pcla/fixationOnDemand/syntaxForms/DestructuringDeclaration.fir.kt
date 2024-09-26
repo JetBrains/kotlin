@@ -34,7 +34,7 @@ fun test() {
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.consumeLambda { (<!COMPONENT_FUNCTION_MISSING!>valueL<!>, <!COMPONENT_FUNCTION_MISSING!>valueR<!>) -> }
+        otvOwner.consumeLambda { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(valueL, valueR)<!> -> }
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -44,7 +44,7 @@ fun test() {
     val resultE = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.consumeLambda { (<!COMPONENT_FUNCTION_MISSING!>valueL<!>) -> }
+        otvOwner.consumeLambda { <!COMPONENT_FUNCTION_MISSING!>(valueL)<!> -> }
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -54,7 +54,7 @@ fun test() {
     val resultF = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.consumeLambda { (<!COMPONENT_FUNCTION_MISSING!>_<!>, <!COMPONENT_FUNCTION_MISSING!>valueR<!>) -> }
+        otvOwner.consumeLambda { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(_, valueR)<!> -> }
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -64,7 +64,7 @@ fun test() {
     val resultG = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        for (<!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>(valueL, valueR)<!> in <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
+        for ((valueL, valueR) in <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -74,7 +74,7 @@ fun test() {
     val resultH = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        for (<!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>(valueL)<!> in <!COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
+        for ((valueL) in <!COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -84,7 +84,7 @@ fun test() {
     val resultI = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        for (<!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>(_, valueR)<!> in <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
+        for ((_, valueR) in <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>otvOwner.provideIterable()<!>) {}
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
