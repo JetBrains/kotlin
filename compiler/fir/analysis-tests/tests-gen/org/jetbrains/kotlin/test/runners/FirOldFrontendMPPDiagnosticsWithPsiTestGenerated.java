@@ -1547,12 +1547,6 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
-    @TestMetadata("directJavaActualization_annotationPropertyMissingKotlinActualAnnotation.kt")
-    public void testDirectJavaActualization_annotationPropertyMissingKotlinActualAnnotation() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationPropertyMissingKotlinActualAnnotation.kt");
-    }
-
-    @Test
     @TestMetadata("directJavaActualization_annotationPropertyTypeMismatch.kt")
     public void testDirectJavaActualization_annotationPropertyTypeMismatch() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationPropertyTypeMismatch.kt");
