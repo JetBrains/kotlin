@@ -83,6 +83,7 @@ internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DC
 
 internal data class DevirtualizationInput(
         val irModule: IrModuleFragment,
+        val moduleDFG: ModuleDFG,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule
@@ -94,7 +95,7 @@ internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenera
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
-            DevirtualizationAnalysis.devirtualize(input.irModule, generationState.context,
+            DevirtualizationAnalysis.devirtualize(input.irModule, input.moduleDFG, generationState,
                     DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL, DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL)
         }
 )
