@@ -17,4 +17,7 @@ class LLAnalysisSessionStatistics(statisticsService: LLStatisticsService) : LLSt
     private val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.AnalysisSessions)
 
     val analyzeCallCounter: LongCounter = meter.counterBuilder(LLStatisticsScopes.AnalysisSessions.Analyze.Invocations.name).build()
+
+    val lowMemoryCacheCleanupInvocationCounter: LongCounter =
+        meter.counterBuilder(LLStatisticsScopes.AnalysisSessions.LowMemoryCacheCleanup.Invocations.name).build()
 }

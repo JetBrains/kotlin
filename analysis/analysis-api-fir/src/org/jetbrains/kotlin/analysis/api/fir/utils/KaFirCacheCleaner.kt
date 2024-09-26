@@ -12,9 +12,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -69,6 +72,11 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
         private val LOG = Logger.getInstance(KaFirStopWorldCacheCleaner::class.java)
 
         private const val CACHE_CLEANER_LOCK_TIMEOUT_MS = 50L
+    }
+
+    @KaCachedService
+    private val analysisSessionStatistics: LLAnalysisSessionStatistics? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLStatisticsService.getInstance(project)?.analysisSessions
     }
 
     /**
@@ -225,6 +233,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     @OptIn(LLFirInternals::class)
     private fun performCleanup() {
         try {
+            analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
+
             val cleanupMs = measureTimeMillis {
                 val invalidationService = LLFirSessionInvalidationService.getInstance(project)
                 invalidationService.invalidateAll(includeLibraryModules = true)

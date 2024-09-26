@@ -25,6 +25,10 @@ internal object LLStatisticsScopes : LLStatisticsScope("kotlin.analysis") {
         object Analyze : LLStatisticsScope("$name.analyze") {
             object Invocations : LLStatisticsScope("$name.invocations")
         }
+
+        object LowMemoryCacheCleanup : LLStatisticsScope("$name.lowMemoryCacheCleanup") {
+            object Invocations : LLStatisticsScope("$name.invocations")
+        }
     }
 
     object SymbolProviders : LLStatisticsScope("$name.symbolProviders") {
