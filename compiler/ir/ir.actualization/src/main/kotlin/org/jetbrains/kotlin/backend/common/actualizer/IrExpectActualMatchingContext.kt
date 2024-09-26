@@ -254,7 +254,7 @@ internal abstract class IrExpectActualMatchingContext(
      *   has no sense in IR context
      */
     override fun RegularClassSymbolMarker.collectAllMembers(isActualDeclaration: Boolean): List<DeclarationSymbolMarker> {
-        return asIr().declarations.filter { it !is IrAnonymousInitializer && !it.isStaticFun() }.map { it.symbol }
+        return asIr().declarations.filterNot { it is IrAnonymousInitializer }.map { it.symbol }
     }
 
     override fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<DeclarationSymbolMarker> {
@@ -610,5 +610,3 @@ internal abstract class IrExpectActualMatchingContext(
         }
     }
 }
-
-private fun IrDeclaration.isStaticFun(): Boolean = this is IrSimpleFunction && isStatic
