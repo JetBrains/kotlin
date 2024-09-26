@@ -40,10 +40,12 @@ class FirDirectJavaActualDeclarationExtractor private constructor(
     }
 
     override fun extract(expectIrClass: IrClass): IrClassSymbol? {
-        val javaActualDeclaration = javaSymbolProvider.getClassLikeSymbolByClassId(expectIrClass.classIdOrFail)
-            ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
-        if (javaActualDeclaration != null) {
-            return classifierStorage.getIrClassSymbol(javaActualDeclaration)
+        if (expectIrClass.parent is IrPackageFragment) { // Top level only
+            val javaActualDeclaration = javaSymbolProvider.getClassLikeSymbolByClassId(expectIrClass.classIdOrFail)
+                ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
+            if (javaActualDeclaration != null) {
+                return classifierStorage.getIrClassSymbol(javaActualDeclaration)
+            }
         }
         return null
     }
