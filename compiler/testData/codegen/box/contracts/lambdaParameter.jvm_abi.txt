@@ -12,9 +12,10 @@ MODULE main
 				+ 2 fake.kt
 				kotlin/jvm/internal/FakeKt
 				*L
-				1#1,36:1
-				1#2:37
+				1#1,37:1
+				1#2:38
 				*E
 				 } )
 			K2
 				---
+
