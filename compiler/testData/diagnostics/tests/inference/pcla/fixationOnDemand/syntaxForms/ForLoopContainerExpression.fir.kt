@@ -2,12 +2,12 @@ fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        for (value in <!ITERATOR_MISSING!>otvOwner.provide()<!>) {}
+        for (value in otvOwner.provide()) {}
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 }
 
 
