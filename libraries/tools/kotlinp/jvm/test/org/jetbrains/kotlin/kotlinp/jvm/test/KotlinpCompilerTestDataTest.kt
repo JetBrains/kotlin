@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.kotlinp.jvm.test
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +29,13 @@ class KotlinpCompilerTestDataTest(private val file: File) {
         try {
             compareAllFiles(file, disposable, tmpdir, compareWithTxt = false, readWriteAndCompare = true, useK2 = useK2)
         } finally {
-            Disposer.dispose(disposable)
+            if (ApplicationManager.getApplication() != null) {
+                runWriteAction {
+                    Disposer.dispose(disposable)
+                }
+            } else {
+                Disposer.dispose(disposable)
+            }
         }
     }
 
