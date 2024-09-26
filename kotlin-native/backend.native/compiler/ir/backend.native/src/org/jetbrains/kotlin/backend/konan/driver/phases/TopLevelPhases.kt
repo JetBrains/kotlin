@@ -409,7 +409,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
     val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !optimize)
-    runPhase(DevirtualizationPhase, DevirtualizationInput(module), disable = !optimize)
+    runPhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !optimize)
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
