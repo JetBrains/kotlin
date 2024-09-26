@@ -1887,7 +1887,7 @@ private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElem
     @OptIn(FirImplementationDetail::class)
     replaceSource(newSource)
     val oldCalleeReference = calleeReference as? FirResolvedNamedReference
-        ?: error("${FirResolvedNamedReference::class.simpleName}} expected, got ${calleeReference.render()}")
+        ?: error("${FirResolvedNamedReference::class.simpleName} expected, got ${calleeReference.render()}")
     replaceCalleeReference(buildResolvedNamedReference {
         this.name = oldCalleeReference.name
         this.source = newSource
