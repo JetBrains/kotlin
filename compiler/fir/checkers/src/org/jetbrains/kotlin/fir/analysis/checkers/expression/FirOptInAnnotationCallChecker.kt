@@ -49,7 +49,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
                 } else {
                     for ((index, classSymbol) in expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                         ?.extractClassesFromArgument(context.session).orEmpty().withIndex()) {
-                        val source = expression.getSourceForIsMarkerDiagnostic(classId, index)
+                        val source = expression.getSourceForIsMarkerDiagnostic(index)
                         checkOptInArgumentIsMarker(classSymbol, classId, source, reporter, context)
                     }
                 }
@@ -86,7 +86,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             val classSymbols = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassesFromArgument(context.session).orEmpty()
 
             classSymbols.forEachIndexed { index, classSymbol ->
-                val source = expression.getSourceForIsMarkerDiagnostic(classId, index)
+                val source = expression.getSourceForIsMarkerDiagnostic(index)
                 checkOptInArgumentIsMarker(classSymbol, classId, source, reporter, context)
             }
         }

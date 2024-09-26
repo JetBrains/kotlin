@@ -488,7 +488,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN by error<PsiElement>()
 
         val OPT_IN_WITHOUT_ARGUMENTS by warning<KtAnnotationEntry>()
-        val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning<KtAnnotationEntry> {
+        val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning<KtClassLiteralExpression> {
             parameter<ClassId>("notMarkerClassId")
         }
         val OPT_IN_MARKER_WITH_WRONG_TARGET by error<KtAnnotationEntry> {

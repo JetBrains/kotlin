@@ -152,12 +152,11 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
                 classDescriptor.loadOptInForMarkerAnnotation()
             }
             if (optInDescription == null) {
+                val source = entry.valueArguments[index].getArgumentExpression() ?: return
                 when (annotationFqName) {
-                    OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {
-                        val source = entry.valueArguments[index].getArgumentExpression() ?: return
+                    OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME ->
                         trace.report(Errors.SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER.on(source, classDescriptor.fqNameSafe))
-                    }
-                    else -> trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
+                    else -> trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(source, classDescriptor.fqNameSafe))
                 }
             }
         }

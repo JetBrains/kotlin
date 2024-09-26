@@ -1147,7 +1147,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OptInWithoutArguments::class
     }
 
-    interface OptInArgumentIsNotMarker : KaFirDiagnostic<KtAnnotationEntry> {
+    interface OptInArgumentIsNotMarker : KaFirDiagnostic<KtClassLiteralExpression> {
         override val diagnosticClass get() = OptInArgumentIsNotMarker::class
         val notMarkerClassId: ClassId
     }

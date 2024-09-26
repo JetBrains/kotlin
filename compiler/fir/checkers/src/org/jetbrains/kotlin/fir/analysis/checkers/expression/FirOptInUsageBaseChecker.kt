@@ -365,8 +365,7 @@ object FirOptInUsageBaseChecker {
         }
     }
 
-    fun FirAnnotationCall.getSourceForIsMarkerDiagnostic(annotationClassId: ClassId, argumentIndex: Int): KtSourceElement? {
-        if (annotationClassId == OPT_IN_CLASS_ID) return this.source
+    fun FirAnnotationCall.getSourceForIsMarkerDiagnostic(argumentIndex: Int): KtSourceElement? {
         val markerArgumentsSources = this.getMarkerArgumentsSources()
         return markerArgumentsSources[argumentIndex]
     }

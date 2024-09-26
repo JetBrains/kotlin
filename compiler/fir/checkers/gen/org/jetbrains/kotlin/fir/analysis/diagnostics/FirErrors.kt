@@ -357,7 +357,7 @@ object FirErrors {
     val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OPT_IN_WITHOUT_ARGUMENTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_WITHOUT_ARGUMENTS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("OPT_IN_ARGUMENT_IS_NOT_MARKER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("OPT_IN_ARGUMENT_IS_NOT_MARKER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtClassLiteralExpression::class)
     val OPT_IN_MARKER_WITH_WRONG_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OPT_IN_MARKER_WITH_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OPT_IN_MARKER_WITH_WRONG_RETENTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_WITH_WRONG_RETENTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OPT_IN_MARKER_ON_WRONG_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OPT_IN_MARKER_ON_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

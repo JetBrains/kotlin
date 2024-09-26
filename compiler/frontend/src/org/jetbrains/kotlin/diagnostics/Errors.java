@@ -346,7 +346,7 @@ public interface Errors {
             OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> OPT_IN_WITHOUT_ARGUMENTS = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory1<KtAnnotationEntry, FqName> OPT_IN_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtExpression, FqName> OPT_IN_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, String> OPT_IN_MARKER_WITH_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> OPT_IN_MARKER_WITH_WRONG_RETENTION = DiagnosticFactory0.create(ERROR);
 
