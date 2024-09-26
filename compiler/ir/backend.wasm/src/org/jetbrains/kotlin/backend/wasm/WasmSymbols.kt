@@ -277,15 +277,15 @@ class WasmSymbols(
         findFunctions(collectionsPackage.memberScope, Name.identifier("contentHashCode"))
             .map { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
-    private fun findOverloadForReceiver(arrayType: IrType, overloadsList: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol =
+    private fun findNullableOverloadForReceiver(arrayType: IrType, overloadsList: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol =
         overloadsList.first {
             val receiverType = it.owner.extensionReceiverParameter?.type
-            receiverType != null && arrayType.isNullable() == receiverType.isNullable() && arrayType.classOrNull == receiverType.classOrNull
+            receiverType != null && receiverType.isNullable() && arrayType.classOrNull == receiverType.classOrNull
         }
 
-    fun findContentToStringOverload(arrayType: IrType): IrSimpleFunctionSymbol = findOverloadForReceiver(arrayType, contentToString)
+    fun findContentToStringOverload(arrayType: IrType): IrSimpleFunctionSymbol = findNullableOverloadForReceiver(arrayType, contentToString)
 
-    fun findContentHashCodeOverload(arrayType: IrType): IrSimpleFunctionSymbol = findOverloadForReceiver(arrayType, contentHashCode)
+    fun findContentHashCodeOverload(arrayType: IrType): IrSimpleFunctionSymbol = findNullableOverloadForReceiver(arrayType, contentHashCode)
 
     private val getProgressionLastElementSymbols =
         irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
