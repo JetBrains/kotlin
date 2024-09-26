@@ -211,7 +211,7 @@ class IrBuiltInsOverFir(
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         val firSymbol = symbolProvider
             .getTopLevelFunctionSymbols(kotlinPackage, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).first {
-                it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isInt == true
+                it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isInt == true
             }
         fir2irBuiltins.findFunction(firSymbol)
     }
@@ -261,22 +261,22 @@ class IrBuiltInsOverFir(
 
     override val memberToString: IrSimpleFunctionSymbol by lazy {
         val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.Any, OperatorNameConventions.TO_STRING).single {
-            it.fir.valueParameters.isEmpty()
+            it.valueParameterSymbols.isEmpty()
         }
         fir2irBuiltins.findFunction(firFunction)
     }
 
     override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
         val firFunction = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.PLUS).single { symbol ->
-            val isStringExtension = symbol.fir.receiverParameter?.typeRef?.coneType?.isNullableString == true
-            isStringExtension && symbol.fir.valueParameters.singleOrNull { it.returnTypeRef.coneType.isNullableAny } != null
+            val isStringExtension = symbol.resolvedReceiverTypeRef?.coneType?.isNullableString == true
+            isStringExtension && symbol.valueParameterSymbols.singleOrNull { it.resolvedReturnType.isNullableAny } != null
         }
         fir2irBuiltins.findFunction(firFunction)
     }
 
     override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
         val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.String, OperatorNameConventions.PLUS).single {
-            it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isNullableAny == true
+            it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
         }
         fir2irBuiltins.findFunction(firFunction)
     }
@@ -297,7 +297,7 @@ class IrBuiltInsOverFir(
             name,
             *packageNameSegments,
             mapKey = { symbol ->
-                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
+                symbol.resolvedReceiverTypeRef?.toIrType(c)?.classifierOrNull
             },
             mapValue = { _, irSymbol -> irSymbol }
         )
@@ -310,7 +310,7 @@ class IrBuiltInsOverFir(
         return fir2irBuiltins.getFunctionsByKey(
             name,
             *packageNameSegments,
-            mapKey = { it.fir.returnTypeRef.toIrType(c).classifierOrNull },
+            mapKey = { it.resolvedReturnType.toIrType(c).classifierOrNull },
             mapValue = { _, irSymbol -> irSymbol }
         )
     }

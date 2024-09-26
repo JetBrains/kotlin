@@ -264,7 +264,7 @@ class Fir2IrBuiltinSymbolsContainer(
             name,
             *packageNameSegments,
             mapKey = { symbol ->
-                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
+                symbol.resolvedReceiverTypeRef?.toIrType(c)?.classifierOrNull
             },
             mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
         )
