@@ -25,6 +25,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("ambiguousLocalEnum.kt")
+  public void testAmbiguousLocalEnum() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/ambiguousLocalEnum.kt");
+  }
+
+  @Test
   @TestMetadata("annotationArgumentsMix.kt")
   public void testAnnotationArgumentsMix() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationArgumentsMix.kt");
