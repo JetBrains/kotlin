@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -32,10 +36,14 @@ enum class LocationType {
     abstract fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry): LineAndColumn
 }
 
-private val IrFile.isIgnoredFile: Boolean
-    get() = packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
+private val IrSymbol?.shouldIgnore: Boolean
+    get() = this?.owner?.getPackageFragment()?.packageFqName?.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE) == true
 
-fun IrElement.getSourceLocation(file: IrFile?, type: LocationType = LocationType.START): SourceLocation {
+fun IrElement.getSourceLocation(
+    declaration: IrSymbol?,
+    file: IrFile?,
+    type: LocationType = LocationType.START
+): SourceLocation {
     val fileEntry = file?.fileEntry
 
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
@@ -46,9 +54,10 @@ fun IrElement.getSourceLocation(file: IrFile?, type: LocationType = LocationType
 
     if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
 
+    // TODO Drop "file" usages after KT-58406 fix and replace IrFile with IrFileEntry
     val module = file.module.name.asString()
 
-    return if (file.isIgnoredFile) {
+    return if (declaration.shouldIgnore) {
         SourceLocation.IgnoredLocation(
             module,
             path,

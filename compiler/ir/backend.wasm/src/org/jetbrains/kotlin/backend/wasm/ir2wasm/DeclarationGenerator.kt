@@ -444,7 +444,7 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    declaration.getSourceLocation(declaration.fileOrNull)
+                    declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())

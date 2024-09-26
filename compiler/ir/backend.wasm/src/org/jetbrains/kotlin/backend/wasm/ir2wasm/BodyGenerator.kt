@@ -936,8 +936,7 @@ class BodyGenerator(
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         body.buildNop(inlinedBlock.getSourceLocation())
 
-        val inlineFunction = inlinedBlock.inlineFunctionSymbol!!.owner
-        functionContext.stepIntoInlinedFunction(inlineFunction)
+        functionContext.stepIntoInlinedFunction(inlinedBlock.inlineFunctionSymbol, inlinedBlock.fileEntry)
         super.visitInlinedFunctionBlock(inlinedBlock)
         functionContext.stepOutLastInlinedFunction()
     }
@@ -1278,6 +1277,11 @@ class BodyGenerator(
         return false
     }
 
-    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.currentFunction?.fileOrNull)
-    private fun IrElement.getSourceEndLocation() = getSourceLocation(functionContext.currentFunction?.fileOrNull, type = LocationType.END)
+    private fun IrElement.getSourceLocation() = getSourceLocation(
+        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull
+    )
+
+    private fun IrElement.getSourceEndLocation() = getSourceLocation(
+        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
+    )
 }
