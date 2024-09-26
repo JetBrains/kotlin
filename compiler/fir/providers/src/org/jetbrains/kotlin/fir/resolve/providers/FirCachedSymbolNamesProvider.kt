@@ -61,8 +61,13 @@ abstract class FirCachedSymbolNamesProvider(protected val session: FirSession) :
         cachedPackageNames
     }
 
-    private val topLevelClassifierNamesByPackage =
+    /**
+     * This cache is (possibly) kept on a soft reference because "names in package" caches can accumulate a lot of entries which can be
+     * recomputed. See KT-70886.
+     */
+    private val topLevelClassifierNamesByPackage by session.firCachesFactory.createPossiblySoftLazyValue {
         session.firCachesFactory.createCache(::computeTopLevelClassifierNames)
+    }
 
     private val topLevelCallablePackageNames by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // See the comment in `topLevelClassifierPackageNames` above for reasoning about `hasSpecific*PackageNamesComputation`.
@@ -72,8 +77,12 @@ abstract class FirCachedSymbolNamesProvider(protected val session: FirSession) :
         cachedPackageNames
     }
 
-    private val topLevelCallableNamesByPackage =
+    /**
+     * @see topLevelClassifierNamesByPackage
+     */
+    private val topLevelCallableNamesByPackage by session.firCachesFactory.createPossiblySoftLazyValue {
         session.firCachesFactory.createCache(::computeTopLevelCallableNames)
+    }
 
     override fun getPackageNames(): Set<String>? = cachedPackageNames
 
