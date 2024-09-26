@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
-import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.NullValue
-import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.nullValueToNull
 
 /**
  * A wrapper around a Caffeine [Cache] which stores `null` values returned by the computation in the form of explicit [NullValue]s. On a
