@@ -4,7 +4,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect annotation class Foo<!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>(val foo: Int = 42)<!>
+expect annotation class Foo(val foo: Int = 42)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
