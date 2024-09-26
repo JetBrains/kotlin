@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -296,13 +297,10 @@ class CacheBuilder(
                 // otherwise the next build will hang here for 2 minutes for no reason.
                 lockFile.delete() // It checks that file actually exists.
             }
-            if (ok && libraryCache.exists) {
-                cacheRootDirectories[library] = libraryCache.absolutePath
-            } else {
-                configuration.report(CompilerMessageSeverity.WARNING,
-                        "Failed to wait for cache to be built\n" +
-                                "Falling back to not use cache for ${library.libraryName}")
+            check(ok && libraryCache.exists) {
+                "Failed to wait for cache to be built for ${library.libraryName}"
             }
+            cacheRootDirectories[library] = libraryCache.absolutePath
             return false
         }
     }
@@ -321,12 +319,28 @@ class CacheBuilder(
             spawnLibraryCacheBuild(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache)
             cacheRootDirectories[library] = libraryCache.absolutePath
         } catch (t: Throwable) {
-            configuration.report(CompilerMessageSeverity.LOGGING, "${t.message}\n${t.stackTraceToString()}")
-            configuration.report(CompilerMessageSeverity.WARNING,
-                    "Failed to build cache: ${t.message}\n${t.stackTraceToString()}\n" +
-                            "Falling back to not use cache for ${library.libraryName}")
+            try {
+                libraryCache.deleteRecursively()
+            } catch (_: Throwable) {
+                // Nothing to do.
+            }
+            val message = (t as? CompilationErrorException)?.message
+                    ?: run {
+                        @Suppress("IncorrectFormatting") val extraUserInfo =
+                                """
+                                    Failed to build cache for ${library.libraryName}.
+                                    As a workaround, please try to disable ${
+                                        if (makePerFileCache)
+                                            "incremental compilation (kotlin.incremental.native=false)"
+                                        else
+                                            "compiler caches (kotlin.native.cacheKind=none)"
+                                    }
 
-            libraryCache.deleteRecursively()
+                                    Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                                    """.trimIndent()
+                        "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
+                    }
+            konanConfig.configuration.reportCompilationError(message)
         }
     }
 
