@@ -364,6 +364,7 @@
 }
 -keepclassmembers class com.intellij.util.containers.ContainerUtil {
     public static java.util.concurrent.ConcurrentMap createConcurrentSoftMap();
+    public static java.util.concurrent.ConcurrentMap createConcurrentWeakMap();
     public static java.util.Map createSoftValueMap();
 }
 -keep class com.intellij.codeInsight.PsiEquivalenceUtil {
