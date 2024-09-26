@@ -50,8 +50,6 @@ open class StubGeneratorExtensions {
 
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 
-    open fun isStaticFunction(descriptor: FunctionDescriptor): Boolean = false
-
     open fun deserializeClass(
         irClass: IrClass,
         stubGenerator: DeclarationStubGenerator,
