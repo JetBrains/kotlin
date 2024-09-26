@@ -19,6 +19,8 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.KotlinCompilerFacade
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -79,7 +81,13 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     @After
     fun disposeTestRootDisposable() {
-        Disposer.dispose(testRootDisposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(testRootDisposable);
+            }
+        } else {
+            Disposer.dispose(testRootDisposable);
+        }
     }
 
     protected open fun CompilerConfiguration.updateConfiguration() {}

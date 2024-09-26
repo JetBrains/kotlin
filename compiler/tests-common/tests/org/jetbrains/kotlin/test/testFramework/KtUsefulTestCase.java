@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
@@ -28,6 +29,7 @@ import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.lang.CompoundRuntimeException;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import junit.framework.TestCase;
+import kotlin.Unit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,7 +198,14 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected final void disposeRootDisposable() {
-        Disposer.dispose(getTestRootDisposable());
+        if (ApplicationManager.getApplication() != null) {
+            UtilKt.runWriteAction(() -> {
+                Disposer.dispose(getTestRootDisposable());
+                return Unit.INSTANCE;
+            });
+        } else {
+            Disposer.dispose(getTestRootDisposable());
+        }
     }
 
     protected void addTmpFileToKeep(@NotNull File file) {
