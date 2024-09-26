@@ -6,12 +6,12 @@ open class Base() {
     open fun fakeOverrideInExpect() {}
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class Foo() : Base {
+expect open class Foo() : Base {
     fun foo()
     open fun fakeOverrideInActual()
 
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>Nested<!><!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>()<!>
-    inner class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>Inner<!><!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>()<!>
+    class Nested
+    inner class Inner
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -25,12 +25,8 @@ open class Base() {
 
     public void additionalMember() {}
 
-    @kotlin.annotations.jvm.KotlinActual public static class Nested {
-        @kotlin.annotations.jvm.KotlinActual public Nested() {}
-    }
-    @kotlin.annotations.jvm.KotlinActual public class Inner {
-        @kotlin.annotations.jvm.KotlinActual public Inner() {}
-    }
+    @kotlin.annotations.jvm.KotlinActual public static class Nested {}
+    @kotlin.annotations.jvm.KotlinActual public class Inner {}
 }
 
 // FILE: JavaBase.java

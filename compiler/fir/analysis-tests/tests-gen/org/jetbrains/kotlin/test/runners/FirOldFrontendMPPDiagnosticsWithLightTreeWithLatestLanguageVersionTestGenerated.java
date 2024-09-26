@@ -1535,21 +1535,9 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
-    @TestMetadata("directJavaActualization_annotation.kt")
-    public void testDirectJavaActualization_annotation() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotation.kt");
-    }
-
-    @Test
     @TestMetadata("directJavaActualization_annotationOnlyOnExpect.kt")
     public void testDirectJavaActualization_annotationOnlyOnExpect() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationOnlyOnExpect.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_annotationPropertyTypeMismatch.kt")
-    public void testDirectJavaActualization_annotationPropertyTypeMismatch() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationPropertyTypeMismatch.kt");
     }
 
     @Test
@@ -1565,39 +1553,9 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
-    @TestMetadata("directJavaActualization_companionObject.kt")
-    public void testDirectJavaActualization_companionObject() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_companionObject.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_defaultParamsInActualFakeOverride.kt")
-    public void testDirectJavaActualization_defaultParamsInActualFakeOverride() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInActualFakeOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization.kt")
-    public void testDirectJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInActualFakeOverrideAddedDuringActualization.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_defaultParamsInExpect.kt")
-    public void testDirectJavaActualization_defaultParamsInExpect() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInExpect.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_defaultParamsInExpectFakeOverride.kt")
-    public void testDirectJavaActualization_defaultParamsInExpectFakeOverride() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParamsInExpectFakeOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt")
-    public void testDirectJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_excessiveKotlinActualAnnotationOnJavaStatic.kt");
+    @TestMetadata("directJavaActualization_defaultParams.kt")
+    public void testDirectJavaActualization_defaultParams() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_defaultParams.kt");
     }
 
     @Test
@@ -1610,12 +1568,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @TestMetadata("directJavaActualization_javaInDifferentModule.kt")
     public void testDirectJavaActualization_javaInDifferentModule() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_javaInDifferentModule.kt");
-    }
-
-    @Test
-    @TestMetadata("directJavaActualization_javaStatics.kt")
-    public void testDirectJavaActualization_javaStatics() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_javaStatics.kt");
     }
 
     @Test
