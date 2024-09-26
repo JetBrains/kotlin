@@ -52,16 +52,6 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.CustomEqualsInValueClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
-            if (functionDescriptor.name in OperatorNameConventions.MOD_OPERATORS_REPLACEMENT.keys) {
-                val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor))
-                    Errors.FORBIDDEN_BINARY_MOD
-                else
-                    Errors.DEPRECATED_BINARY_MOD
-
-                val newNameConvention = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[functionDescriptor.name]
-                diagnosticHolder.report(diagnosticFactory.on(modifier, functionDescriptor, newNameConvention!!.asString()))
-            }
-
             return
         }
 

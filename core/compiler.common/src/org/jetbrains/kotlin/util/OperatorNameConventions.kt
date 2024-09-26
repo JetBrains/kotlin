@@ -58,14 +58,12 @@ object OperatorNameConventions {
 
     @JvmField val TIMES = Name.identifier("times")
     @JvmField val DIV = Name.identifier("div")
-    private val MOD = Name.identifier("mod")
     @JvmField val REM = Name.identifier("rem")
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
     @JvmField val RANGE_UNTIL = Name.identifier("rangeUntil")
 
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")
-    private val MOD_ASSIGN = Name.identifier("modAssign")
     @JvmField val REM_ASSIGN = Name.identifier("remAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
@@ -106,9 +104,6 @@ object OperatorNameConventions {
 
     @JvmField
     val DELEGATED_PROPERTY_OPERATORS = setOf(GET_VALUE, SET_VALUE, PROVIDE_DELEGATE)
-
-    @JvmField
-    val MOD_OPERATORS_REPLACEMENT = mapOf(MOD to REM, MOD_ASSIGN to REM_ASSIGN)
 
     @JvmField
     val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS

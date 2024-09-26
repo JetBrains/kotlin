@@ -40,21 +40,5 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker(MppCheckerKind.Comm
                 return
             }
         }
-
-        checkReplaceableLegacyOperators(declaration, context, reporter)
-    }
-
-    private fun checkReplaceableLegacyOperators(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val replacement = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[declaration.name] ?: return
-
-        val diagnostic = if (
-            declaration.symbol.callableId.packageName.isSubpackageOf(StandardClassIds.BASE_KOTLIN_PACKAGE)
-        ) {
-            FirErrors.DEPRECATED_BINARY_MOD
-        } else {
-            FirErrors.FORBIDDEN_BINARY_MOD
-        }
-
-        reporter.reportOn(declaration.source, diagnostic, declaration.symbol, replacement.asString(), context)
     }
 }

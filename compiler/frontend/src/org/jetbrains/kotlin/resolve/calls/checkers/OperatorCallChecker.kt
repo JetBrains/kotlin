@@ -59,10 +59,6 @@ class OperatorCallChecker : CallChecker {
 
         val isConventionOperator = element is KtOperationReferenceExpression && element.isConventionOperator()
 
-        if (isConventionOperator) {
-            checkModConvention(functionDescriptor, context.trace, reportOn)
-        }
-
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)
@@ -92,28 +88,4 @@ class OperatorCallChecker : CallChecker {
             return passedTypeArgumentsToInvoke && resolvedCall.variableCall.candidateDescriptor.typeParameters.isNotEmpty()
         }
     }
-}
-
-fun FunctionDescriptor.isOperatorMod(): Boolean {
-    return this.isOperator && name in OperatorNameConventions.MOD_OPERATORS_REPLACEMENT
-}
-
-private fun checkModConvention(
-    descriptor: FunctionDescriptor,
-    diagnosticHolder: DiagnosticSink,
-    modifier: PsiElement
-) {
-    if (!descriptor.isOperatorMod()) return
-
-    warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier)
-}
-
-private fun warnAboutDeprecatedOrForbiddenMod(
-    descriptor: FunctionDescriptor,
-    diagnosticHolder: DiagnosticSink,
-    reportOn: PsiElement
-) {
-    val diagnosticFactory = Errors.FORBIDDEN_BINARY_MOD_AS_REM
-    val newNameConvention = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[descriptor.name]
-    diagnosticHolder.report(diagnosticFactory.on(reportOn, descriptor, newNameConvention!!.asString()))
 }
