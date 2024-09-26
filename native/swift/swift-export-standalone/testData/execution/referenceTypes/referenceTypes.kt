@@ -144,6 +144,60 @@ class HostDerived : HostBase() {
     }
 }
 
+// MODULE: overrides
+// EXPORT_TO_SWIFT
+// FILE: overrides.kt
+
+open class Parent() {
+    open fun foo(): String = "Parent"
+    open var bar: Int = 10
+
+    open fun hop(): String = "Parent"
+    open fun chain(): String = "Parent"
+
+    open fun poly(): Parent = this
+    open fun nullable(): Parent? = this
+}
+
+open class Child : Parent() {
+    override fun foo(): String = "Child"
+    override var bar: Int = 20
+
+    /* override fun hop(): String = "Skipped" */
+    override fun chain(): String = "Child"
+
+    override fun poly(): Parent = this
+    override fun nullable(): Parent? = this
+}
+
+class GrandChild : Child() {
+    final override fun foo(): String = "GrandChild"
+    final override var bar: Int
+        get() = 42
+        set(_) = Unit
+
+    override fun hop(): String = "GrandChild"
+    final override fun chain(): String = "GrandChild"
+
+    override fun poly(): Parent = this
+    override fun nullable(): Parent = this
+}
+
+// MODULE: overrides_across_modules(overrides)
+// EXPORT_TO_SWIFT
+// FILE: overrides_across_modules.kt
+
+open class Cousin : Parent() {
+    override fun foo(): String = "Cousin"
+    override var bar: Int = 21
+
+    /* override fun hop(): String = "Skipped" */
+    final override fun chain(): String = "Cousin"
+
+    override fun poly(): Parent = this
+    override fun nullable(): Parent? = this
+}
+
 // MODULE: second_main(deps)
 // FILE: second_main.kt
 

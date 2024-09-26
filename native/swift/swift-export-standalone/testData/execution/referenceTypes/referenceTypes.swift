@@ -1,6 +1,8 @@
 import ReferenceTypes
 import second_main
 import KotlinRuntime
+import overrides
+import overrides_across_modules
 
 func initProducesNewObject() throws {
     let one = Foo(x: 1)
@@ -283,6 +285,68 @@ func companionObject() throws {
     try assertEquals(actual: HostDerived.Companion.shared.hostDepth, expected: 1)
 }
 
+func overridesShouldWork() throws {
+    let parent: Parent = Parent()
+    let child: Parent = Child()
+    let grandchild: Parent = GrandChild()
+
+    try assertEquals(actual: parent.foo(), expected: "Parent")
+    try assertEquals(actual: child.foo(), expected: "Child")
+    try assertEquals(actual: grandchild.foo(), expected: "GrandChild")
+
+    parent.bar += 5
+    try assertEquals(actual: parent.bar, expected: 15)
+
+    child.bar += 5
+    try assertEquals(actual: child.bar, expected: 25)
+
+    try assertEquals(actual: grandchild.bar, expected: 42)
+    grandchild.bar = 50
+    try assertEquals(actual: grandchild.bar, expected: 42)
+
+    try assertEquals(actual: parent.hop(), expected: "Parent")
+    try assertEquals(actual: child.hop(), expected: "Parent")
+    try assertEquals(actual: grandchild.hop(), expected: "GrandChild")
+
+    try assertEquals(actual: parent.chain(), expected: "Parent")
+    try assertEquals(actual: child.chain(), expected: "Child")
+    try assertEquals(actual: grandchild.chain(), expected: "GrandChild")
+
+    try assertEquals(actual: parent.poly(), expected: parent)
+    try assertEquals(actual: child.poly(), expected: child)
+    try assertEquals(actual: grandchild.poly(), expected: grandchild)
+
+    try assertEquals(actual: parent.nullable(), expected: parent)
+    try assertEquals(actual: child.nullable(), expected: child)
+    try assertEquals(actual: grandchild.nullable(), expected: grandchild)
+}
+
+func overridesShouldWorkAcrossModules() throws {
+    let parent: Parent = Parent()
+    let cousin: Parent = Cousin()
+
+    try assertEquals(actual: parent.foo(), expected: "Parent")
+    try assertEquals(actual: cousin.foo(), expected: "Cousin")
+
+    parent.bar += 5
+    try assertEquals(actual: parent.bar, expected: 15)
+
+    cousin.bar += 5
+    try assertEquals(actual: cousin.bar, expected: 26)
+
+    try assertEquals(actual: parent.hop(), expected: "Parent")
+    try assertEquals(actual: cousin.hop(), expected: "Parent")
+
+    try assertEquals(actual: parent.chain(), expected: "Parent")
+    try assertEquals(actual: cousin.chain(), expected: "Cousin")
+
+    try assertEquals(actual: parent.poly(), expected: parent)
+    try assertEquals(actual: cousin.poly(), expected: cousin)
+
+    try assertEquals(actual: parent.nullable(), expected: parent)
+    try assertEquals(actual: cousin.nullable(), expected: cousin)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -321,6 +385,8 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "openClasses", method: withAutorelease(openClasses)),
             TestCase(name: "openClassesAdhereToLSP", method: withAutorelease(openClassesAdhereToLSP)),
             TestCase(name: "companionObject", method: withAutorelease(companionObject)),
+            TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWork)),
+            TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWorkAcrossModules)),
         ]
     }
 }

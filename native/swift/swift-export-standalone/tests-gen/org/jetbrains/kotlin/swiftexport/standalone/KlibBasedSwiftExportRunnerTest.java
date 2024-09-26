@@ -90,6 +90,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("overrides")
+  public void testOverrides() {
+    runTest("native/swift/swift-export-standalone/testData/generation/overrides/");
+  }
+
+  @Test
   @TestMetadata("package_flattening")
   public void testPackage_flattening() {
     runTest("native/swift/swift-export-standalone/testData/generation/package_flattening/");

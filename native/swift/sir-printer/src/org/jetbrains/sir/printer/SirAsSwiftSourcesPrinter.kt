@@ -157,6 +157,7 @@ public class SirAsSwiftSourcesPrinter(
         printDocumentation()
         printAttributes()
         printModifiers()
+        printOverride()
         print(
             "var ",
             name.swiftIdentifier,
@@ -194,9 +195,19 @@ public class SirAsSwiftSourcesPrinter(
         println("}")
     }
 
-    private fun SirCallable.printOverride() {
-        if (this is SirInit && this.isOverride) {
+    private fun SirClassMemberDeclaration.printOverride() {
+        if (this.isOverride) {
             print("override ")
+        }
+    }
+
+    private fun SirCallable.printOverride() {
+        when (this) {
+            is SirInit -> if (this.isOverride) {
+                print("override ")
+            }
+            is SirClassMemberDeclaration -> (this as SirClassMemberDeclaration).printOverride()
+            else -> {}
         }
     }
 
