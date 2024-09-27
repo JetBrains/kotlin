@@ -98,6 +98,7 @@
         <option value="$PROJECT_DIR$/native/native.tests/testData" />
         <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
         <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
+        <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData" />
       </array>
     </option>
   </component>
