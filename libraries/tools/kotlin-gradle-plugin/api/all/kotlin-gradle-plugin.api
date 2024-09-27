@@ -1426,6 +1426,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NewNativeVersionDiagnostic : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NewNativeVersionDiagnostic;
+	public final fun invoke (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NoComposeCompilerPluginAppliedWarning : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NoComposeCompilerPluginAppliedWarning;
 	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
@@ -1434,6 +1439,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NoKotlinTargetsDeclared : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$NoKotlinTargetsDeclared;
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$OldNativeVersionDiagnostic : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$OldNativeVersionDiagnostic;
+	public final fun invoke (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$PlatformSourceSetConventionUsedWithCustomTargetName : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {

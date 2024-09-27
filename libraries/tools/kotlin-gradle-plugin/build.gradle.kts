@@ -447,10 +447,13 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
-    tasks.register<Test>("functionalTest")
+    tasks.register<Test>("functionalTest") {
+        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    }
 
     tasks.register<Test>("functionalUnitTest") {
         include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     }
 
     tasks.register<Test>("functionalRegressionTest") {

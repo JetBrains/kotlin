@@ -138,7 +138,10 @@ fun BuildResult.assertNoBuildWarnings(
     additionalExpectedWarnings: Set<String> = emptySet(),
 ) {
     val expectedWarnings = setOf(
-        "w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] ATTENTION! This build uses the following Kotlin Gradle Plugin properties:"
+        "w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] ATTENTION! This build uses the following Kotlin Gradle Plugin properties:",
+        // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
+        // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
+        "w: [OldNativeVersionDiagnostic | WARNING]"
     )
     val cleanedOutput = (expectedWarnings + additionalExpectedWarnings).fold(output) { acc, s ->
         acc.replace(s, "")
