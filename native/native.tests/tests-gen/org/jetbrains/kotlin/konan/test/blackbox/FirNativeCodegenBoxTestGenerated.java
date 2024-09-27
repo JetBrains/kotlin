@@ -31038,6 +31038,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("enumStaticMethods.kt")
+        public void testEnumStaticMethods() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/enumStaticMethods.kt");
+        }
+
+        @Test
         @TestMetadata("expectNonExpectOverloads.kt")
         public void testExpectNonExpectOverloads() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/expectNonExpectOverloads.kt");
