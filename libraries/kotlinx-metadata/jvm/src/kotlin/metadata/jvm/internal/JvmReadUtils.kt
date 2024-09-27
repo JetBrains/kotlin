@@ -12,7 +12,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.internal.toKmLambda
 import kotlin.metadata.internal.toKmPackage
 import kotlin.metadata.jvm.*
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 
@@ -88,7 +88,7 @@ internal object JvmReadUtils {
         val isAtLeast110 = jvmMetadataVersion.isAtLeast(1, 1, 0)
         val isCompatible = if (lenient) isAtLeast110 else jvmMetadataVersion.isCompatibleWithCurrentCompilerVersion()
         if (!isCompatible) {
-            // Kotlin 1.0 produces classfiles with metadataVersion = 1.1.0, while 1.0.0 represents unsupported pre-1.0 Kotlin (see JvmMetadataVersion.kt:39)
+            // Kotlin 1.0 produces classfiles with metadataVersion = 1.1.0, while 1.0.0 represents unsupported pre-1.0 Kotlin (see MetadataVersion.kt:39)
             val postfix =
                 if (!isAtLeast110) "while minimum supported version is 1.1.0 (Kotlin 1.0)."
                 else "while maximum supported version is ${if (jvmMetadataVersion.isStrictSemantics) CompilerMetadataVersion.INSTANCE else CompilerMetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlin-metadata-jvm library."

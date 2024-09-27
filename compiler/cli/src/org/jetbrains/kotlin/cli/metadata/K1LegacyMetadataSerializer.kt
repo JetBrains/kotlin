@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.ClassId
@@ -110,7 +110,7 @@ open class K1LegacyMetadataSerializer(
             for (table in packageTable.values) {
                 table.addTo(this)
             }
-        }.build().serializeToByteArray(JvmMetadataVersion.INSTANCE, 0) // TODO: use another version here, not JVM
+        }.build().serializeToByteArray(MetadataVersion.INSTANCE, 0) // TODO: use another version here, not JVM
         // TODO: also, use CommonConfigurationKeys.METADATA_VERSION if needed
 
         kotlinModuleFile.parentFile.mkdirs()

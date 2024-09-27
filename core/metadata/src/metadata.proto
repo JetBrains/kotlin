@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.metadata;
 import "core/metadata/src/ext_options.proto";
 
 // Changes to this proto are tracked by versions of proto files that include `import metadata.proto`.
-// Namely BuiltInsBinaryVersion, JvmMetadataVersion, JsMetadataVersion, KlibMetadataVersion, and probably something else.
+// Namely BuiltInsBinaryVersion, MetadataVersion, JsMetadataVersion, KlibMetadataVersion, and probably something else.
 // See their KDocs.
 
 option java_outer_classname = "ProtoBuf";

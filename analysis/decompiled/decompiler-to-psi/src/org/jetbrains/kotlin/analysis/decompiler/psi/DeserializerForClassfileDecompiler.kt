@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -37,7 +37,7 @@ fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForC
 class DeserializerForClassfileDecompiler(
     packageDirectory: VirtualFile,
     directoryPackageFqName: FqName,
-    private val jvmMetadataVersion: JvmMetadataVersion
+    private val metadataVersion: MetadataVersion
 ) : DeserializerForDecompilerBase(directoryPackageFqName) {
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
@@ -46,10 +46,10 @@ class DeserializerForClassfileDecompiler(
     override val deserializationComponents: DeserializationComponents
 
     init {
-        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, jvmMetadataVersion)
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, metadataVersion)
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
         val annotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
-            moduleDescriptor, notFoundClasses, storageManager, classFinder, jvmMetadataVersion
+            moduleDescriptor, notFoundClasses, storageManager, classFinder, metadataVersion
         )
 
         val configuration = object : DeserializationConfiguration {
@@ -73,7 +73,7 @@ class DeserializerForClassfileDecompiler(
         assert(packageFqName == directoryPackageFqName) {
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
-        val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName), jvmMetadataVersion)
+        val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName), metadataVersion)
         val header = binaryClassForPackageClass?.classHeader
         val annotationData = header?.data
         val strings = header?.strings

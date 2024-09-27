@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.handlers.renderNormalizedMetadata
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
@@ -100,7 +100,7 @@ private fun run(
         }
     }
 
-    val stubsMap = generateStubs(module, files, options, logger, JvmMetadataVersion.INSTANCE) { renderMetadata(it) }
+    val stubsMap = generateStubs(module, files, options, logger, MetadataVersion.INSTANCE) { renderMetadata(it) }
     return context to stubsMap.entries.sortedBy { it.key.qualifiedName }.mapNotNull { it.value }
 }
 

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.FqName
@@ -80,7 +80,7 @@ internal open class FirLegacyMetadataSerializer(
             for (table in packageTable.values) {
                 table.addTo(this)
             }
-        }.build().serializeToByteArray(JvmMetadataVersion.INSTANCE, 0)
+        }.build().serializeToByteArray(MetadataVersion.INSTANCE, 0)
 
         kotlinModuleFile.parentFile.mkdirs()
         kotlinModuleFile.writeBytes(packageTableBytes)

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -60,7 +60,7 @@ class JvmClassFileBasedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ), FirJavaAwareSymbolProvider {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
-    private val ownMetadataVersion: JvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
+    private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
     private val reportErrorsOnPreReleaseDependencies = with(session.languageVersionSettings) {
         !getFlag(AnalysisFlags.skipPrereleaseCheck) && !isPreRelease() && !KotlinCompilerVersion.isPreRelease()
@@ -132,14 +132,14 @@ class JvmClassFileBasedSymbolProvider(
 
     override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
 
-    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
+    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
             if (session.languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)) return null
 
             if (classHeader.metadataVersion.isCompatible(ownMetadataVersion)) return null
             return IncompatibleVersionErrorData(
                 actualVersion = classHeader.metadataVersion,
-                compilerVersion = JvmMetadataVersion.INSTANCE,
+                compilerVersion = MetadataVersion.INSTANCE,
                 languageVersion = ownMetadataVersion,
                 expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
                 filePath = location,

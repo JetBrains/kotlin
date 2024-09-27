@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -120,7 +120,7 @@ class DeserializationComponentsForJava(
             val deserializationComponentsForJava =
                 makeDeserializationComponentsForJava(
                     module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, JvmMetadataVersion.INSTANCE
+                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, MetadataVersion.INSTANCE
                 )
 
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
@@ -182,11 +182,11 @@ fun makeDeserializationComponentsForJava(
     reflectKotlinClassFinder: KotlinClassFinder,
     deserializedDescriptorResolver: DeserializedDescriptorResolver,
     errorReporter: ErrorReporter,
-    jvmMetadataVersion: JvmMetadataVersion
+    metadataVersion: MetadataVersion
 ): DeserializationComponentsForJava {
     val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
     val binaryClassAnnotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
-        module, notFoundClasses, storageManager, reflectKotlinClassFinder, jvmMetadataVersion
+        module, notFoundClasses, storageManager, reflectKotlinClassFinder, metadataVersion
     )
     return DeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,

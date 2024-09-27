@@ -5,7 +5,7 @@
 
 package kotlin.metadata.jvm
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion as CompilerMetadataVersion
 
 /**
  * Version of the metadata inside JVM classfile.
@@ -46,11 +46,11 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
     }
 
     /**
-     * Compares this JvmMetadataVersion object with another JvmMetadataVersion object.
+     * Compares this MetadataVersion object with another MetadataVersion object.
      *
      * Comparison is based on integer values of version parts with [major] being most significant one, then [minor], and finally [patch].
      *
-     * @return a negative integer, zero, or a positive integer if this JvmMetadataVersion object is less than, equal to, or greater than [other].
+     * @return a negative integer, zero, or a positive integer if this MetadataVersion object is less than, equal to, or greater than [other].
      */
     override fun compareTo(other: JvmMetadataVersion): Int {
         val majors = major.compareTo(other.major)
@@ -76,9 +76,9 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
     }
 
     /**
-     * Checks if this JvmMetadataVersion object is equal to [other] JvmMetadataVersion object.
+     * Checks if this MetadataVersion object is equal to [other] MetadataVersion object.
      *
-     * Instances of JvmMetadataVersion are equal if they have the same major, minor, and patch components.
+     * Instances of MetadataVersion are equal if they have the same major, minor, and patch components.
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -94,7 +94,7 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
     }
 
     /**
-     * Companion object to hold pre-defined JvmMetadataVersion instances.
+     * Companion object to hold pre-defined MetadataVersion instances.
      */
     public companion object {
         /**

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
@@ -164,7 +164,7 @@ public class ClassFileFactory implements OutputFileCollection {
             // not a real Kotlin version, and rather a substitute for the 2.0 metadata version.
             //
             // This workaround can be removed once we no longer support language version 2.0.
-            return new JvmMetadataVersion(1, 9, 9999);
+            return new MetadataVersion(1, 9, 9999);
         }
         return version;
     }

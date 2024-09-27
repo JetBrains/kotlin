@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.utils.jvmMetadataVersionOrDefault
+import org.jetbrains.kotlin.utils.metadataVersionOrDefault
 
 fun ModuleMapping.Companion.loadModuleMapping(
     bytes: ByteArray?,
     debugName: String,
     configuration: DeserializationConfiguration,
-    reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
+    reportIncompatibleVersionError: (MetadataVersion) -> Unit
 ): ModuleMapping =
     loadModuleMapping(
         bytes,
         debugName,
         configuration.skipMetadataVersionCheck,
         configuration.isJvmPackageNameSupported,
-        configuration.jvmMetadataVersionOrDefault(),
+        configuration.metadataVersionOrDefault(),
         reportIncompatibleVersionError
     )

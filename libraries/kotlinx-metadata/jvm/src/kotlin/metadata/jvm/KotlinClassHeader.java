@@ -10,7 +10,6 @@ import kotlin.Metadata;
 import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

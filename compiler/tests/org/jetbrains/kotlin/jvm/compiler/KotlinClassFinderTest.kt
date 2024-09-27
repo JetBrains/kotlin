@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -63,7 +63,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         assertTrue(psiClass !is KtLightClass, "Kotlin light classes are not not expected")
 
         val binaryClass = VirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(
-            JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass)), JvmMetadataVersion.INSTANCE
+            JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass)), MetadataVersion.INSTANCE
         )
         assertNotNull(binaryClass, "No binary class for $className")
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>>(
     protected val kotlinClassFinder: KotlinClassFinder
 ) : AnnotationLoader<A> {
-    abstract val jvmMetadataVersion: JvmMetadataVersion
+    abstract val metadataVersion: MetadataVersion
 
     protected abstract fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): S
 
@@ -141,7 +141,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                     field,
                     isConst,
                     isMovedFromInterfaceCompanion,
-                    kotlinClassFinder, jvmMetadataVersion
+                    kotlinClassFinder, metadataVersion
                 )
             )
                 ?: return listOf()
@@ -248,7 +248,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
         ) return false
 
-        val klass = kotlinClassFinder.findKotlinClass(classId, jvmMetadataVersion)
+        val klass = kotlinClassFinder.findKotlinClass(classId, metadataVersion)
         return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 
@@ -264,14 +264,14 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             isConst: Boolean?,
             isMovedFromInterfaceCompanion: Boolean,
             kotlinClassFinder: KotlinClassFinder,
-            jvmMetadataVersion: JvmMetadataVersion
+            metadataVersion: MetadataVersion
         ): KotlinJvmBinaryClass? {
             if (property) {
                 checkNotNull(isConst) { "isConst should not be null for property (container=$container)" }
                 if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
                     return kotlinClassFinder.findKotlinClass(
                         container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)),
-                        jvmMetadataVersion
+                        metadataVersion
                     )
                 }
                 if (isConst && container is ProtoContainer.Package) {
@@ -281,7 +281,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                         // Converting '/' to '.' is fine here because the facade class has a top level ClassId
                         return kotlinClassFinder.findKotlinClass(
                             ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))),
-                            jvmMetadataVersion
+                            metadataVersion
                         )
                     }
                 }
@@ -302,7 +302,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                 val jvmPackagePartSource = container.source as JvmPackagePartSource
 
                 return jvmPackagePartSource.knownJvmBinaryClass
-                    ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId, jvmMetadataVersion)
+                    ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId, metadataVersion)
             }
             return null
         }

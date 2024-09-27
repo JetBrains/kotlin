@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion as CompilerMetadataVersion
 
 /**
  * Represents the parsed metadata of a Kotlin JVM module file.
