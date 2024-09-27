@@ -118,7 +118,7 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.isStatic) return
 
         // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
-        val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
+        val (getterCompatibility, deprecatedOverrideOfHidden, originalJavaGetter) = getterSymbol.computeGetterCompatibility()
         if (getterCompatibility == Incompatible) return
 
         var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.coneType
@@ -130,7 +130,8 @@ class FirSyntheticPropertiesScope private constructor(
 
         // `void` type is the only case when we've got not-nullable non-enhanced Unit from Java
         // And it doesn't make sense to make a synthetic property for `void` typed getters
-        if (getterReturnType?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnType.attributes) return
+        val getterReturnTypeForUnitCheck = originalJavaGetter?.fir?.returnTypeRef?.coneType ?: getterReturnType
+        if (getterReturnTypeForUnitCheck?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnTypeForUnitCheck.attributes) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
@@ -260,7 +261,11 @@ class FirSyntheticPropertiesScope private constructor(
         HasJavaOrigin
     }
 
-    private data class GetterCompatibilityResult(val compatibility: SyntheticGetterCompatibility, val deprecatedOverrideOfHidden: Boolean)
+    private data class GetterCompatibilityResult(
+        val compatibility: SyntheticGetterCompatibility,
+        val deprecatedOverrideOfHidden: Boolean,
+        val originalJavaGetter: FirNamedFunctionSymbol?,
+    )
     /**
      * This method computes if getter method can be used as base for synthetic property based on overridden hierarchy
      * There are three kinds of compatibility:
@@ -274,6 +279,7 @@ class FirSyntheticPropertiesScope private constructor(
         var isHiddenEverywhereBesideSuperCalls = false
         var isDeprecatedOverrideOfHidden = false
         var result = Incompatible
+        var originalJavaGetter: FirNamedFunctionSymbol? = null
 
         val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
         fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
@@ -292,7 +298,9 @@ class FirSyntheticPropertiesScope private constructor(
                  * Otherwise we are in the middle of the hierarchy, so leaf potentially can be from Kotlin
                  */
                 val potentialResult = when {
-                    overriddenWithScope.isEmpty() -> HasJavaOrigin
+                    overriddenWithScope.isEmpty() -> HasJavaOrigin.also {
+                        originalJavaGetter = symbol
+                    }
                     kotlinBaseAllowed -> HasKotlinOrigin
                     else -> Incompatible
                 }
@@ -315,7 +323,7 @@ class FirSyntheticPropertiesScope private constructor(
             isJavaTypeOnThePath(this.dispatchReceiverType) -> HasKotlinOrigin
             else -> Incompatible
         }
-        return GetterCompatibilityResult(syntheticGetterCompatibility, isDeprecatedOverrideOfHidden)
+        return GetterCompatibilityResult(syntheticGetterCompatibility, isDeprecatedOverrideOfHidden, originalJavaGetter)
     }
 
     /*
