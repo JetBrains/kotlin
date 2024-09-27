@@ -8,22 +8,18 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 @OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArguments): K2JSCompilerArguments {
-    copyCommonKlibBasedCompilerArguments(from, to)
+    copyK2WasmCompilerArguments(from, to)
 
     to.cacheDirectory = from.cacheDirectory
-    to.debuggerCustomFormatters = from.debuggerCustomFormatters
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.fakeOverrideValidator = from.fakeOverrideValidator
     to.friendModules = from.friendModules
     to.friendModulesDisabled = from.friendModulesDisabled
     to.generateDts = from.generateDts
     to.generatePolyfills = from.generatePolyfills
-    to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.includes = from.includes
     to.irBuildCache = from.irBuildCache
     to.irDce = from.irDce
-    to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
-    to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     to.irDcePrintReachabilityInfo = from.irDcePrintReachabilityInfo
     to.irDceRuntimeDiagnostic = from.irDceRuntimeDiagnostic
     to.irGenerateInlineAnonymousFunctions = from.irGenerateInlineAnonymousFunctions
@@ -52,7 +48,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     @Suppress("DEPRECATION")
     to.outputFile = from.outputFile
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
-    to.preserveIcOrder = from.preserveIcOrder
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs
     to.sourceMapEmbedSources = from.sourceMapEmbedSources
@@ -65,16 +60,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.useEsArrowFunctions = from.useEsArrowFunctions
     to.useEsClasses = from.useEsClasses
     to.useEsGenerators = from.useEsGenerators
-    to.wasm = from.wasm
-    to.wasmDebug = from.wasmDebug
-    to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
-    to.wasmEnableAsserts = from.wasmEnableAsserts
-    to.wasmGenerateWat = from.wasmGenerateWat
-    to.wasmKClassFqn = from.wasmKClassFqn
-    to.wasmTarget = from.wasmTarget
-    to.wasmUseJsTag = from.wasmUseJsTag
-    to.wasmUseNewExceptionProposal = from.wasmUseNewExceptionProposal
-    to.wasmUseTrapsInsteadOfExceptions = from.wasmUseTrapsInsteadOfExceptions
 
     return to
 }

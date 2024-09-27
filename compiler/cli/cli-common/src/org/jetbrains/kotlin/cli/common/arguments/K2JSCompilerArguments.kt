@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 
-class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
+// TODO remove inheritance from K2WasmCompilerArguments after or within extracting Wasm parts from JS CLI (KT-56850) 
+class K2JSCompilerArguments : K2WasmCompilerArguments() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
     }
@@ -89,16 +90,6 @@ It is deprecated and will be removed in Kotlin 2.2."""
     )
     @Argument(value = "-source-map", description = "Generate a source map.")
     var sourceMap = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-debugger-custom-formatters",
-        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values"
-    )
-    var debuggerCustomFormatters = false
         set(value) {
             checkFrozen()
             field = value
@@ -293,44 +284,6 @@ It is deprecated and will be removed in Kotlin 2.2."""
         description = "Print reachability information about declarations to 'stdout' while performing DCE."
     )
     var irDcePrintReachabilityInfo = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
-        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine."
-    )
-    var includeUnavailableSourcesIntoSourceMap = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xir-dce-dump-reachability-info-to-file",
-        valueDescription = "<path>",
-        description = "Dump reachability information collected about declarations while performing DCE to a file. " +
-                "The format will be chosen automatically based on the file extension. " +
-                "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
-                "and plain text for all other file types."
-    )
-    var irDceDumpReachabilityInfoToFile: String? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xir-dump-declaration-ir-sizes-to-file",
-        valueDescription = "<path>",
-        description = "Dump the IR size of each declaration into a file. " +
-                "The format will be chosen automatically depending on the file extension. " +
-                "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
-                "and plain text for all other file types."
-    )
-    var irDceDumpDeclarationIrSizesToFile: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -579,93 +532,7 @@ It is deprecated and will be removed in a future release."""
             checkFrozen()
             field = value
         }
-
-    @Argument(value = "-Xwasm", description = "Use the experimental WebAssembly compiler backend.")
-    var wasm = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-preserve-ic-order", description = "Preserve wasm file structure between IC runs.")
-    var preserveIcOrder = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-debug-info", description = "Add debug info to the compiled WebAssembly module.")
-    var wasmDebug = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for 'KClass.qualifiedName'.")
-    var wasmKClassFqn = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-enable-array-range-checks", description = "Turn on range checks for array access functions.")
-    var wasmEnableArrayRangeChecks = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-enable-asserts", description = "Turn on asserts.")
-    var wasmEnableAsserts = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-generate-wat", description = "Generate a .wat file.")
-    var wasmGenerateWat = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xwasm-target", description = "Set up the Wasm target (wasm-js or wasm-wasi).")
-    var wasmTarget: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-Xwasm-use-traps-instead-of-exceptions",
-        description = "Use traps instead of throwing exceptions."
-    )
-    var wasmUseTrapsInsteadOfExceptions = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-use-new-exception-proposal",
-        description = "Use an updated version of the exception proposal with try_table."
-    )
-    var wasmUseNewExceptionProposal = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-attach-js-exception",
-        description = "Attach a thrown by JS-value to the JsException class"
-    )
-    var wasmUseJsTag: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
+    
     @Argument(
         value = "-Xoptimize-generated-js",
         description = "Perform additional optimizations on the generated JS code."
