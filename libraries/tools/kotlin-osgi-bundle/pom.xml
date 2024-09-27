@@ -45,6 +45,19 @@
                             <excludes>**/MANIFEST.MF</excludes>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>unpack-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>sources</classifier>
+                            <includeScope>compile</includeScope>
+                            <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/sources</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -86,15 +99,14 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>empty-sources-jar</id>
+                        <id>sources-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <skipIfEmpty>false</skipIfEmpty>
                             <classifier>sources</classifier>
-                            <classesDirectory>${basedir}/sources</classesDirectory>
+                            <classesDirectory>${project.build.directory}/sources</classesDirectory>
                         </configuration>
                     </execution>
                 </executions>
