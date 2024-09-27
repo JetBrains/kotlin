@@ -48,7 +48,7 @@ object FirExpectActualResolver {
 
                             when (actualSymbol) {
                                 is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
-                                else -> expectContainingClass?.getMembersForExpectClass(actualSymbol.name)
+                                else -> expectContainingClass?.getCallablesForExpectClass(actualSymbol.name)
                             }.orEmpty()
                         }
                         else -> {

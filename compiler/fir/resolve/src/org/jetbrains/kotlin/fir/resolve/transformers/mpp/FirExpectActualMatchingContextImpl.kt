@@ -191,7 +191,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         }
     }
 
-    override fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<FirCallableSymbol<*>> {
+    override fun RegularClassSymbolMarker.getCallablesForExpectClass(name: Name): List<FirCallableSymbol<*>> {
         val symbol = asSymbol()
         val scope = symbol.defaultType().scope(
             useSiteSession = symbol.moduleData.session,

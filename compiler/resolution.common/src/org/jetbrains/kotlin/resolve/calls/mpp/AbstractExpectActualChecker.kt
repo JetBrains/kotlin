@@ -580,7 +580,7 @@ object AbstractExpectActualChecker {
         selector(first) == selector(second)
 
     private fun ExpectActualMatchingContext<*>.isCtorless(regularClass: RegularClassSymbolMarker): Boolean {
-        return regularClass.getMembersForExpectClass(SpecialNames.INIT).isEmpty()
+        return regularClass.getCallablesForExpectClass(SpecialNames.INIT).isEmpty()
     }
 
     private fun ExpectActualMatchingContext<*>.isFinal(regularClassSymbolMarker: RegularClassSymbolMarker): Boolean {

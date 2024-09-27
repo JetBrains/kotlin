@@ -257,8 +257,8 @@ internal abstract class IrExpectActualMatchingContext(
         return asIr().declarations.filter { it !is IrAnonymousInitializer && !it.isStaticFun() }.map { it.symbol }
     }
 
-    override fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<DeclarationSymbolMarker> {
-        return asIr().declarations.filter { it.getNameWithAssert() == name }.map { it.symbol }
+    override fun RegularClassSymbolMarker.getCallablesForExpectClass(name: Name): List<CallableSymbolMarker> {
+        return asIr().declarations.filter { it.getNameWithAssert() == name }.mapNotNull { it.symbol as? CallableSymbolMarker }
     }
 
     override fun RegularClassSymbolMarker.collectEnumEntryNames(): List<Name> {
