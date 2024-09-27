@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: ANY
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
