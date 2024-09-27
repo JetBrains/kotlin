@@ -122,9 +122,4 @@ fun TestProject.parse(logger: DokkaLogger = defaultAnalysisLogger): DModule = Te
 fun TestProject.useServices(
     logger: DokkaLogger = defaultAnalysisLogger,
     block: TestAnalysisServices.(context: TestAnalysisContext) -> Unit
-) {
-    withTempDirectory { tempDirectory ->
-        val (services, context) = TestProjectAnalyzer.analyze(this, tempDirectory, logger)
-        services.block(context)
-    }
-}
+): Unit = TestProjectAnalyzer.useServices(this, logger, block)
