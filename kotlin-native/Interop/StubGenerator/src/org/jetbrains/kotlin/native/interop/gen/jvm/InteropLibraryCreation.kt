@@ -32,11 +32,7 @@ fun createInteropLibrary(
     shortName: String?,
     staticLibraries: List<String>
 ) {
-    val version = KotlinLibraryVersioning(
-            abiVersion = KotlinAbiVersion.CURRENT,
-            compilerVersion = KotlinCompilerVersion.VERSION,
-            metadataVersion = MetadataVersion.INSTANCE,
-    )
+    val version = KotlinLibraryVersioning.CURRENT
     val libFile = File(outputPath)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
     val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)

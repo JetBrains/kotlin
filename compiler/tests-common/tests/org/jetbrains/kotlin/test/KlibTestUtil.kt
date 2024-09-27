@@ -141,11 +141,7 @@ object KlibTestUtil {
 
         val library = KotlinLibraryWriterImpl(
             moduleName = libraryName,
-            versions = KotlinLibraryVersioning(
-                compilerVersion = null,
-                abiVersion = null,
-                metadataVersion = MetadataVersion.INSTANCE,
-            ),
+            versions = KotlinLibraryVersioning.CURRENT,
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),
             nopack = false,
