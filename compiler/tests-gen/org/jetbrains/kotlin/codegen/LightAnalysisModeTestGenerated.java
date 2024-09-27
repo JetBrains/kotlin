@@ -46172,6 +46172,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/syntheticAccessors/packagePrivateInPrivateInline.kt");
     }
 
+    @TestMetadata("propertyOfUnitType.kt")
+    public void testPropertyOfUnitType() {
+      runTest("compiler/testData/codegen/box/syntheticAccessors/propertyOfUnitType.kt");
+    }
+
     @TestMetadata("protectedFromLambda.kt")
     public void testProtectedFromLambda() {
       runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");

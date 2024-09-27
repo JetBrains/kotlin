@@ -57710,6 +57710,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("propertyOfUnitType.kt")
+    public void testPropertyOfUnitType() {
+      runTest("compiler/testData/codegen/box/syntheticAccessors/propertyOfUnitType.kt");
+    }
+
+    @Test
     @TestMetadata("protectedFromLambda.kt")
     public void testProtectedFromLambda() {
       runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
