@@ -228,6 +228,63 @@ fun main() {
             }
         }
 
+        // KLIB cross-compilation tests over codegen/box tests (an experiment).
+        testGroup("native/native.tests/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractFirLightTreeKlibCrossCompilationIdentityTest>(
+                suiteTestClassName = "FirLightTreeCodegenBoxKlibCrossCompilationIdentityTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                )
+            ) {
+                fun File.isIgnored(): Boolean =
+                    useLines { lines ->
+                        lines.any { line ->
+                            line.startsWith("// WITH_COROUTINES") ||
+                                    (line.startsWith("// IGNORE_BACKEND") && ("NATIVE" in line || "ANY" in line))
+                        }
+                    }
+
+                listOf("box", "boxInline").forEach { relativeRootPath ->
+                    model(
+                        relativeRootPath = relativeRootPath,
+                        skipTestAllFilesCheck = true,
+                        skipSpecificFile = { testDataFile ->
+                            val normalizedPath = testDataFile.toPath().joinToString("/") { it.toString() }
+                            normalizedPath.contains("/generated/") ||
+                                    normalizedPath.contains("compiler/testData/codegen/box/ranges/literal/") ||
+                                    normalizedPath.contains("compiler/testData/codegen/box/ranges/expression/") ||
+                                    normalizedPath.contains("compiler/testData/codegen/box/ranges/unsigned/literal/") ||
+                                    normalizedPath.contains("compiler/testData/codegen/box/ranges/unsigned/expression/") ||
+                                    testDataFile.isIgnored()
+                        }
+                    )
+                }
+            }
+        }
+
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/codegen") {
+            testClass<AbstractFirLightTreeKlibCrossCompilationIdentityTest>(
+                suiteTestClassName = "FirLightTreeCodegenBoxLocalKlibCrossCompilationIdentityTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                )
+            ) {
+                fun File.isCInteropTest(): Boolean =
+                    useLines { lines -> lines.any { line -> line.startsWith("// FILE:") && line.endsWith(".def") } }
+
+                model(
+                    skipTestAllFilesCheck = true,
+                    skipSpecificFile = { testDataFile ->
+                        val normalizedPath = testDataFile.toPath().joinToString("/") { it.toString() }
+                        testDataFile.name == "kt62262.kt" ||
+                                normalizedPath.endsWith("/cinterop/kt40426.kt") ||
+                                normalizedPath.endsWith("/fileCheck/filecheck_expected_failure.kt") ||
+                                testDataFile.isCInteropTest()
+                    }
+                )
+            }
+        }
+
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(

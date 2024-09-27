@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.klib.ManifestWritingTest.Companion.readManifestAndSanitize
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -93,6 +98,9 @@ abstract class AbstractFirKlibCrossCompilationIdentityTest(
                 +ConfigurationDirectives.WITH_PLATFORM_LIBS
 
                 FIR_PARSER with parser
+
+                // Some opt-ins necessary to run pure Kotlin/Native codegen/box tests.
+                OPT_IN with "kotlin.native.internal.InternalForKotlinNative"
             }
         }
     }
@@ -201,5 +209,18 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
     }
 }
 
-open class AbstractFirLightTreeKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTest(FirParser.LightTree)
+open class AbstractFirLightTreeKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTest(FirParser.LightTree),
+    ExternalSourceTransformersProvider {
+    private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
+
+    override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = registeredSourceTransformers[testDataFile]
+
+    /**
+     * Called directly from test class constructor.
+     */
+    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: ExternalSourceTransformer) {
+        registeredSourceTransformers.computeIfAbsent(getAbsoluteFile(testDataFilePath)) { mutableListOf() } += sourceTransformer
+    }
+}
+
 open class AbstractFirPsiKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTest(FirParser.Psi)
