@@ -1265,9 +1265,9 @@ __attribute__((swift_name("KotlinChar.Companion")))
 
 /**
  * @note annotations
- *   kotlin.DeprecatedSinceKotlin(warningSince="1.9")
+ *   kotlin.DeprecatedSinceKotlin(warningSince="1.9", errorSince="2.1")
 */
-@property (readonly) int32_t MAX_RADIX __attribute__((swift_name("MAX_RADIX"))) __attribute__((deprecated("Introduce your own constant with the value of `36")));
+@property (readonly) int32_t MAX_RADIX __attribute__((swift_name("MAX_RADIX"))) __attribute__((unavailable("Introduce your own constant with the value of `36")));
 @property (readonly) unichar MAX_SURROGATE __attribute__((swift_name("MAX_SURROGATE")));
 
 /**
@@ -1286,9 +1286,9 @@ __attribute__((swift_name("KotlinChar.Companion")))
 
 /**
  * @note annotations
- *   kotlin.DeprecatedSinceKotlin(warningSince="1.9")
+ *   kotlin.DeprecatedSinceKotlin(warningSince="1.9", errorSince="2.1")
 */
-@property (readonly) int32_t MIN_RADIX __attribute__((swift_name("MIN_RADIX"))) __attribute__((deprecated("Introduce your own constant with the value of `2`")));
+@property (readonly) int32_t MIN_RADIX __attribute__((swift_name("MIN_RADIX"))) __attribute__((unavailable("Introduce your own constant with the value of `2`")));
 
 /**
  * @note annotations
