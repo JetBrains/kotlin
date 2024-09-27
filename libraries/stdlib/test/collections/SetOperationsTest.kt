@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,18 @@ class SetOperationsTest {
         assertEquals(listOf(5), listOf(1, 3, 5).intersect(listOf(5)).toList())
         assertEquals(listOf(1, 3, 5), listOf(1, 3, 5).intersect(listOf(1, 3, 5)).toList())
         assertTrue(listOf<Int>().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectWithIdentitySet() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(b, c), listOf(a, b, c).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b, c), listOf(c, b, a).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b), listOf(b, c).intersect(IdentitySet(b, a)))
     }
 
     fun testPlus(doPlus: (Set<String>) -> Set<String>) {
@@ -78,5 +90,21 @@ class SetOperationsTest {
     @Test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
     @Test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
     @Test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+}
 
+private class IdentitySet<T : Any>(vararg val elements: T) : AbstractSet<T>() {
+    init {
+        for (idx1 in elements.indices) {
+            for (idx2 in elements.indices) {
+                require(idx1 == idx2 || elements[idx1] !== elements[idx2])
+            }
+        }
+    }
+
+    override val size: Int
+        get() = elements.size
+
+    override fun iterator(): Iterator<T> = elements.iterator()
+
+    override fun contains(element: T): Boolean = elements.any { it === element }
 }
