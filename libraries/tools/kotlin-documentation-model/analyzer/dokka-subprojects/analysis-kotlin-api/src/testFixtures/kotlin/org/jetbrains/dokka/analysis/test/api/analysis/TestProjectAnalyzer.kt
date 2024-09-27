@@ -13,9 +13,8 @@ import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
 import org.jetbrains.dokka.analysis.test.api.TestProject
+import org.jetbrains.dokka.analysis.test.api.analysis.TestProjectAnalyzer.parse
 import org.jetbrains.dokka.analysis.test.api.configuration.toDokkaConfiguration
-import org.jetbrains.dokka.analysis.test.api.parse
-import org.jetbrains.dokka.analysis.test.api.useServices
 import org.jetbrains.dokka.analysis.test.api.util.withTempDirectory
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -61,39 +60,41 @@ internal object TestProjectAnalyzer {
      *
      * @see [TestProject.parse] for a user-friendly way to call it
      */
-    fun parse(testProject: TestProject, logger: DokkaLogger): DModule {
-        // since we only need documentables, we can delete the input test files right away
-        return withTempDirectory(logger) { tempDirectory ->
-            val (_, context) = testProject.initialize(outputDirectory = tempDirectory, logger)
-            generateDocumentableModel(context, logger)
+    fun parse(testProject: TestProject, logger: DokkaLogger): DModule = withTempDirectory(logger) { tempDirectory ->
+        val (_, dokkaContext) = testProject.initialize(outputDirectory = tempDirectory, logger)
+        try {
+            generateDocumentableModel(dokkaContext, logger)
+        } finally {
+            cleanup(dokkaContext)
         }
     }
 
     /**
-     * Works in the same way as [parse], but it returns the context and configuration used for
-     * running Dokka, and does not delete the input test files at the end of the execution - it
-     * must be taken care of on call site.
+     * Works in the same way as [parse], but provides not only the resulting documentable model,
+     * but analysis context and configuration as well.
      *
-     * @param persistentDirectory a directory that will be used to generate the input test files into.
-     *                            It must be available during the test run, especially if services are used,
-     *                            otherwise parts of Dokka might not work as expected. Can be safely deleted
-     *                            at the end of the test after all asserts have been run.
+     * Creates the input test files, runs Dokka and then deletes them right after the [block]
+     * has been executed, leaving no trailing files or any other garbage behind.
      *
      * @see [TestProject.useServices] for a user-friendly way to call it
      */
-    fun analyze(
+    fun useServices(
         testProject: TestProject,
-        persistentDirectory: File,
-        logger: DokkaLogger
-    ): Pair<TestAnalysisServices, TestAnalysisContext> {
-        val (dokkaConfiguration, dokkaContext) = testProject.initialize(outputDirectory = persistentDirectory, logger)
-        val analysisServices = createTestAnalysisServices(dokkaContext, logger)
-        val testAnalysisContext = TestAnalysisContext(
-            context = dokkaContext,
-            configuration = dokkaConfiguration,
-            module = generateDocumentableModel(dokkaContext, logger)
-        )
-        return analysisServices to testAnalysisContext
+        logger: DokkaLogger = defaultAnalysisLogger,
+        block: TestAnalysisServices.(context: TestAnalysisContext) -> Unit
+    ): Unit = withTempDirectory(logger) { tempDirectory ->
+        val (dokkaConfiguration, dokkaContext) = testProject.initialize(outputDirectory = tempDirectory, logger)
+        try {
+            val analysisServices = createTestAnalysisServices(dokkaContext, logger)
+            val testAnalysisContext = TestAnalysisContext(
+                context = dokkaContext,
+                configuration = dokkaConfiguration,
+                module = generateDocumentableModel(dokkaContext, logger)
+            )
+            analysisServices.block(testAnalysisContext)
+        } finally {
+            cleanup(dokkaContext)
+        }
     }
 
     /**
@@ -242,4 +243,14 @@ internal object TestProjectAnalyzer {
             }
         )
     }
+
+    /**
+     * Cleans up memory used during analysis by invoking all Dokka post-actions
+     * which will dispose KotlinAnalysis sessions for both K1 and K2 analysis.
+     * After this, [context] should not be used.
+     */
+    private fun cleanup(context: DokkaContext) {
+        context[CoreExtensions.postActions].forEach { action -> action.invoke() }
+    }
+
 }
