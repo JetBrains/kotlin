@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.utils.prettyName
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 
@@ -63,6 +64,14 @@ object KotlinToolingDiagnostics {
                         .onlyIf(changedKotlinNativeHomeProperty != null)
         )
     }
+
+    object NativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build(
+            "'$nativeVersion' native is being used with an older '$kotlinVersion' Kotlin. Please adjust versions to avoid incompatibilities."
+                .onlyIf(nativeVersion != null && nativeVersion > kotlinVersion)
+        )
+    }
+
 
     object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build(
@@ -393,7 +402,7 @@ object KotlinToolingDiagnostics {
 
     abstract class JsLikeEnvironmentNotChosenExplicitly(
         private val environmentName: String,
-        private val targetType: String
+        private val targetType: String,
     ) : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(availableEnvironments: List<String>) = build(
             """
@@ -1010,7 +1019,7 @@ object KotlinToolingDiagnostics {
 
     object DeprecatedInKMPJavaPluginsDiagnostic : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(pluginId: String): ToolingDiagnostic {
-            val pluginString = when(pluginId) {
+            val pluginString = when (pluginId) {
                 "application" -> "'$pluginId' (also applies 'java' plugin)"
                 "java-library" -> "'$pluginId' (also applies 'java' plugin)"
                 else -> "'$pluginId'"
@@ -1052,7 +1061,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion: ToolingDiagnosticFactory(WARNING) {
+    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependency: String, includedProjectPath: String): ToolingDiagnostic = build(
             """
                 Dependency '$dependency' resolved into included build project '$includedProjectPath'. 
