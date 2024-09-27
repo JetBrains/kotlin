@@ -20,7 +20,7 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
     val versions = KotlinLibraryVersioning(
         abiVersion = KotlinAbiVersion.CURRENT,
         compilerVersion = KotlinCompilerVersion.getVersion(),
-        metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
+        metadataVersion = KLIB_LEGACY_METADATA_VERSION,
     )
 
     buildKotlinLibrary(
