@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
-class KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<KlibMetadataVersion>(
+class KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<MetadataVersion>(
     KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
     DynamicTypeDeserializer,
     { KLIB_LEGACY_METADATA_VERSION },
-    { KlibMetadataVersion.INVALID_VERSION },
+    { MetadataVersion.INVALID_VERSION },
     KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
 ) {
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
