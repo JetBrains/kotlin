@@ -17,8 +17,8 @@ dependencies {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     kotlinOptions {
-        languageVersion = "1.4"
-        apiVersion = "1.4"
+        languageVersion = "1.6"
+        apiVersion = "1.6"
         freeCompilerArgs += listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
     }
 }

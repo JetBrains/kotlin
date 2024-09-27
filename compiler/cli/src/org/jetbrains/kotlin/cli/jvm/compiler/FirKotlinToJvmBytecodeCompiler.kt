@@ -70,6 +70,8 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 object FirKotlinToJvmBytecodeCompiler {
     fun compileModulesUsingFrontendIR(
@@ -423,7 +425,8 @@ fun findMainClass(fir: List<FirFile>): FqName? {
             }
 
             compatibleClasses += FqName.fromSegments(
-                file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
+                file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt")
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Kt"
             )
         }
     }

@@ -347,7 +347,7 @@ class KotlinCoreEnvironment private constructor(
         get() = projectEnvironment.project
 
     internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
-        sourceFiles.sumBy { sourceFile ->
+        sourceFiles.sumOf { sourceFile ->
             val text = sourceFile.text
             StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
         }

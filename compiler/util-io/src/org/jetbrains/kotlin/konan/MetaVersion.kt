@@ -4,7 +4,10 @@
  */
 package org.jetbrains.kotlin.konan
 
-inline class MetaVersion(val metaString: String) {
+import kotlin.jvm.JvmInline
+
+@JvmInline
+value class MetaVersion(val metaString: String) {
     operator fun compareTo(other: MetaVersion): Int {
         if (metaOrder.contains(this)) {
             if (metaOrder.contains(other)) {

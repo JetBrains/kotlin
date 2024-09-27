@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.util
 
-val <T : Enum<T>> T.visibleName get() = name.toLowerCase()
+val <T : Enum<T>> T.visibleName get() = name.lowercase()
 
 interface Named {
     val name: String

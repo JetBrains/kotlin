@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.Architecture.ARM64
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.util.*
 
 enum class NativeBuildType(
     val optimized: Boolean,
@@ -21,7 +22,7 @@ enum class NativeBuildType(
     RELEASE(true, false, BitcodeEmbeddingMode.BITCODE),
     DEBUG(false, true, BitcodeEmbeddingMode.MARKER);
 
-    override fun getName(): String = name.toLowerCase()
+    override fun getName(): String = name.lowercase(Locale.getDefault())
 
     fun embedBitcode(target: KonanTarget) = with(target) {
         if (family in listOf(IOS, WATCHOS, TVOS) && architecture in listOf(ARM32, ARM64)) {

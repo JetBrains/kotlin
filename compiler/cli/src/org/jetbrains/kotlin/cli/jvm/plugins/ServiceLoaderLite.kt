@@ -12,6 +12,7 @@ import java.lang.Character.isJavaIdentifierStart
 import java.net.URLClassLoader
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.Paths
+import java.util.*
 import java.util.zip.ZipFile
 
 /**
@@ -72,7 +73,7 @@ object ServiceLoaderLite {
 
         return when {
             file.isDirectory -> findImplementationsInDirectory(classIdentifier, file)
-            file.isFile && file.extension.toLowerCase() == "jar" -> findImplementationsInJar(classIdentifier, file)
+            file.isFile && file.extension.lowercase(Locale.getDefault()) == "jar" -> findImplementationsInJar(classIdentifier, file)
             else -> emptySet()
         }
     }

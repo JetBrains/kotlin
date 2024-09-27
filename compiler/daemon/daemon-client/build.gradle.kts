@@ -40,7 +40,7 @@ dependencies {
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
         // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        apiVersion = "1.4"
+        apiVersion = "1.6"
         freeCompilerArgs += "-Xsuppress-version-warnings"
     }
 }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import java.util.*
+
 enum class KotlinJsCompilerType {
     LEGACY,
     IR,
@@ -25,7 +27,7 @@ enum class KotlinJsCompilerType {
 }
 
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase()
+    get() = name.lowercase(Locale.getDefault())
 
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
@@ -33,5 +35,5 @@ fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize())
+    return removeSuffix(compilerType.lowerName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
 }

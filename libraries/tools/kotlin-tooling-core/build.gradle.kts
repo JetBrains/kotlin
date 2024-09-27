@@ -9,8 +9,8 @@ javadocJar()
 configureKotlinCompileTasksGradleCompatibility()
 
 kotlin.sourceSets.configureEach {
-    languageSettings.apiVersion = "1.4"
-    languageSettings.languageVersion = "1.4"
+    languageSettings.apiVersion = "1.6"
+    languageSettings.languageVersion = "1.6"
 }
 
 dependencies {

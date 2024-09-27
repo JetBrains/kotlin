@@ -20,7 +20,7 @@ class ByteArrayCharSequence(
 
     override val length get() = end - start
 
-    override fun get(index: Int): Char = bytes[index + start].toChar()
+    override fun get(index: Int): Char = bytes[index + start].toInt().toChar()
 
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         if (startIndex == 0 && endIndex == length) return this
@@ -31,7 +31,7 @@ class ByteArrayCharSequence(
         val chars = CharArray(length)
 
         for (i in 0 until length) {
-            chars[i] = bytes[i + start].toChar()
+            chars[i] = bytes[i + start].toInt().toChar()
         }
 
         return String(chars)

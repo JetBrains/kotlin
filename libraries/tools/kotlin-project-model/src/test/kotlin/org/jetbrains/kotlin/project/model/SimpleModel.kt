@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.project.model
 
+import java.util.*
+
 fun module(name: String, classifier: String? = null) = KpmBasicModule(KpmLocalModuleIdentifier("current", name, classifier))
 
 fun KpmBasicModule.fragment(vararg nameParts: String): KpmBasicFragment =
-    fragment(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })
+    fragment(nameParts.drop(1).joinToString("", nameParts.first()) { it.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() } })
 
 fun KpmBasicModule.fragment(name: String): KpmBasicFragment =
     fragments.firstOrNull { it.fragmentName == name } ?: KpmBasicFragment(this, name).also { fragments.add(it) }
 
 fun KpmBasicModule.variant(vararg nameParts: String): KpmBasicVariant =
-    variant(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })
+    variant(nameParts.drop(1).joinToString("", nameParts.first()) { it.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() } })
 
 fun KpmBasicModule.variant(name: String): KpmBasicVariant =
     fragments.firstOrNull { it.fragmentName == name }

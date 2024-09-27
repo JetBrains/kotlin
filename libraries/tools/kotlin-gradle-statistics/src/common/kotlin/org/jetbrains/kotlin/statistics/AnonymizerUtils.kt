@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.statistics
 
 import java.security.MessageDigest
+import java.util.*
 
 internal interface ValueAnonymizer<T> {
 
@@ -21,7 +22,7 @@ internal val salt: String by lazy {
 }
 
 fun anonymizeComponentVersion(version: String): String {
-    val parts = version.toLowerCase().replace('-', '.')
+    val parts = version.lowercase(Locale.getDefault()).replace('-', '.')
         .split(".")
         .plus(listOf("0", "0", "0")) // pad with zeros
         .take(4)

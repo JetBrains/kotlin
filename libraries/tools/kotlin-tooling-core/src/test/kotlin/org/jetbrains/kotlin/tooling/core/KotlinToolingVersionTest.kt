@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tooling.core
 
 import org.junit.Test
+import java.util.*
 import kotlin.test.*
 
 class KotlinToolingVersionTest {
@@ -271,7 +272,7 @@ class KotlinToolingVersionTest {
     @Test
     fun invalidMilestoneVersion() {
         val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20-M") }
-        assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
+        assertTrue("maturity" in exception.message.orEmpty().lowercase(Locale.getDefault()), "Expected 'maturity' issue mentioned in error message")
     }
 
     @Test
