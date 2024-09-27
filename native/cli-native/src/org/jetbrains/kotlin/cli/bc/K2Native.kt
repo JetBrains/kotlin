@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.profile
@@ -36,7 +36,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
-    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
     override val defaultPerformanceManager: PerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
