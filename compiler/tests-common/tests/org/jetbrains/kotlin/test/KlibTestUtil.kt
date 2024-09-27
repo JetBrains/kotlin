@@ -143,7 +143,7 @@ object KlibTestUtil {
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
+                metadataVersion = KLIB_LEGACY_METADATA_VERSION,
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),

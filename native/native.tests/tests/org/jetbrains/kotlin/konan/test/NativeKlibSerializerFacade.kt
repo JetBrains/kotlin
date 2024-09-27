@@ -69,7 +69,7 @@ abstract class AbstractNativeKlibSerializerFacade(
             versions = KotlinLibraryVersioning(
                 abiVersion = KotlinAbiVersion.CURRENT,
                 compilerVersion = KotlinCompilerVersion.getVersion(),
-                metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
+                metadataVersion = KLIB_LEGACY_METADATA_VERSION,
             ),
             target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
             output = outputArtifact.outputFile.path,

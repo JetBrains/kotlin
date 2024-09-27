@@ -116,7 +116,7 @@ class KlibLoadingMetadataCache {
 
     private fun computeLibraryMetadataVersion(manifestFile: VirtualFile): MetadataVersion? = try {
         val versioning = Properties().apply { manifestFile.inputStream.use { load(it) } }.readKonanLibraryVersioning()
-        versioning.metadataVersion?.let(BinaryVersion.Companion::parseVersionArray)?.let(::MetadataVersion)
+        versioning.metadataVersion
     } catch (_: IOException) {
         // ignore and cache null value
         null
