@@ -43,8 +43,16 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val sourceSetConfigurationToResolve: FileCollection = project.kotlinSecondaryVariantsDataSharing
-        .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration).files
+    @get:Optional
+    val sourceSetConfigurationToResolve: FileCollection? =
+        // This configuration is resolvable only for P2P dependencies, for IDE import we should not invoke sourceSet metadata compilations
+        if (keepProjectDependencies) {
+            project.kotlinSecondaryVariantsDataSharing
+                .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration)
+                .files
+        } else {
+            null
+        }
 
     @Suppress("unused") // Gradle input
     @get:InputFiles

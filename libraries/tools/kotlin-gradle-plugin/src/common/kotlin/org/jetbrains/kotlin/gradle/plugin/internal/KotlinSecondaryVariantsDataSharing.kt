@@ -127,6 +127,11 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         val keyFromResolvedArtifact = variant.attributes.getAttribute(kotlinProjectSharedDataAttribute) ?: return null
         if (key != keyFromResolvedArtifact) return null
 
+        // In some cases, for example CInterop transformations for IDE, actual artifact file may not exists
+        // this can happen because consuming task doesn't not depend on the resolved artifacts collection
+        // and producing task may not be invoked. So checking for file existence is required here.
+        if (!file.exists()) return null
+
         val content = file.readText()
         return runCatching { JsonUtils.gson.fromJson(content, clazz) }.getOrNull()
     }

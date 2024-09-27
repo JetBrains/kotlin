@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
@@ -44,9 +45,12 @@ internal val ExportCommonSourceSetsMetadataLocations = KotlinProjectSetupCorouti
 }
 
 internal class SourceSetMetadataLocations(
-    @get:InputFiles
+    @get:Internal
     val locationBySourceSetName: Map<String, File>
-) : KotlinShareableDataAsSecondaryVariant
+) : KotlinShareableDataAsSecondaryVariant {
+    @get:InputFiles
+    val locations: Collection<File> get() = locationBySourceSetName.values
+}
 
 
 

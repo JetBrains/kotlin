@@ -22,7 +22,7 @@ import kotlin.test.fail
  *
  * To run task with the same build option as test - use `run.sh` (or `run.bat`) script.
  */
-fun TestProject.makeSnapshotTo(destinationPath: String) {
+fun TestProject.makeSnapshotTo(destinationPath: String, buildOptions: BuildOptions = this.buildOptions) {
     if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
 
     val dest = Paths

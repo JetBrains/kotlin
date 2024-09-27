@@ -42,6 +42,8 @@ private constructor(
         diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
         resolvedPsmConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor? {
+        checkNotNull(resolvedPsmConfiguration) { "MppDependenciesProjectStructureMetadataExtractorFactory must not receive null psmConfiguration" }
+
         val moduleId = metadataArtifact.variant.owner
 
         val psmFile = findPsmFileOrNull(resolvedPsmConfiguration, moduleId)
@@ -67,7 +69,7 @@ private constructor(
         /** If, for some reason, [org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataTransformAction]
          * didn't work, Fallback to JAR */
         if (psmFile == null) {
-            JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
+            return JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
         }
 
         return ProjectMppDependencyProjectStructureMetadataExtractor(
@@ -76,12 +78,12 @@ private constructor(
     }
 
     private fun findPsmFileOrNull(
-        resolvedPsmConfiguration: LazyResolvedConfiguration?,
-        moduleId: ComponentIdentifier?,
-    ) = resolvedPsmConfiguration?.resolvedArtifacts
-        ?.filter { it.id.componentIdentifier == moduleId }
-        ?.map { it.file }
-        ?.singleOrNull()
+        resolvedPsmConfiguration: LazyResolvedConfiguration,
+        moduleId: ComponentIdentifier,
+    ) = resolvedPsmConfiguration.getArtifacts(moduleId)
+        .filter { it.variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name == KotlinUsages.KOTLIN_PSM_METADATA }
+        .map { it.file }
+        .singleOrNull()
 
     companion object {
         fun getOrCreate(project: Project): MppDependenciesProjectStructureMetadataExtractorFactory =

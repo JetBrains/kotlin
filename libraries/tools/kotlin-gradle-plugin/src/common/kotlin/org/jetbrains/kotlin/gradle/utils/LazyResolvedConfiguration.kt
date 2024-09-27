@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.ResolvedConfiguration
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
@@ -29,8 +30,6 @@ internal class LazyResolvedConfiguration private constructor(
 ) {
     /**
      * Creates [LazyResolvedConfiguration] from given [configuration].
-     *
-     * Pass [artifactType] to select different artifacts if available.
      */
     constructor(configuration: Configuration, configureArtifactViewAttributes: (AttributeContainer) -> Unit = {}) : this(
         // Calling resolutionResult doesn't actually trigger resolution. But accessing its root ResolvedComponentResult
@@ -71,6 +70,8 @@ internal class LazyResolvedConfiguration private constructor(
         val componentIds = component.variants.map { it.lastExternalVariantOrSelf().owner }
         return componentIds.flatMap { artifactsByComponentId[it].orEmpty() }
     }
+
+    fun getArtifacts(componentId: ComponentIdentifier): List<ResolvedArtifactResult> = artifactsByComponentId[componentId].orEmpty()
 
     override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
 }

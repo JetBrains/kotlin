@@ -288,7 +288,11 @@ internal class GranularMetadataTransformation(
 
         val metadataProvider = when (mppDependencyMetadataExtractor) {
             is AbstractProjectMppDependencyProjectStructureMetadataExtractor -> {
-                val sourceSetMetadataOutputs = extractSourceSetMetadataOutputs(mppDependencyMetadataExtractor, dependency)
+                val sourceSetMetadataOutputs = extractSourceSetMetadataOutputs(
+                    allVisibleSourceSets,
+                    mppDependencyMetadataExtractor,
+                    dependency
+                )
                 ProjectMetadataProvider(
                     sourceSetMetadataOutputs = sourceSetMetadataOutputs
                 )
@@ -315,14 +319,24 @@ internal class GranularMetadataTransformation(
     }
 
     private fun extractSourceSetMetadataOutputs(
+        visibleSourceSetNames: Set<String>,
         mppDependencyMetadataExtractor: AbstractProjectMppDependencyProjectStructureMetadataExtractor,
         dependency: ResolvedDependencyResult,
     ): Map<String, SourceSetMetadataOutputs> {
         return if (params.kotlinKmpProjectIsolationEnabled) {
-            val sourceSetMetadataLocations = params.sourceSetMetadataLocationsOfProjectDependencies.getProjectDataFromDependencyOrNull(dependency)
-                ?: error("There is no source set to class directory mapping for the $dependency dependency.")
-            sourceSetMetadataLocations.locationBySourceSetName.mapValues { (_, classDir) ->
-                SourceSetMetadataOutputs(params.objects.fileCollection().from(classDir))
+            val sourceSetMetadataLocations = params
+                .sourceSetMetadataLocationsOfProjectDependencies
+                .getProjectDataFromDependencyOrNull(dependency)
+            // TODO: introduce IDE mode for GranularMetadataTransformations, in this mode GMT
+            // will not materialize actual metadata artifacts for Project Dependencies,
+            // so here we could simply return, or even don't invoke this method.
+            // but for now just fallback to "null" provider.
+            if (sourceSetMetadataLocations == null) {
+                visibleSourceSetNames.associateWith { SourceSetMetadataOutputs(null) }
+            } else {
+                sourceSetMetadataLocations.locationBySourceSetName.mapValues { (_, classDir) ->
+                    SourceSetMetadataOutputs(params.objects.fileCollection().from(classDir))
+                }
             }
         } else {
             params.projectData[mppDependencyMetadataExtractor.projectPath]?.sourceSetMetadataOutputs
