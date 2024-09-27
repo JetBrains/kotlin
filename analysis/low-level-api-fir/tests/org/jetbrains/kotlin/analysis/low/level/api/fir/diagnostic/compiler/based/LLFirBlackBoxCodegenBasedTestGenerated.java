@@ -39304,6 +39304,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("enumStaticMethods.kt")
+      public void testEnumStaticMethods() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/enumStaticMethods.kt");
+      }
+
+      @Test
       @TestMetadata("expectAnnotationAsTypeAlias.kt")
       public void testExpectAnnotationAsTypeAlias() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");
