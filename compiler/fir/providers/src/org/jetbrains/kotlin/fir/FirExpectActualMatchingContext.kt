@@ -22,6 +22,7 @@ interface FirExpectActualMatchingContext : ExpectActualMatchingContext<FirBasedS
 
     val expectScopeSession: ScopeSession
     override fun RegularClassSymbolMarker.getCallablesForExpectClass(name: Name): List<FirCallableSymbol<*>>
+    fun RegularClassSymbolMarker.getStaticCallablesForExpectClass(name: Name): List<FirCallableSymbol<*>>
 }
 
 interface FirExpectActualMatchingContextFactory : FirSessionComponent {

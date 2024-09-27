@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM, JS, NATIVE, JS_IR, JS_IR_ES6
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
