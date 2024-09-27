@@ -334,6 +334,12 @@ class DifferenceCalculatorForClass(
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
+                ProtoBufClassKind.COMPILER_PLUGIN_DATA_LIST -> {
+                    // plugins may modify the whole hierarchy depending on metadata written by them,
+                    // so we should be conservative if this metadata has changed
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
             }
         }
 

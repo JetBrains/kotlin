@@ -203,6 +203,8 @@ open class ProtoCompareGenerated(
             if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
         }
 
+        if (!checkEqualsClassCompilerPluginData(old, new)) return false
+
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) return false
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) return false
@@ -290,6 +292,7 @@ open class ProtoCompareGenerated(
         MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
+        COMPILER_PLUGIN_DATA_LIST,
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
         JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME,
@@ -367,6 +370,8 @@ open class ProtoCompareGenerated(
         if (old.hasVersionRequirementTable()) {
             if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
         }
+
+        if (!checkEqualsClassCompilerPluginData(old, new)) result.add(ProtoBufClassKind.COMPILER_PLUGIN_DATA_LIST)
 
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME)
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
@@ -479,6 +484,8 @@ open class ProtoCompareGenerated(
         if (old.hasContract()) {
             if (!checkEquals(old.contract, new.contract)) return false
         }
+
+        if (!checkEqualsFunctionCompilerPluginData(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
         if (old.hasExtension(JvmProtoBuf.methodSignature)) {
@@ -599,6 +606,8 @@ open class ProtoCompareGenerated(
         }
 
         if (!checkEqualsPropertyVersionRequirement(old, new)) return false
+
+        if (!checkEqualsPropertyCompilerPluginData(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
@@ -784,6 +793,8 @@ open class ProtoCompareGenerated(
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
         if (!checkEqualsTypeAliasVersionRequirement(old, new)) return false
+
+        if (!checkEqualsTypeAliasCompilerPluginData(old, new)) return false
 
         return true
     }
@@ -974,6 +985,8 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsConstructorVersionRequirement(old, new)) return false
 
+        if (!checkEqualsConstructorCompilerPluginData(old, new)) return false
+
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
@@ -1051,6 +1064,14 @@ open class ProtoCompareGenerated(
         if (old.hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
             if (old.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal) != new.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) return false
         }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.CompilerPluginData, new: ProtoBuf.CompilerPluginData): Boolean {
+        if (!checkStringEquals(old.pluginId, new.pluginId)) return false
+
+        if (old.data != new.data) return false
 
         return true
     }
@@ -1545,6 +1566,16 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsClassCompilerPluginData(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.compilerPluginDataCount != new.compilerPluginDataCount) return false
+
+        for(i in 0..old.compilerPluginDataCount - 1) {
+            if (!checkEquals(old.getCompilerPluginData(i), new.getCompilerPluginData(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionTypeParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1595,6 +1626,16 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsFunctionCompilerPluginData(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.compilerPluginDataCount != new.compilerPluginDataCount) return false
+
+        for(i in 0..old.compilerPluginDataCount - 1) {
+            if (!checkEquals(old.getCompilerPluginData(i), new.getCompilerPluginData(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsPropertyTypeParameter(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1635,6 +1676,16 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsPropertyCompilerPluginData(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.compilerPluginDataCount != new.compilerPluginDataCount) return false
+
+        for(i in 0..old.compilerPluginDataCount - 1) {
+            if (!checkEquals(old.getCompilerPluginData(i), new.getCompilerPluginData(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeAliasTypeParameter(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1660,6 +1711,16 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.versionRequirementCount - 1) {
             if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeAliasCompilerPluginData(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
+        if (old.compilerPluginDataCount != new.compilerPluginDataCount) return false
+
+        for(i in 0..old.compilerPluginDataCount - 1) {
+            if (!checkEquals(old.getCompilerPluginData(i), new.getCompilerPluginData(i))) return false
         }
 
         return true
@@ -1720,6 +1781,16 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.versionRequirementCount - 1) {
             if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsConstructorCompilerPluginData(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
+        if (old.compilerPluginDataCount != new.compilerPluginDataCount) return false
+
+        for(i in 0..old.compilerPluginDataCount - 1) {
+            if (!checkEquals(old.getCompilerPluginData(i), new.getCompilerPluginData(i))) return false
         }
 
         return true
@@ -1954,6 +2025,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    for(i in 0..compilerPluginDataCount - 1) {
+        hashCode = 31 * hashCode + getCompilerPluginData(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     if (hasExtension(JvmProtoBuf.classModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.classModuleName))
     }
@@ -2044,6 +2119,10 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasContract()) {
         hashCode = 31 * hashCode + contract.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..compilerPluginDataCount - 1) {
+        hashCode = 31 * hashCode + getCompilerPluginData(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasExtension(JvmProtoBuf.methodSignature)) {
@@ -2140,6 +2219,10 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..versionRequirementCount - 1) {
         hashCode = 31 * hashCode + getVersionRequirement(i)
+    }
+
+    for(i in 0..compilerPluginDataCount - 1) {
+        hashCode = 31 * hashCode + getCompilerPluginData(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {
@@ -2260,6 +2343,10 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     for(i in 0..versionRequirementCount - 1) {
         hashCode = 31 * hashCode + getVersionRequirement(i)
+    }
+
+    for(i in 0..compilerPluginDataCount - 1) {
+        hashCode = 31 * hashCode + getCompilerPluginData(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     return hashCode
@@ -2414,6 +2501,10 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
+    for(i in 0..compilerPluginDataCount - 1) {
+        hashCode = 31 * hashCode + getCompilerPluginData(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -2459,6 +2550,16 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
     if (hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
         hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)
     }
+
+    return hashCode
+}
+
+fun ProtoBuf.CompilerPluginData.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
+    var hashCode = 1
+
+    hashCode = 31 * hashCode + stringIndexes(pluginId)
+
+    hashCode = 31 * hashCode + data.hashCode()
 
     return hashCode
 }

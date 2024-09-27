@@ -257,6 +257,7 @@ message Class {
   repeated int32 version_requirement = 31;
 
   optional VersionRequirementTable version_requirement_table = 32;
+  repeated CompilerPluginData compiler_plugin_data = 33;
 
   extensions 100 to 18999;
 }
@@ -296,6 +297,7 @@ message Constructor {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 18999;
 }
@@ -339,6 +341,7 @@ message Function {
   repeated int32 version_requirement = 31;
 
   optional Contract contract = 32;
+  repeated CompilerPluginData compiler_plugin_data = 33;
 
   extensions 100 to 18999;
 }
@@ -394,6 +397,7 @@ message Property {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 18999;
 }
@@ -439,6 +443,7 @@ message TypeAlias {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 199;
 }
@@ -601,4 +606,9 @@ message Expression {
   // Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
   // it is optimized and embedded straight into this message.
   repeated Expression or_argument = 7;
+}
+
+message CompilerPluginData {
+  required int32 plugin_id = 1 [(string_id_in_table) = true];
+  required bytes data = 2;
 }

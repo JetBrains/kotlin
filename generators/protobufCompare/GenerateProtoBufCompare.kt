@@ -42,8 +42,8 @@ class GenerateProtoBufCompare {
         Descriptors.FieldDescriptor.JavaType.DOUBLE,
         Descriptors.FieldDescriptor.JavaType.BOOLEAN,
         Descriptors.FieldDescriptor.JavaType.STRING,
-        Descriptors.FieldDescriptor.JavaType.ENUM
-
+        Descriptors.FieldDescriptor.JavaType.ENUM,
+        Descriptors.FieldDescriptor.JavaType.BYTE_STRING,
     )
 
     private val RESULT_NAME = "result"
