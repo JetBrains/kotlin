@@ -650,7 +650,7 @@ fun serializeModuleIntoKlib(
     val versions = KotlinLibraryVersioning(
         abiVersion = abiVersion,
         compilerVersion = KotlinCompilerVersion.VERSION,
-        metadataVersion = MetadataVersion.INSTANCE.toString(),
+        metadataVersion = MetadataVersion.INSTANCE,
     )
 
     val properties = Properties().also { p ->

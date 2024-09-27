@@ -144,7 +144,7 @@ object KlibTestUtil {
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = MetadataVersion.INSTANCE.toString(),
+                metadataVersion = MetadataVersion.INSTANCE,
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),
