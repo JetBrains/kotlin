@@ -203,6 +203,19 @@ object AbstractExpectActualChecker {
             outToIncompatibleMembers = incompatibleMembers
         )
 
+        val actualStaticMembersByName = actualClassSymbol.collectAllStaticCallables(isActualDeclaration = true).groupBy { nameOf(it) }
+        val expectStaticMembers = expectClassSymbol.collectAllStaticCallables(isActualDeclaration = false)
+        matchAndCheckExpectMembersAgainstPotentialActuals(
+            expectClassSymbol,
+            actualClassSymbol,
+            substitutor,
+            languageVersionSettings,
+            expectStaticMembers,
+            actualStaticMembersByName,
+            outToMismatchedMembers = mismatchedMembers,
+            outToIncompatibleMembers = incompatibleMembers
+        )
+
         if (expectClassSymbol.classKind == ClassKind.ENUM_CLASS) {
             val aEntries = expectClassSymbol.collectEnumEntryNames()
             val bEntries = actualClassSymbol.collectEnumEntryNames()

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
@@ -46,8 +48,9 @@ object FirExpectActualResolver {
                                 ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
                                 ?.singleOrNull() as? FirRegularClassSymbol
 
-                            when (actualSymbol) {
-                                is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
+                            when {
+                                actualSymbol is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
+                                actualSymbol.isStatic -> expectContainingClass?.getStaticCallablesForExpectClass(actualSymbol.name)
                                 else -> expectContainingClass?.getCallablesForExpectClass(actualSymbol.name)
                             }.orEmpty()
                         }
