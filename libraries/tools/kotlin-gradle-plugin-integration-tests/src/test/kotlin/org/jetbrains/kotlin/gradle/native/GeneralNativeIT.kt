@@ -991,4 +991,53 @@ class GeneralNativeIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Test new kotlin native with an old kotlin version")
+    @GradleTest
+    fun newKotlinNativeVersionCheck(gradleVersion: GradleVersion) {
+
+        nativeProject("native-simple-project", gradleVersion) {
+
+            //build should fail because native is not found, warning should be printed anyway
+            val nativeVersion = "30.0.0"
+            buildAndFail(
+                "assemble",
+                buildOptions = defaultBuildOptions.copy(
+                    kotlinVersion = TestVersions.Kotlin.CURRENT,
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        version = nativeVersion
+                    )
+                )
+            )
+            {
+                assertOutputContains(
+                    "'$nativeVersion' native is being used with an older '${TestVersions.Kotlin.CURRENT}' Kotlin."
+                )
+            }
+        }
+    }
+
+    @DisplayName("Test old kotlin native with an new kotlin version")
+    @GradleTest
+    fun oldKotlinNativeVersionCheck(gradleVersion: GradleVersion) {
+
+        nativeProject("native-simple-project", gradleVersion) {
+
+            build(
+                "assemble",
+                buildOptions = defaultBuildOptions.copy(
+                    kotlinVersion = TestVersions.Kotlin.CURRENT,
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        version = TestVersions.Kotlin.STABLE_RELEASE,
+                        distributionDownloadFromMaven = true
+                    )
+                )
+            )
+            {
+                assertOutputContains(
+                    "'${TestVersions.Kotlin.STABLE_RELEASE}' native is being used with an newer '${TestVersions.Kotlin.CURRENT}' Kotlin."
+                )
+            }
+        }
+    }
 }
