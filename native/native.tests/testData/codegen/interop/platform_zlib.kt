@@ -9,7 +9,9 @@ import kotlin.test.assertEquals
 
 import platform.zlib.*
 
+@Suppress("DEPRECATION_ERROR")
 val source = immutableBlobOf(0xF3, 0x48, 0xCD, 0xC9, 0xC9, 0x57, 0x04, 0x00).asCPointer().reinterpret<UByteVar>()
+@Suppress("DEPRECATION_ERROR")
 val golden = immutableBlobOf(0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x21, 0x00).asCPointer()
 
 fun box() = memScoped {
