@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 
 data class SimpleOutputItem(val sourceFiles: Collection<File>, val outputFile: File) {

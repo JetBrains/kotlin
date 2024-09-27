@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.utils
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
 fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =

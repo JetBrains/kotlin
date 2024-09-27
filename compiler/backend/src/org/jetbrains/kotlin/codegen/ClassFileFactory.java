@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion;
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;

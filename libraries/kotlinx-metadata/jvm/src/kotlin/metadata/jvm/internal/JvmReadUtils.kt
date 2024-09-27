@@ -12,7 +12,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.internal.toKmLambda
 import kotlin.metadata.internal.toKmPackage
 import kotlin.metadata.jvm.*
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 

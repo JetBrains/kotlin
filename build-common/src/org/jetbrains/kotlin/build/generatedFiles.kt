@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.utils.sure
 import java.io.File

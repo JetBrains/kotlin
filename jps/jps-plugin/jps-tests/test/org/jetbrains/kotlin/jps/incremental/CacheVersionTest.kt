@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

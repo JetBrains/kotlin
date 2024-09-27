@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion;
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;

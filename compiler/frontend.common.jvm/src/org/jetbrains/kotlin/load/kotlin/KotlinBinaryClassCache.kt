@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -62,7 +62,7 @@ class KotlinBinaryClassCache : Disposable {
             "Please pass metadataVersion explicitly",
             ReplaceWith(
                 "getKotlinBinaryClassOrClassFileContent(file, MetadataVersion.INSTANCE, fileContent = fileContent)",
-                "org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion"
+                "org.jetbrains.kotlin.metadata.deserialization.MetadataVersion"
             )
         )
         fun getKotlinBinaryClassOrClassFileContent(
