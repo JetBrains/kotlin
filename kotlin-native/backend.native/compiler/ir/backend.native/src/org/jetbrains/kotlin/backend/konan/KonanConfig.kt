@@ -279,8 +279,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val genericSafeCasts: Boolean by lazy {
-        configuration.get(BinaryOptions.genericSafeCasts)
-                ?: false // For now disabled by default due to performance penalty.
+        val defaultSafeCasts = !optimizationsEnabled // For now disabled in release builds by default due to performance penalty.
+        configuration.get(BinaryOptions.genericSafeCasts) ?: defaultSafeCasts
     }
 
     internal val defaultPagedAllocator: Boolean get() = true

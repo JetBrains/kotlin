@@ -520,9 +520,21 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       }
 
       @Test
-      @TestMetadata("kt65260.kt")
-      public void testKt65260() {
-        runTest("native/native.tests/testData/codegen/cinterop/objc/kt65260.kt");
+      @TestMetadata("kt65260_common.kt")
+      public void testKt65260_common() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt65260_common.kt");
+      }
+
+      @Test
+      @TestMetadata("kt65260_with_safe_casts.kt")
+      public void testKt65260_with_safe_casts() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt65260_with_safe_casts.kt");
+      }
+
+      @Test
+      @TestMetadata("kt65260_without_safe_casts.kt")
+      public void testKt65260_without_safe_casts() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt65260_without_safe_casts.kt");
       }
 
       @Test

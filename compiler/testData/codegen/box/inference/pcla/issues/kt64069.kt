@@ -1,7 +1,7 @@
 // ISSUE: KT-64069
 // WITH_STDLIB
 
-// IGNORE_BACKEND_K1: JVM_IR, WASM
+// IGNORE_BACKEND_K1: JVM_IR, WASM, NATIVE
 // REASON: java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Void (see corresponding issue)
 
 private var enable: Boolean = true
