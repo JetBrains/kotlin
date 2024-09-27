@@ -31,6 +31,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
     }
 
     override fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> = withValidityAssertion {
+        @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
         when (this) {
             is KaFunctionSymbol -> substitute(substitutor)
             is KaVariableSymbol -> substitute(substitutor)
@@ -39,6 +40,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
     }
 
     override fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> = withValidityAssertion {
+        @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
         return when (this) {
             is KaFunctionSymbol -> asSignature()
             is KaVariableSymbol -> asSignature()
