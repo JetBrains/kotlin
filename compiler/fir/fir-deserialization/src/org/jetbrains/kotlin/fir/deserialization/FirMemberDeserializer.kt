@@ -227,6 +227,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.apply {
             this.versionRequirements = versionRequirements
             sourceElement = c.containerSource
+            deserializeCompilerPluginMetadata(c, proto, ProtoBuf.TypeAlias::getCompilerPluginDataList)
         }
     }
 
@@ -492,6 +493,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             this.versionRequirements = versionRequirements
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+            deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Property::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)
             getter?.setLazyPublishedVisibility(annotations, this, c.session)
             setter?.setLazyPublishedVisibility(annotations, this, c.session)
@@ -582,6 +584,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.apply {
             this.versionRequirements = versionRequirements
             setLazyPublishedVisibility(c.session)
+            deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Function::getCompilerPluginDataList)
         }
         if (proto.hasContract()) {
             val contractDeserializer = if (proto.typeParameterList.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
@@ -665,6 +668,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             this.versionRequirements = VersionRequirement.create(proto, c)
+            deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Constructor::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)
         }
     }

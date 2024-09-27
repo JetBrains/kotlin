@@ -248,7 +248,7 @@ fun deserializeClassToSymbol(
         if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
             hasNoEnumEntriesAttr = true
         }
-
+        deserializeCompilerPluginMetadata(context, classProto, ProtoBuf.Class::getCompilerPluginDataList)
         setLazyPublishedVisibility(session)
     }
 }

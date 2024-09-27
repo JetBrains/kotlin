@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder
 
 /*
@@ -15,3 +19,16 @@ import org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder
 
 internal fun VersionRequirement.Companion.create(proto: MessageLiteOrBuilder, context: FirDeserializationContext): List<VersionRequirement> =
     create(proto, context.nameResolver, context.versionRequirementTable)
+
+internal inline fun <M : GeneratedMessageLite.ExtendableMessage<M>> FirDeclaration.deserializeCompilerPluginMetadata(
+    context: FirDeserializationContext,
+    proto: M,
+    getCompilerPluginMetadataList: M.() -> List<ProtoBuf.CompilerPluginData>
+) {
+    proto.getCompilerPluginMetadataList().takeIf { it.isNotEmpty() }?.let { pluginDataList ->
+        this.compilerPluginMetadata = pluginDataList.associateBy(
+            keySelector = { context.nameResolver.getString(it.pluginId) },
+            valueTransform = { it.data.toByteArray() }
+        )
+    }
+}

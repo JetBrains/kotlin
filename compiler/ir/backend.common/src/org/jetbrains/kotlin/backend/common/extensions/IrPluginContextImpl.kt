@@ -194,5 +194,8 @@ open class IrPluginContextImpl constructor(
 
         override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {}
 
+        override fun addCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String, data: ByteArray) {}
+
+        override fun getCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String): ByteArray? = null
     }
 }

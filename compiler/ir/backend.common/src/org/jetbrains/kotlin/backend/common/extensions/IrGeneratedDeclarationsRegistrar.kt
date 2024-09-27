@@ -22,4 +22,15 @@ abstract class IrGeneratedDeclarationsRegistrar {
 
     // TODO: KT-63881
     // abstract fun registerPropertyAsMetadataVisible(irProperty: IrProperty)
+
+    abstract fun addCustomMetadataExtension(
+        irDeclaration: IrDeclaration,
+        pluginId: String,
+        data: ByteArray,
+    )
+
+    abstract fun getCustomMetadataExtension(
+        irDeclaration: IrDeclaration,
+        pluginId: String,
+    ): ByteArray?
 }

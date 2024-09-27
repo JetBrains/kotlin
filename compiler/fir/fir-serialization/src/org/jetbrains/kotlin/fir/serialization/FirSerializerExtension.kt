@@ -32,7 +32,7 @@ abstract class FirSerializerExtension {
     }
 
     abstract val constValueProvider: ConstValueProvider?
-    protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
+    abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
 
     @OptIn(ConstValueProviderInternals::class)
     internal inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {

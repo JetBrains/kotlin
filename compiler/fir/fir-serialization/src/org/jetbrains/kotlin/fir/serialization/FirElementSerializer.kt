@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -341,7 +342,7 @@ class FirElementSerializer private constructor(
                 plugin.registerProtoExtensions(klass.symbol, stringTable, protoRegistrar)
             }
         }
-
+        builder.serializeCompilerPluginMetadata(klass, ProtoBuf.Class.Builder::addCompilerPluginData)
         return builder
     }
 
@@ -610,6 +611,7 @@ class FirElementSerializer private constructor(
         }
 
         extension.serializeProperty(property, builder, versionRequirementTable, local)
+        builder.serializeCompilerPluginMetadata(property, ProtoBuf.Property.Builder::addCompilerPluginData)
 
         return builder
     }
@@ -708,6 +710,8 @@ class FirElementSerializer private constructor(
             }
         }
 
+        builder.serializeCompilerPluginMetadata(function, ProtoBuf.Function.Builder::addCompilerPluginData)
+
         return builder
     }
 
@@ -772,6 +776,7 @@ class FirElementSerializer private constructor(
         }
 
         extension.serializeTypeAlias(typeAlias, builder)
+        builder.serializeCompilerPluginMetadata(typeAlias, ProtoBuf.TypeAlias.Builder::addCompilerPluginData)
 
         return builder
     }
@@ -811,7 +816,7 @@ class FirElementSerializer private constructor(
         }
 
         extension.serializeConstructor(constructor, builder, local)
-
+        builder.serializeCompilerPluginMetadata(constructor, ProtoBuf.Constructor.Builder::addCompilerPluginData)
         return builder
     }
 
@@ -1447,6 +1452,19 @@ class FirElementSerializer private constructor(
                 }
             }
             return versionRequirementTable[requirement]
+        }
+    }
+
+    private inline fun <M : GeneratedMessageLite.ExtendableMessage<M>, B : GeneratedMessageLite.Builder<M, B>> B.serializeCompilerPluginMetadata(
+        declaration: FirDeclaration,
+        addCompilerPluginData: B.(ProtoBuf.CompilerPluginData.Builder) -> B
+    ) {
+        extension.additionalMetadataProvider?.findMetadataExtensionsFor(declaration)?.forEach { (pluginId, data) ->
+            val pluginData = ProtoBuf.CompilerPluginData.newBuilder().apply {
+                this.pluginId = stringTable.getStringIndex(pluginId)
+                this.data = ByteString.copyFrom(data)
+            }
+            addCompilerPluginData(pluginData)
         }
     }
 }

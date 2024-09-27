@@ -11,4 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 abstract class FirAdditionalMetadataProvider {
     abstract fun findGeneratedAnnotationsFor(declaration: FirDeclaration): List<FirAnnotation>
     abstract fun hasGeneratedAnnotationsFor(declaration: FirDeclaration): Boolean
+
+    abstract fun findMetadataExtensionsFor(declaration: FirDeclaration): Map<String, ByteArray>
 }

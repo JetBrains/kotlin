@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:fir:fir-deserialization"))
-
+    implementation(project(":core:metadata"))
     implementation(project(":compiler:serialization"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
