@@ -23,7 +23,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.sure
 

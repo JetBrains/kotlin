@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource

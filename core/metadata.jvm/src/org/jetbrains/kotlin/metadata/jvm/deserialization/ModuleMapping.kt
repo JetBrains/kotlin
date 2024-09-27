@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.metadata.jvm.deserialization
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf

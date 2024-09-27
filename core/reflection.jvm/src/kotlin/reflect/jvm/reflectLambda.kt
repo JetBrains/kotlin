@@ -18,7 +18,7 @@ package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.annotation.AnnotationTarget.*

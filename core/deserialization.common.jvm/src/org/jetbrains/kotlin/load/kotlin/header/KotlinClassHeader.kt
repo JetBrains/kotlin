@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.load.kotlin.header
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 class KotlinClassHeader(
     val kind: Kind,

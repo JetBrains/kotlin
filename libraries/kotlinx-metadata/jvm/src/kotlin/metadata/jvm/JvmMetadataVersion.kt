@@ -5,7 +5,7 @@
 
 package kotlin.metadata.jvm
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 
 /**
  * Version of the metadata inside JVM classfile.

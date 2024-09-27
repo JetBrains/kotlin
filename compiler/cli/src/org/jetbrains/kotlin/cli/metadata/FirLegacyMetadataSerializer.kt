@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.FqName

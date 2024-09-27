@@ -6,7 +6,7 @@
 package kotlin.metadata.test
 
 import kotlin.metadata.jvm.KotlinClassMetadata
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertContentEquals

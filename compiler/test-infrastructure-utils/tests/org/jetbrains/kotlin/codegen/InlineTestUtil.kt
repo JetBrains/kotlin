@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
-import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
