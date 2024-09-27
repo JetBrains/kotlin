@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.jvmMetadataVersionOrDefault
+import org.jetbrains.kotlin.utils.metadataVersionOrDefault
 import org.jetbrains.kotlin.utils.keysToMap
 
 class IncrementalPackageFragmentProvider(
@@ -97,12 +97,12 @@ class IncrementalPackageFragmentProvider(
                         val jvmBinaryClass =
                             kotlinClassFinder.findKotlinClass(
                                 ClassId.topLevel(partName.fqNameForTopLevelClassMaybeWithDollars),
-                                deserializationComponents.configuration.jvmMetadataVersionOrDefault()
+                                deserializationComponents.configuration.metadataVersionOrDefault()
                             )
 
                         val metadataVersion =
                             jvmBinaryClass?.classHeader?.metadataVersion
-                                ?: JvmMetadataVersion.INSTANCE
+                                ?: MetadataVersion.INSTANCE
 
                         DeserializedPackageMemberScope(
                             this, packageProto, nameResolver, metadataVersion,

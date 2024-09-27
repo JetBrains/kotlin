@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.utils.jvmMetadataVersionOrDefault
+import org.jetbrains.kotlin.utils.metadataVersionOrDefault
 import java.util.concurrent.ConcurrentHashMap
 
 class PackagePartScopeCache(private val resolver: DeserializedDescriptorResolver, private val kotlinClassFinder: ReflectKotlinClassFinder) {
@@ -26,7 +26,7 @@ class PackagePartScopeCache(private val resolver: DeserializedDescriptorResolver
             if (fileClass.classHeader.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS)
                 fileClass.classHeader.multifilePartNames.mapNotNull { partName ->
                     val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
-                    kotlinClassFinder.findKotlinClass(classId, resolver.components.configuration.jvmMetadataVersionOrDefault())
+                    kotlinClassFinder.findKotlinClass(classId, resolver.components.configuration.metadataVersionOrDefault())
                 }
             else listOf(fileClass)
 

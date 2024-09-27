@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -59,18 +59,18 @@ class KotlinBinaryClassCache : Disposable {
 
     companion object {
         @Deprecated(
-            "Please pass jvmMetadataVersion explicitly",
+            "Please pass metadataVersion explicitly",
             ReplaceWith(
-                "getKotlinBinaryClassOrClassFileContent(file, JvmMetadataVersion.INSTANCE, fileContent = fileContent)",
-                "org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion"
+                "getKotlinBinaryClassOrClassFileContent(file, MetadataVersion.INSTANCE, fileContent = fileContent)",
+                "org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion"
             )
         )
         fun getKotlinBinaryClassOrClassFileContent(
             file: VirtualFile, fileContent: ByteArray?
-        ) = getKotlinBinaryClassOrClassFileContent(file, jvmMetadataVersion = JvmMetadataVersion.INSTANCE, fileContent = fileContent)
+        ) = getKotlinBinaryClassOrClassFileContent(file, metadataVersion = MetadataVersion.INSTANCE, fileContent = fileContent)
 
         fun getKotlinBinaryClassOrClassFileContent(
-            file: VirtualFile, jvmMetadataVersion: JvmMetadataVersion, fileContent: ByteArray? = null
+            file: VirtualFile, metadataVersion: MetadataVersion, fileContent: ByteArray? = null
         ): KotlinClassFinder.Result? {
             if (file.extension != JavaClassFileType.INSTANCE.defaultExtension &&
                 file.fileType !== JavaClassFileType.INSTANCE
@@ -86,7 +86,7 @@ class KotlinBinaryClassCache : Disposable {
             }
 
             val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                VirtualFileKotlinClass.create(file, jvmMetadataVersion, fileContent)
+                VirtualFileKotlinClass.create(file, metadataVersion, fileContent)
             })
 
             return requestCache.cache(file, aClass)

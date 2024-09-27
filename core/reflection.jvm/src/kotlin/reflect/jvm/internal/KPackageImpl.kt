@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
@@ -61,7 +61,7 @@ internal class KPackageImpl(
             else null
         }
 
-        val metadata: Triple<JvmNameResolver, ProtoBuf.Package, JvmMetadataVersion>? by lazy(PUBLICATION) {
+        val metadata: Triple<JvmNameResolver, ProtoBuf.Package, MetadataVersion>? by lazy(PUBLICATION) {
             kotlinClass?.classHeader?.let { header ->
                 val data = header.data
                 val strings = header.strings

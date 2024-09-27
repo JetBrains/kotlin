@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -471,8 +471,8 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
 
         // TODO: ideally we should read arguments not here but at earlier stages
-        val jvmMetadataVersionFromLanguageVersion =
-            LanguageVersion.fromVersionString(args.languageVersion)?.toMetadataVersion() ?: JvmMetadataVersion.INSTANCE
+        val metadataVersionFromLanguageVersion =
+            LanguageVersion.fromVersionString(args.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
@@ -518,7 +518,7 @@ abstract class IncrementalCompilerRunner<
             transaction.writeText(dirtySourcesSinceLastTimeFile.toPath(), text)
 
             val generatedFiles = outputItemsCollector.outputs.map {
-                it.toGeneratedFile(jvmMetadataVersionFromLanguageVersion)
+                it.toGeneratedFile(metadataVersionFromLanguageVersion)
             }
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?

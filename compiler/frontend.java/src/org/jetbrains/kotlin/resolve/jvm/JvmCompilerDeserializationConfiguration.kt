@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.utils.toMetadataVersion
 
 class JvmCompilerDeserializationConfiguration(
     languageVersionSettings: LanguageVersionSettings
 ) : CompilerDeserializationConfiguration(languageVersionSettings) {
-    override val binaryVersion: JvmMetadataVersion
+    override val binaryVersion: MetadataVersion
         get() = languageVersionSettings.languageVersion.toMetadataVersion()
 }

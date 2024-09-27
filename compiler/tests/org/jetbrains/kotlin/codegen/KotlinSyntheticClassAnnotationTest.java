@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -146,7 +146,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, METADATA_VERSION_FIELD_NAME);
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
-                   new JvmMetadataVersion(version).isCompatibleWithCurrentCompilerVersion());
+                   new MetadataVersion(version).isCompatibleWithCurrentCompilerVersion());
     }
 
     @NotNull

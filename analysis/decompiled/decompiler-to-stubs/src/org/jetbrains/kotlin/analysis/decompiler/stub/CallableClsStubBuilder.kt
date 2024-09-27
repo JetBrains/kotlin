@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -344,7 +344,7 @@ private class PropertyClsStubBuilder(
     private fun calcInitializer(): ConstantValue<*>? {
         val classFinder = c.components.classFinder
         val containerClass =
-            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
+            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.metadataVersion!!) else null
         val source = protoContainer.source
         val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
         var constantInitializer: ConstantValue<*>? = null
@@ -402,7 +402,7 @@ private class PropertyClsStubBuilder(
 
     private fun getSpecialCaseContainerClass(
         classFinder: KotlinClassFinder,
-        jvmMetadataVersion: JvmMetadataVersion
+        metadataVersion: MetadataVersion
     ): KotlinJvmBinaryClass? {
         return AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass(
             container = protoContainer,
@@ -411,7 +411,7 @@ private class PropertyClsStubBuilder(
             isConst = Flags.IS_CONST.get(propertyProto.flags),
             isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto),
             kotlinClassFinder = classFinder,
-            jvmMetadataVersion = jvmMetadataVersion
+            metadataVersion = metadataVersion
         )
     }
 }

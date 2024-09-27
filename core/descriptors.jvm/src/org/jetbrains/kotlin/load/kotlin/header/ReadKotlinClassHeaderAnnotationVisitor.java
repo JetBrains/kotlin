@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -72,17 +72,17 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Nullable
     public KotlinClassHeader createHeaderWithDefaultMetadataVersion() {
-        return createHeader(JvmMetadataVersion.INSTANCE);
+        return createHeader(MetadataVersion.INSTANCE);
     }
 
     @Nullable
-    public KotlinClassHeader createHeader(JvmMetadataVersion metadataVersionFromLanguageVersion) {
+    public KotlinClassHeader createHeader(MetadataVersion metadataVersionFromLanguageVersion) {
         if (headerKind == null || metadataVersionArray == null) {
             return null;
         }
 
-        JvmMetadataVersion metadataVersion =
-                new JvmMetadataVersion(metadataVersionArray, (extraInt & JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0);
+        MetadataVersion metadataVersion =
+                new MetadataVersion(metadataVersionArray, (extraInt & JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0);
 
         if (!metadataVersion.isCompatible(metadataVersionFromLanguageVersion)) {
             incompatibleData = data;

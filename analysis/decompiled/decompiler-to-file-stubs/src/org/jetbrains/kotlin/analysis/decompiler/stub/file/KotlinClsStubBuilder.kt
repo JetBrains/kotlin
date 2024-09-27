@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -114,12 +114,12 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         file: VirtualFile,
         packageFqName: FqName,
         fileContent: ByteArray,
-        jvmMetadataVersion: JvmMetadataVersion
+        metadataVersion: MetadataVersion
     ): ClsStubBuilderComponents {
         val classFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, jvmMetadataVersion)
-        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent, jvmMetadataVersion)
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file, BuiltInSerializerProtocol, classFinder, jvmMetadataVersion)
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, metadataVersion)
+        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent, metadataVersion)
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file, BuiltInSerializerProtocol, classFinder, metadataVersion)
     }
 
     companion object {
@@ -138,7 +138,7 @@ private class AnnotationLoaderForClassFileStubBuilder(
     kotlinClassFinder: KotlinClassFinder,
     private val cachedFile: VirtualFile,
     private val cachedFileContent: ByteArray,
-    override val jvmMetadataVersion: JvmMetadataVersion
+    override val metadataVersion: MetadataVersion
 ) : AbstractBinaryClassAnnotationLoader<AnnotationWithArgs, AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>>(
     kotlinClassFinder
 ) {

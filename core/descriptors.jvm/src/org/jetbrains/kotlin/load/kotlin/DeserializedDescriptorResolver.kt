@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.utils.jvmMetadataVersionOrDefault
+import org.jetbrains.kotlin.utils.metadataVersionOrDefault
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
     lateinit var components: DeserializationComponents
 
-    private val ownMetadataVersion: JvmMetadataVersion get() = components.configuration.jvmMetadataVersionOrDefault()
+    private val ownMetadataVersion: MetadataVersion get() = components.configuration.metadataVersionOrDefault()
 
     // component dependency cycle
     @Inject
@@ -81,12 +81,12 @@ class DeserializedDescriptorResolver {
         }
     }
 
-    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
+    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
             if (skipMetadataVersionCheck || classHeader.metadataVersion.isCompatible(ownMetadataVersion)) return null
             return IncompatibleVersionErrorData(
                 actualVersion = classHeader.metadataVersion,
-                compilerVersion = JvmMetadataVersion.INSTANCE,
+                compilerVersion = MetadataVersion.INSTANCE,
                 languageVersion = ownMetadataVersion,
                 expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
                 filePath = location,
@@ -143,10 +143,10 @@ class DeserializedDescriptorResolver {
         private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
             setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
 
-        private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
+        private val KOTLIN_1_1_EAP_METADATA_VERSION = MetadataVersion(1, 1, 2)
 
-        private val KOTLIN_1_3_M1_METADATA_VERSION = JvmMetadataVersion(1, 1, 11)
+        private val KOTLIN_1_3_M1_METADATA_VERSION = MetadataVersion(1, 1, 11)
 
-        internal val KOTLIN_1_3_RC_METADATA_VERSION = JvmMetadataVersion(1, 1, 13)
+        internal val KOTLIN_1_3_RC_METADATA_VERSION = MetadataVersion(1, 1, 13)
     }
 }

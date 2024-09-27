@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.findMul
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
@@ -28,7 +28,7 @@ fun buildDecompiledTextForClassFile(
     val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-        return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
+        return createIncompatibleAbiVersionDecompiledText(MetadataVersion.INSTANCE, classHeader.metadataVersion)
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.utils
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
-fun DeserializationConfiguration.jvmMetadataVersionOrDefault(): JvmMetadataVersion =
-    binaryVersion as? JvmMetadataVersion ?: JvmMetadataVersion.INSTANCE
+fun DeserializationConfiguration.metadataVersionOrDefault(): MetadataVersion =
+    binaryVersion as? MetadataVersion ?: MetadataVersion.INSTANCE

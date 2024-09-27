@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.incremental.toProtoData
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
@@ -34,7 +34,7 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
         MockLibraryUtil.compileKotlin(sourceDir.path, outputDir, extraOptions = listOf(K2JVMCompilerArguments::disableDefaultScriptingPlugin.cliArgument))
 
         val classFiles = outputDir.walkMatching { it.name.endsWith(".class") }
-        val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it, JvmMetadataVersion.INSTANCE)!! }
+        val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it, MetadataVersion.INSTANCE)!! }
         return localClassFiles.associateBy { it.classId }
     }
 

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
@@ -68,7 +68,7 @@ class JvmOptionalAnnotationSerializerExtension(
     override val stringTable: StringTableImpl
 ) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override val metadataVersion: BinaryVersion
-        get() = JvmMetadataVersion.INSTANCE
+        get() = MetadataVersion.INSTANCE
 
     override fun shouldUseTypeTable(): Boolean = true
 }
