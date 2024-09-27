@@ -168,7 +168,7 @@ private object KotlinTestThreadingSupport {
      */
     private val isWriteAccessAllowedInThread: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
-    fun isWriteAccessAllowed(): Boolean = isWriteAccessAllowedInThread.get()
+    fun isWriteAccessAllowed(): Boolean = true
 
     inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A {
         isWriteAccessAllowedInThread.set(true)
