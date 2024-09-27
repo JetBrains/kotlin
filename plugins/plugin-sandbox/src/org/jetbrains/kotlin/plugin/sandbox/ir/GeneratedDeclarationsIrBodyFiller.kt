@@ -23,6 +23,8 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
             ComposableFunctionsTransformer(pluginContext),
             BodyWithDefaultValueReplacer(),
             SourceElementChecker(pluginContext),
+            MetadataExtensionEmitter(pluginContext),
+            MetadataExtensionExtractor(pluginContext),
         )
 
         for (transformer in transformers) {

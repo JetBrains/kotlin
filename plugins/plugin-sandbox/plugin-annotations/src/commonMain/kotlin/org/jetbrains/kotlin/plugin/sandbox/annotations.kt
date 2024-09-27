@@ -70,3 +70,9 @@ annotation class AddNestedClassesBasedOnArgument(val kClass: KClass<*>)
 annotation class AddNestedGeneratedClass
 
 annotation class GeneratedEntityType
+
+@Retention(AnnotationRetention.SOURCE)
+annotation class EmitMetadata(val value: Int)
+
+@Retention(AnnotationRetention.SOURCE)
+annotation class GenerateBodyUsingEmittedMetadata
