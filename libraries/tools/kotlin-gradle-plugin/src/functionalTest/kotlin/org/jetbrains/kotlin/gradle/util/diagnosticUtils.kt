@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -34,7 +35,13 @@ internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: 
  * [compactRendering] == true will omit projects with no diagnostics from the report, as well as
  * name of the project if it's a single one with diagnostics (useful for small one-project tests)
  */
-internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Boolean = true) {
+internal fun Project.checkDiagnostics(
+    testDataName: String,
+    compactRendering: Boolean = true,
+    // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
+    // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
+    filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),
+) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
         val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
         if (diagnostics.isEmpty() && compactRendering)
@@ -44,17 +51,19 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
     }.toMap()
     val expectedDiagnostics = expectedDiagnosticsFile(testDataName)
 
-    if (diagnosticsPerProject.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
+    val filteredDiagnostics = diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } }}
+
+    if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())
             error("Expected to have some diagnostics in file://${expectedDiagnostics.canonicalPath}, but none were actually reported")
         else
             return // do not create empty file
     }
 
-    val actualRenderedText = if (diagnosticsPerProject.size == 1 && compactRendering) {
-        diagnosticsPerProject.entries.single().value.render()
+    val actualRenderedText = if (filteredDiagnostics.size == 1 && compactRendering) {
+        filteredDiagnostics.entries.single().value.render()
     } else {
-        diagnosticsPerProject
+        filteredDiagnostics
             .entries
             .joinToString(separator = "\n\n") { (projectName, diagnostics) ->
                 val nameSanitized = if (projectName == "test") "<root>" else projectName
@@ -67,8 +76,10 @@ internal fun Project.checkDiagnostics(testDataName: String, compactRendering: Bo
     KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
 }
 
-internal fun Project.assertNoDiagnostics() {
-    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+// An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
+// Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
+internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),) {
+    val actualDiagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
