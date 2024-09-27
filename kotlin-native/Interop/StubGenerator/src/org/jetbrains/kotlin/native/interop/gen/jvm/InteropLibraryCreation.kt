@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.util.*
 
 fun createInteropLibrary(
@@ -35,7 +35,7 @@ fun createInteropLibrary(
     val version = KotlinLibraryVersioning(
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
-            metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+            metadataVersion = MetadataVersion.INSTANCE.toString(),
     )
     val libFile = File(outputPath)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")

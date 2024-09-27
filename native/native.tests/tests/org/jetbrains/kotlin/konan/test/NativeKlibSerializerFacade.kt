@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -114,8 +114,8 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
 
         val serializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
-            metadataVersion = configuration[CommonConfigurationKeys.METADATA_VERSION] as? KlibMetadataVersion
-                ?: KlibMetadataVersion.INSTANCE,
+            metadataVersion = configuration[CommonConfigurationKeys.METADATA_VERSION] as? MetadataVersion
+                ?: MetadataVersion.INSTANCE,
             frontendOutput.project,
             exportKDoc = false,
             skipExpects = true,

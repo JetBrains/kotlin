@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -36,7 +36,7 @@ class KlibMetadataIncrementalSerializer(
     private val bindingContext: BindingContext,
     private val moduleDescriptor: ModuleDescriptor,
     languageVersionSettings: LanguageVersionSettings,
-    metadataVersion: KlibMetadataVersion,
+    metadataVersion: MetadataVersion,
     project: Project,
     exportKDoc: Boolean,
     allowErrorTypes: Boolean = false
@@ -61,8 +61,8 @@ class KlibMetadataIncrementalSerializer(
         bindingContext = bindingContext,
         moduleDescriptor = moduleDescriptor,
         languageVersionSettings = configuration.languageVersionSettings,
-        metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion
-            ?: KlibMetadataVersion.INSTANCE,
+        metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? MetadataVersion
+            ?: MetadataVersion.INSTANCE,
         project = project,
         exportKDoc = false,
         allowErrorTypes = allowErrorTypes,
