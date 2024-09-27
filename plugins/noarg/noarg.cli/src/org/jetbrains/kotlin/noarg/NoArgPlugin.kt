@@ -110,6 +110,6 @@ private class CliNoArgComponentContainerContributor(
     ) {
         if (!platform.isJvm()) return
 
-        container.useInstance(CliNoArgDeclarationChecker(annotations, useIr))
+        container.useInstance(CliNoArgDeclarationChecker(annotations))
     }
 }

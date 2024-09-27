@@ -25,9 +25,7 @@ import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsNoArg {
     DiagnosticFactory0<PsiElement> NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> NOARG_ON_INNER_CLASS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> NOARG_ON_INNER_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> NOARG_ON_LOCAL_CLASS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> NOARG_ON_LOCAL_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")

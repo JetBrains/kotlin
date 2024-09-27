@@ -1,14 +1,15 @@
+// FIR_IDENTICAL
 annotation class NoArg
 
 class Outer {
     @NoArg
-    inner class <!NOARG_ON_INNER_CLASS!>Inner<!>(val b: Any)
+    inner class <!NOARG_ON_INNER_CLASS_ERROR!>Inner<!>(val b: Any)
 }
 
 fun local() {
     @NoArg
-    class <!NOARG_ON_LOCAL_CLASS!>Local<!>(val l: Any) {
+    class <!NOARG_ON_LOCAL_CLASS_ERROR!>Local<!>(val l: Any) {
         @NoArg
-        inner class <!NOARG_ON_INNER_CLASS!>InnerLocal<!>(val x: Any)
+        inner class <!NOARG_ON_INNER_CLASS_ERROR!>InnerLocal<!>(val x: Any)
     }
 }
