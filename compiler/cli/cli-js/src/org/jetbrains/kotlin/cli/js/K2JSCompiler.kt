@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -308,7 +308,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     override fun executableScriptFileName(): String = "kotlinc-js"
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
-        return KlibMetadataVersion(*versionArray)
+        return MetadataVersion(*versionArray)
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JSCompilerArguments) {}

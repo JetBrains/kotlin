@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -52,8 +52,8 @@ class Fir2KlibMetadataSerializer(
 
     private val languageVersionSettings = compilerConfiguration.languageVersionSettings
 
-    private val metadataVersion = compilerConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion
-        ?: KlibMetadataVersion.INSTANCE
+    private val metadataVersion = compilerConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) as? MetadataVersion
+        ?: MetadataVersion.INSTANCE
 
     /**
      * The list of source files whose metadata is to be serialized.

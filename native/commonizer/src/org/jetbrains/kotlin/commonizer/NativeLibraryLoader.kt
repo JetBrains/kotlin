@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.metadataVersion
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
@@ -37,7 +38,7 @@ internal class DefaultNativeLibraryLoader(
                 logger.errorAndExitJvmProcess(
                     """
                 Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $file
-                Please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
+                Please make sure that all libraries passed to commonizer compatible metadata version ${MetadataVersion.INSTANCE}
                 """.trimIndent()
                 )
             return NativeLibrary(library)

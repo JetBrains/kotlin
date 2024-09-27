@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -37,7 +37,7 @@ object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>
     configurationUpdaters = listOf(CommonWebConfigurationUpdater, JsConfigurationUpdater, WasmConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
-        return KlibMetadataVersion(*versionArray)
+        return MetadataVersion(*versionArray)
     }
 }
 

@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 
 fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedMetadata: SerializedMetadata, destDir: File) {
     val versions = KotlinLibraryVersioning(
         abiVersion = KotlinAbiVersion.CURRENT,
         compilerVersion = KotlinCompilerVersion.getVersion(),
-        metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+        metadataVersion = MetadataVersion.INSTANCE.toString(),
     )
 
     buildKotlinLibrary(

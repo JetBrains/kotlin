@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
-class K2KotlinNativeMetadataDecompiler : K2KlibMetadataDecompiler<KlibMetadataVersion>(
+class K2KotlinNativeMetadataDecompiler : K2KlibMetadataDecompiler<MetadataVersion>(
     KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
     DynamicTypeDeserializer,
-    { KlibMetadataVersion.INSTANCE },
-    { KlibMetadataVersion.INVALID_VERSION },
+    { MetadataVersion.INSTANCE },
+    { MetadataVersion.INVALID_VERSION },
     KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
 )

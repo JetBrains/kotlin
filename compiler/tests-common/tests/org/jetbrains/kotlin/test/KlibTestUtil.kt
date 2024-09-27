@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -126,7 +127,7 @@ object KlibTestUtil {
 
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KlibMetadataVersion.INSTANCE,
+            metadataVersion = MetadataVersion.INSTANCE,
             exportKDoc = false,
             skipExpects = false,
             project = null,
@@ -143,7 +144,7 @@ object KlibTestUtil {
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+                metadataVersion = MetadataVersion.INSTANCE.toString(),
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),

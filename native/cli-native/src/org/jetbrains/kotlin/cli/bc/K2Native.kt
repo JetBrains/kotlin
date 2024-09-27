@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -33,7 +33,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
-    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
@@ -97,7 +97,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         /* Set default version of metadata version */
         val metadataVersionString = arguments.metadataVersion
         if (metadataVersionString == null) {
-            configuration.put(CommonConfigurationKeys.METADATA_VERSION, KlibMetadataVersion.INSTANCE)
+            configuration.put(CommonConfigurationKeys.METADATA_VERSION, MetadataVersion.INSTANCE)
         }
 
         arguments.relativePathBases?.let {

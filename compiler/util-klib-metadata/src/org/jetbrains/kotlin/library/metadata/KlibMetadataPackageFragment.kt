@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -113,7 +114,7 @@ abstract class KlibMetadataPackageFragment(
             this,
             proto.getPackage(),
             nameResolver,
-            KlibMetadataVersion.INSTANCE,
+            MetadataVersion.INSTANCE,
             /* containerSource = */ containerSource,
             components,
             "scope for $this"

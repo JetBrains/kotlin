@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryOnlyIrWriter
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -99,7 +99,7 @@ class GenerateIrRuntime {
     }
 
     private val CompilerConfiguration.metadataVersion
-        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
+        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? MetadataVersion ?: MetadataVersion.INSTANCE
 
     private val environment =
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
@@ -247,7 +247,7 @@ class GenerateIrRuntime {
     fun runMonolithicDiskWriting() {
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+        val metadataVersion = MetadataVersion.INSTANCE.toString()
 
         val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()
@@ -267,7 +267,7 @@ class GenerateIrRuntime {
     fun runPerFileDiskWriting() {
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+        val metadataVersion = MetadataVersion.INSTANCE.toString()
 
         val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()

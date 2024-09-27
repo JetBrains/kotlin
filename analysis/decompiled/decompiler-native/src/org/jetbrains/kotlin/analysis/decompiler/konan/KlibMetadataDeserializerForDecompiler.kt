@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.EnumEntriesDeserializationSupportImpl
@@ -59,7 +59,7 @@ internal class KlibMetadataDeserializerForDecompiler(
             createDummyPackageFragment(facadeFqName),
             proto.`package`,
             nameResolver,
-            KlibMetadataVersion.INSTANCE,
+            MetadataVersion.INSTANCE,
             containerSource = null,
             components = deserializationComponents,
             classNames = { emptyList() },
