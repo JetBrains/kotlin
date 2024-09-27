@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -21,16 +22,37 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Caches [declared member scopes][FirContainingNamesAwareScope] and [nested classifier scopes][FirNestedClassifierScope] for [FirClass]es.
+ *
+ * ### Caching strategy
+ *
+ * The provider uses caches with suggested limits. In the compiler, the cache will simply be an unlimited cache. In the Analysis API,
+ * however, these limits will be applied.
+ *
+ * Scope values are expired after they haven't been accessed for a few seconds. This keeps the cache lean and avoids accumulation of unused
+ * scopes. Because this expiration is only checked when the cache is accessed, scope values are additionally held on soft references so that
+ * they can be collected under memory pressure.
+ */
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
     private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
-        useSiteSession.firCachesFactory.createCache { klass, context ->
+        useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
+            expirationAfterAccess = 5.seconds,
+            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+        ) { klass, context ->
             createDeclaredMemberScope(klass = klass, existingNamesForLazyNestedClassifierScope = context.existingNames)
         }
 
     private val nestedClassifierCache: FirCache<FirClass, FirNestedClassifierScope?, Nothing?> =
-        useSiteSession.firCachesFactory.createCache { klass, _ -> createNestedClassifierScope(klass) }
+        useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
+            expirationAfterAccess = 5.seconds,
+            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+        ) { klass, _ ->
+            createNestedClassifierScope(klass)
+        }
 
     fun declaredMemberScope(
         klass: FirClass,
