@@ -1601,6 +1601,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
+    @TestMetadata("directJavaActualization_enumStatics.kt")
+    public void testDirectJavaActualization_enumStatics() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_enumStatics.kt");
+    }
+
+    @Test
     @TestMetadata("directJavaActualization_enumWithFun.kt")
     public void testDirectJavaActualization_enumWithFun() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_enumWithFun.kt");
