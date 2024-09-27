@@ -74,7 +74,7 @@ object KotlinToolingDiagnostics {
 
     object OldNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build(
-            "'$nativeVersion' native is being used with an newer '$kotlinVersion' Kotlin. Please adjust versions to avoid incompatibilities."
+            "'$nativeVersion' Kotlin Native is being used with an newer '$kotlinVersion' Kotlin. Please adjust versions to avoid incompatibilities."
                 .onlyIf(nativeVersion != null && nativeVersion < kotlinVersion)
         )
     }
