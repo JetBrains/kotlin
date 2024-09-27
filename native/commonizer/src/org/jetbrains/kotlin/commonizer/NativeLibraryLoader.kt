@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.library.metadata.metadataVersion
+import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.Logger

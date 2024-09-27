@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]
@@ -180,3 +182,10 @@ val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
     else null
 
 const val DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS = "Library and dependency versions have been phased out, see KT-65834"
+
+val KotlinLibrary.metadataVersion: MetadataVersion?
+    get() {
+        val versionString = manifestProperties.getProperty(KLIB_PROPERTY_METADATA_VERSION) ?: return null
+        val versionIntArray = BinaryVersion.parseVersionArray(versionString) ?: return null
+        return MetadataVersion(*versionIntArray)
+    }
