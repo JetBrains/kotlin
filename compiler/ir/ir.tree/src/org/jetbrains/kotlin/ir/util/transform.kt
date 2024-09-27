@@ -36,6 +36,18 @@ fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrElementTra
     }
 }
 
+@JvmName("transformInPlaceNullable")
+fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrElementTransformer<D>, data: D) {
+    for (i in 0 until size) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        val element = get(i) as IrElementBase?
+        if (element != null) {
+            @Suppress("UNCHECKED_CAST")
+            set(i, element.transform(transformer, data) as T)
+        }
+    }
+}
+
 fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrElementTransformer<D>, data: D) {
     for (i in indices) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.

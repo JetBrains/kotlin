@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,9 +26,8 @@ class IrConstructorCallImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    protected override val valueArguments: Array<IrExpression?>,
     protected override val typeArguments: Array<IrType?>,
-    override var symbol: IrConstructorSymbol,
+    symbol: IrConstructorSymbol,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
 ) : IrConstructorCall() {
@@ -37,9 +35,13 @@ class IrConstructorCallImpl internal constructor(
 
     override var originalBeforeInline: IrAttributeContainer? = null
 
-    override var dispatchReceiver: IrExpression? = null
-
-    override var extensionReceiver: IrExpression? = null
+    override var symbol: IrConstructorSymbol = symbol
+        set(value) {
+            if (field !== value) {
+                field = value
+                updateTargetSymbol()
+            }
+        }
 
     companion object
 }
