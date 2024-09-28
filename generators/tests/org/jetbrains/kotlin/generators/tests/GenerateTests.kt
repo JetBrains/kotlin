@@ -317,10 +317,10 @@ fun main(args: Array<String>) {
                 model("box")
             }
             testClass<AbstractDiagnosticTestForLombok> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/k1+k2", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractFirPsiDiagnosticTestForLombok> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics")
             }
         }
 
