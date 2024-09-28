@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes

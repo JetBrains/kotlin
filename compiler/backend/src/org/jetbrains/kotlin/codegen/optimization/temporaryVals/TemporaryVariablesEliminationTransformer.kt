@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
-import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
+import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer

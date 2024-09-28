@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.optimization.boxing.isPrimitiveBoxing
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
 import org.jetbrains.kotlin.name.Name

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.jetbrains.kotlin.codegen.SourceInfo
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes

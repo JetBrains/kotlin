@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
@@ -75,25 +76,6 @@ val AbstractInsnNode.nodeType: Int
             else -> opcodeToNodeType.getOrElse(opcode) { -1 }
         }
     }
-
-class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
-    constructor(insnList: InsnList) : this(insnList.first, null)
-
-    override fun iterator(): Iterator<AbstractInsnNode> {
-        return object : Iterator<AbstractInsnNode> {
-            var current: AbstractInsnNode? = from
-            override fun next(): AbstractInsnNode {
-                val result = current
-                current = current!!.next
-                return result!!
-            }
-
-            override fun hasNext() = current != to
-        }
-    }
-}
-
-fun InsnList.asSequence(): Sequence<AbstractInsnNode> = if (size() == 0) emptySequence() else InsnSequence(this)
 
 fun MethodNode.prepareForEmitting() {
     stripOptimizationMarkers()

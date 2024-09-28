@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.coroutines.createCustomCopy
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
