@@ -1012,16 +1012,6 @@ object KotlinToolingDiagnostics {
             throwable = trace
         )
     }
-
-    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion: ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(dependency: String, includedProjectPath: String): ToolingDiagnostic = build(
-            """
-                Dependency '$dependency' resolved into included build project '$includedProjectPath'. 
-                However Kotlin Multiplatform can't process such dependency with enabled Project Isolation support.
-                Please consider upgrading Kotlin Version to the latest one in '$includedProjectPath' project.                               
-            """.trimIndent()
-        )
-    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

@@ -5,20 +5,18 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.PSM_RESOLVABLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.configureMetadataDependenciesAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -40,46 +38,39 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
         val metadataTarget = project.multiplatformExtension.awaitMetadataTarget()
         val apiElements = project.configurations.getByName(metadataTarget.apiElementsConfigurationName)
 
-        apiElements.outgoing.variants.maybeCreate("projectStructureMetadata").apply {
+        apiElements.outgoing.variants.maybeCreate("kotlinProjectStructureMetadata").apply {
+            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
             artifact(generateProjectStructureMetadata.map { task -> task.resultFile }) {
                 it.classifier = "psm-metadata"
+                it.type = KotlinUsages.KOTLIN_PSM_METADATA
             }
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
         }
     }
 }
 
-internal val InternalKotlinSourceSet.projectStructureMetadataResolvableConfiguration: Configuration? by extrasStoredProperty {
-    if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
-        project.configurations.maybeCreateResolvable(projectStructureMetadataConfigurationName) {
-            copyDependenciesLazy(project, resolvableMetadataConfiguration)
-            configurePsmResolvableAttributes(project)
-        }
-    } else {
-        null
+internal fun InternalKotlinSourceSet.psmArtifactsOfMetadataDependencies(): LazyResolvedConfiguration {
+    return LazyResolvedConfiguration(resolvableMetadataConfiguration) { attributes ->
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+        attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
 }
 
-internal fun resolvableMetadataConfigurationForEachSourSet(project: Project): List<FileCollection> {
-    return project.multiplatformExtension.sourceSets.mapNotNull { sourceSet ->
-        if (sourceSet is InternalKotlinSourceSet) {
-            sourceSet.projectStructureMetadataResolvableConfiguration?.lenientArtifactsView?.artifactFiles
-        } else null
+internal fun Project.psmArtifactsForAllDependencies(): List<FileCollection> {
+    if (!kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyList()
+    return multiplatformExtension.sourceSets.map { sourceSet ->
+        sourceSet.internal.psmArtifactsOfMetadataDependencies().files
     }
 }
-
-private fun Configuration.configurePsmResolvableAttributes(project: Project) {
-    this.configureMetadataDependenciesAttribute(project)
-    setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-}
-
-private val InternalKotlinSourceSet.projectStructureMetadataConfigurationName: String
-    get() = disambiguateName(lowerCamelCaseName(PSM_RESOLVABLE_CONFIGURATION_NAME))
-
 
 private fun setupTransformActionFromJarToPsm(project: Project) {
     project.dependencies.registerTransform(ProjectStructureMetadataTransformAction::class.java) { transform ->
-        transform.from.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        transform.to.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+        transform.from.apply {
+            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+        }
+        transform.to.apply {
+            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+        }
     }
 }

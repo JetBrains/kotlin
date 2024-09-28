@@ -10,7 +10,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.psmArtifactsOfMetadataDependencies
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -22,7 +22,6 @@ internal class MetadataDependencyTransformationTaskInputs(
     kotlinSourceSet: KotlinSourceSet,
     private val keepProjectDependencies: Boolean = true,
 ) {
-
     private val currentBuild = project.currentBuild
 
     // GMT algorithm uses the project-structure-metadata.json files from the other subprojects.
@@ -34,9 +33,7 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val projectStructureMetadataFileCollection: ConfigurableFileCollection = project.filesProvider {
-        kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.lenientArtifactsView?.artifactFiles
-    }
+    val projectStructureMetadataFileCollection = kotlinSourceSet.internal.psmArtifactsOfMetadataDependencies().files
 
     @Suppress("unused") // Gradle input
     @get:InputFiles

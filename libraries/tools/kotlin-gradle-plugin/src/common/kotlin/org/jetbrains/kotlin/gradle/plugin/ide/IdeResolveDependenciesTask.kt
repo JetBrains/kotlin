@@ -15,7 +15,6 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -45,23 +44,6 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  */
 @DisableCachingByDefault(because = "Used for debugging/diagnostic purpose.")
 internal open class IdeResolveDependenciesTask : DefaultTask() {
-
-    // GMT algorithm uses the project-structure-metadata.json files from the other subprojects.
-    // Resolving `projectStructureMetadataResolvableConfiguration` triggers other subprojects' tasks
-    // to generate project-structure-metadata.json.
-    // Thus, this should be a Gradle input to trigger the whole process.
-    @Suppress("unused") // Gradle input
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    val projectStructureMetadataFileCollection: ConfigurableFileCollection = project.filesProvider {
-        project.kotlinExtension.sourceSets.map {
-            it.internal.projectStructureMetadataResolvableConfiguration?.lenientArtifactsView?.artifactFiles
-        }
-    }
-
-
     @TaskAction
     fun resolveDependencies() {
         val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies").get().asFile

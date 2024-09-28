@@ -469,14 +469,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                     TaskInstantiationTrackingBuildService.trackInstantiationInProject(project)
                 }
             }
-            if (gradleVersion < GradleVersion.version("8.4")) {
-                build(":transformNativeMainCInteropDependenciesMetadata")
-            } else {
-                // fixme: KT-71764
-                buildAndFail(":transformNativeMainCInteropDependenciesMetadata") {
-                    assertOutputContains("The following tasks were instantiated at execution time: [:lib:allMetadataJar, :lib:commonizeCInterop]")
-                }
-            }
+            build(":transformNativeMainCInteropDependenciesMetadata")
         }
     }
 }

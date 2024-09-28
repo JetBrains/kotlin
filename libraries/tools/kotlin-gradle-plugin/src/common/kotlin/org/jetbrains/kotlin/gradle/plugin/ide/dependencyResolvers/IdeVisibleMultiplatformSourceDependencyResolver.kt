@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.resolvableMetadataConfigurationForEachSourSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.psmArtifactsForAllDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.projectDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
@@ -51,6 +51,6 @@ internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyR
     }
 
     override fun dependencies(project: Project): Iterable<Any> {
-        return resolvableMetadataConfigurationForEachSourSet(project)
+        return project.psmArtifactsForAllDependencies()
     }
 }

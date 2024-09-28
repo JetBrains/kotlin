@@ -32,14 +32,12 @@ internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
 }
 
-internal class ProjectMppDependencyProjectStructureMetadataExtractor(
-    private val projectStructureMetadataFile: File?,
+internal class ProjectStructureMetadataFileExtractor(
+    private val projectStructureMetadataFile: File,
 ) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(null) {
 
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return projectStructureMetadataFile?.let {
-            parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
-        }
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata {
+        return parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
     }
 }
 
