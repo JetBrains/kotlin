@@ -57,7 +57,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
     private fun getActualVariablesAsString(list: List<LocalVariable>) = if (backend.isIR) {
         // Ignore local index.
-        list.map { it.toString().replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+        list.map {
+            it.toString().replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*")
+                .replaceFirst("<name for destructuring parameter [0-9]+>".toRegex(), "<destruct>") // use FIR name for it
+        }
             .sorted()
             .joinToString("\n")
     } else {
@@ -69,7 +72,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         return if (backend.isIR) {
             // Ignore local index.
             variableLines
-                .map { it.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+                .map {
+                    it.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*")
+                        .replaceFirst("<name for destructuring parameter [0-9]+>".toRegex(), "<destruct>") // use FIR name for it
+                }
                 .sorted()
                 .joinToString("\n")
         } else {

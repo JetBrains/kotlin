@@ -12,9 +12,7 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 }
 
 // METHOD : ParametersKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-
-// JVM_IR_TEMPLATES
-// VARIABLE : NAME=<name for destructuring parameter 1> TYPE=LData; INDEX=*
+// VARIABLE : NAME=<destruct> TYPE=LData; INDEX=*
 // VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=*
 // VARIABLE : NAME=$this$foo TYPE=J INDEX=*
 // VARIABLE : NAME=i TYPE=I INDEX=*
