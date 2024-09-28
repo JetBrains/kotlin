@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.addScopeInfo
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.getInlineScopeInfo
-import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -240,7 +239,7 @@ private fun IrVariable.calculateNewName(inlinedBlock: IrInlinedFunctionBlock): S
 
 private fun addInlineScopeInfo(name: String, scopeNumber: Int): String {
     val nameWithScopeNumber = name.addScopeInfo(scopeNumber)
-    if (isFakeLocalVariableForInline(name)) {
+    if (JvmAbi.isFakeLocalVariableForInline(name)) {
         // During IR inlining we can't fetch call site line numbers because the line number mapping
         // has not been calculated yet. To keep the inline scope info format consistent, we will add
         // a mock call site line number instead, which will be replaced with the real one during the

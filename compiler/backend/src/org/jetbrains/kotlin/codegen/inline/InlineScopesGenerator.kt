@@ -68,7 +68,7 @@ class InlineScopesGenerator {
                 currentNode = currentNode.findClosestSurroundingScope(variable, labelToIndex)
 
                 val name = variable.name
-                if (isFakeLocalVariableForInline(name)) {
+                if (JvmAbi.isFakeLocalVariableForInline(name)) {
                     seenInlineScopesNumber += 1
 
                     val newNode = InlineScopeNode(variable, seenInlineScopesNumber, currentNode.inlineNesting, currentNode)
@@ -147,7 +147,7 @@ class InlineScopesGenerator {
         }
 
         val markerVariablesWithoutScopeInfoNum = localVariables.count {
-            isFakeLocalVariableForInline(it.name) && !it.name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
+            JvmAbi.isFakeLocalVariableForInline(it.name) && !it.name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
         }
 
         when {

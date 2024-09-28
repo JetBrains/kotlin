@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -724,7 +725,7 @@ class ExpressionCodegen(
 
         if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) &&
             state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER) &&
-            isFakeLocalVariableForInline(name) &&
+            JvmAbi.isFakeLocalVariableForInline(name) &&
             name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
         ) {
             declaration.name = Name.identifier(updateCallSiteLineNumber(name, lineNumberMapper.getLineNumber()))

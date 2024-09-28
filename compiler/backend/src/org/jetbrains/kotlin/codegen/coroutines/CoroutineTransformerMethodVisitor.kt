@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -221,7 +222,7 @@ class CoroutineTransformerMethodVisitor(
         for (stateLabel in stateLabels) {
             val newRecords = mutableListOf<LocalVariableNode>()
             for (record in methodNode.localVariables) {
-                if (isFakeLocalVariableForInline(record.name) &&
+                if (JvmAbi.isFakeLocalVariableForInline(record.name) &&
                     methodNode.instructions.indexOf(record.start) < methodNode.instructions.indexOf(stateLabel) &&
                     methodNode.instructions.indexOf(stateLabel) < methodNode.instructions.indexOf(record.end)
                 ) {
@@ -1329,7 +1330,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         // $continuation is used to create async stack trace
         if (variable.name == CONTINUATION_VARIABLE_NAME ||
             variable.name == SUSPEND_CALL_RESULT_NAME ||
-            isFakeLocalVariableForInline(variable.name)
+            JvmAbi.isFakeLocalVariableForInline(variable.name)
         ) {
             method.localVariables.add(variable)
             continue

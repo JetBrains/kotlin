@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.inline
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.asSequence
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -92,7 +93,7 @@ class SourceMapCopyingMethodVisitor(private val smapCopier: SourceMapCopier, mv:
         super.visitLineNumber(smapCopier.mapLineNumber(line), start)
 
     override fun visitLocalVariable(name: String, descriptor: String, signature: String?, start: Label, end: Label, index: Int) =
-        if (isFakeLocalVariableForInline(name))
+        if (JvmAbi.isFakeLocalVariableForInline(name))
             super.visitLocalVariable(updateCallSiteLineNumber(name, smapCopier::mapLineNumber), descriptor, signature, start, end, index)
         else
             super.visitLocalVariable(name, descriptor, signature, start, end, index)

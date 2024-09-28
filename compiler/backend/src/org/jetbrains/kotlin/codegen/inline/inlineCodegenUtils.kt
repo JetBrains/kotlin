@@ -684,15 +684,11 @@ internal fun calcMarkerShift(parameters: Parameters, node: MethodNode): Int {
 private fun getIndexAfterLastMarker(node: MethodNode): Int {
     var result = -1
     for (variable in node.localVariables) {
-        if (isFakeLocalVariableForInline(variable.name)) {
+        if (JvmAbi.isFakeLocalVariableForInline(variable.name)) {
             result = max(result, variable.index + 1)
         }
     }
     return result
-}
-
-fun isFakeLocalVariableForInline(name: String): Boolean {
-    return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
 }
 
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name

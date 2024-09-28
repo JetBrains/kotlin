@@ -448,7 +448,7 @@ class MethodInliner(
             return
         }
 
-        val markerVariablesFromInlinedNode = inlinedNodeLocalVariables.filter { isFakeLocalVariableForInline(it.name) }
+        val markerVariablesFromInlinedNode = inlinedNodeLocalVariables.filter { JvmAbi.isFakeLocalVariableForInline(it.name) }
         if (markerVariablesFromInlinedNode.isEmpty()) {
             return
         }
@@ -467,7 +467,7 @@ class MethodInliner(
 
         for (variable in resultNodeLocalVariables) {
             val name = variable.name
-            if (isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
+            if (JvmAbi.isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
                 variable.name = updateCallSiteLineNumber(name) { sourceMapper.mapLineNumber(it) }
             }
         }
@@ -1325,7 +1325,7 @@ private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): In
     var inlineScopeNumberIncrement = 0
     for (variable in localVariables) {
         val variableStartIndex = labelToIndex[variable.start.label] ?: continue
-        if (variableStartIndex < currentIndex && isFakeLocalVariableForInline(variable.name)) {
+        if (variableStartIndex < currentIndex && JvmAbi.isFakeLocalVariableForInline(variable.name)) {
             inlineScopeNumberIncrement += 1
         }
 
