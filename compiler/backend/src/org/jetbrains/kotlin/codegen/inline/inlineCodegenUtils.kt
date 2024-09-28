@@ -54,7 +54,6 @@ import kotlin.math.max
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
-const val INLINE_SCOPE_NUMBER_SEPARATOR = '\\'
 
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 const val SPECIAL_TRANSFORMATION_NAME = "\$special"

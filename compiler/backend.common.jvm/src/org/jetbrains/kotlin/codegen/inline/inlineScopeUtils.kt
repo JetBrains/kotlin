@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+const val INLINE_SCOPE_NUMBER_SEPARATOR = '\\'
+
 data class InlineScopeInfo(val scopeNumber: Int, val callSiteLineNumber: Int?, val surroundingScopeNumber: Int?)
 
 fun String.dropInlineScopeInfo(): String =
