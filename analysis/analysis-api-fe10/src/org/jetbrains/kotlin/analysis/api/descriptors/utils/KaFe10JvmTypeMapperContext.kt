@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.Companion.hasNothingInNonContravariantPosition
@@ -188,5 +188,6 @@ internal class KaFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
         return SpecialNames.safeIdentifier(declaration.name).identifier
     }
 
-    private fun String.sanitize() = JvmCodegenUtil.sanitizeNameIfNeeded(this, resolveSession.languageVersionSettings)
+    private fun String.sanitize(): String =
+        sanitizeNameIfNeeded(this, resolveSession.languageVersionSettings)
 }

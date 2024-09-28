@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
-import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -107,10 +107,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         irClass.localClassType?.internalName?.let { return it }
         irClass.classNameOverride?.let { return it.internalName }
 
-        return JvmCodegenUtil.sanitizeNameIfNeeded(
-            computeClassInternalNameAsString(irClass),
-            context.config.languageVersionSettings
-        )
+        return sanitizeNameIfNeeded(computeClassInternalNameAsString(irClass), context.config.languageVersionSettings)
     }
 
     override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String =

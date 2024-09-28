@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.localClassType
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -39,7 +39,7 @@ internal class JvmInventNamesForLocalClasses(private val context: JvmBackendCont
     }
 
     override fun sanitizeNameIfNeeded(name: String): String {
-        return JvmCodegenUtil.sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
+        return sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {

@@ -493,7 +493,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @NotNull
     private MutableClosure recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        Type type = Type.getObjectType(JvmCodegenUtil.sanitizeNameIfNeeded(name, languageVersionSettings));
+        Type type = Type.getObjectType(CommonVariableAsmNameManglingUtils.sanitizeNameIfNeeded(name, languageVersionSettings));
         return CodegenBinding.recordClosure(bindingTrace, classDescriptor, getProperEnclosingClass(), type);
     }
 

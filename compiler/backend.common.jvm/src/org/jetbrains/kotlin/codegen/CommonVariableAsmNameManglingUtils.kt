@@ -6,6 +6,8 @@
 @file:JvmName("CommonVariableAsmNameManglingUtils")
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.checkers.isValidDalvikCharacter
 
 fun mangleNameIfNeeded(name: String): String {
@@ -29,3 +31,8 @@ fun mangleNameIfNeeded(name: String): String {
 private fun Char.isValidCharacter(): Boolean {
     return this != '$' && this != '-' && isValidDalvikCharacter(this)
 }
+
+fun sanitizeNameIfNeeded(name: String, languageVersionSettings: LanguageVersionSettings): String =
+    if (languageVersionSettings.getFlag(JvmAnalysisFlags.sanitizeParentheses))
+        name.replace("(", "\$_").replace(")", "\$_")
+    else name
