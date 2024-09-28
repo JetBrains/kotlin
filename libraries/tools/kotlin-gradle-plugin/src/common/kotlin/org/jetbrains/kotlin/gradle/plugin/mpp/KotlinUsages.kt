@@ -124,11 +124,6 @@ object KotlinUsages {
             ) {
                 compatible()
             }
-            if (consumerValue?.name == KOTLIN_PSM_METADATA &&
-                (producerValue?.name == KOTLIN_METADATA || producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
-            ) {
-                compatible()
-            }
         }
     }
 
@@ -183,10 +178,6 @@ object KotlinUsages {
                 // Prefer Kotlin metadata, but if there's no such variant then accept 'kotlin-api' or the Java usages
                 // (see the compatibility rule):
                 closestMatchToFirstAppropriateCandidate(commonCandidateList)
-            }
-            if (consumerValue?.name == KOTLIN_PSM_METADATA) {
-                // Prefer Kotlin psm metadata, but if there's no such variant then accept the candidate order as for kotlin metadata
-                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PSM_METADATA) + commonCandidateList)
             }
         }
 

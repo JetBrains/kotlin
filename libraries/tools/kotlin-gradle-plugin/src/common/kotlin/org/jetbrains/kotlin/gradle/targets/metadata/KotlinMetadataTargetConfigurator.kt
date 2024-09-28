@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinMetadataConfigurationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
@@ -97,7 +96,6 @@ class KotlinMetadataTargetConfigurator :
                 // As it configures legacy metadata configurations that is used by older IDE Import
                 // And it also configures platform source sets for the same reason
                 sourceSet.internal.resolvableMetadataConfiguration
-                sourceSet.internal.projectStructureMetadataResolvableConfiguration
             }
         }
     }

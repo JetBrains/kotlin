@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -511,7 +510,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `test incompatible project isolation diagnostic reported`(gradleVersion: GradleVersion) {
+    fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
         val producer = project(
             "mpp-composite-build/sample0/producerBuild",
             gradleVersion = gradleVersion,
@@ -528,8 +527,9 @@ class MppCompositeBuildIT : KGPBaseTest() {
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
 
-            build(":consumerA:transformCommonMainDependenciesMetadata") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion)
+            build("assemble") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
             }
         }
     }
