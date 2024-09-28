@@ -9,8 +9,7 @@ suspend fun test() = foo(A("OK", 1)) { (x_param, y_param) ->
 }
 
 // METHOD : GenericKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-// JVM_IR_TEMPLATES
-// VARIABLE : NAME=<name for destructuring parameter 0> TYPE=LA; INDEX=*
+// VARIABLE : NAME=<destruct> TYPE=LA; INDEX=*
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=I INDEX=4
 // VARIABLE : NAME=this TYPE=LGenericKt$test$2; INDEX=0
