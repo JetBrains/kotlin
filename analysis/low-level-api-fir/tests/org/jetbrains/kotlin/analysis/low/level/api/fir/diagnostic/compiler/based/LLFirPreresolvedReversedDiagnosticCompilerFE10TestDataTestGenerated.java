@@ -35476,6 +35476,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("callableReferences.kt")
+        public void testCallableReferences() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferences.kt");
+        }
+
+        @Test
         @TestMetadata("dslMarkerOnTypealias.kt")
         public void testDslMarkerOnTypealias() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnTypealias.kt");
