@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToIndex
 
@@ -853,8 +854,11 @@ class FirElementSerializer private constructor(
         }
 
         if (parameter.isVararg) {
-            val varargElementType = parameter.returnTypeRef.coneType.varargElementType()
-                .withAttributes(parameter.returnTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = false))
+            val delegatedTypeAttrs = (parameter.returnTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef?.coneTypeOrNull?.attributes
+            val varargElementType = parameter.returnTypeRef.coneType.varargElementType().applyIf(delegatedTypeAttrs != null) {
+                withAttributes(delegatedTypeAttrs!!)
+            }
+
             if (useTypeTable()) {
                 builder.varargElementTypeId = typeId(varargElementType)
             } else {
@@ -1055,7 +1059,14 @@ class FirElementSerializer private constructor(
         }
 
         val extensionAttributes = mutableListOf<ConeAttribute<*>>()
-        for (attribute in type.attributes) {
+        // KT-67474: In K1, iteration order of `type.attributes` is the following: 1) custom attrs, then 2) builtin attrs;
+        //   see it in `Annotations.withExtensionFunctionAnnotation` in functionTypes.kt
+        // In K2, relevant iteration order of ArrayMap is defined by order of registration, defined by initialization order of the following properties:
+        // - `ConeAttributes.WithExtensionFunctionType` in ConeAttributes.kt and
+        // - `ConeAttributes.custom` in CustomAnnotationTypeAttribute.kt
+        // To put custom attrs before builtin ones, as K1 does, the following partial sorting is used.
+        val sortedAttributes = type.attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
+        for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
                 attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey ->
