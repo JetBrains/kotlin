@@ -738,7 +738,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public SourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            sourceMapper = new SourceMapper(element instanceof KtElement ? SourceInfo.Companion.createFromPsi((KtElement)element, getClassName()) : null);
+            sourceMapper = new SourceMapper(
+                    element instanceof KtElement ? SourceInfoUtils.Companion.createSourceInfoFromPsi((KtElement) element, getClassName()) : null
+            );
         }
         return sourceMapper;
     }

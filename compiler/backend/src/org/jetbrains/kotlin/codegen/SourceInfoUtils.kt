@@ -21,14 +21,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-data class SourceInfo(
-    val sourceFileName: String?,
-    val pathOrCleanFQN: String,
-    val linesInFile: Int
-) {
-
+class SourceInfoUtils {
     companion object {
-        fun createFromPsi(element: KtElement?, internalClassName: String): SourceInfo {
+        fun createSourceInfoFromPsi(element: KtElement?, internalClassName: String): SourceInfo {
             assert(element != null) { "Couldn't create source mapper for null element $internalClassName" }
             val lineNumbers = CodegenUtil.getLineNumberForElement(element!!.containingFile, true)
                 ?: error("Couldn't extract line count in ${element.containingFile}")
@@ -40,7 +35,5 @@ data class SourceInfo(
             val fileName = element.containingKtFile.name
             return SourceInfo(fileName, cleanedClassFqName, lineNumbers)
         }
-
     }
 }
-
