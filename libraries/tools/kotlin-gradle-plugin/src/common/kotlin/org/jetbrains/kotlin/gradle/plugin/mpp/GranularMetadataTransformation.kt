@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
@@ -229,7 +230,7 @@ internal class GranularMetadataTransformation(
         logger.debug("Process dependency: $moduleId")
 
         /** Due to [KotlinUsages.KotlinMetadataCompatibility], non kotlin-metadata resolutions can happen */
-        if (!dependency.resolvedVariant.attributes.containsMultiplatformMetadataAttributes) {
+        if (!dependency.resolvedVariant.attributes.containsCompositeMetadataJarAttributes) {
             logger.debug("Dependency $moduleId is not a Kotlin HMPP library")
             return MetadataDependencyResolution.KeepOriginalDependency(module)
         }
@@ -320,7 +321,7 @@ internal class GranularMetadataTransformation(
         .getArtifacts(dependency)
         .singleOrNull()
         // Make sure that resolved metadata artifact is actually Multiplatform one
-        ?.takeIf { it.variant.attributes.containsMultiplatformMetadataAttributes }
+        ?.takeIf { it.variant.attributes.containsCompositeMetadataJarAttributes }
 
     private fun extractProjectStructureMetadata(
         dependency: ResolvedDependencyResult,
@@ -441,5 +442,11 @@ internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpt
 internal val AttributeContainer.containsMultiplatformAttributes: Boolean
     get() = keySet().any { it.name == KotlinPlatformType.attribute.name }
 
-private val AttributeContainer.containsMultiplatformMetadataAttributes: Boolean
-    get() = keySet().any { it.name == KotlinPlatformType.attribute.name && getAttribute(it).toString() == KotlinPlatformType.common.name }
+private val AttributeContainer.containsCompositeMetadataJarAttributes: Boolean
+    get() {
+        val usageAttribute = keySet().find { it.name == Usage.USAGE_ATTRIBUTE.name } ?: return false
+        if (getAttribute(usageAttribute).toString() != KotlinUsages.KOTLIN_METADATA) return false
+
+        val platformType = keySet().find { it.name == KotlinPlatformType.attribute.name } ?: return false
+        return getAttribute(platformType).toString() == KotlinPlatformType.common.name
+    }
