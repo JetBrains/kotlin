@@ -129,6 +129,13 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     // Advanced options
 
+    @Argument(value = "-Xir-inliner-before-klib-writing", description = "Enable IR Inliner before K2 Klib writing: https://youtrack.jetbrains.com/issue/OSIP-409")
+    var irInlinerBeforeKlibWriting = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xno-inline", description = "Disable method inlining.")
     var noInline = false
         set(value) {

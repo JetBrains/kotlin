@@ -65,6 +65,10 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    put(CommonConfigurationKeys.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING, arguments.irInlinerBeforeKlibWriting
+                && languageVersionSettings.languageVersion.toKotlinVersion().isAtLeast(2, 1) // TODO: KT-69765: change to `isAtLeast(2, 2)` after LV becomes 2.2 in master
+    )
+
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
