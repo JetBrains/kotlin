@@ -719,12 +719,19 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
         }
 
+        // Klib IR Inliner
+        val inlinedIr = if (environmentForJS.configuration.get(CommonConfigurationKeys.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING) == true) {
+            // TODO: KT-68756: Invoke lowering prefix and IR Inliner
+            fir2IrActualizedResult
+        } else
+            fir2IrActualizedResult
+
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             serializeFirKlib(
                 moduleStructure = moduleStructure,
                 firOutputs = analyzedOutput.output,
-                fir2IrActualizedResult = fir2IrActualizedResult,
+                fir2IrActualizedResult = inlinedIr,
                 outputKlibPath = outputKlibPath,
                 nopack = arguments.irProduceKlibDir,
                 messageCollector = messageCollector,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibIrInlinerFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -49,6 +51,9 @@ open class AbstractFirJsTest(
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
+
+    override val klibIrInlinerFacade: Constructor<KlibIrInlinerFacade<IrBackendInput>>
+        get() = ::JsKlibIrInlinerFacade
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirJsKlibSerializerFacade
@@ -125,6 +130,17 @@ open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
         builder.useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor
         )
+    }
+}
+
+open class AbstractFirJsCodegenBoxKlibIrInlinerTest : AbstractFirJsCodegenBoxTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +ENABLE_IR_INLINER_BEFORE_KLIB_WRITING
+            }
+        }
     }
 }
 
