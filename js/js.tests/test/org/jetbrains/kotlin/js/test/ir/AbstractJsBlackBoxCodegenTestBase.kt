@@ -37,6 +37,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
+    abstract val irInliningFacade: Constructor<IrInliningFacade<I>>
     abstract val backendFacade: Constructor<BackendFacade<I, A>>
     abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Js>>?
     abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
@@ -53,7 +54,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, irInliningFacade, backendFacade)
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
@@ -121,6 +122,7 @@ fun <
     targetFrontend: FrontendKind<R>,
     frontendFacade: Constructor<FrontendFacade<R>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
+    irInliningFacade: Constructor<IrInliningFacade<I>>,
     backendFacade: Constructor<BackendFacade<I, A>>,
 ) {
     globalDefaults {
@@ -157,6 +159,8 @@ fun <
 
     facadeStep(frontendToBackendConverter)
     irHandlersStep()
+
+    facadeStep(irInliningFacade)
 
     facadeStep(backendFacade)
     klibArtifactsHandlersStep {
