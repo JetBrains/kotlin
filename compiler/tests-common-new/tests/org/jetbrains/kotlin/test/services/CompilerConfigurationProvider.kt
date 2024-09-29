@@ -152,6 +152,13 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in module.directives
     )
 
+    // This test setting is useless in K2.2, since compiler core testinfra respects only CodegenTestDirectives.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING,
+    // while production pipeline respects only CommonConfigurationKeys.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING
+    configuration.put(
+        CommonConfigurationKeys.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING,
+        CodegenTestDirectives.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING in module.directives
+    )
+
     val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings

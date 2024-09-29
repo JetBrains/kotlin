@@ -283,6 +283,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val ENABLE_IR_INLINER_BEFORE_KLIB_WRITING by directive(
+        description = "Enables IR Inliner before K2 Klib writing. It tests MVP of IR Inliner moving to 1st compilation phase: https://youtrack.jetbrains.com/issue/OSIP-409"
+    )
+
     val KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by directive(
         """
             Narrow the visibility of generated synthetic accessors to _internal_" +
