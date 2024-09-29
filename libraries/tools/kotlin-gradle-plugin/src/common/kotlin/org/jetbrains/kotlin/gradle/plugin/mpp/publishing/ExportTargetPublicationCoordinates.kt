@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinShareableDataAsSecondaryVariant
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
@@ -62,6 +63,9 @@ internal val ExportTargetPublicationCoordinates = KotlinProjectSetupCoroutine {
 private const val PROJECT_DATA_SHARING_KEY = "targetPublicationCoordinates"
 
 private suspend fun Project.exportForPomDependenciesRewriter(target: KotlinTarget) {
+    // Non-default publication layouts are not supported for pom rewriting
+    if (!project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) return
+
     project.kotlinPluginLifecycle.await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
 
     val rootComponent = multiplatformExtension.rootSoftwareComponent
