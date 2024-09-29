@@ -451,6 +451,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     tasks.register<Test>("functionalUnitTest") {
         include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     }
 
     tasks.register<Test>("functionalRegressionTest") {
