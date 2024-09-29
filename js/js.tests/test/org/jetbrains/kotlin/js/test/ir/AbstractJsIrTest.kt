@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrInlinerFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
@@ -41,6 +42,9 @@ abstract class AbstractJsIrTest(
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+
+    override val irInlinerFacade: Constructor<IrInlinerFacade<IrBackendInput>>
+        get() = ::JsIrInlinerFacade // though, shouldRunAnalysis will return false, since IR Inliner test directive is not set for K1
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::JsKlibSerializerFacade
