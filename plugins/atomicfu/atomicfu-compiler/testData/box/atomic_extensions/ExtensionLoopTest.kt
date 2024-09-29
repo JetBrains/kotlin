@@ -76,7 +76,25 @@ class LoopTest {
     }
 }
 
+private val a = atomic(10)
+private val b = atomic(false)
+private val l = atomic(10L)
 private val ref = atomic<String>("aaa")
+
+private inline fun AtomicInt.topLevelExtensionLoop(to: Int): Int = loop { cur ->
+    lazySet(cur + to)
+    return value
+}
+
+private inline fun AtomicLong.topLevelExtensionLoop(to: Long): Long = loop { cur ->
+    lazySet(cur + to)
+    return value
+}
+
+private inline fun AtomicBoolean.topLevelExtensionLoop(to: Boolean): Boolean = loop { cur ->
+    lazySet(to)
+    return value
+}
 
 private inline fun AtomicRef<String>.topLevelExtensionLoop(to: String): String = loop { cur ->
     lazySet(cur + to)
@@ -84,6 +102,9 @@ private inline fun AtomicRef<String>.topLevelExtensionLoop(to: String): String =
 }
 
 fun testTopLevelExtensionLoop() {
+    assertEquals(110, a.topLevelExtensionLoop(100))
+    assertEquals(110L, l.topLevelExtensionLoop(100L))
+    assertEquals(true, b.topLevelExtensionLoop(true))
     assertEquals("aaattt", ref.topLevelExtensionLoop("ttt"))
 }
 

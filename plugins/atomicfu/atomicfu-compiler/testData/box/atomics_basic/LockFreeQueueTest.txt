@@ -6,11 +6,10 @@ final class LockFreeQueue$Node {
     private final field value: int
     static method <clinit>(): void
     public method <init>(p0: int): void
-    public synthetic final static method access$getNext$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final static method getNext$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getNext$volatile(): java.lang.Object
+    public synthetic final static method getNext$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public synthetic final method getNext$volatile(): java.lang.Object
     public final method getValue(): int
-    private synthetic final method setNext$volatile(p0: java.lang.Object): void
+    public synthetic final method setNext$volatile(p0: java.lang.Object): void
     private final inner class LockFreeQueue$Node
 }
 
@@ -29,7 +28,7 @@ public final class LockFreeQueue {
     private synthetic final method getHead$volatile(): java.lang.Object
     private synthetic final static method getTail$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getTail$volatile(): java.lang.Object
-    private synthetic final method loop$atomicfu$Any(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method setHead$volatile(p0: java.lang.Object): void
     private synthetic final method setTail$volatile(p0: java.lang.Object): void
     private final inner class LockFreeQueue$Node

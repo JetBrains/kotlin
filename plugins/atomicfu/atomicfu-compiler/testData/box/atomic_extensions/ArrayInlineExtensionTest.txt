@@ -11,15 +11,19 @@ public final class AtomicBooleanArrayInlineExtensionTest {
     public method <init>(): void
     private final method casLoop(p0: boolean): boolean
     private final method casLoopExpression(p0: boolean): boolean
-    private synthetic final method extensionLoop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean): boolean
-    private synthetic final method extensionLoop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: boolean): boolean
-    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean): boolean
-    private synthetic final method extensionLoopExpression$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: boolean): boolean
-    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean, p3: boolean, p4: int): boolean
-    private synthetic final method extensionLoopMixedReceivers$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: boolean, p3: boolean, p4: int): boolean
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_ARRAY$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean): boolean
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: boolean): boolean
+    private synthetic final method extensionLoop$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean, p1: boolean): boolean
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean): boolean
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_FIELD_UPDATER$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: boolean): boolean
+    private synthetic final method extensionLoopExpression$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean, p1: boolean): boolean
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: boolean, p3: boolean, p4: int): boolean
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_FIELD_UPDATER$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: boolean, p3: boolean, p4: int): boolean
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean, p1: boolean, p2: boolean, p3: int): boolean
     private synthetic final method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
-    private synthetic final method loop$atomicfu$Boolean(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu$array$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_ARRAY$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean, p1: kotlin.jvm.functions.Function1): void
     public final method test(): void
 }
 
@@ -31,25 +35,32 @@ public final class AtomicIntArrayInlineExtensionTest {
     private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method bar$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
-    private synthetic final method bar$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
+    private synthetic final method bar$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
+    private synthetic final method bar$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): int
+    private synthetic final method bar$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): int
     private final method casLoop(p0: int): int
     private final method casLoopExpression(p0: int): int
-    private synthetic final method extensionLoop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
-    private synthetic final method extensionLoop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
-    private synthetic final method extensionLoopExpression$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int, p3: int, p4: int): int
-    private synthetic final method extensionLoopMixedReceivers$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int, p3: int, p4: int): int
-    private synthetic final method extensionLoopRecursive$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
-    private synthetic final method extensionLoopRecursive$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method foo$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
-    private synthetic final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): int
+    private synthetic final method extensionLoop$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): int
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): int
+    private synthetic final method extensionLoopExpression$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): int
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int, p3: int, p4: int): int
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int, p3: int, p4: int): int
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int, p2: int, p3: int): int
+    private synthetic final method extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
+    private synthetic final method extensionLoopRecursive$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): int
+    private synthetic final method extensionLoopRecursive$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): int
+    private synthetic final method foo$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
+    private synthetic final method foo$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: int): int
+    private synthetic final method foo$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: int): int
     private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method getA$volatile(): int
     private synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
-    private synthetic final method loop$atomicfu$Int(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu$array$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): void
     private synthetic final method setA$volatile(p0: int): void
     public final method test(): void
 }
@@ -62,25 +73,32 @@ public final class AtomicLongArrayInlineExtensionTest {
     private synthetic final field longArr: java.util.concurrent.atomic.AtomicLongArray
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method bar$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
-    private synthetic final method bar$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long): long
+    private synthetic final method bar$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
+    private synthetic final method bar$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long): long
+    private synthetic final method bar$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long): long
     private final method casLoop(p0: long): long
     private final method casLoopExpression(p0: long): long
-    private synthetic final method extensionLoop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
-    private synthetic final method extensionLoop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long): long
-    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
-    private synthetic final method extensionLoopExpression$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long): long
-    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long, p3: long, p4: int): long
-    private synthetic final method extensionLoopMixedReceivers$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long, p3: long, p4: int): long
-    private synthetic final method extensionLoopRecursive$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
-    private synthetic final method extensionLoopRecursive$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long): long
-    private synthetic final method foo$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
-    private synthetic final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: long): long
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long): long
+    private synthetic final method extensionLoop$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long): long
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long): long
+    private synthetic final method extensionLoopExpression$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long): long
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long, p3: long, p4: int): long
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long, p3: long, p4: int): long
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long, p2: long, p3: int): long
+    private synthetic final method extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
+    private synthetic final method extensionLoopRecursive$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long): long
+    private synthetic final method extensionLoopRecursive$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long): long
+    private synthetic final method foo$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: long): long
+    private synthetic final method foo$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: long): long
+    private synthetic final method foo$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: long): long
     private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
     private synthetic final method getA$volatile(): long
     private synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
-    private synthetic final method loop$atomicfu$Long(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu$array$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: kotlin.jvm.functions.Function1): void
     private synthetic final method setA$volatile(p0: long): void
     public final method test(): void
 }
@@ -95,17 +113,21 @@ public final class AtomicRefArrayInlineExtensionTest {
     public method <init>(): void
     private final method casLoop(p0: java.lang.String): java.lang.String
     private final method casLoopExpression(p0: java.lang.String): java.lang.String
-    private synthetic final method extensionLoop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String): java.lang.String
-    private synthetic final method extensionLoop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.String): java.lang.String
-    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String): java.lang.String
-    private synthetic final method extensionLoopExpression$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.String): java.lang.String
-    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String, p3: java.lang.String, p4: int): java.lang.String
-    private synthetic final method extensionLoopMixedReceivers$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.String, p3: java.lang.String, p4: int): java.lang.String
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String): java.lang.String
+    private synthetic final method extensionLoop$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: java.lang.String): java.lang.String
+    private synthetic final method extensionLoop$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: java.lang.String): java.lang.String
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String): java.lang.String
+    private synthetic final method extensionLoopExpression$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: java.lang.String): java.lang.String
+    private synthetic final method extensionLoopExpression$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: java.lang.String): java.lang.String
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.String, p3: java.lang.String, p4: int): java.lang.String
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: java.lang.String, p3: java.lang.String, p4: int): java.lang.String
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: java.lang.String, p2: java.lang.String, p3: int): java.lang.String
     private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
     private synthetic final method getA$volatile(): long
     private synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    private synthetic final method loop$atomicfu$Any(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu$array$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: kotlin.jvm.functions.Function1): void
     private synthetic final method setA$volatile(p0: long): void
     public final method test(): void
 }

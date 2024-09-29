@@ -79,31 +79,15 @@ public final class DelegatedProperties {
 }
 
 @kotlin.Metadata
-synthetic final class DelegatedPropertiesTest$VolatileWrapper$atomicfu$private {
-    // source: 'DelegatedPropertiesTest.kt'
-    private synthetic final static field _topLevelInt$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic volatile field _topLevelInt$volatile: int
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$get_topLevelInt$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public synthetic final static method access$get_topLevelInt$volatile$p(p0: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private): int
-    public synthetic final static method access$set_topLevelInt$volatile$p(p0: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private, p1: int): void
-    private synthetic final static method get_topLevelInt$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private synthetic final method get_topLevelInt$volatile(): int
-    private synthetic final method set_topLevelInt$volatile(p0: int): void
-}
-
-@kotlin.Metadata
 public final class DelegatedPropertiesTestKt {
     // source: 'DelegatedPropertiesTest.kt'
-    private synthetic final static field delegatedPropertiesTest$VolatileWrapper$atomicfu$private: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private
+    private synthetic final static field _topLevelInt: java.util.concurrent.atomic.AtomicInteger
     private synthetic volatile static field topLevelVolatile$volatile: int
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private synthetic final static method getDelegatedPropertiesTest$VolatileWrapper$atomicfu$private(): DelegatedPropertiesTest$VolatileWrapper$atomicfu$private
     public final static method getTopLevelInt(): int
     private final static method getTopLevelVolatile(): int
+    private synthetic final static method get_topLevelInt(): java.util.concurrent.atomic.AtomicInteger
     public final static method setTopLevelInt(p0: int): void
     private final static method setTopLevelVolatile(p0: int): void
     public final static method testTopLevelDelegatedProperties(): void

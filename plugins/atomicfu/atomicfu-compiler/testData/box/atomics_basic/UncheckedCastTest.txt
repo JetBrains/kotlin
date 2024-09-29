@@ -14,20 +14,6 @@ final class UncheckedCastTest$Box {
 }
 
 @kotlin.Metadata
-synthetic final class UncheckedCastTest$VolatileWrapper$atomicfu$private {
-    // source: 'UncheckedCastTest.kt'
-    private synthetic final static field topLevelS$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic volatile field topLevelS$volatile: java.lang.Object
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getTopLevelS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final static method getTopLevelS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getTopLevelS$volatile(): java.lang.Object
-    private synthetic final method setTopLevelS$volatile(p0: java.lang.Object): void
-}
-
-@kotlin.Metadata
 public final class UncheckedCastTest {
     // source: 'UncheckedCastTest.kt'
     private synthetic final field a: java.util.concurrent.atomic.AtomicReferenceArray
@@ -38,13 +24,14 @@ public final class UncheckedCastTest {
     static method <clinit>(): void
     public method <init>(): void
     private synthetic final method getA(): java.util.concurrent.atomic.AtomicReferenceArray
-    private synthetic final method getAndUpdate$atomicfu$Any(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): UncheckedCastTest$Box[][]
+    private synthetic final method getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): java.lang.Object
     private synthetic final static method getBs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getBs$volatile(): java.lang.Object
     private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getS$volatile(): java.lang.Object
-    private synthetic final method getString$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): java.lang.String
-    private synthetic final method getString$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater): java.lang.String
+    private synthetic final method getString$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): java.lang.String
+    private synthetic final method getString$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object): java.lang.String
+    private synthetic final method getString$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference): java.lang.String
     private synthetic final method setBs$volatile(p0: java.lang.Object): void
     private synthetic final method setS$volatile(p0: java.lang.Object): void
     public final method testArrayValueUncheckedCast(): void
@@ -55,17 +42,17 @@ public final class UncheckedCastTest {
     public final method testAtomicValUncheckedCast(): void
     public final method testInlineFunc(): void
     public final method testTopLevelValUnchekedCast(): void
-    private synthetic final method update$atomicfu$Any(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method updateAndGet$atomicfu$Any(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): UncheckedCastTest$Box[][]
+    private synthetic final method update$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): java.lang.Object
     private final inner class UncheckedCastTest$Box
 }
 
 @kotlin.Metadata
 public final class UncheckedCastTestKt {
     // source: 'UncheckedCastTest.kt'
-    private synthetic final static field uncheckedCastTest$VolatileWrapper$atomicfu$private: UncheckedCastTest$VolatileWrapper$atomicfu$private
+    private synthetic final static field topLevelS: java.util.concurrent.atomic.AtomicReference
     static method <clinit>(): void
-    public synthetic final static method access$getUncheckedCastTest$VolatileWrapper$atomicfu$private(): UncheckedCastTest$VolatileWrapper$atomicfu$private
+    public synthetic final static method access$getTopLevelS(): java.util.concurrent.atomic.AtomicReference
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private synthetic final static method getUncheckedCastTest$VolatileWrapper$atomicfu$private(): UncheckedCastTest$VolatileWrapper$atomicfu$private
+    private synthetic final static method getTopLevelS(): java.util.concurrent.atomic.AtomicReference
 }

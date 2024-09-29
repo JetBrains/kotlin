@@ -19,10 +19,9 @@ final class AtomicState {
     private synthetic volatile field state$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public synthetic final static method access$getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final static method getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private synthetic final method getState$volatile(): java.lang.Object
-    private synthetic final method setState$volatile(p0: java.lang.Object): void
+    public synthetic final static method getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public synthetic final method getState$volatile(): java.lang.Object
+    public synthetic final method setState$volatile(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
