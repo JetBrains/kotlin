@@ -50,6 +50,7 @@ private constructor(
         moduleId: ComponentIdentifier,
     ) = resolvedPsmConfiguration.getArtifacts(moduleId)
         .filter { it.variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name == KotlinUsages.KOTLIN_PSM_METADATA }
+        .filter { it.file.name != EMPTY_PROJECT_STRUCTURE_METADATA_FILE_NAME }
         .map { it.file }
         .singleOrNull()
 
