@@ -65,6 +65,10 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    if (arguments.enableInlinerBeforeKlibWriting) {
+        put(CommonConfigurationKeys.ENABLE_IR_INLINER_BEFORE_KLIB_WRITING, true)
+    }
+
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)

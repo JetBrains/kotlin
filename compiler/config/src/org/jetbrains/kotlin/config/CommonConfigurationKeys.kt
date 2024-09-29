@@ -89,6 +89,9 @@ object CommonConfigurationKeys {
     @JvmField
     val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING =
         CompilerConfigurationKey.create<Boolean>("Check post-inlining IR for visibility violations")
+
+    @JvmField
+    val ENABLE_IR_INLINER_BEFORE_KLIB_WRITING = CompilerConfigurationKey.create<Boolean>("Enable IR Inliner before K2 Klib writing: https://youtrack.jetbrains.com/issue/OSIP-409")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
