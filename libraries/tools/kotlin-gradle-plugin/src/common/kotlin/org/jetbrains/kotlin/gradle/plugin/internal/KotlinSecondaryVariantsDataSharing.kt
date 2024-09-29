@@ -23,6 +23,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -51,16 +52,16 @@ internal class KotlinSecondaryVariantsDataSharing(
         taskDependencies: List<Any> = emptyList(),
     ) {
         val taskName = lowerCamelCaseName("export", key, "for", outgoingConfiguration.name)
-        val task = project.tasks.register(taskName, ExportKotlinProjectDataTask::class.java) { task ->
+        val task = project.locateOrRegisterTask<ExportKotlinProjectDataTask>(taskName, configureTask = {
             val fileName = "${key}_${outgoingConfiguration.name}.json"
 
             @Suppress("UNCHECKED_CAST")
-            val taskOutputData = task.outputData as Property<T>
+            val taskOutputData = outputData as Property<T>
             taskOutputData.set(dataProvider)
 
-            task.outputFile.set(project.layout.buildDirectory.file("kotlin/kotlin-project-shared-data/$fileName"))
-            task.dependsOn(taskDependencies)
-        }
+            outputFile.set(project.layout.buildDirectory.file("kotlin/kotlin-project-shared-data/$fileName"))
+            dependsOn(taskDependencies)
+        })
 
         shareDataFromExistingTask(key, outgoingConfiguration, task.flatMap { it.outputFile })
     }
@@ -71,6 +72,11 @@ internal class KotlinSecondaryVariantsDataSharing(
         taskOutputProvider: Provider<RegularFile>,
         taskDependencies: List<Any> = emptyList(),
     ) {
+        if (outgoingConfiguration.outgoing.variants.names.contains(key)) {
+            project.logger.warn("KotlinSecondaryVariantsDataSharing can't create secondary variant with name $key " +
+                        "on configuration $outgoingConfiguration. Something can be declared twice or have clashing names.")
+            return
+        }
 
         outgoingConfiguration.outgoing.variants.create(key) { variant ->
             variant.artifact(taskOutputProvider) { artifact ->
