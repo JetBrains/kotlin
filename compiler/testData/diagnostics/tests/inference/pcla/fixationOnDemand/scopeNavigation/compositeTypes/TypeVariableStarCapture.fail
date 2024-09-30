@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Illegal type substitutor: org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap@3c6d208c, because for captured type 'CapturedType(*)' supertype approximation should be null, but it is: 'Stub (BI): TypeVariable(OT)',original supertype: 'TypeVariable(OT)'
