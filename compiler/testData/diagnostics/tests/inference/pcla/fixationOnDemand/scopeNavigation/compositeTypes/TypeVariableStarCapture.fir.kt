@@ -1,12 +1,13 @@
-// ISSUE: KT-71843
+// FIR_IDENTICAL
+// ISSUE: KT-71845
 
 fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        // expected: CapturedType(out ScopeOwner)
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(OT)")!>otvOwner.provide()<!>
+        // expected: CapturedType(*)
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>otvOwner.provide()<!>
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }
@@ -15,12 +16,12 @@ fun test() {
 }
 
 
-class TypeVariableOwner<T, CT> {
+class TypeVariableOwner<T, CT: T> {
     fun constrain(subtypeValue: T) {}
     fun provide(): CT = null!!
 }
 
-fun <OT> pcla(lambda: (TypeVariableOwner<OT, out OT>) -> Unit): OT = null!!
+fun <OT> pcla(lambda: (TypeVariableOwner<OT, *>) -> Unit): OT = null!!
 
 interface BaseType
 

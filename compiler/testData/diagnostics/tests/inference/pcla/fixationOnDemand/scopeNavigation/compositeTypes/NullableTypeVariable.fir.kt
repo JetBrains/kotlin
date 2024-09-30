@@ -1,15 +1,17 @@
+// FIR_IDENTICAL
+
 fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // expected: ScopeOwner?
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(OT)?")!>otvOwner.provide()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>otvOwner.provide()<!>
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide()?.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide()?.function()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 }
 
 
