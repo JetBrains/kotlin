@@ -520,50 +520,75 @@ See [pcla.md](pcla.md) for more information.
 
 ## Glossary
 
-### TV = type variable (fresh type variable)
+### Type variable (TV)
 
-Type variable is a special kind of type/type constructor being created for each type parameter in the call-tree.
+Fresh type variables (or just type variables for short) are special types (and type constructors) that are created:
+* for each type parameter of a called declaration
+* per call of said declaration
 
-To avoid confusion with type parameter types, we mostly use `Tv` for referencing type variable based on a type parameter named `T`.
+The second clause is relevant in situations when the same type parameter is encountered twice in the same call-tree,
+e.g., `listOf(listOf(""))`:
+a total of two type variables (one for each of the two calls) would be created in this example even though there is only one type parameter.
 
-Note that in the same call-tree, the same type parameter might be met twice (`listOf(listOf(""))`), but we would have two different
-type variables (for sake of simplicity, let's call them `Tv1` and `Tv2`) for each instance of the call.
+To avoid mixing up type variables with the corresponding type parameters and with each other, we often use the following conventions:
+* a type variable `Tv` is based on a type parameter `T`
+* type variables `Tv1` and `Tv2` are two different type variables based on the same type parameter `T`
 
-Another kind of type variables is synthetic ones created for lambdas unknown parameter/return types.
+There are also synthetic type variables that represent unknown parameter types and/or return types of lambdas.
 
-### CS = Constraint system
+### Type constraint
 
-- Mostly, it’s just a collection of TVs and the constraints for them in a form of `Xi <: SomeType` or `SomeType <: Xi` or `Xi = SomeType`
-- Represented as an instance of `org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl`
+A type relation between a type variable and another type in one of the following forms:
+- `Tv <: AnotherType`
+- `AnotherType <: Tv`
+- `Tv == AnotherType`
 
-### Related TVs
+### Proper type
 
-See `TypeVariableDependencyInformationProvider` for details.
+A type that doesn't contain any (not-yet-fixed) type variables.
+
+### Proper constraint
+
+A constraint that is imposed on a type variable by a proper type.
+
+### Constraint system (CS)
+
+A collection of type variables and constraints imposed on them.
+
+**Source code representation:** `org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl`
+
+### Related type variables
+
+**Source code reference:** `TypeVariableDependencyInformationProvider`
 
 #### Shallow relation
 
-Two variables `Xv` and `Yv` are shallowly related if there is some chain of a constraints
-`Xv ~ a_1 ~ .. ~ a_n ~ Yv` where (`~` is either `<:` or `>:`)
+Two type variables `Xv` and `Yv` are **shallowly related** if:
+- there exists a type relation chain `Xv ~ T_1 ~ .. ~ T_n ~ Yv` (where `~` is either `<:` or `>:`)
 
 #### Deep relation
 
-Two variables `Xv` and `Yv` are deeply related if there is some chain of a constraints
-`a_1 ~ .. ~ a_n` where (`~` is either `<:` or `>:`) **and** `a_1` contains `Xv` while `a_n` contains `Yv`.
+Two type variables `Xv` and `Yv` are **deeply related** if:
+- there exists a type relation chain `T_1 ~ .. ~ T_n` (where `~` is either `<:` or `>:`)
+- `T_1` contains `Xv`
+- `T_n` contains `Yv`
 
 ### Call-tree
 
-A tree of calls, in which constraint systems are joined and solved(completed) together
+A tree of calls for which constraint systems of each call are joined and solved (completed) together.
 
-### Proper type/constraint
+### Postponed atoms
 
-A type/constraint that doesn't reference any (not-yet-fixed) type variables
+- Lambda argument of a call
+- Callable reference argument of a call
 
-### Input types of a lambda
+### Input types of a postponed atom
 
-- Receiver type
-- Value parameter types
+- Type of the postponed atom's receiver
+- Types of the postponed atom's value parameters
 
 ### Inference session
 
-A set of callbacks related to inference that being called during function body transformations.
-See `FirInferenceSession`.
+A set of callbacks related to inference that are called during function body transformations.
+
+**Source code representation:** `FirInferenceSession`

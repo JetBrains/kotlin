@@ -395,7 +395,7 @@ This means that this set consists of:
 
 The `PCLA_POSTPONED_CALL` mode imposes the following limitation on variable fixation:
 it is not allowed to fix TVs that are deeply related to any TV from the outer CS
-(see [inference.md](inference.md#related-tvs) for the definition of a deep relation).
+(see [inference.md](inference.md#deep-relation) for the definition of a deep relation).
 
 **Source code reference:** `TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY`
 
