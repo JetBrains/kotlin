@@ -187,6 +187,24 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
   }
 
   @Test
+  @TestMetadata("superBuilder.kt")
+  public void testSuperBuilder() {
+    runTest("plugins/lombok/testData/box/superBuilder.kt");
+  }
+
+  @Test
+  @TestMetadata("superBuilderGuava.kt")
+  public void testSuperBuilderGuava() {
+    runTest("plugins/lombok/testData/box/superBuilderGuava.kt");
+  }
+
+  @Test
+  @TestMetadata("superBuilderSingular.kt")
+  public void testSuperBuilderSingular() {
+    runTest("plugins/lombok/testData/box/superBuilderSingular.kt");
+  }
+
+  @Test
   @TestMetadata("value.kt")
   public void testValue() {
     runTest("plugins/lombok/testData/box/value.kt");

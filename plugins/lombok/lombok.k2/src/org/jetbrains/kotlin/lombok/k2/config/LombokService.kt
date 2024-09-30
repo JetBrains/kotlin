@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AbstractBuilder
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Data
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.NoArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.SuperBuilder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.With
 import java.io.File
@@ -79,8 +80,12 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         Value.getOrNull(symbol.fir, session)
     }
 
-    private val builderCache: Cache<AbstractBuilder?> = cachesFactory.createCache { symbol ->
-        AbstractBuilder.getIfAnnotated(symbol.fir, config, session)
+    private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
+        Builder.getIfAnnotated(symbol.fir, config, session)
+    }
+
+    private val superBuilderCache: Cache<SuperBuilder?> = cachesFactory.createCache { symbol ->
+        SuperBuilder.getIfAnnotated(symbol.fir, config, session)
     }
 
     private val singularCache: Cache<Singular?> = cachesFactory.createCache { symbol ->
@@ -97,7 +102,8 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getRequiredArgsConstructor(symbol: FirBasedSymbol<*>): RequiredArgsConstructor? = requiredArgsConstructorCache.getValue(symbol)
     fun getData(symbol: FirBasedSymbol<*>): Data? = dataCache.getValue(symbol)
     fun getValue(symbol: FirBasedSymbol<*>): Value? = valueCache.getValue(symbol)
-    fun getBuilder(symbol: FirBasedSymbol<*>): AbstractBuilder? = builderCache.getValue(symbol)
+    fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
+    fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
 }
 
