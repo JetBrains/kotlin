@@ -35,7 +35,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
   public class Box {
     @Test
     public void testAllFilesPresentInBox() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1");
     }
 
     @Nested
@@ -31644,13 +31644,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-      }
-
-      @Test
-      @TestMetadata("expectProperty.kt")
-      public void testExpectProperty() {
-        runTest("compiler/testData/codegen/box/multiplatform/expectProperty.kt");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "k1");
       }
 
       @Test
@@ -31666,42 +31660,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
-      @TestMetadata("optionalExpectation.kt")
-      public void testOptionalExpectation() {
-        runTest("compiler/testData/codegen/box/multiplatform/optionalExpectation.kt");
-      }
-
-      @Test
       @TestMetadata("starImportOfExpectEnumWithActualTypeAlias.kt")
       public void testStarImportOfExpectEnumWithActualTypeAlias() {
         runTest("compiler/testData/codegen/box/multiplatform/starImportOfExpectEnumWithActualTypeAlias.kt");
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/complexMatchings")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
-      @FirPipeline()
-      @UseExtTestCaseGroupProvider()
-      @UsePartialLinkage(mode = Mode.DISABLED)
-      @Tag("no-partial-linkage-may-be-skipped")
-      public class ComplexMatchings {
-        @Test
-        public void testAllFilesPresentInComplexMatchings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-        }
-
-        @Test
-        @TestMetadata("expectCtorlessFinalToActualObject.kt")
-        public void testExpectCtorlessFinalToActualObject() {
-          runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualObject.kt");
-        }
-
-        @Test
-        @TestMetadata("expectCtorlessFinalToActualUnit.kt")
-        public void testExpectCtorlessFinalToActualUnit() {
-          runTest("compiler/testData/codegen/box/multiplatform/complexMatchings/expectCtorlessFinalToActualUnit.kt");
-        }
       }
 
       @Nested
@@ -31719,153 +31680,9 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
-        @TestMetadata("bothInExpectAndActual.kt")
-        public void testBothInExpectAndActual() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/bothInExpectAndActual.kt");
-        }
-
-        @Test
-        @TestMetadata("bothInExpectAndActual2.kt")
-        public void testBothInExpectAndActual2() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/bothInExpectAndActual2.kt");
-        }
-
-        @Test
-        @TestMetadata("constructor.kt")
-        public void testConstructor() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/constructor.kt");
-        }
-
-        @Test
-        @TestMetadata("delegatedExpectedInterface.kt")
-        public void testDelegatedExpectedInterface() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/delegatedExpectedInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("dispatchReceiverValue.kt")
-        public void testDispatchReceiverValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/dispatchReceiverValue.kt");
-        }
-
-        @Test
-        @TestMetadata("extensionReceiverValue.kt")
-        public void testExtensionReceiverValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/extensionReceiverValue.kt");
-        }
-
-        @Test
-        @TestMetadata("function.kt")
-        public void testFunction() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/function.kt");
-        }
-
-        @Test
-        @TestMetadata("functionFromOtherModule.kt")
-        public void testFunctionFromOtherModule() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/functionFromOtherModule.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromCommonClass.kt")
-        public void testInheritedFromCommonClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromCommonClass.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromExpectedClass.kt")
-        public void testInheritedFromExpectedClass() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedClass.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromExpectedInterface.kt")
-        public void testInheritedFromExpectedInterface() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromExpectedMethod.kt")
-        public void testInheritedFromExpectedMethod() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedMethod.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedInExpectedDeclarations.kt")
-        public void testInheritedInExpectedDeclarations() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedInExpectedDeclarations.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedViaAnotherInterfaceIndirectly.kt")
-        public void testInheritedViaAnotherInterfaceIndirectly() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedViaAnotherInterfaceIndirectly.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineFunctionWithDefaultLambda.kt")
-        public void testInlineFunctionWithDefaultLambda() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inlineFunctionWithDefaultLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("kt23239.kt")
-        public void testKt23239() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt23239.kt");
-        }
-
-        @Test
-        @TestMetadata("kt23739.kt")
-        public void testKt23739() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt23739.kt");
-        }
-
-        @Test
-        @TestMetadata("kt67488.kt")
-        public void testKt67488() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt67488.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedEnumEntryValue.kt")
-        public void testNestedEnumEntryValue() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/nestedEnumEntryValue.kt");
-        }
-
-        @Test
-        @TestMetadata("parametersInArgumentValues.kt")
-        public void testParametersInArgumentValues() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/parametersInArgumentValues.kt");
-        }
-
-        @Test
-        @TestMetadata("superCall.kt")
-        public void testSuperCall() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/superCall.kt");
-        }
-
-        @Test
-        @TestMetadata("suspend.kt")
-        public void testSuspend() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/suspend.kt");
-        }
-
-        @Test
-        @TestMetadata("typeAlias.kt")
-        public void testTypeAlias() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
-        }
-
-        @Test
         @TestMetadata("typeAlias2.kt")
         public void testTypeAlias2() {
           runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
-        }
-
-        @Test
-        @TestMetadata("withTypeParameter.kt")
-        public void testWithTypeParameter() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/withTypeParameter.kt");
         }
       }
 
@@ -32607,45 +32424,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           public void testRemap_expect_property_ref() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/remap_expect_property_ref.kt");
           }
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/migratedOldTests")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
-      @FirPipeline()
-      @UseExtTestCaseGroupProvider()
-      @UsePartialLinkage(mode = Mode.DISABLED)
-      @Tag("no-partial-linkage-may-be-skipped")
-      public class MigratedOldTests {
-        @Test
-        public void testAllFilesPresentInMigratedOldTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-        }
-
-        @Test
-        @TestMetadata("mpp1.kt")
-        public void testMpp1() {
-          runTest("compiler/testData/codegen/box/multiplatform/migratedOldTests/mpp1.kt");
-        }
-
-        @Test
-        @TestMetadata("mpp2.kt")
-        public void testMpp2() {
-          runTest("compiler/testData/codegen/box/multiplatform/migratedOldTests/mpp2.kt");
-        }
-
-        @Test
-        @TestMetadata("mpp_default_args.kt")
-        public void testMpp_default_args() {
-          runTest("compiler/testData/codegen/box/multiplatform/migratedOldTests/mpp_default_args.kt");
-        }
-
-        @Test
-        @TestMetadata("remap_expect_property_ref.kt")
-        public void testRemap_expect_property_ref() {
-          runTest("compiler/testData/codegen/box/multiplatform/migratedOldTests/remap_expect_property_ref.kt");
         }
       }
 

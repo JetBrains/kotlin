@@ -1,9 +1,9 @@
 // LANGUAGE: +MultiPlatformProjects
-// FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: ANY
 // FIR status: outdated code (expect and actual in the same module)
 // WITH_STDLIB
+
 // FILE: common.kt
 
 @file:JvmMultifileClass

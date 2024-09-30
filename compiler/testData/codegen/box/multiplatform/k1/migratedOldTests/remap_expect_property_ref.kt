@@ -1,10 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
-// TARGET_BACKEND: JVM_IR
-
+// TARGET_BACKEND: JVM_IR, JS_IR, WASM, NATIVE
 // IGNORE_BACKEND_K2: ANY
 
 // FILE: common.kt

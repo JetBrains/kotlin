@@ -22,6 +22,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
     val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
@@ -210,11 +211,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractFirJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
-                model("box", excludeDirs = jvmOnlyBoxTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractIrJsCodegenInlineTest>(annotations = listOf(*legacyFrontend())) {

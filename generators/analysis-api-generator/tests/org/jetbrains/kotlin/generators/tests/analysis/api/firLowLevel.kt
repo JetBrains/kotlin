@@ -393,6 +393,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "codegen/box",
                 excludeDirs = listOf(
                     "script", // script is excluded until KT-60127 is implemented
+                    "multiplatform/k1",
                 )
             )
         }
@@ -402,6 +403,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "codegen/box",
                 excludeDirs = listOf(
                     "script", // script is excluded until KT-60127 is implemented
+                    "multiplatform/k1",
                 )
             )
         }

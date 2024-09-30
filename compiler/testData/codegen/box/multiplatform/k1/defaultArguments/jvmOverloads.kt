@@ -1,8 +1,9 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: ANY
 // FIR status: outdated code (expect/actual in the same module)
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
 // FILE: J.java
 
 public class J {

@@ -1,7 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
+
 // FILE: common.kt
 
 expect annotation class A1(val x: Int, val y: String = "OK")

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+    val k1BoxTestDir = listOf("multiplatform/k1")
     val k2BoxTestDir = listOf("multiplatform/k2")
     val excludedScriptDirs = listOf("script")
     // We exclude the 'inlineScopes' directory from the IR inliner tests. The reason is that
@@ -176,7 +177,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             // ------------- Inline scopes tests duplication -------------
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
-                model("codegen/box", excludeDirs = k2BoxTestDir + excludedScriptDirs)
+                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
             testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
@@ -314,11 +315,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = excludedScriptDirs)
+                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k1BoxTestDir)
             }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
