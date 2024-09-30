@@ -8,10 +8,12 @@ fun test(action: Regular.() -> Unit) {}
 
 fun otherReceiver(action: Any.() -> Unit) {}
 
-fun Regular.usage() {
+fun usage() {
     test {
-        otherReceiver {
-            <expr>this@test.one()</expr>
+        test r2@{
+            otherReceiver {
+                <expr>this@r2.one()</expr>
+            }
         }
     }
 }
