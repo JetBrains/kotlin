@@ -448,20 +448,36 @@ And in most cases if both candidate types exist, we choose the subtype (if it's 
 
 ### Partially Constrained Lambda Analysis
 
-For `FULL` completion mode, we've got the situation when no more type information might be brought from somewhere outside, so we have
-to use only what we already got.
+In most cases, a failure to fix a type variable during `FULL` completion leads to a compilation error.
+By the point a `FULL` completion is reached,
+most of the useful type constraints that are usually available have already been added to the Constraint System;
+this is because relevant type information cannot be found "outside" calls that are completed in the `FULL` mode.
 
-And if there are still some not-yet-fixed type variables _and_ some lambdas not-yet-analyzed
-(because they contain type variables among their input types), the last resort would be to try analyzing them in some limited form.
+However, if any lambda arguments are not processed by the end of a `FULL` completion,
+helpful type information might still be present inside them;
+the only reason a lambda argument would not be processed by that point is if its input types contained not-fixed type variables in question.
+Therefore, as a last resort in such situations, we can try analyzing such lambda arguments in a limited capacity.
 
-The problem with that is that usually we don't allow using type variables inside the independent statements, while here we had to do that.
+The most common example of when such analysis is necessary is a call to a "builder-like" function:
 
-The most common example when it becomes necessary is builder functions with signature like
-`fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E>`, so in the case of independent call
-like `buildList { add("") }` the only possible way to infer the type argument is to analyze lambda, but the lambda input type contains
-the single type variable.
+```kotlin
+fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> { /* ... */ }
 
-For more information, see [pcla.md](pcla.md).
+fun main() {
+    buildList { // Ev := ????
+        add("") // Ev <: String
+    } // Ev := String
+}
+```
+
+In the example above, there is not enough information to fix `Ev` of the `buildList` call by the end of a `FULL` completion
+nor are there any additional sources of type information available aside from the `add("")` call inside the body of the lambda argument.
+
+The problem with performing such analysis naively is that we usually don't allow using type variables inside independent statements.
+In situations like the `buildList` example, we have to do that, which necessitates a separate mode of lambda analysis.
+We call this mode the _partially constrained lambda analysis_ (_PCLA_ for short).
+
+See [pcla.md](pcla.md) for more information.
 
 ## Glossary
 
