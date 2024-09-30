@@ -43,6 +43,7 @@ internal data class LoadedJsIr(
     private val linker: JsIrLinker,
     private val functionTypeInterfacePackages: FunctionTypeInterfacePackages,
 ) {
+    val irBuiltIns = linker.builtIns
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
     private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()

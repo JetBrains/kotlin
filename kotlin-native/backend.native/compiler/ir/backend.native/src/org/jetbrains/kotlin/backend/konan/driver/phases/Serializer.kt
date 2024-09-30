@@ -41,7 +41,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
                 DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 config.languageVersionSettings
             ),
-            ir.irBuiltins,
+            input.psiToIrOutput.irBuiltIns,
             compatibilityMode = CompatibilityMode.CURRENT,
             normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
             sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),

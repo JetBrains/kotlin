@@ -599,7 +599,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
 
-            val (moduleFragment, _) = generateIrForKlibSerialization(
+            val (moduleFragment, irPluginContext) = generateIrForKlibSerialization(
                 environmentForJS.project,
                 moduleSourceFiles,
                 environmentForJS.configuration,
@@ -621,6 +621,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 jsOutputName = arguments.irPerModuleOutputName,
                 icData = icData,
                 moduleFragment = moduleFragment,
+                irBuiltIns = irPluginContext.irBuiltIns,
                 diagnosticReporter = diagnosticsReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
                 wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName)

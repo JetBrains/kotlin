@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import java.io.File
 import java.util.*
 
@@ -25,8 +26,12 @@ open class WasmICContext(
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
-    override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
-        WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags)
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface =
+        WasmCompilerWithIC(mainModule, irBuiltIns, configuration, allowIncompleteImplementations, safeFragmentTags)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
         WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
@@ -46,8 +51,12 @@ class WasmICContextForTesting(
     skipLocalNames: Boolean = false,
     safeFragmentTags: Boolean = false,
 ) : WasmICContext(allowIncompleteImplementations, skipLocalNames, safeFragmentTags) {
-    override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
-        WasmCompilerWithICForTesting(mainModule, configuration, allowIncompleteImplementations)
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface =
+        WasmCompilerWithICForTesting(mainModule, irBuiltIns, configuration, allowIncompleteImplementations)
 }
 
 class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stageController), IdSignatureRetriever {

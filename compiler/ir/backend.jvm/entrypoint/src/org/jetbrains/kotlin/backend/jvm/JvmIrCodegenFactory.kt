@@ -123,6 +123,7 @@ open class JvmIrCodegenFactory(
 
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
+        val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val phaseConfig: PhaseConfig?,
         val irProviders: List<IrProvider>,
@@ -291,6 +292,7 @@ open class JvmIrCodegenFactory(
         }
         return JvmIrBackendInput(
             irModuleFragment,
+            psi2irContext.irBuiltIns,
             symbolTable,
             phaseConfig,
             irProviders,
@@ -318,7 +320,7 @@ open class JvmIrCodegenFactory(
 
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
-        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
+        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
         wholeModule.files.filterTo(moduleCopy.files) { file ->
             file.getKtFile() in moduleChunk
         }
@@ -326,7 +328,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
+        val (irModuleFragment, irBuiltIns, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -335,7 +337,7 @@ open class JvmIrCodegenFactory(
         else null
         val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmLoweringPhases)
         val context = JvmBackendContext(
-            state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions,
+            state, irBuiltIns, symbolTable, phaseConfig, extensions,
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
@@ -343,7 +345,7 @@ open class JvmIrCodegenFactory(
         }
         val generationExtensions = IrGenerationExtension.getInstances(state.project)
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
-        val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
+        val intrinsics by lazy { IrIntrinsicMethods(irBuiltIns, context.ir.symbols) }
         context.getIntrinsic = { symbol: IrFunctionSymbol ->
             intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
         }
@@ -434,6 +436,7 @@ open class JvmIrCodegenFactory(
             state,
             JvmIrBackendInput(
                 irModuleFragment,
+                irPluginContext.irBuiltIns,
                 symbolTable,
                 phaseConfig,
                 irProviders,

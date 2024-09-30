@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -36,6 +37,7 @@ data class PsiToIrInput(
 
 internal sealed class PsiToIrOutput(
         val irModule: IrModuleFragment,
+        val irBuiltIns: IrBuiltIns,
         val symbols: KonanSymbols,
 ) : KotlinBackendIrHolder {
 
@@ -45,14 +47,16 @@ internal sealed class PsiToIrOutput(
     class ForBackend(
             val irModules: Map<String, IrModuleFragment>,
             irModule: IrModuleFragment,
+            irBuiltIns: IrBuiltIns,
             symbols: KonanSymbols,
             val irLinker: KonanIrLinker,
-    ) : PsiToIrOutput(irModule, symbols)
+    ) : PsiToIrOutput(irModule, irBuiltIns, symbols)
 
     class ForKlib(
             irModule: IrModuleFragment,
+            irBuiltIns: IrBuiltIns,
             symbols: KonanSymbols,
-    ) : PsiToIrOutput(irModule, symbols)
+    ) : PsiToIrOutput(irModule, irBuiltIns, symbols)
 }
 
 // TODO: Consider component-based approach

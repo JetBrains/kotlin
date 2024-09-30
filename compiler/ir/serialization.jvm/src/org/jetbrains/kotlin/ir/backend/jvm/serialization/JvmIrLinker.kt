@@ -171,7 +171,7 @@ class JvmIrLinker(
             }
         }
 
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
         override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC

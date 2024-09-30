@@ -85,6 +85,7 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  *
  * @param moduleName The name of the module being serialized to be written into the KLIB header.
  * @param irModuleFragment The IR to be serialized into the KLIB being produced, or `null` if this is going to be a metadata-only KLIB.
+ * @param irBuiltins IR builtins for `irModuleFragment`, or `null` if this is going to be a metadata-only KLIB.
  * @param configuration Used to determine certain serialization parameters and enable/disable serialization diagnostics.
  * @param diagnosticReporter Used for reporting serialization-time diagnostics, for example, about clashing IR signatures.
  * @param compatibilityMode The information about KLIB ABI.
@@ -101,6 +102,7 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
 fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
+    irBuiltins: IrBuiltIns?,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
     compatibilityMode: CompatibilityMode,
@@ -143,7 +145,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
         createModuleSerializer(
             irDiagnosticReporter,
-            it.irBuiltins,
+            irBuiltins!!,
             compatibilityMode,
             configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
             configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),

@@ -474,7 +474,6 @@ object IrTree : AbstractTreeBuilder() {
             optInAnnotation = null
         }
         +field("name", type<Name>(), mutable = false)
-        +field("irBuiltins", type(Packages.tree, "IrBuiltIns"), mutable = false)
         +listField("files", file, mutability = MutableList)
     }
     val property: Element by element(Declaration) {

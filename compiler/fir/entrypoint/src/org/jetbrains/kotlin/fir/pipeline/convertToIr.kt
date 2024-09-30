@@ -168,9 +168,6 @@ private class Fir2IrPipeline(
         val mainIrFragment = fragments.last()
         val (irBuiltIns, symbolTable) = createBuiltInsAndSymbolTable(componentsStorage, syntheticIrBuiltinsSymbolsContainer)
 
-        mainIrFragment.initializeIrBuiltins(irBuiltIns)
-        dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltIns) }
-
         val irTypeSystemContext = typeSystemContextProvider(irBuiltIns)
 
         return Fir2IrConversionResult(
@@ -326,7 +323,7 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
-        Fir2IrConverter.evaluateConstants(mainIrFragment, componentsStorage)
+        Fir2IrConverter.evaluateConstants(mainIrFragment, componentsStorage, irBuiltIns)
     }
 
     // ------------------------------------------------------ f/o building helpers ------------------------------------------------------

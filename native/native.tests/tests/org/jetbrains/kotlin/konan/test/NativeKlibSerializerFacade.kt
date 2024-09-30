@@ -123,7 +123,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
 
         val serializerIr = KonanIrModuleSerializer(
             KtDiagnosticReporterWithImplicitIrBasedContext(inputArtifact.diagnosticReporter, configuration.languageVersionSettings),
-            inputArtifact.irModuleFragment.irBuiltins,
+            inputArtifact.irPluginContext.irBuiltIns,
             CompatibilityMode.CURRENT,
             normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
             sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
@@ -178,6 +178,7 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
     ) = serializeModuleIntoKlib(
         moduleName = inputArtifact.irModuleFragment.name.asString(),
         inputArtifact.irModuleFragment,
+        inputArtifact.irPluginContext.irBuiltIns,
         configuration,
         inputArtifact.diagnosticReporter,
         CompatibilityMode.CURRENT,

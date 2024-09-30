@@ -64,7 +64,7 @@ class IrValidatorTest {
             LockBasedStorageManager("IrValidatorTest"),
             DefaultBuiltIns.Instance
         )
-        module = IrModuleFragmentImpl(moduleDescriptor, TestIrBuiltins)
+        module = IrModuleFragmentImpl(moduleDescriptor)
     }
 
     private fun buildInvalidIrExpressionWithNoLocations(): IrElement {

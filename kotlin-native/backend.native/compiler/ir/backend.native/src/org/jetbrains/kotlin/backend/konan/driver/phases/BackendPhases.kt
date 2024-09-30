@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 internal data class SpecialBackendChecksInput(
         val irModule: IrModuleFragment,
+        val irBuiltIns: IrBuiltIns,
         val symbols: KonanSymbols,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
@@ -44,7 +46,7 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrC
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, input ->
-    SpecialBackendChecksTraversal(context, input.symbols, input.irModule.irBuiltins).lower(input.irModule)
+    SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
 }
 
 internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
@@ -55,21 +57,21 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     SpecialBackendChecksTraversal(
             context,
             input.symbols,
-            moduleFragment.irBuiltins
+            input.fir2irActualizedResult.irBuiltIns,
     ).lower(moduleFragment)
 }
 
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, IrModuleFragment>(
+internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
         name = "CopyDefaultValuesToActual",
         description = "Copy default values from expect to actual declarations",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { _, input ->
-    ExpectToActualDefaultValueCopier(input).process()
+    ExpectToActualDefaultValueCopier(input.irModule, input.irBuiltIns).process()
 }
 
-internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, symbols: KonanSymbols) {
-    runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, symbols))
+internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
+    runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {

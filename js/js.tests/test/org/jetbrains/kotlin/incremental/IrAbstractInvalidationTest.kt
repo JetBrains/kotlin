@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -96,7 +95,7 @@ abstract class IrAbstractInvalidationTest(
 
         val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
         val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
-        val (moduleFragment, _) = generateIrForKlibSerialization(
+        val (moduleFragment, irPluginContext) = generateIrForKlibSerialization(
             environment.project,
             moduleSourceFiles,
             configuration,
@@ -115,6 +114,7 @@ abstract class IrAbstractInvalidationTest(
             jsOutputName = moduleName,
             icData = icData,
             moduleFragment = moduleFragment,
+            irBuiltIns = irPluginContext.irBuiltIns,
             diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
         )
     }

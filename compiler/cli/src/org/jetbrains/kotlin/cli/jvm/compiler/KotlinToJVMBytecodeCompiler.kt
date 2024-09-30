@@ -140,7 +140,7 @@ object KotlinToJVMBytecodeCompiler {
             } else {
                 // K2/LT only, backend is always JVM-based
                 val wholeModule = (backendInput as JvmIrCodegenFactory.JvmIrBackendInput).irModuleFragment
-                val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
+                val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
                 wholeModule.files.filterTo(moduleCopy.files) { file ->
                     file.fileEntry.name in module.getSourceFiles()
                 }
@@ -318,6 +318,7 @@ object KotlinToJVMBytecodeCompiler {
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         return codegenFactory to JvmIrCodegenFactory.JvmIrBackendInput(
             irModuleFragment,
+            irBuiltIns,
             symbolTable,
             phaseConfig,
             components.irProviders,

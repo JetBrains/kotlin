@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,7 +47,7 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment) {
+internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment, private val irBuiltIns: IrBuiltIns) {
 
     // Note: local declarations aren't required here; TODO: use more lightweight index.
     private val moduleIndex = ModuleIndex(irModule)
@@ -85,7 +86,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
                 val actualForExpected = function.findActualForExpected()
                 actualForExpected.valueParameters[index].defaultValue =
-                        irModule.irBuiltins.irFactory.createExpressionBody(
+                        irBuiltIns.irFactory.createExpressionBody(
                                 defaultValue.startOffset, defaultValue.endOffset,
                                 defaultValue.expression.remapExpectValueSymbols().patchDeclarationParents(actualForExpected)
                         )

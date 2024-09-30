@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -49,10 +50,10 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
         val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
-        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.symbols)
+        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
+    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
     return psiToIrOutput to additionalOutput
 }
 
@@ -114,7 +115,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, bitcodeFile, cExportFiles)
+                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
                     // Split here
                     val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
                     val depsFilePath = config.writeSerializedDependencies
@@ -216,7 +217,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     containsStdlib = containsStdlib
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
-            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins)
+            val fragment = IrModuleFragmentImpl(input.descriptor)
             fragment.files += file
             if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
                 fragment.files += files.filter { it.isFunctionInterfaceFile }
@@ -268,8 +269,13 @@ internal data class ModuleCompilationOutput(
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
  */
-internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: java.io.File, cExportFiles: CExportFiles?) {
-    runBackendCodegen(module, cExportFiles)
+internal fun PhaseEngine<NativeGenerationState>.compileModule(
+        module: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        bitcodeFile: java.io.File,
+        cExportFiles: CExportFiles?
+) {
+    runBackendCodegen(module, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
@@ -366,8 +372,8 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     mergeDependencies(module, dependenciesToCompile)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, cExportFiles: CExportFiles?) {
-    runCodegen(module)
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
+    runCodegen(module, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
@@ -400,7 +406,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment) {
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
@@ -424,7 +430,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
-    runPhase(CodegenPhase, CodegenInput(module, lifetimes))
+    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {

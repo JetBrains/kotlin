@@ -26,7 +26,7 @@ class FragmentModuleGenerator(
         assert(ktFiles.singleOrNull { it is KtBlockCodeFragment} != null) {
             "Amongst all files passed to the FragmentModuleGenerator should be exactly one KtBlockCodeFragment"
         }
-        return IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+        return IrModuleFragmentImpl(context.moduleDescriptor).also { irModule ->
             val irDeclarationGenerator = FragmentDeclarationGenerator(context, fragmentInfo)
             ktFiles.forEach { ktFile ->
                 irModule.files.add(

@@ -234,7 +234,7 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
-            psiToIrOutput.irModule.irBuiltins,
+            psiToIrOutput.irBuiltIns,
             psiToIrOutput.irModules,
             psiToIrOutput.irLinker,
             psiToIrOutput.symbols

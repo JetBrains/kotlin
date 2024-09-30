@@ -66,6 +66,7 @@ class FirJsKlibSerializerFacade(
                 klibPath = outputFile.path,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
+                inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,

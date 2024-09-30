@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.*
@@ -70,7 +71,7 @@ interface PlatformDependentICContext {
     /**
      * It is expected that the method implementation creates a backend context and initializes all builtins and intrinsics.
      */
-    fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface
+    fun createCompiler(mainModule: IrModuleFragment, irBuiltIns: IrBuiltIns, configuration: CompilerConfiguration): IrCompilerICInterface
 
     fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File? = null): SrcFileArtifact
 
@@ -770,7 +771,7 @@ class CacheUpdater(
 
         stopwatch.startNext("Processing IR - initializing backend context")
         val mainModuleFragment = loadedIr.loadedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        val compilerForIC = icContext.createCompiler(mainModuleFragment, compilerConfiguration)
+        val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
 
         // Load declarations referenced during `context` initialization
         loadedIr.loadUnboundSymbols()
@@ -873,6 +874,7 @@ fun rebuildCacheForDirtyFiles(
 
     val compilerWithIC = JsIrCompilerWithIC(
         currentIrModule,
+        loadedIr.irBuiltIns,
         mainArguments,
         configuration,
         JsGenerationGranularity.PER_MODULE,
