@@ -245,40 +245,79 @@ For more details, see `org.jetbrains.kotlin.resolve.calls.inference.components.C
 
 ### Completion Stage
 
-At this stage, we've got:
+We have the following information at this stage:
 
-- Chosen candidates for the call and for all its call-sub-arguments
-- Single Constraint System which contains type variables from the whole call-tree with their constraints and no-yet found contradictions
-- No lambda has been analyzed yet
-- For `Independent` calls, there might be an expected type (which initially should be contributed into a relevant initial constraint)
+- a chosen candidate for each call of the call-tree
+- a single Constraint System containing type variables from the entire call-tree together with their constraints
+  - additionally, no contradictions have been found in the Constraint System yet
+- in case of an `Independent` call, possibly, an expected type (which, if present, also served as a basis for an initial constraint earlier)
 
-**Completion** is a process that for given information tries to infer the resulting type for each type variable and to analyze all the given
-lambdas.
+It's worth noting that no lambda argument from the call-tree has been analyzed yet.
 
-#### Completion Mode
+**Completion** is a process that, given the aforementioned information, tries:
+- to infer a proper type for each type variable of the call-tree
+- to analyze all lambda arguments from the call-tree
 
-Completion mode (`ConstraintSystemCompletionMode`) defines how actively/forcefully the given call is being completed
+### Completion Modes
 
-* `PARTIAL` — used for calls that are other calls arguments
-    * It prevents from fixing TV that are related somehow to return types because their actual result depends on the chosen outer call
-    * Otherwise, it tries to infer as much as possible, but doesn’t lead to reporting not-inferred-type-parameter or running PCLA lambdas
-    * On one hand, we might’ve not run that kind of completion at all, and just accumulate nested argument calls into an outer as is,
-    * but inferring something allows disambiguating outer candidates
-    * ```
-      val x: Int = 1
-      fun main() {
-          x.plus(run { x })
-      }
-      ```
-* `FULL` — used for top statement-level calls and receivers
-    * It tries to fix/analyze everything we have
-    * And start PCLA analysis if necessary
-    * Reports errors if for some TV there’s no enough information to infer them
-* `UNTIL_FIRST_LAMBDA` — used for OverloadByLambdaReturnType
-    * Similar to FULL, but stops after first lambda analyzed
-* `PCLA_POSTPONED_CALL` — see [pcla.md](pcla.md).
+Completion modes (`ConstraintSystemCompletionMode`) define how actively/forcefully a given call-tree should be completed.
 
-#### Completion Framework
+#### `FULL` completion mode
+
+Used for call-trees in top-statement and receiver positions.
+
+- tries to fix every type variable from the Constraint System
+- reports errors if there’s not enough information to fix a type variable
+- processes lambdas via [PCLA](#partially-constrained-lambda-analysis) if necessary and possible
+
+#### `PARTIAL` completion mode
+
+Used for call-trees in value-argument positions.
+
+- doesn't try to fix type variables from the Constraint System that are related to the calls' return types
+  - (fixation of such type variables depends on the results of overload resolution for the containing call)
+- doesn't report errors if there’s not enough information to fix a type variable
+  - (such a type variable could be fixed later during `FULL` completion of the top-level containing call-tree)
+- doesn't process lambdas via [PCLA](#partially-constrained-lambda-analysis) (but does process lambdas via regular lambda analysis if possible)
+  - (see [the "PCLA entry point" section of pcla.md](pcla.md#pcla-entry-point))
+
+One could argue that the `PARTIAL` mode could or/and should have been removed
+in favor of performing a single `FULL` completion of the entire top-level containing call-tree;
+however, `PARTIAL` completion of value arguments can be necessary to perform overload resolution for containing calls:
+
+```
+fun foo(arg: Int) {}
+fun foo(arg: Double) {}
+
+fun <R> run(block: () -> R): R = block()
+
+fun example(int: Int) {
+    // a candidate for this call cannot be chosen
+    // without fixing Rv to Int first
+    foo(
+        // Rv cannot be fixed to Int
+        // without analyzing this call's lambda argument first
+        run(
+            // PARTIAL completion mode makes it possible to analyze this lambda
+            // before a candidate for the `foo` call has to be chosen
+            { int }
+        )
+    )
+}
+```
+
+#### `PCLA_POSTPONED_CALL` completion mode
+
+A modification of `FULL` completion mode.
+Used for [PCLA](#partially-constrained-lambda-analysis).
+See [the "PCLA_POSTPONED_CALL completion mode" section of pcla.md](pcla.md#pcla_postponed_call-completion-mode).
+
+#### `UNTIL_FIRST_LAMBDA` completion mode
+
+A modification of `FULL` completion mode that stops after the first lambda analyzed.
+Used for overload resolution by a lambda's return type.
+
+### Completion Framework
 
 Roughly, the framework algorithm might be represented in the form of the following pseudocode, some parts of which will be described
 in the following sections
