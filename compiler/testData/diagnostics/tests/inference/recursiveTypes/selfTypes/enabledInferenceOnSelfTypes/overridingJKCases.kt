@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-59012
 // LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 // FILE: I.java
