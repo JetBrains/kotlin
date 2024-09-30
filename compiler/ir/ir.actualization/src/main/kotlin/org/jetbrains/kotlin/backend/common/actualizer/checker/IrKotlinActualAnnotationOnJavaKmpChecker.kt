@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.actualizer.checker
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.reportJavaDirectActualWithoutExpect
 import org.jetbrains.kotlin.backend.common.actualizer.reportKotlinActualAnnotationMissing
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -44,8 +43,9 @@ private fun checkAnnotationRecursive(
     topLevelExpect: IrClassSymbol
 ) {
     val hasAnnotation = actual.hasAnnotation(StandardClassIds.Annotations.KotlinActual) ||
-            actual is IrProperty && (actual.parent as? IrClass)?.isAnnotationClass == true &&
-            actual.getter?.hasAnnotation(StandardClassIds.Annotations.KotlinActual) == true
+            actual is IrProperty &&
+            actual.getter?.hasAnnotation(StandardClassIds.Annotations.KotlinActual) == true &&
+            (!actual.isVar || actual.setter?.hasAnnotation(StandardClassIds.Annotations.KotlinActual) == true)
     val expect = expectActualMap.actualToDirectExpect[actual.symbol]
     if (hasAnnotation && expect == null) {
         diagnosticsReporter.reportJavaDirectActualWithoutExpect(actual, reportOn = topLevelExpect)
