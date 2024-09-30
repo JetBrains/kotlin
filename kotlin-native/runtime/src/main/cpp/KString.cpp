@@ -64,8 +64,27 @@ auto encodingAware(KConstRef string1, KConstRef string2, F&& impl) {
     });
 }
 
+template <uint64_t maskT, uint64_t mask64, typename T>
+bool allZeroWhenMasked(const T* data, size_t size) {
+    auto vectorSize = sizeof(uint64_t) / sizeof(T);
+    if (size >= vectorSize * 2) {
+        auto misalignment = (vectorSize - reinterpret_cast<uintptr_t>(data) / sizeof(T)) % vectorSize;
+        for (; misalignment--; size--) if (*data++ & maskT) return false;
+        // now (uintptr_t)data % sizeof(uint64_t) == 0, so it's safe to cast
+        for (; size >= vectorSize; data += vectorSize, size -= vectorSize) {
+            if (*reinterpret_cast<const uint64_t*>(data) & mask64) return false;
+        }
+    }
+    while (size--) if (*data++ & maskT) return false;
+    return true;
+}
+
 bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
-    return !std::any_of(utf8, utf8 + lengthBytes, [](char c) { return c & 0x80; });
+    return allZeroWhenMasked<0x80, 0x8080808080808080ull>(utf8, lengthBytes);
+}
+
+bool utf16StringIsLatin1(const uint16_t* utf16, size_t lengthChars) {
+    return allZeroWhenMasked<0xFF00, 0xFF00FF00FF00FF00ull>(utf16, lengthChars);
 }
 
 template <typename String, typename It>
@@ -253,17 +272,9 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     });
 }
 
-static bool Kotlin_CharArray_isLatin1(KConstRef thiz, KInt start, KInt size) {
-    return std::all_of(
-        CharArrayAddressOfElementAt(thiz->array(), start),
-        CharArrayAddressOfElementAt(thiz->array(), start + size),
-        [](KChar c) { return c < 256; }
-    );
-}
-
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theCharArrayTypeInfo, "Must use a char array");
-    if (Kotlin_CharArray_isLatin1(thiz, start, size)) {
+    if (utf16StringIsLatin1(CharArrayAddressOfElementAt(thiz->array(), start), size)) {
         RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, size,
             [=](uint8_t* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
     }
