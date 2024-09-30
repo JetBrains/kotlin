@@ -19,5 +19,5 @@ public class Matchers {
 import Matchers.*
 
 fun test(list: List<String>, string: String) {
-    assertThat(list, <!DEBUG_INFO_EXPRESSION_TYPE("Matcher<kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?!>..Matcher<kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?!>?!")!>hasItem(string)<!>)
+    assertThat(list, <!DEBUG_INFO_EXPRESSION_TYPE("(Matcher<(kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?)>..Matcher<(kotlin.collections.MutableIterable<*>..kotlin.collections.Iterable<*>?)>?)")!>hasItem(string)<!>)
 }

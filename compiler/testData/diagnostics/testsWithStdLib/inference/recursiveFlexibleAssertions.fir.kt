@@ -82,5 +82,5 @@ fun test() {
         true -> Assertions.assertThat(listOf("foo")).isNotEmpty
         else -> Assertions.assertThat("bar").isEqualTo("bar")
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("AbstractAssert<*, out kotlin.Any..kotlin.Any?!> & EnumerableAssert<*, out kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?>..AbstractAssert<*, out kotlin.Any..kotlin.Any?!>? & EnumerableAssert<*, out kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?>?")!>assertion<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(AbstractAssert<*, out (kotlin.Any..kotlin.Any?)> & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>..AbstractAssert<*, out (kotlin.Any..kotlin.Any?)>? & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>?)")!>assertion<!>
 }

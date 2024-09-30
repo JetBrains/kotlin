@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.types.*
 fun ConeKotlinType.renderForDebugInfo(): String {
     val nullabilitySuffix = when {
         this is ConeErrorType -> ""
-        hasFlexibleMarkedNullability -> "!"
         isMarkedNullable -> "?"
         else -> ""
     }
@@ -34,9 +33,11 @@ fun ConeKotlinType.renderForDebugInfo(): String {
         }
         is ConeFlexibleType -> {
             buildString {
+                append("(")
                 append(lowerBound.renderForDebugInfo())
                 append("..")
                 append(upperBound.renderForDebugInfo())
+                append(")")
             }
         }
         is ConeIntersectionType -> {

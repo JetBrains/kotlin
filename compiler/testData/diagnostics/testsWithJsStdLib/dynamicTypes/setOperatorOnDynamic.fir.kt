@@ -8,6 +8,6 @@ fun foo() {
     }
     val x3: Any = arrayOf<String>().fold(js("({})")) { res, key ->
         res[key] = "hello"
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing..kotlin.Any?!")!>res<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Nothing..kotlin.Any?)")!>res<!>
     }
 }

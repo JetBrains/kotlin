@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57979
 
 // FILE: J.java
