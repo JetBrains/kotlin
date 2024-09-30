@@ -101,6 +101,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("classWithTypeParamsAndSupertypes.kt")
+  public void testClassWithTypeParamsAndSupertypes() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classWithTypeParamsAndSupertypes.kt");
+  }
+
+  @Test
   @TestMetadata("delegateField.kt")
   public void testDelegateField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/delegateField.kt");
