@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
 // ISSUE: KT-59766
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
 // FULL_JDK
 
 // MODULE: lib-jvm

@@ -1,6 +1,6 @@
-// ISSUE: KT-70894
-// TARGET_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
+// ISSUE: KT-70894
 
 // MODULE: common
 expect class Foo1() {

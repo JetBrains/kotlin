@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS_IR, JS_IR_ES6, WASM
-// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
+// IGNORE_BACKEND_K1: ANY
 // IGNORE_REASON: multimodule MPP tests are not supported in K1
 // ISSUE: KT-59613
 

@@ -11,7 +11,6 @@ open class Base2 : Base1()
 // MODULE: lib-common(dep)
 // FILE: lib-common.kt
 
-
 open expect class BaseAlias() : Base1
 
 open class Child: BaseAlias()

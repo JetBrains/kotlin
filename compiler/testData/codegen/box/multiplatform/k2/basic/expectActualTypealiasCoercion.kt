@@ -1,7 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: NATIVE
-
 // LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
+// TARGET_BACKEND: JVM_IR, NATIVE
 // WITH_STDLIB
 
 // MODULE: common

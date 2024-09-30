@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common0
 // TARGET_PLATFORM: Common
 // FILE: common0.kt

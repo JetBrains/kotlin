@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
-// FULL_JDK
+// TARGET_BACKEND: JVM_IR
 // ISSUE: KT-63574
+// FULL_JDK
 
 // MODULE: commonJvm
 // FILE: common.kt

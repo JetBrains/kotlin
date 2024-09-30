@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM
 // ISSUE: KT-20306
 
 // MODULE: m1-common

@@ -1,6 +1,6 @@
-// ISSUE: KT-51969
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
+// ISSUE: KT-51969
 // WITH_STDLIB
 
 // MODULE: common

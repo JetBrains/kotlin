@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM
 
 // MODULE: common0
 // TARGET_PLATFORM: Common

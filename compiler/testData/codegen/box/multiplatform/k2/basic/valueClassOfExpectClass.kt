@@ -1,6 +1,6 @@
-// ISSUE: KT-63638
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
+// ISSUE: KT-63638
 // WITH_STDLIB
 
 // MODULE: common

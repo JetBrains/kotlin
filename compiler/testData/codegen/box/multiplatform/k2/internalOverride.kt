@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common
 // FILE: common.kt
 
@@ -9,7 +10,6 @@ open class A {
 open class B {
     open internal fun foo() = "B"
 }
-
 
 // MODULE: middle()()(common)
 // FILE: middle.kt

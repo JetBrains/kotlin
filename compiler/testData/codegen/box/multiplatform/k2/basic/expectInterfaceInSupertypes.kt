@@ -1,5 +1,6 @@
-// WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
+// WITH_STDLIB
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt

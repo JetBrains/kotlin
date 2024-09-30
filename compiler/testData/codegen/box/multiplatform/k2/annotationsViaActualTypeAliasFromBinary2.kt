@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
-// WITH_REFLECT
+// TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
+// WITH_REFLECT
 
 // MODULE: lib1
 // FILE: Jnno.java

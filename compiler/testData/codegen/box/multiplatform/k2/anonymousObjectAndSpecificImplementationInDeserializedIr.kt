@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
-// WITH_STDLIB
 // ISSUE: KT-58252
+// WITH_STDLIB
 
 // MODULE: lib-common
 // FILE: common.kt

@@ -1,6 +1,6 @@
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// LANGUAGE: +MultiPlatformProjects
 // JVM_ABI_K1_K2_DIFF: KT-67645
 // PREFER_IN_TEST_OVER_STDLIB
 

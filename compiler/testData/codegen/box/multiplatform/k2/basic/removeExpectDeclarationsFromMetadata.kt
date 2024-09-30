@@ -1,7 +1,7 @@
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57250
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalMultiplatform
-// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // TARGET_PLATFORM: Common

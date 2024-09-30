@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common
 // FILE: common.kt
 

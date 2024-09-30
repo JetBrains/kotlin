@@ -1,7 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_LIGHT_TREE
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_LIGHT_TREE
+
 // MODULE: common
 // FILE: common.kt
 

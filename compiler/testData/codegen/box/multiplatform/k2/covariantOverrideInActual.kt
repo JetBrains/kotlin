@@ -3,10 +3,8 @@
 // MODULE: lib-common
 // FILE: common.kt
 
-
 abstract expect class Base
 expect class Child : Base
-
 
 // MODULE: lib()()(lib-common)
 // FILE: platform.kt

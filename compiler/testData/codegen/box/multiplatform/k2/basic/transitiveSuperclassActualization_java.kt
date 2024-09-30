@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
 // ISSUE: KT-59356
 
 // MODULE: common

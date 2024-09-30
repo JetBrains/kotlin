@@ -1,6 +1,6 @@
-// WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-51156
+// WITH_STDLIB
 
 // MODULE: common
 // FILE: common.kt

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JVM, JVM_IR
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: JVM, JVM_IR
 
 // MODULE: common
 // FILE: common.kt

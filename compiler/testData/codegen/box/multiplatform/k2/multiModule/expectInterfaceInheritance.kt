@@ -1,6 +1,6 @@
-// ISSUE: KT-56398
-// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM
+// ISSUE: KT-56398
 
 // MODULE: common
 // TARGET_PLATFORM: Common

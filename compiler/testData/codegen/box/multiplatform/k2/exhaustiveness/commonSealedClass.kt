@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM
 // ISSUE: KT-44474
 
 // MODULE: m1-common

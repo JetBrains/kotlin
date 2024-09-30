@@ -1,6 +1,6 @@
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
 // JVM_ABI_K1_K2_DIFF: KT-67645
-// LANGUAGE: +MultiPlatformProjects
 // PREFER_IN_TEST_OVER_STDLIB
 
 // MODULE: common

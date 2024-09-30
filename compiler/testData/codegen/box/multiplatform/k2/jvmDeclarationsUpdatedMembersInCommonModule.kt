@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK
 

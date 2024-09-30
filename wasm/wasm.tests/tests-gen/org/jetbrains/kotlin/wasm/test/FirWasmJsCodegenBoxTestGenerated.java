@@ -27943,12 +27943,6 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
-      @TestMetadata("directJavaActualization.kt")
-      public void testDirectJavaActualization() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
-      }
-
-      @Test
       @TestMetadata("enumStaticMethods.kt")
       public void testEnumStaticMethods() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/enumStaticMethods.kt");

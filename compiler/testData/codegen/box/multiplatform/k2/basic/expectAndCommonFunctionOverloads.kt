@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58896
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt

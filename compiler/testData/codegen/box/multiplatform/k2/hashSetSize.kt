@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
 
 // MODULE: common
 // FILE: common.kt

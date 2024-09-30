@@ -1,5 +1,5 @@
-// ISSUE: KT-68801
 // LANGUAGE: +MultiPlatformProjects
+// ISSUE: KT-68801
 
 // MODULE: common
 // FILE: common.kt
