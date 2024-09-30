@@ -158,7 +158,7 @@ private fun decimalCount64High(value: ULong): Int {
 
 private const val MAX_DOUBLE_LENGTH = 28
 
-internal fun dtoa(value: Double): String {
+internal fun dtoa(value: Double, isSinglePrecision: Boolean): String {
     if (value == 0.0) {
         return if (value.toRawBits() == 0L) "0.0" else "-0.0"
     }
@@ -169,13 +169,13 @@ internal fun dtoa(value: Double): String {
     }
 
     val buf = WasmCharArray(MAX_DOUBLE_LENGTH)
-    val size = dtoaCore(buf, value)
+    val size = dtoaCore(buf, value, isSinglePrecision)
     val ret = WasmCharArray(size)
     buf.copyInto(ret, 0, 0, size)
     return ret.createString()
 }
 
-private fun dtoaCore(buffer: WasmCharArray, valueInp: Double): Int {
+private fun dtoaCore(buffer: WasmCharArray, valueInp: Double, isSinglePrecision: Boolean): Int {
     var value = valueInp
 
     val sign = (value < 0).toInt()
@@ -183,7 +183,7 @@ private fun dtoaCore(buffer: WasmCharArray, valueInp: Double): Int {
         value = -value
         buffer.set(0, CharCodes.MINUS.code.toChar())
     }
-    var len = grisu2(value, buffer, sign)
+    var len = grisu2(value, buffer, sign, isSinglePrecision)
     len = prettify(BufferWithOffset(buffer, sign), len - sign, _K)
     return len + sign
 }
@@ -235,15 +235,36 @@ private val FRC_POWERS = longArrayOf(
     0x9E19DB92B4E31BA9UL.toLong(), 0xEB96BF6EBADF77D9UL.toLong(), 0xAF87023B9BF0EE6BUL.toLong()
 )
 
-private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int): Int {
-    // frexp routine
-    val uv = value.toBits()
-    var exp = ((uv and 0x7FF0000000000000) ushr 52).toInt()
-    val sid = uv and 0x000FFFFFFFFFFFFF
-    var frc = ((exp != 0).toLong() shl 52) + sid
-    exp = (if (exp != 0) exp else 1) - (0x3FF + 52)
+private const val SINGLE_SIGNIFICANT_MASK = 0x007FFFFF
+private const val SINGLE_EXPONENT_MASK = 0x7F800000
+private const val SINGLE_SIGNIFICANT_SIZE = 23  // Excluding hidden bit
+private const val SINGLE_EXPONENT_BIAS = 0x7F + SINGLE_SIGNIFICANT_SIZE
 
-    normalizedBoundaries(frc, exp)
+private const val DOUBLE_SIGNIFICANT_MASK = 0x000FFFFFFFFFFFFFL
+private const val DOUBLE_EXPONENT_MASK = 0x7FF0000000000000L
+private const val DOUBLE_SIGNIFICANT_SIZE = 52  // Excluding hidden bit
+private const val DOUBLE_EXPONENT_BIAS = 0x3FF + DOUBLE_SIGNIFICANT_SIZE
+
+private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int, isSinglePrecision: Boolean): Int {
+    var frc: Long
+    var exp: Int
+
+    // frexp routine
+    if (isSinglePrecision) {
+        val uv = value.toFloat().toBits()
+        exp = (uv and SINGLE_EXPONENT_MASK) ushr SINGLE_SIGNIFICANT_SIZE
+        val sid = uv and SINGLE_SIGNIFICANT_MASK
+        frc = ((exp != 0).toLong() shl SINGLE_SIGNIFICANT_SIZE) + sid
+        exp = (if (exp != 0) exp else 1) - SINGLE_EXPONENT_BIAS
+    } else {
+        val uv = value.toBits()
+        exp = ((uv and DOUBLE_EXPONENT_MASK) ushr DOUBLE_SIGNIFICANT_SIZE).toInt()
+        val sid = uv and DOUBLE_SIGNIFICANT_MASK
+        frc = ((exp != 0).toLong() shl DOUBLE_SIGNIFICANT_SIZE) + sid
+        exp = (if (exp != 0) exp else 1) - DOUBLE_EXPONENT_BIAS
+    }
+
+    normalizedBoundaries(frc, exp, isSinglePrecision)
     getCachedPower(_exp)
 
     // normalize
@@ -288,14 +309,15 @@ private fun umul64e(e1: Int, e2: Int): Int {
     return e1 + e2 + 64 // where 64 is significand size
 }
 
-private fun normalizedBoundaries(f: Long, e: Int) {
+private fun normalizedBoundaries(f: Long, e: Int, isSinglePrecision: Boolean) {
     var frc = (f shl 1) + 1
     var exp = e - 1
     val off = frc.countLeadingZeroBits()
     frc = frc shl off
     exp -= off
 
-    val m = 1 + (f == 0x0010000000000000).toInt()
+    val smallestNormalizedSignificand: Long = if (isSinglePrecision) 0x00800000 else 0x0010000000000000
+    val m = 1 + (f == smallestNormalizedSignificand).toInt()
 
     _frc_plus = frc
     _frc_minus = ((f shl m) - 1) shl e - m - exp
