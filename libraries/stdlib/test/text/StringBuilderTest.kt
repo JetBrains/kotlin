@@ -323,8 +323,8 @@ class StringBuilderTest {
     @Test
     fun lastIndexOf() {
         StringBuilder("my lastIndexOf test").let { sb ->
-            assertEquals(sb.length, sb.lastIndexOf(""))
-            assertEquals(sb.length, sb.lastIndexOf("", 100))
+            assertEquals(sb.toString().lastIndexOf(""), sb.lastIndexOf(""))
+            assertEquals(sb.toString().lastIndexOf("", 100), sb.lastIndexOf("", 100))
             assertEquals(5, sb.lastIndexOf("", 5))
             assertEquals(0, sb.lastIndexOf("", 0))
             assertEquals(-1, sb.lastIndexOf("", -100))

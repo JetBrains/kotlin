@@ -41,6 +41,10 @@ namespace {
 static constexpr const uint32_t MAX_STRING_SIZE =
     static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
+template <StringEncoding encoding>
+static constexpr const bool isFixedLengthEncoding =
+    std::is_convertible_v<StringData<encoding>&, FixedLengthUnitStringData<encoding, typename StringData<encoding>::unit>&>;
+
 size_t encodingUnitSize(StringEncoding encoding) {
     switch (encoding) {
     case StringEncoding::kUTF16: return sizeof(typename StringData<StringEncoding::kUTF16>::unit);
@@ -236,9 +240,11 @@ extern "C" KInt Kotlin_String_getStringLength(KConstRef thiz) {
 extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, KChar newChar) {
     return encodingAware(thizPtr, [=](auto thiz) {
         if (!thiz.canEncode(oldChar)) RETURN_OBJ(const_cast<KRef>(thizPtr));
-        if (thiz.encoding == StringEncoding::kLatin1 && thiz.canEncode(newChar)) {
-            RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, thiz.sizeInUnits(),
-                [=](uint8_t* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+        if constexpr (thiz.encoding != StringEncoding::kUTF16 && isFixedLengthEncoding<thiz.encoding>) {
+            if (thiz.canEncode(newChar)) {
+                RETURN_RESULT_OF(createString<thiz.encoding>, thiz.sizeInUnits(),
+                    [=](auto* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+            }
         }
         RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars(),
             [=](KChar* out) { std::replace_copy(thiz.begin(), thiz.end(), out, oldChar, newChar); });
@@ -284,7 +290,7 @@ extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, K
         [=](KChar* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
 }
 
-static void Kotlin_String_overwriteArray(KConstRef string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
+extern "C" OBJ_GETTER(Kotlin_String_toCharArray, KConstRef string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
     encodingAware(string, [=](auto string) {
         auto it = string.begin() + start;
         auto out = CharArrayAddressOfElementAt(destination->array(), destinationOffset);
@@ -294,10 +300,6 @@ static void Kotlin_String_overwriteArray(KConstRef string, KRef destination, KIn
             std::copy_n(it, size, out);
         }
     });
-}
-
-extern "C" OBJ_GETTER(Kotlin_String_toCharArray, KConstRef string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
-    Kotlin_String_overwriteArray(string, destination, destinationOffset, start, size);
     RETURN_OBJ(destination);
 }
 
@@ -372,26 +374,6 @@ extern "C" OBJ_GETTER(Kotlin_String_unsafeStringToUtf8, KConstRef thiz, KInt sta
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringToUtf8OrThrow, KConstRef thiz, KInt start, KInt size) {
     RETURN_RESULT_OF(unsafeConvertToUTF8<KStringConversionMode::CHECKED>, thiz, start, size);
-}
-
-extern "C" KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KConstRef fromString, KInt sourceIndex, KInt count) {
-    Kotlin_String_overwriteArray(fromString, builder, distIndex, sourceIndex, count);
-    return count;
-}
-
-extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
-    auto toArray = builder->array();
-    RuntimeAssert(toArray->count_ >= static_cast<uint32_t>(11 + position), "must be true");
-    char cstring[12];
-    auto length = std::snprintf(cstring, sizeof(cstring), "%d", value);
-    RuntimeAssert(length >= 0, "This should never happen"); // may be overkill
-    RuntimeAssert(static_cast<size_t>(length) < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
-    auto* from = &cstring[0];
-    auto* to = CharArrayAddressOfElementAt(toArray, position);
-    while (*from) {
-        *to++ = static_cast<KChar>(*from++); // always ASCII
-    }
-    return from - cstring;
 }
 
 static std::optional<KInt> Kotlin_String_cachedHashCode(KConstRef thiz) {
@@ -531,7 +513,7 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
         return *cached;
     }
     KInt result = encodingAware(thiz, [](auto thiz) {
-        if constexpr (thiz.encoding == StringEncoding::kUTF16 || thiz.encoding == StringEncoding::kLatin1) {
+        if constexpr (isFixedLengthEncoding<thiz.encoding>) {
             return polyHash(thiz.sizeInUnits(), thiz.begin().ptr());
         } else {
             return polyHash_naive(thiz.begin(), thiz.end());
@@ -621,3 +603,97 @@ std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noex
 template std::string kotlin::to_string<KStringConversionMode::CHECKED>(KConstRef, size_t, size_t);
 template std::string kotlin::to_string<KStringConversionMode::UNCHECKED>(KConstRef, size_t, size_t) noexcept;
 template std::string kotlin::to_string<KStringConversionMode::REPLACE_INVALID>(KConstRef, size_t, size_t) noexcept;
+
+// StringBuilder.kt
+
+extern "C" OBJ_GETTER(Kotlin_StringBuilder_unsafeStringCopy, KConstRef thiz, KInt length) {
+    return encodingAware(thiz, [=](auto thiz) {
+        if constexpr (isFixedLengthEncoding<thiz.encoding>) {
+            RETURN_RESULT_OF(createString<thiz.encoding>, length,
+                [=](auto* out) { std::copy(thiz.begin().ptr(), thiz.end().ptr(), out); });
+        } else {
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, length,
+                [=](auto* out) { std::copy(thiz.begin(), thiz.end(), out); });
+        }
+    });
+}
+
+template <StringEncoding encoding>
+static typename StringData<encoding>::unit* unsafeWritableStringData(const StringData<encoding>& string, KInt index) {
+    return const_cast<typename StringData<encoding>::unit*>((string.begin() + index).ptr());
+}
+
+template <typename F /* = R(FixedLengthUnitStringData<*, *>) */>
+static auto fixedLengthEncodingAware(KConstRef string, F&& impl) {
+    return encodingAware(string, [&](auto string) {
+        if constexpr (isFixedLengthEncoding<string.encoding>)
+            return impl(string);
+        else
+            ThrowIllegalArgumentException();
+    });
+}
+
+static OBJ_GETTER(Kotlin_StringBuilder_unsafeStringSetUTF16Array, KRef thizPtr, KInt index, const KChar* array, size_t size) {
+    if (size == 0) RETURN_OBJ(thizPtr);
+    return fixedLengthEncodingAware(thizPtr, [=](auto thiz) {
+        if (thiz.encoding == StringEncoding::kUTF16 || utf16StringIsLatin1(array, size)) {
+            std::copy_n(array, size, unsafeWritableStringData(thiz, index));
+            RETURN_OBJ(thizPtr);
+        }
+        RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars(), [=](KChar* out) {
+            std::copy_n(thiz.begin(), thiz.sizeInChars(), out);
+            std::copy_n(array, size, out + index);
+        });
+    });
+}
+
+extern "C" OBJ_GETTER(Kotlin_StringBuilder_unsafeStringSetChar, KRef thiz, KInt index, KChar value) {
+    RETURN_RESULT_OF(Kotlin_StringBuilder_unsafeStringSetUTF16Array, thiz, index, &value, 1);
+}
+
+extern "C" OBJ_GETTER(Kotlin_StringBuilder_unsafeStringSetArray, KRef thiz, KInt index, KConstRef value, KInt start, KInt end) {
+    RETURN_RESULT_OF(Kotlin_StringBuilder_unsafeStringSetUTF16Array, thiz, index,
+                     CharArrayAddressOfElementAt(value->array(), start), end - start);
+}
+
+extern "C" OBJ_GETTER(Kotlin_StringBuilder_unsafeStringSetString, KRef thizPtr, KInt index, KConstRef value, KInt start, KInt end) {
+    if (start == end) RETURN_OBJ(thizPtr);
+    return fixedLengthEncodingAware(thizPtr, [=](auto thiz) {
+        return encodingAware(value, [=](auto value) {
+            auto a = value.begin() + start;
+            auto out = unsafeWritableStringData(thiz, index);
+            if constexpr (thiz.encoding == value.encoding) {
+                // `thiz` and `value` could be the same string, in which case the ranges may overlap.
+                memmove(out, a.ptr(), (end - start) * sizeof(*out));
+                RETURN_OBJ(thizPtr);
+            } else if constexpr (thiz.encoding == StringEncoding::kUTF16) {
+                std::copy_n(a, end - start, out);
+                RETURN_OBJ(thizPtr);
+            } else if (value.encoding == StringEncoding::kUTF16 && utf16StringIsLatin1(a.ptr(), end - start)) {
+                std::copy_n(a.ptr(), end - start, out);
+                RETURN_OBJ(thizPtr);
+            } else {
+                RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars(), [=](KChar* out) {
+                    std::copy_n(thiz.begin(), thiz.sizeInChars(), out);
+                    std::copy_n(value.begin() + start, end - start, out + index);
+                });
+            }
+        });
+    });
+}
+
+extern "C" KInt Kotlin_StringBuilder_unsafeStringSetInt(KRef thiz, KInt index, KInt value) {
+    char cstring[12];
+    auto length = std::snprintf(cstring, sizeof(cstring), "%d", value);
+    RuntimeAssert(length >= 0, "This should never happen"); // may be overkill
+    RuntimeAssert(static_cast<size_t>(length) < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
+    encodingAware(thiz, [&](auto thiz) {
+        auto from = &cstring[0];
+        auto to = unsafeWritableStringData(thiz, index);
+        memmove(to + length, to, length * sizeof(*to));
+        while (*from) {
+            *to++ = static_cast<KChar>(*from++); // always ASCII
+        }
+    });
+    return length;
+}

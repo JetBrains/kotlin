@@ -79,10 +79,22 @@ public fun StringBuilder.appendln(it: Any?): StringBuilder = appendLine(it)
 @Deprecated("Use appendLine instead", ReplaceWith("appendLine()"))
 public fun StringBuilder.appendln(): StringBuilder = appendLine()
 
-@GCUnsafeCall("Kotlin_StringBuilder_insertString")
+@GCUnsafeCall("Kotlin_StringBuilder_unsafeStringCopy")
 @Escapes.Nothing
-internal actual external fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+internal actual external fun unsafeStringCopy(string: String, length: Int): String
 
-@GCUnsafeCall("Kotlin_StringBuilder_insertInt")
+@GCUnsafeCall("Kotlin_StringBuilder_unsafeStringSetChar")
 @Escapes.Nothing
-internal actual external fun insertInt(array: CharArray, start: Int, value: Int): Int
+internal actual external fun unsafeStringSetChar(string: String, index: Int, c: Char): String
+
+@GCUnsafeCall("Kotlin_StringBuilder_unsafeStringSetArray")
+@Escapes.Nothing
+internal actual external fun unsafeStringSetArray(string: String, index: Int, value: CharArray, start: Int, end: Int): String
+
+@GCUnsafeCall("Kotlin_StringBuilder_unsafeStringSetString")
+@Escapes.Nothing
+internal actual external fun unsafeStringSetString(string: String, index: Int, value: String, start: Int, end: Int): String
+
+@GCUnsafeCall("Kotlin_StringBuilder_unsafeStringSetInt")
+@Escapes.Nothing
+internal actual external fun unsafeStringSetInt(string: String, index: Int, value: Int): Int

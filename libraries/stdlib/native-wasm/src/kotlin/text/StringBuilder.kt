@@ -10,28 +10,31 @@ package kotlin.text
  *
  * String builder can be used to efficiently perform multiple string manipulation operations.
  */
-public actual class StringBuilder
-private constructor (private var array: CharArray) : CharSequence, Appendable {
+public actual class StringBuilder : CharSequence, Appendable {
+    private var array: String
+    private var _length: Int
 
     /** Constructs an empty string builder. */
     public actual constructor() : this(10)
 
     /** Constructs an empty string builder with the specified initial [capacity]. */
-    public actual constructor(capacity: Int) : this(CharArray(capacity))
+    public actual constructor(capacity: Int) {
+        _length = 0
+        array = unsafeStringCopy("", capacity)
+    }
 
     /** Constructs a string builder that contains the same characters as the specified [content] string. */
-    public actual constructor(content: String) : this(content.toCharArray()) {
-        _length = array.size
+    public actual constructor(content: String) {
+        _length = content.length
+        array = unsafeStringCopy(content, _length)
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
-    public actual constructor(content: CharSequence): this(content.length) {
+    public actual constructor(content: CharSequence) : this(content.length) {
         append(content)
     }
 
     // Of CharSequence.
-    private var _length: Int = 0
-
     actual override val length: Int
         get() = _length
 
@@ -40,23 +43,21 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
         return array[index]
     }
 
-    actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = substring(startIndex, endIndex)
+    actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+        substring(startIndex, endIndex)
 
-    // Of Appenable.
+    // Of Appendable.
     actual override fun append(value: Char) : StringBuilder {
         ensureExtraCapacity(1)
-        array[_length++] = value
+        array = unsafeStringSetChar(array, _length++, value)
         return this
     }
 
-    actual override fun append(value: CharSequence?): StringBuilder {
-        // Kotlin/JVM processes null as if the argument was "null" char sequence.
-        val toAppend = value ?: "null"
-        return append(toAppend, 0, toAppend.length)
-    }
+    actual override fun append(value: CharSequence?): StringBuilder =
+        if (value == null) append(null as String?) else appendRange(value, 0, value.length)
 
     actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder =
-            this.appendRange(value ?: "null", startIndex, endIndex)
+        if (value == null) append(null as String?) else appendRange(value, startIndex, endIndex)
 
     /**
      * Reverses the contents of this string builder and returns this instance.
@@ -79,23 +80,22 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
         var allowFrontSurrogate = true
         var allowEndSurrogate = true
         while (front < _length / 2) {
-
-            var frontTrailingChar = array[front + 1]
-            var endLeadingChar = array[end - 1]
-            var surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
+            val frontTrailingChar = array[front + 1]
+            val endLeadingChar = array[end - 1]
+            val surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
             if (surrogateAtFront && _length < 3) {
                 return this
             }
-            var surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
+            val surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
             allowFrontSurrogate = true
             allowEndSurrogate = true
             when {
                 surrogateAtFront && surrogateAtEnd -> {
                     // Both surrogates - just exchange them.
-                    array[end] = frontTrailingChar
-                    array[end - 1] = frontLeadingChar
-                    array[front] = endLeadingChar
-                    array[front + 1] = endTrailingChar
+                    unsafeStringSetChar(array, end, frontTrailingChar)
+                    unsafeStringSetChar(array, end - 1, frontLeadingChar)
+                    unsafeStringSetChar(array, front, endLeadingChar)
+                    unsafeStringSetChar(array, front + 1, endTrailingChar)
                     frontLeadingChar = array[front + 2]
                     endTrailingChar = array[end - 2]
                     front++
@@ -103,24 +103,24 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
                 }
                 !surrogateAtFront && !surrogateAtEnd -> {
                     // Neither surrogates - exchange only front/end.
-                    array[end] = frontLeadingChar
-                    array[front] = endTrailingChar
+                    unsafeStringSetChar(array, end, frontLeadingChar)
+                    unsafeStringSetChar(array, front, endTrailingChar)
                     frontLeadingChar = frontTrailingChar
                     endTrailingChar = endLeadingChar
                 }
                 surrogateAtFront && !surrogateAtEnd -> {
                     // Surrogate only at the front -
                     // move the low part, the high part will be moved as a usual character on the next iteration.
-                    array[end] = frontTrailingChar
-                    array[front] = endTrailingChar
+                    unsafeStringSetChar(array, end, frontTrailingChar)
+                    unsafeStringSetChar(array, front, endTrailingChar)
                     endTrailingChar = endLeadingChar
                     allowFrontSurrogate = false
                 }
                 !surrogateAtFront && surrogateAtEnd -> {
                     // Surrogate only at the end -
                     // move the high part, the low part will be moved as a usual character on the next iteration.
-                    array[end] = frontLeadingChar
-                    array[front] = endLeadingChar
+                    unsafeStringSetChar(array, end, frontLeadingChar)
+                    unsafeStringSetChar(array, front, endLeadingChar)
                     frontLeadingChar = frontTrailingChar
                     allowEndSurrogate = false
                 }
@@ -129,7 +129,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
             end--
         }
         if (_length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
-            array[end] = if (allowFrontSurrogate) endTrailingChar else frontLeadingChar
+            unsafeStringSetChar(array, end, if (allowFrontSurrogate) endTrailingChar else frontLeadingChar)
         }
         return this
     }
@@ -142,15 +142,13 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public actual fun append(value: Any?): StringBuilder = append(value.toString())
 
-    // TODO: optimize the append overloads with primitive value!
-
     /**
      * Appends the string representation of the specified boolean [value] to this string builder and returns this instance.
      *
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    public actual fun append(value: Boolean): StringBuilder = append(value.toString())
+    public actual fun append(value: Boolean): StringBuilder = append(if (value) "true" else "false")
 
     /**
      * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
@@ -158,7 +156,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    public fun append(value: Byte): StringBuilder = append(value.toString())
+    public fun append(value: Byte): StringBuilder = append(value.toInt())
 
     /**
      * Appends the string representation of the specified short [value] to this string builder and returns this instance.
@@ -166,7 +164,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    public fun append(value: Short): StringBuilder = append(value.toString())
+    public fun append(value: Short): StringBuilder = append(value.toInt())
 
     /**
      * Appends the string representation of the specified int [value] to this string builder and returns this instance.
@@ -176,9 +174,11 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public actual fun append(value: Int): StringBuilder {
         ensureExtraCapacity(11)
-        _length += insertInt(array, _length, value)
+        _length += unsafeStringSetInt(array, _length, value)
         return this
     }
+
+    // TODO: optimize the append overloads with primitive value!
 
     /**
      * Appends the string representation of the specified long [value] to this string builder and returns this instance.
@@ -210,9 +210,10 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Characters are appended in order, starting at the index 0.
      */
     public actual fun append(value: CharArray): StringBuilder {
-        ensureExtraCapacity(value.size)
-        value.copyInto(array, _length)
-        _length += value.size
+        val valueSize = value.size
+        ensureExtraCapacity(valueSize)
+        array = unsafeStringSetArray(array, _length, value, 0, valueSize)
+        _length += valueSize
         return this
     }
 
@@ -223,8 +224,10 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public actual fun append(value: String?): StringBuilder {
         val toAppend = value ?: "null"
-        ensureExtraCapacity(toAppend.length)
-        _length += insertString(array, _length, toAppend)
+        val toAppendLength = toAppend.length
+        ensureExtraCapacity(toAppendLength)
+        array = unsafeStringSetString(array, _length, toAppend, 0, toAppendLength)
+        _length += toAppendLength
         return this
     }
 
@@ -233,7 +236,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * The capacity is the maximum length this string builder can have before an allocation occurs.
      */
-    public actual fun capacity(): Int = array.size
+    public actual fun capacity(): Int = array.length
 
     /**
      * Ensures that the capacity of this string builder is at least equal to the specified [minimumCapacity].
@@ -242,8 +245,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Otherwise, this method takes no action and simply returns.
      */
     public actual fun ensureCapacity(minimumCapacity: Int) {
-        if (minimumCapacity <= array.size) return
-        ensureCapacityInternal(minimumCapacity)
+        if (minimumCapacity <= array.length) return
+        array = unsafeStringCopy(array, AbstractList.newCapacity(array.length, minimumCapacity))
     }
 
     /**
@@ -252,9 +255,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    public actual fun indexOf(string: String): Int {
-        return (this as CharSequence).indexOf(string, startIndex = 0, ignoreCase = false)
-    }
+    public actual fun indexOf(string: String): Int = indexOf(string, startIndex = 0)
 
     /**
      * Returns the index within this string builder of the first occurrence of the specified [string],
@@ -264,8 +265,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     @SinceKotlin("1.4")
     public actual fun indexOf(string: String, startIndex: Int): Int {
-        if (string.isEmpty() && startIndex >= _length) return _length
-        return (this as CharSequence).indexOf(string, startIndex, ignoreCase = false)
+        val result = array.indexOf(string, startIndex, ignoreCase = false)
+        return if (result < 0 || result + string.length <= _length) result else -1
     }
 
     /**
@@ -275,10 +276,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    public actual fun lastIndexOf(string: String): Int {
-        if (string.isEmpty()) return _length
-        return (this as CharSequence).lastIndexOf(string, startIndex = lastIndex, ignoreCase = false)
-    }
+    public actual fun lastIndexOf(string: String): Int =
+        array.lastIndexOf(string, lastIndex, ignoreCase = false)
 
     /**
      * Returns the index within this string builder of the last occurrence of the specified [string],
@@ -287,12 +286,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    public actual fun lastIndexOf(string: String, startIndex: Int): Int {
-        if (string.isEmpty() && startIndex >= _length) return _length
-        return (this as CharSequence).lastIndexOf(string, startIndex, ignoreCase = false)
-    }
-
-    // TODO: optimize the insert overloads with primitive value!
+    public actual fun lastIndexOf(string: String, startIndex: Int): Int =
+        array.lastIndexOf(string, startIndex.coerceAtMost(_length), ignoreCase = false)
 
     /**
      * Inserts the string representation of the specified boolean [value] into this string builder at the specified [index] and returns this instance.
@@ -302,7 +297,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    public actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
+    public actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, if (value) "true" else "false")
 
     /**
      * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
@@ -312,7 +307,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
+    public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toInt())
 
     /**
      * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
@@ -322,7 +317,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
+    public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toInt())
 
     /**
      * Inserts the string representation of the specified int [value] into this string builder at the specified [index] and returns this instance.
@@ -332,7 +327,14 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    public actual fun insert(index: Int, value: Int): StringBuilder = insert(index, value.toString())
+    public actual fun insert(index: Int, value: Int): StringBuilder {
+        AbstractList.checkPositionIndex(index, _length)
+        ensureExtraCapacity(11)
+        _length += unsafeStringSetInt(array, index, value)
+        return this
+    }
+
+    // TODO: optimize the insert overloads with primitive value!
 
     /**
      * Inserts the string representation of the specified long [value] into this string builder at the specified [index] and returns this instance.
@@ -372,11 +374,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     public actual fun insert(index: Int, value: Char): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(1)
-        val newLastIndex = lastIndex + 1
-        for (i in newLastIndex downTo index + 1) {
-            array[i] = array[i - 1]
-        }
-        array[index] = value
+        unsafeStringSetString(array, index + 1, array, index, _length)
+        array = unsafeStringSetChar(array, index, value)
         _length++
         return this
     }
@@ -390,12 +389,11 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public actual fun insert(index: Int, value: CharArray): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
-        ensureExtraCapacity(value.size)
-
-        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + value.size)
-        value.copyInto(array, destinationOffset = index)
-
-        _length += value.size
+        val valueSize = value.size
+        ensureExtraCapacity(valueSize)
+        unsafeStringSetString(array, index + valueSize, array, index, _length)
+        array = unsafeStringSetArray(array, index, value, 0, valueSize)
+        _length += valueSize
         return this
     }
 
@@ -409,11 +407,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    public actual fun insert(index: Int, value: CharSequence?): StringBuilder {
-        // Kotlin/JVM inserts the "null" string if the argument is null.
-        val toInsert = value ?: "null"
-        return insertRange(index, toInsert, 0, toInsert.length)
-    }
+    public actual fun insert(index: Int, value: CharSequence?): StringBuilder =
+        if (value == null) insert(index, null as String?) else insertRange(index, value, 0, value.length)
 
     /**
      * Inserts the string representation of the specified object [value] into this string builder at the specified [index] and returns this instance.
@@ -433,11 +428,13 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     public actual fun insert(index: Int, value: String?): StringBuilder {
-        val toInsert = value ?: "null"
         AbstractList.checkPositionIndex(index, _length)
-        ensureExtraCapacity(toInsert.length)
-        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + toInsert.length)
-        _length += insertString(array, index, toInsert)
+        val toInsert = value ?: "null"
+        val toInsertLength = toInsert.length
+        ensureExtraCapacity(toInsertLength)
+        unsafeStringSetString(array, index + toInsertLength, array, index, _length)
+        array = unsafeStringSetString(array, index, toInsert, 0, toInsertLength)
+        _length += toInsertLength
         return this
     }
 
@@ -456,9 +453,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
         if (newLength < 0) {
             throw IllegalArgumentException("Negative new length: $newLength.")
         }
-
-        if (newLength > _length) {
-            array.fill('\u0000', _length, newLength.coerceAtMost(array.size))
+        for (i in _length until newLength.coerceAtMost(array.length)) {
+            unsafeStringSetChar(array, i, '\u0000')
         }
         ensureCapacity(newLength)
         _length = newLength
@@ -471,7 +467,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public actual fun substring(startIndex: Int, endIndex: Int): String {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
-        return unsafeStringFromCharArray(array, startIndex, endIndex - startIndex)
+        return array.substring(startIndex, endIndex)
     }
 
     /**
@@ -480,9 +476,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public actual fun substring(startIndex: Int): String {
-        return substring(startIndex, _length)
-    }
+    public actual fun substring(startIndex: Int): String = substring(startIndex, _length)
 
     /**
      * Attempts to reduce storage used for this string builder.
@@ -492,11 +486,11 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Calling this method may, but is not required to, affect the value of the [capacity] property.
      */
     public actual fun trimToSize() {
-        if (_length < array.size)
-            array = array.copyOf(_length)
+        if (_length < array.length)
+            array = array.substring(0, _length)
     }
 
-    override fun toString(): String = unsafeStringFromCharArray(array, 0, _length)
+    override fun toString(): String = array.substring(0, _length)
 
     /**
      * Sets the character at the specified [index] to the specified [value].
@@ -505,7 +499,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     public operator fun set(index: Int, value: Char) {
         AbstractList.checkElementIndex(index, _length)
-        array[index] = value
+        array = unsafeStringSetChar(array, index, value)
     }
 
     /**
@@ -520,15 +514,13 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     @SinceKotlin("1.4")
     public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
-
         val coercedEndIndex = endIndex.coerceAtMost(_length)
-        val lengthDiff = value.length - (coercedEndIndex - startIndex)
+        val valueLength = value.length
+        val lengthDiff = valueLength - (coercedEndIndex - startIndex)
         ensureExtraCapacity(lengthDiff)
-        array.copyInto(array, startIndex = coercedEndIndex, endIndex = _length, destinationOffset = startIndex + value.length)
-        var replaceIndex = startIndex
-        for (index in 0 until value.length) array[replaceIndex++] = value[index] // optimize
+        unsafeStringSetString(array, startIndex + valueLength, array, coercedEndIndex, _length)
+        array = unsafeStringSetString(array, startIndex, value, 0, valueLength)
         _length += lengthDiff
-
         return this
     }
 
@@ -544,7 +536,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     @SinceKotlin("1.4")
     public fun deleteAt(index: Int): StringBuilder {
         AbstractList.checkElementIndex(index, _length)
-        array.copyInto(array, startIndex = index + 1, endIndex = _length, destinationOffset = index)
+        unsafeStringSetString(array, index, array, index + 1, _length)
         --_length
         return this
     }
@@ -560,9 +552,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     @SinceKotlin("1.4")
     public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
-
         val coercedEndIndex = endIndex.coerceAtMost(_length)
-        array.copyInto(array, startIndex = coercedEndIndex, endIndex = _length, destinationOffset = startIndex)
+        unsafeStringSetString(array, startIndex, array, coercedEndIndex, _length)
         _length -= coercedEndIndex - startIndex
         return this
     }
@@ -583,8 +574,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     public fun toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
         AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + endIndex - startIndex, destination.size)
-
-        array.copyInto(destination, destinationOffset, startIndex, endIndex)
+        array.toCharArray(destination, destinationOffset, startIndex, endIndex)
     }
 
     /**
@@ -599,14 +589,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
-        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
-        value.copyInto(array, _length, startIndex, endIndex)
-        _length += extraLength
-        return this
-    }
+    public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
+        insertRange(_length, value, startIndex, endIndex)
 
     /**
      * Appends a subsequence of the specified character sequence [value] to this string builder and returns this instance.
@@ -618,19 +602,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
-        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
-        (value as? String)?.let {
-            _length += insertString(array, _length, it, startIndex, extraLength)
-            return this
-        }
-        var index = startIndex
-        while (index < endIndex)
-            array[_length++] = value[index++]
-        return this
-    }
+    public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
+        insertRange(_length, value, startIndex, endIndex)
 
     /**
      * Inserts characters in a subsequence of the specified character sequence [value] into this string builder at the specified [index] and returns this instance.
@@ -651,14 +624,20 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
         AbstractList.checkPositionIndex(index, _length)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
-
-        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + extraLength)
-        var from = startIndex
-        var to = index
-        while (from < endIndex) {
-            array[to++] = value[from++]
+        unsafeStringSetString(array, index + extraLength, array, index, _length)
+        when (value) {
+            is String ->
+                array = unsafeStringSetString(array, index, value, startIndex, endIndex)
+            is StringBuilder ->
+                array = unsafeStringSetString(array, index, value.array, startIndex, endIndex)
+            else -> {
+                var from = startIndex
+                var to = index
+                while (from < endIndex) {
+                    array = unsafeStringSetChar(array, to++, value[from++])
+                }
+            }
         }
-
         _length += extraLength
         return this
     }
@@ -680,28 +659,20 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
-
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
-        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + extraLength)
-        value.copyInto(array, startIndex = startIndex, endIndex = endIndex, destinationOffset = index)
-
+        unsafeStringSetString(array, index + extraLength, array, index, _length)
+        array = unsafeStringSetArray(array, index, value, startIndex, endIndex)
         _length += extraLength
         return this
     }
 
     // ---------------------------- private ----------------------------
 
-    private fun ensureExtraCapacity(n: Int) {
-        ensureCapacityInternal(_length + n)
-    }
-
-    private fun ensureCapacityInternal(minCapacity: Int) {
-        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > array.size) {
-            val newSize = AbstractList.newCapacity(array.size, minCapacity)
-            array = array.copyOf(newSize)
-        }
+    private fun ensureExtraCapacity(extraLength: Int) {
+        val minimumCapacity = _length + extraLength
+        if (minimumCapacity < 0) throw OutOfMemoryError() // overflow
+        ensureCapacity(minimumCapacity)
     }
 
     private fun checkReplaceRange(startIndex: Int, endIndex: Int, length: Int) {
@@ -787,7 +758,7 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
-        this.setRange(startIndex, endIndex, value)
+    this.setRange(startIndex, endIndex, value)
 
 /**
  * Removes the character at the specified [index] from this string builder and returns this instance.
@@ -830,7 +801,7 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length): Unit =
-        this.toCharArray(destination, destinationOffset, startIndex, endIndex)
+    this.toCharArray(destination, destinationOffset, startIndex, endIndex)
 
 /**
  * Appends characters in a subarray of the specified character array [value] to this string builder and returns this instance.
@@ -846,7 +817,7 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
-        this.appendRange(value, startIndex, endIndex)
+    this.appendRange(value, startIndex, endIndex)
 
 /**
  * Appends a subsequence of the specified character sequence [value] to this string builder and returns this instance.
@@ -860,7 +831,7 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
-        this.appendRange(value, startIndex, endIndex)
+    this.appendRange(value, startIndex, endIndex)
 
 /**
  * Inserts characters in a subarray of the specified character array [value] into this string builder at the specified [index] and returns this instance.
@@ -878,7 +849,7 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
-        this.insertRange(index, value, startIndex, endIndex)
+    this.insertRange(index, value, startIndex, endIndex)
 
 /**
  * Inserts characters in a subsequence of the specified character sequence [value] into this string builder at the specified [index] and returns this instance.
@@ -896,11 +867,7 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
-        this.insertRange(index, value, startIndex, endIndex)
-
-
-internal fun insertString(array: CharArray, start: Int, value: String): Int =
-        insertString(array, start, value, 0, value.length)
+    this.insertRange(index, value, startIndex, endIndex)
 
 // Method renamings
 /**
@@ -919,12 +886,12 @@ internal fun insertString(array: CharArray, start: Int, value: String): Int =
  */
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 @Deprecated(
-        "Use insertRange(index: Int, csq: CharSequence, start: Int, end: Int) instead",
-        ReplaceWith("insertRange(index, csq ?: \"null\", start, end)")
+    "Use insertRange(index: Int, csq: CharSequence, start: Int, end: Int) instead",
+    ReplaceWith("insertRange(index, csq ?: \"null\", start, end)")
 )
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder =
-        this.insertRange(index, csq ?: "null", start, end)
+    this.insertRange(index, csq ?: "null", start, end)
 
 @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
 @Deprecated("Use set(index: Int, value: Char) instead", ReplaceWith("set(index, value)"))
@@ -945,8 +912,17 @@ public inline fun StringBuilder.setCharAt(index: Int, value: Char): Unit = this.
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.deleteCharAt(index: Int): StringBuilder = this.deleteAt(index)
 
-
-
 internal expect fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String
-internal expect fun insertInt(array: CharArray, start: Int, value: Int): Int
-internal expect fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+
+// Returns a *mutable* copy of the string that can be modified by the functions below.
+// `length` has to be at least `string.length`; if it's greater, the copy has extra space at the end.
+internal expect fun unsafeStringCopy(string: String, length: Int): String
+
+// These intrinsics do not do any bounds checks. They modify the existing string if possible,
+// but can return a new string if the current representation cannot encode the new value. This can
+// be ignored if it's known that the value is in range for the current encoding, e.g. if it was
+// obtained from this string in the first place or if it's always ASCII.
+internal expect fun unsafeStringSetChar(string: String, index: Int, c: Char): String
+internal expect fun unsafeStringSetArray(string: String, index: Int, value: CharArray, start: Int, end: Int): String
+internal expect fun unsafeStringSetString(string: String, index: Int, value: String, start: Int, end: Int): String
+internal expect fun unsafeStringSetInt(string: String, index: Int, value: Int): Int
