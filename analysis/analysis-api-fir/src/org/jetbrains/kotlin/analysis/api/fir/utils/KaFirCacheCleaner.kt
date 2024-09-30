@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -160,7 +161,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             require(analyzerCount >= 0) { "Inconsistency in analyzer block counter" }
 
             if (cleanupLatch != null) {
-                LOG.info("Analysis complete in ${Thread.currentThread()}, $analyzerCount left before the K2 cache cleanup")
+                LOG.debug { "Analysis complete in ${Thread.currentThread()}, $analyzerCount left before the K2 cache cleanup" }
             }
 
             // Clean up the caches if there's a postponed cleanup, and we have no more analyses
@@ -208,7 +209,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                     LOG.error("K2 cache cleanup was expected to happen right after the last analysis block completion")
                 }
             } else if (existingLatch == null) {
-                LOG.info("K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left")
+                LOG.debug { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
                 cleanupScheduleMs = System.currentTimeMillis()
                 cleanupLatch = CountDownLatch(1)
             }
@@ -228,7 +229,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                 invalidationService.invalidateAll(includeLibraryModules = true)
             }
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs
-            LOG.info("K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)")
+            LOG.debug { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
         } catch (e: Throwable) {
             LOG.error("Could not clean up K2 caches", e)
         }
