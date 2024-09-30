@@ -33174,126 +33174,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class Multiplatform extends AbstractLightAnalysisModeTest {
-    @TestMetadata("callToJavaSuper.kt")
-    public void ignoreCallToJavaSuper() {
-      runTest("compiler/testData/codegen/box/multiplatform/callToJavaSuper.kt");
-    }
-
-    @TestMetadata("kt59613.kt")
-    public void ignoreKt59613() {
-      runTest("compiler/testData/codegen/box/multiplatform/kt59613.kt");
-    }
-
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInMultiplatform() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "k2");
-    }
-
-    @TestMetadata("annotationsViaActualTypeAliasFromBinary2.kt")
-    public void testAnnotationsViaActualTypeAliasFromBinary2() {
-      runTest("compiler/testData/codegen/box/multiplatform/annotationsViaActualTypeAliasFromBinary2.kt");
-    }
-
-    @TestMetadata("commonInternal.kt")
-    public void testCommonInternal() {
-      runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");
-    }
-
-    @TestMetadata("kt57391.kt")
-    public void testKt57391() {
-      runTest("compiler/testData/codegen/box/multiplatform/kt57391.kt");
-    }
-
-    @TestMetadata("kt60854.kt")
-    public void testKt60854() {
-      runTest("compiler/testData/codegen/box/multiplatform/kt60854.kt");
-    }
-
-    @TestMetadata("kt61166.kt")
-    public void testKt61166() {
-      runTest("compiler/testData/codegen/box/multiplatform/kt61166.kt");
-    }
-
-    @TestMetadata("optionalExpectationJvm.kt")
-    public void testOptionalExpectationJvm() {
-      runTest("compiler/testData/codegen/box/multiplatform/optionalExpectationJvm.kt");
-    }
-
-    @TestMetadata("starImportOfExpectEnumWithActualTypeAlias.kt")
-    public void testStarImportOfExpectEnumWithActualTypeAlias() {
-      runTest("compiler/testData/codegen/box/multiplatform/starImportOfExpectEnumWithActualTypeAlias.kt");
-    }
-
-    @TestMetadata("unsignedArrayForLoop.kt")
-    public void testUnsignedArrayForLoop() {
-      runTest("compiler/testData/codegen/box/multiplatform/unsignedArrayForLoop.kt");
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultArguments extends AbstractLightAnalysisModeTest {
-      @TestMetadata("typeAlias2.kt")
-      public void ignoreTypeAlias2() {
-        runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
-      }
-
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-      }
-
-      public void testAllFilesPresentInDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Exhaustiveness extends AbstractLightAnalysisModeTest {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-      }
-
-      public void testAllFilesPresentInExhaustiveness() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @TestMetadata("commonEnum.kt")
-      public void testCommonEnum() {
-        runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonEnum.kt");
-      }
-
-      @TestMetadata("commonSealedClass.kt")
-      public void testCommonSealedClass() {
-        runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedClass.kt");
-      }
-
-      @TestMetadata("commonSealedInterface.kt")
-      public void testCommonSealedInterface() {
-        runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedInterface.kt");
-      }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/multiplatform/hmpp")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Hmpp extends AbstractLightAnalysisModeTest {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-      }
-
-      public void testAllFilesPresentInHmpp() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @TestMetadata("simple.kt")
-      public void testSimple() {
-        runTest("compiler/testData/codegen/box/multiplatform/hmpp/simple.kt");
-      }
     }
 
     @TestMetadata("compiler/testData/codegen/box/multiplatform/k1")
@@ -33530,34 +33416,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testRemap_expect_property_ref() {
           runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/remap_expect_property_ref.kt");
         }
-      }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class MultiModule extends AbstractLightAnalysisModeTest {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-      }
-
-      public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @TestMetadata("expectInterfaceInheritance.kt")
-      public void testExpectInterfaceInheritance() {
-        runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInheritance.kt");
-      }
-
-      @TestMetadata("hmppSimple.kt")
-      public void testHmppSimple() {
-        runTest("compiler/testData/codegen/box/multiplatform/multiModule/hmppSimple.kt");
-      }
-
-      @TestMetadata("stdlibClassRedefine.kt")
-      public void testStdlibClassRedefine() {
-        runTest("compiler/testData/codegen/box/multiplatform/multiModule/stdlibClassRedefine.kt");
       }
     }
   }

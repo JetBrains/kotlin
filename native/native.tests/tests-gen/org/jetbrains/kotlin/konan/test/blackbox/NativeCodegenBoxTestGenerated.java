@@ -30287,63 +30287,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "k2");
       }
 
-      @Test
-      @TestMetadata("kt57391.kt")
-      public void testKt57391() {
-        runTest("compiler/testData/codegen/box/multiplatform/kt57391.kt");
-      }
-
-      @Test
-      @TestMetadata("kt59613.kt")
-      public void testKt59613() {
-        runTest("compiler/testData/codegen/box/multiplatform/kt59613.kt");
-      }
-
-      @Test
-      @TestMetadata("starImportOfExpectEnumWithActualTypeAlias.kt")
-      public void testStarImportOfExpectEnumWithActualTypeAlias() {
-        runTest("compiler/testData/codegen/box/multiplatform/starImportOfExpectEnumWithActualTypeAlias.kt");
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
-      @TestDataPath("$PROJECT_ROOT")
-      @UseExtTestCaseGroupProvider()
-      public class DefaultArguments {
-        @Test
-        public void testAllFilesPresentInDefaultArguments() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-        }
-
-        @Test
-        @TestMetadata("typeAlias2.kt")
-        public void testTypeAlias2() {
-          runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
-      @TestDataPath("$PROJECT_ROOT")
-      @UseExtTestCaseGroupProvider()
-      public class Exhaustiveness {
-        @Test
-        public void testAllFilesPresentInExhaustiveness() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/hmpp")
-      @TestDataPath("$PROJECT_ROOT")
-      @UseExtTestCaseGroupProvider()
-      public class Hmpp {
-        @Test
-        public void testAllFilesPresentInHmpp() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-        }
-      }
-
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k1")
       @TestDataPath("$PROJECT_ROOT")
@@ -30577,17 +30520,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           public void testRemap_expect_property_ref() {
             runTest("compiler/testData/codegen/box/multiplatform/k1/migratedOldTests/remap_expect_property_ref.kt");
           }
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
-      @TestDataPath("$PROJECT_ROOT")
-      @UseExtTestCaseGroupProvider()
-      public class MultiModule {
-        @Test
-        public void testAllFilesPresentInMultiModule() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
       }
     }
