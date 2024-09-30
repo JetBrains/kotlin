@@ -280,6 +280,57 @@ class AbstractBuilderGenerator(session: FirSession) : FirDeclarationGenerationEx
         )
     }
 
+    @OptIn(SymbolInternals::class)
+    private fun FirClassSymbol<*>.createJavaClass(
+        session: FirSession,
+        name: Name,
+        visibility: Visibility,
+        modality: Modality,
+        isStatic: Boolean,
+        superTypeRefs: List<FirTypeRef>,
+        declarationListProvider: (FirRegularClassSymbol) -> FirJavaDeclarationList,
+    ): FirJavaClass? {
+        val containingClass = this.fir as? FirJavaClass ?: return null
+        val classId = containingClass.classId.createNestedClassId(name)
+        return buildJavaClass {
+            containingClassSymbol = containingClass.symbol
+            moduleData = containingClass.moduleData
+            symbol = FirRegularClassSymbol(classId)
+            this.name = name
+            isFromSource = true
+            this.visibility = visibility
+            this.modality = modality
+            this.isStatic = isStatic
+            classKind = ClassKind.CLASS
+            javaTypeParameterStack = containingClass.classJavaTypeParameterStack
+            scopeProvider = JavaScopeProvider
+            if (!isStatic) {
+                typeParameters += containingClass.nonEnhancedTypeParameters.map {
+                    buildOuterClassTypeParameterRef { symbol = it.symbol }
+                }
+            }
+            this.superTypeRefs += superTypeRefs
+            val effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
+                visibility.toEffectiveVisibility(this@createJavaClass, forClass = true),
+                session.typeContext
+            )
+            isTopLevel = false
+            status = FirResolvedDeclarationStatusImpl(
+                visibility,
+                modality,
+                effectiveVisibility
+            ).apply {
+                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                isCompanion = false
+                isData = false
+                isInline = false
+                isFun = classKind == ClassKind.INTERFACE
+            }
+
+            declarationList = declarationListProvider(symbol)
+        }
+    }
+
     private fun Name.toMethodName(builder: AbstractBuilder): Name {
         val prefix = builder.setterPrefix
         return if (prefix.isNullOrBlank()) {
@@ -371,54 +422,3 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
 }
 
 class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
-
-@OptIn(SymbolInternals::class)
-fun FirClassSymbol<*>.createJavaClass(
-    session: FirSession,
-    name: Name,
-    visibility: Visibility,
-    modality: Modality,
-    isStatic: Boolean,
-    superTypeRefs: List<FirTypeRef>,
-    declarationListProvider: (FirRegularClassSymbol) -> FirJavaDeclarationList,
-): FirJavaClass? {
-    val containingClass = this.fir as? FirJavaClass ?: return null
-    val classId = containingClass.classId.createNestedClassId(name)
-    return buildJavaClass {
-        containingClassSymbol = containingClass.symbol
-        moduleData = containingClass.moduleData
-        symbol = FirRegularClassSymbol(classId)
-        this.name = name
-        isFromSource = true
-        this.visibility = visibility
-        this.modality = modality
-        this.isStatic = isStatic
-        classKind = ClassKind.CLASS
-        javaTypeParameterStack = containingClass.classJavaTypeParameterStack
-        scopeProvider = JavaScopeProvider
-        if (!isStatic) {
-            typeParameters += containingClass.nonEnhancedTypeParameters.map {
-                buildOuterClassTypeParameterRef { symbol = it.symbol }
-            }
-        }
-        this.superTypeRefs += superTypeRefs
-        val effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
-            visibility.toEffectiveVisibility(this@createJavaClass, forClass = true),
-            session.typeContext
-        )
-        isTopLevel = false
-        status = FirResolvedDeclarationStatusImpl(
-            visibility,
-            modality,
-            effectiveVisibility
-        ).apply {
-            this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
-            isCompanion = false
-            isData = false
-            isInline = false
-            isFun = classKind == ClassKind.INTERFACE
-        }
-
-        declarationList = declarationListProvider(symbol)
-    }
-}
