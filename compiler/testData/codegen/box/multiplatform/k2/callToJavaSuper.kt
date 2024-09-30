@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
-//   Ignore reason: expect/actual are not supported in K1 box tests
 // ISSUE: KT-58030
 // WITH_STDLIB
 // FULL_JDK

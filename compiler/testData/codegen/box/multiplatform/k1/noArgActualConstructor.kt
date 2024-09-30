@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: ANY
-// FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // WITH_STDLIB
 
 // FILE: common.kt

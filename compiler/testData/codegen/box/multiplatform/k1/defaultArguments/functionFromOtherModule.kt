@@ -1,6 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
-// FIR status: expect/actual in the same module
 // WITH_STDLIB
 
 // MODULE: lib

@@ -1,7 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
-// FIR status: expect/actual in the same module
-//   also used as a workaround for no multi-module support in K1 box tests
 
 // FILE: common.kt
 

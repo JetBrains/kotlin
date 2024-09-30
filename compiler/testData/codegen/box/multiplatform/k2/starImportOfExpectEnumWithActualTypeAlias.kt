@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
 
 // MODULE: lib-common
 // FILE: common.kt

@@ -2,7 +2,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JVM, JVM_IR, WASM, NATIVE
 //   K1/NATIVE fail: KT-59608
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 
 // FILE: lib.kt
 

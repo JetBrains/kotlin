@@ -1,6 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
-// FIR status: outdated code (expect/actual in the same module)
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

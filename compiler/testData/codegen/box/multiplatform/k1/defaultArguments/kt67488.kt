@@ -1,10 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 
-// IGNORE_BACKEND_K1: JVM
+// IGNORE_BACKEND: JVM
 // The legacy JVM backend throws java.lang.InstantiationError
 
-// IGNORE_BACKEND_K2: ANY
-// FIR status: outdated code (expect and actual in the same module)
 
 // FILE: common.kt
 expect annotation class A()

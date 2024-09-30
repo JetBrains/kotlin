@@ -1,6 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
-// IGNORE_REASON: multimodule MPP tests are not supported in K1
 // ISSUE: KT-59613
 
 // MODULE: common

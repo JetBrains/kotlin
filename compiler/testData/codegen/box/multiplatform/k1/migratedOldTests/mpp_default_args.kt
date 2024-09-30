@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR, JS_IR, WASM, NATIVE
-// IGNORE_BACKEND_K2: ANY
 
 // FILE: common.kt
 

@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
 
 // FILE: common.kt

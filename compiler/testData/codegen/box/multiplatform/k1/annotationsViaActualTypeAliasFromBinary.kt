@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
-// FIR status: In FIR, declaring the same `expect` and `actual` classes in one compiler module is not possible (see KT-55177).
 // WITH_REFLECT
 
 // MODULE: lib
