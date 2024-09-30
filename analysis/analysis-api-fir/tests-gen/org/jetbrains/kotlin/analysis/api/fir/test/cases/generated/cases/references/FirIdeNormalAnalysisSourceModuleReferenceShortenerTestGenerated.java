@@ -341,6 +341,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   }
 
   @Test
+  @TestMetadata("memberVsObjectMemberConflict_sameMember.kt")
+  public void testMemberVsObjectMemberConflict_sameMember() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/memberVsObjectMemberConflict_sameMember.kt");
+  }
+
+  @Test
   @TestMetadata("multipleImport.kt")
   public void testMultipleImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/multipleImport.kt");
@@ -590,6 +596,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestMetadata("staticMethodFromBaseClassConflict.kt")
   public void testStaticMethodFromBaseClassConflict() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/staticMethodFromBaseClassConflict.kt");
+  }
+
+  @Test
+  @TestMetadata("staticMethodFromBaseClassConflict2.kt")
+  public void testStaticMethodFromBaseClassConflict2() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/staticMethodFromBaseClassConflict2.kt");
   }
 
   @Test
@@ -1167,6 +1179,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
       }
 
       @Test
+      @TestMetadata("extensionReceiver_vs_lambdaReceiver_conflict.kt")
+      public void testExtensionReceiver_vs_lambdaReceiver_conflict() {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/extensionReceiver_vs_lambdaReceiver_conflict.kt");
+      }
+
+      @Test
       @TestMetadata("extensionReceiver_vs_local.kt")
       public void testExtensionReceiver_vs_local() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/extensionReceiver_vs_local.kt");
@@ -1185,6 +1203,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
       }
 
       @Test
+      @TestMetadata("lambdaReceiver_vs_lambdaReceiver_conflict.kt")
+      public void testLambdaReceiver_vs_lambdaReceiver_conflict() {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/lambdaReceiver_vs_lambdaReceiver_conflict.kt");
+      }
+
+      @Test
       @TestMetadata("regularClass.kt")
       public void testRegularClass() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass.kt");
@@ -1200,6 +1224,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
       @TestMetadata("regularClass_vs_innerClass.kt")
       public void testRegularClass_vs_innerClass() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass_vs_innerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("regularClass_vs_innerClass_conflict.kt")
+      public void testRegularClass_vs_innerClass_conflict() {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass_vs_innerClass_conflict.kt");
       }
     }
   }

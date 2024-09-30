@@ -1157,7 +1157,8 @@ private class ElementsToShortenCollector(
         val singleCandidate = candidatesWithinSamePriorityScopes.singleOrNull() ?: return false
 
         // TODO isInBestCandidates should probably be used more actively to filter candidates
-        return singleCandidate.isInBestCandidates
+        return singleCandidate.isInBestCandidates &&
+                areReceiversEquivalent(firQualifiedAccess, singleCandidate.candidate)
     }
 
     fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
@@ -1188,6 +1189,7 @@ private class ElementsToShortenCollector(
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
         findCallableQualifiedAccessToShorten(
+            firPropertyAccess,
             propertySymbol,
             option,
             qualifiedProperty,
@@ -1239,6 +1241,7 @@ private class ElementsToShortenCollector(
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
         findCallableQualifiedAccessToShorten(
+            functionCall,
             calledSymbol,
             option,
             qualifiedCallExpression,
@@ -1247,12 +1250,14 @@ private class ElementsToShortenCollector(
     }
 
     private fun findCallableQualifiedAccessToShorten(
+        qualifiedAccess: FirQualifiedAccessExpression,
         calledSymbol: FirCallableSymbol<*>,
         option: ShortenStrategy,
         qualifiedCallExpression: KtDotQualifiedExpression,
         availableCallables: List<AvailableSymbol<FirCallableSymbol<*>>>,
     ): ElementToShorten? {
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
+        if (!canBePossibleToImportReceiver(qualifiedAccess)) return null
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
@@ -1293,15 +1298,17 @@ private class ElementsToShortenCollector(
     private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
         return when (val explicitReceiver = qualifiedAccess.explicitReceiver) {
             is FirThisReceiverExpression -> {
-                shortenOptions.removeThis &&
-                        !explicitReceiver.isImplicit &&
-                        explicitReceiver.calleeReference.referencesClosestReceiver()
+                // any non-implicit 'this' receiver can potentially be shortened by reference shortener
+                shortenOptions.removeThis && !explicitReceiver.isImplicit
             }
 
-            is FirResolvedQualifier -> qualifiedAccess.extensionReceiver == null
-
-            else -> false
+            else -> canBePossibleToImportReceiver(qualifiedAccess)
         }
+    }
+
+    private fun canBePossibleToImportReceiver(firQualifiedAccess: FirQualifiedAccessExpression): Boolean {
+        return firQualifiedAccess.explicitReceiver is FirResolvedQualifier &&
+                firQualifiedAccess.extensionReceiver == null
     }
 
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {
