@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.builders
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
@@ -235,6 +236,11 @@ class TestConfigurationBuilder {
                 this.configuration()
             }
         }
+
+        // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
+        // so it is added after all configuration callbacks have already been executed
+        useAfterAnalysisCheckers(::UpdateTestDataHandler)
+
         return TestConfigurationImpl(
             testInfo,
             defaultsProviderBuilder.build(),

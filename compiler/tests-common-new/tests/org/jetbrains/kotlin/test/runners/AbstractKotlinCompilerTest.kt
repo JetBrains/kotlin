@@ -58,8 +58,6 @@ abstract class AbstractKotlinCompilerTest {
         useAdditionalService { createKotlinStandardLibrariesPathProvider() }
         configure(this)
         useAfterAnalysisCheckers(::IrValidationErrorChecker)
-        // UpdateTestDataHandler should be the last handler, so it's added after the configure call.
-        useAfterAnalysisCheckers(::UpdateTestDataHandler)
     }
 
     abstract fun TestConfigurationBuilder.configuration()
