@@ -823,6 +823,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
     }
 
+    @TestMetadata("javaClassWithDifferentNameIndividual.args")
+    public void testJavaClassWithDifferentNameIndividual() {
+      runTest("compiler/testData/cli/jvm/javaClassWithDifferentNameIndividual.args");
+    }
+
+    @TestMetadata("javaClassWithDifferentNameWholeRoot.args")
+    public void testJavaClassWithDifferentNameWholeRoot() {
+      runTest("compiler/testData/cli/jvm/javaClassWithDifferentNameWholeRoot.args");
+    }
+
     @TestMetadata("javaSealedClass.args")
     public void testJavaSealedClass() {
       runTest("compiler/testData/cli/jvm/javaSealedClass.args");
