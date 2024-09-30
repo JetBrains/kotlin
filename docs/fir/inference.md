@@ -27,7 +27,7 @@ fun main() {
 
 In general, the situation might be a bit more complicated.
 
-The independent call may have dependent call-arguments (see [Call tree](#call-tree)):
+The independent call may have dependent call-arguments (forming a [_call-tree_](#call-tree)):
 
 ```kotlin
 fun <K> materialize(): K = TODO()
@@ -66,7 +66,7 @@ The idea of this part is to give some basic idea of how the algorithm works:
 
 - At first step, we create a constraint system ([CS](#cs--constraint-system)) with type variables associated with all type parameters in the
   call-tree.
-- Gather type variables constraints from the call tree (e.g. `Tv <: String` in `listOf("")`).
+- Gather type variables constraints from the call-tree (e.g. `Tv <: String` in `listOf("")`).
 - Analyze lambdas' bodies after choosing types of their parameters (once it's possible).
 - For each type variable, from the gathered constraints, choose the most reasonable resulting type.
 
@@ -343,7 +343,7 @@ actual representation of the Main While Loop.
 **NB:** From the definition of the loop, it shouldn't be very hard to show that it converges in polynomial time
 (if all the operations are polynomial).
 
-### Basic Lambda analysis
+### Regular Lambda Analysis
 
 If for some lambda all its [input types](#input-types-of-a-lambda) are proper, it's possible to start its regular analysis.
 
@@ -412,7 +412,7 @@ fun main() {
 }
 ```
 
-#### Variables order
+#### Order of variable fixation
 
 All other variables (that might be fixed) are being sorted according to a set of heuristics, and then the first one is chosen to be fixed.
 
