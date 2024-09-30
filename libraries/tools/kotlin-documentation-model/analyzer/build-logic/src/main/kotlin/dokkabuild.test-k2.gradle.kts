@@ -48,20 +48,8 @@ testing {
             val onlyDescriptorTags = listOf("onlyDescriptors", "onlyDescriptorsMPP")
             val onlySymbolsTags = listOf("onlySymbols")
 
-            // Modify the regular :test target to exclude symbols (K2) tests.
-            val testTarget = targets.named("test") {
-                testTask.configure {
-                    description = "Runs tests using descriptors-analysis (K1) (excluding tags: $onlySymbolsTags)"
-                    useJUnitPlatform {
-                        excludeTags.addAll(onlySymbolsTags)
-                    }
-                    classpath += descriptorsTestImplementationResolver.incoming.files
-                }
-            }
-
             // Create a new target for _only_ running test compatible with descriptor-analysis (K1).
-            // Note: this target is the same as the regular test target, it is only created to provide a more descriptive name.
-            targets.register("testDescriptors") {
+            val testDescriptorsTarget = targets.register("testDescriptors") {
                 testTask.configure {
                     description = "Runs tests using descriptors-analysis (K1) (excluding tags: ${onlySymbolsTags})"
                     useJUnitPlatform {
@@ -82,11 +70,14 @@ testing {
                 }
             }
 
-            // So that both K1 and K2 are tested, when running :test, also run :testSymbols
-            // (Running :descriptorsTest isn't required, because it has the same tags/dependencies as :test)
-            testTarget.configure {
+            // Run both K1 and K2, when running :test
+            // don't run the task itself, as it's just an aggregate for K1/K2 tests.
+            // Ideally, we don't really need this `test` target, but it's not possible to remove it.
+            targets.named("test") {
                 testTask.configure {
-                    finalizedBy(testSymbolsTarget.map { it.testTask })
+                    onlyIf { false }
+                    dependsOn(testDescriptorsTarget.map { it.testTask })
+                    dependsOn(testSymbolsTarget.map { it.testTask })
                 }
             }
         }
