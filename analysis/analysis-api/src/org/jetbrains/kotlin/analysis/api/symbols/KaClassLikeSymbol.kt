@@ -85,6 +85,20 @@ public typealias KtTypeAliasSymbol = KaTypeAliasSymbol
 public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerSymbol {
 
     public abstract val classKind: KaClassKind
+
+    /**
+     * A list of the direct supertypes. If the class has no explicit supertypes, the supertype will be [Any], or a special supertype such as
+     * [Enum] for enum classes.
+     *
+     * Type parameters are included in supertype type arguments in an unsubstituted form. For example, if we have `class A<T> : B<T>`,
+     * [superTypes] for `A` contains `B<T>` as a type, with an unsubstituted [KaTypeParameterType][org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType]
+     * `T`.
+     *
+     * For a list of all supertypes, consider using [KaType.allSupertypes][org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.allSupertypes]
+     * on [KaNamedClassSymbol.defaultType][org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType]. To check whether
+     * this symbol is a subtype of another symbol, consider using [KaClassSymbol.isSubClassOf][org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.isSubClassOf],
+     * or [KaType.isSubtypeOf][org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf].
+     */
     public abstract val superTypes: List<KaType>
 
     abstract override fun createPointer(): KaSymbolPointer<KaClassSymbol>
