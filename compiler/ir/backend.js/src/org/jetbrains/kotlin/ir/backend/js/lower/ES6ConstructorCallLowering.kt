@@ -41,13 +41,6 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                         withIrEntry("expression", expression)
                     }
 
-                if (expression.isInitCall) {
-                    assert(factoryFunction.isInitFunction) { "Expect to have init function replacement" }
-                    return JsIrBuilder.buildCall(factoryFunction.symbol).apply {
-                        copyValueArgumentsFrom(expression, factoryFunction)
-                    }
-                }
-
                 val isDelegatingCall = expression.isSyntheticDelegatingReplacement && currentFunction != null
 
                 val factoryFunctionCall = JsIrBuilder.buildCall(

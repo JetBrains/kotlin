@@ -813,11 +813,18 @@ private val es6AddBoxParameterToConstructorsLowering = makeIrModulePhase(
     description = "Add box parameter to a constructor if needed",
 )
 
+private val es6SyntheticPrimaryConstructorLowering = makeIrModulePhase(
+    ::ES6SyntheticPrimaryConstructorLowering,
+    name = "ES6SyntheticPrimaryConstructorLowering",
+    description = "Lower synthetic primary constructors declarations to support ES classes",
+    prerequisite = setOf(es6AddBoxParameterToConstructorsLowering)
+)
+
 private val es6ConstructorLowering = makeIrModulePhase(
     ::ES6ConstructorLowering,
     name = "ES6ConstructorLowering",
     description = "Lower constructors declarations to support ES classes",
-    prerequisite = setOf(es6AddBoxParameterToConstructorsLowering)
+    prerequisite = setOf(es6SyntheticPrimaryConstructorLowering)
 )
 
 private val es6ConstructorUsageLowering = makeIrModulePhase(
@@ -994,6 +1001,7 @@ fun getJsLowerings(
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
     es6AddBoxParameterToConstructorsLowering,
+    es6SyntheticPrimaryConstructorLowering,
     es6ConstructorLowering,
     es6ConstructorUsageLowering,
     callsLoweringPhase,
