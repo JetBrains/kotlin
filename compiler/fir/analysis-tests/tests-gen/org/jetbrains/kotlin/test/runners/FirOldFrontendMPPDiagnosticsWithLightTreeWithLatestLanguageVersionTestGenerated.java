@@ -1631,12 +1631,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
-    @TestMetadata("directJavaActualization_getterInActual.kt")
-    public void testDirectJavaActualization_getterInActual() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_getterInActual.kt");
-    }
-
-    @Test
     @TestMetadata("directJavaActualization_injectEmptySuperclass.kt")
     public void testDirectJavaActualization_injectEmptySuperclass() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_injectEmptySuperclass.kt");
@@ -1670,6 +1664,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @TestMetadata("directJavaActualization_overloadedMethods.kt")
     public void testDirectJavaActualization_overloadedMethods() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_overloadedMethods.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_propertyInActual.kt")
+    public void testDirectJavaActualization_propertyInActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_propertyInActual.kt");
     }
 
     @Test
