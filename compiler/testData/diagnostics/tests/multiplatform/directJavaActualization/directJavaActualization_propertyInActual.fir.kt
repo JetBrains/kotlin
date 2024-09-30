@@ -21,7 +21,7 @@ open class Base {
 }
 
 <!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo {
-    val <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>valOverriddenGetter<!>: Int
+    val valOverriddenGetter: Int
     val <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>valOverriddenGetter_missingAnootation<!>: Int
     val valFakeOverrideGetter: Int
 
@@ -29,7 +29,7 @@ open class Base {
     var varOverriddenOnlySetter_missingAnnotation: Int
     var varOverriddenOnlyGetter: Int
     var varOverriddenOnlyGetter_missingAnnotation: Int
-    var <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>varOverriddenGetterAndSetter<!>: Int
+    var varOverriddenGetterAndSetter: Int
     var <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>varOverriddenGetterAndSetter_missingOnlyGetterAnnotation<!>: Int
     var <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>varOverriddenGetterAndSetter_missingOnlySetterAnnotation<!>: Int
     var <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>varOverriddenGetterAndSetter_missingBothAnnotations<!>: Int
