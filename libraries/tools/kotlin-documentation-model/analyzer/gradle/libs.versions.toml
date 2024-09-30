@@ -53,8 +53,10 @@ gradlePlugin-gradlePluginPublish = "1.2.1"
 gradlePlugin-gradleNode = "7.0.1"
 
 ## Gradle Develocity
+# versions should be kept in sync with `build-settings-logic/settings.gradle.kts`
 gradlePlugin-gradle-customUserData = "2.0.2"
 gradlePlugin-gradle-develocity = "3.17.6"
+gradlePlugin-gradle-foojayToolchains = "0.7.0"
 
 ## Test
 junit = "5.9.3"
@@ -84,6 +86,7 @@ gradlePlugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", ver
 gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
 gradlePlugin-gradle-develocity = { module = "com.gradle:develocity-gradle-plugin", version.ref = "gradlePlugin-gradle-develocity" }
+gradlePlugin-gradle-foojayToolchains = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradlePlugin-gradle-foojayToolchains" }
 
 gradlePlugin-androidApi = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android" }
 
