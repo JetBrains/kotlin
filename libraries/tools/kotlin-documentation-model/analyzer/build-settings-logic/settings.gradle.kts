@@ -126,7 +126,7 @@ val buildCacheLocalDirectory: Provider<String> =
     dokkaProperty("build.cache.local.directory")
 val buildCachePushEnabled: Provider<Boolean> =
     dokkaProperty("build.cache.push", String::toBoolean)
-        .orElse(buildingOnTeamCity)
+        .orElse(buildingOnCi)
 
 buildCache {
     local {
