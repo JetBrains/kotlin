@@ -17,7 +17,6 @@
 // To fix that issue, it was decided to mark newly added `actual` by `@Deprecated` annotation with `HIDDEN` level and fix resolving.
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect fun <T> Array<T>.f(): String

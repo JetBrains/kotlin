@@ -2,7 +2,6 @@
 // ISSUE: KT-57263
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect val traceFormatDefault: String

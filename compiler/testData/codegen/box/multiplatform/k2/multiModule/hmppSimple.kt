@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect class A constructor() {
@@ -25,7 +24,6 @@ fun test_1(): String {
 }
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 // FILE: intermediate.kt
 
 actual fun func(): String = "Actual func."

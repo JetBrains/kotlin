@@ -4,13 +4,11 @@
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: expect.kt
 
 expect value class ExpectValue(val x: String)
 
 // MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: actual.kt
 
 @JvmInline

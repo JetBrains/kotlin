@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 enum class Base1 { O }

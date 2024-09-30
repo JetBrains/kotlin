@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: commonMain.kt
 
 expect class S
