@@ -1,9 +1,18 @@
 > b main.kt:12
-> b main.kt:5
 > r
 > p x
 (int) 42[..]
-> n
+> s
+> s
+> s
+> s
+> bt
+* thread #1, [..], stop reason = step in
+  * frame #0: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] [..]foo[..] at main.kt:5:12
+    frame #1: [..]`kfun:#main(args=[]){} at main.kt:12:5
+    frame #2: [..]`Konan_start(args=[..]) at [..]
+    frame #3: [..]
+    frame #4: [..]
 > p x
 (int) 1
 > p y
