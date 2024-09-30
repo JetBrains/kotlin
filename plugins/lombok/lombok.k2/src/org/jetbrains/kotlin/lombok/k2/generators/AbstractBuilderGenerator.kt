@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AbstractBuilder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+class AbstractBuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private const val TO_BUILDER = "toBuilder"
     }
@@ -167,7 +167,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
     }
 
     private fun createSetterMethod(
-        builder: Builder,
+        builder: AbstractBuilder,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
         destination: MutableList<FirDeclaration>,
@@ -184,7 +184,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
     }
 
     private fun createMethodsForSingularFields(
-        builder: Builder,
+        builder: AbstractBuilder,
         singular: Singular,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
@@ -280,7 +280,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         )
     }
 
-    private fun Name.toMethodName(builder: Builder): Name {
+    private fun Name.toMethodName(builder: AbstractBuilder): Name {
         val prefix = builder.setterPrefix
         return if (prefix.isNullOrBlank()) {
             this

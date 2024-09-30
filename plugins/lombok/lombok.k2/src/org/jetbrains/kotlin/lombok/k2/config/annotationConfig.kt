@@ -205,7 +205,7 @@ object ConeLombokAnnotations {
         }
     }
 
-    class Builder(
+    class AbstractBuilder(
         val builderClassName: String,
         val buildMethodName: String,
         val builderMethodName: String,
@@ -213,15 +213,15 @@ object ConeLombokAnnotations {
         val visibility: AccessLevel,
         val setterPrefix: String?
     ) {
-        companion object : ConeAnnotationAndConfigCompanion<Builder>(LombokNames.BUILDER_ID) {
+        companion object : ConeAnnotationAndConfigCompanion<AbstractBuilder>(LombokNames.BUILDER_ID) {
             private const val DEFAULT_BUILDER_CLASS_NAME = "*Builder"
             private const val DEFAULT_BUILD_METHOD_NAME = "build"
             private const val DEFAULT_BUILDER_METHOD_NAME = "builder"
             private const val DEFAULT_REQUIRES_TO_BUILDER = false
 
 
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Builder {
-                return Builder(
+            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): AbstractBuilder {
+                return AbstractBuilder(
                     builderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME, session)
                         ?: config.getString(BUILDER_CLASS_NAME_CONFIG)
                         ?: DEFAULT_BUILDER_CLASS_NAME,
