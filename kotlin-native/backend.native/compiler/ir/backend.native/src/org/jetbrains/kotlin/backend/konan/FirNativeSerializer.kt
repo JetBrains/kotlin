@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -46,6 +45,7 @@ internal fun PhaseContext.firSerializerBase(
     val serializerOutput = serializeModuleIntoKlib(
             moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
             irModuleFragment = irModuleFragment,
+            irBuiltins = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns,
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
             metadataSerializer = Fir2KlibMetadataSerializer(

@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.util.transformInPlace
@@ -24,8 +23,6 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     abstract val descriptor: ModuleDescriptor
 
     abstract val name: Name
-
-    abstract val irBuiltins: IrBuiltIns
 
     abstract val files: MutableList<IrFile>
 

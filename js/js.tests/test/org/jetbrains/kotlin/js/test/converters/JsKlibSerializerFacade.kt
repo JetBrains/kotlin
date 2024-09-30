@@ -57,6 +57,7 @@ class JsKlibSerializerFacade(
                 klibPath = outputFile.path,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
                 inputArtifact.irModuleFragment,
+                inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,

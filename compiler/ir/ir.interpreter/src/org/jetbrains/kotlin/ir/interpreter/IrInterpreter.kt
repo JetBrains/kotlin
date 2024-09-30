@@ -38,8 +38,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
             this(IrInterpreterEnvironment(irBuiltIns), bodyMap)
 
-    constructor(irModule: IrModuleFragment) : this(IrInterpreterEnvironment(irModule), emptyMap())
-
     private fun incrementAndCheckCommands() {
         commandCount++
         if (commandCount >= environment.configuration.maxCommands) InterpreterTimeOutError().handleUserException(environment)

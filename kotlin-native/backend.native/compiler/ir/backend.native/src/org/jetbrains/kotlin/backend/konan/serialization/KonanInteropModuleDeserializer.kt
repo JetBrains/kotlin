@@ -91,7 +91,7 @@ internal class KonanInteropModuleDeserializer(
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
 
     override val kind get() = IrModuleDeserializerKind.DESERIALIZED
 }

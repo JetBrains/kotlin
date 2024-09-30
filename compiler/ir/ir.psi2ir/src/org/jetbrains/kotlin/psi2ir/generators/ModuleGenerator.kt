@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 open class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-        IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+        IrModuleFragmentImpl(context.moduleDescriptor).also { irModule ->
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
                 val fileContext = context.createFileScopeContext(ktFile)
                 val irDeclarationGenerator = DeclarationGenerator(fileContext)

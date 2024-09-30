@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
@@ -33,8 +34,12 @@ class JsICContext(
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
 
-    override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
-        JsIrCompilerWithIC(mainModule, mainArguments, configuration, granularity, phaseConfig, exportedDeclarations)
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface =
+        JsIrCompilerWithIC(mainModule, irBuiltIns, mainArguments, configuration, granularity, phaseConfig, exportedDeclarations)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
         JsSrcFileArtifact(srcFilePath, fragments as? JsIrProgramFragments, astArtifact)
@@ -52,6 +57,7 @@ class JsICContext(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
+    irBuiltIns: IrBuiltIns,
     private val mainArguments: List<String>?,
     configuration: CompilerConfiguration,
     granularity: JsGenerationGranularity,
@@ -61,7 +67,6 @@ class JsIrCompilerWithIC(
     private val context: JsIrBackendContext
 
     init {
-        val irBuiltIns = mainModule.irBuiltins
         val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
 
         context = JsIrBackendContext(

@@ -170,7 +170,7 @@ class IrMangledNameAndSignatureDumpHandler(
                     module,
                     info.irMangler,
                     info.descriptorMangler,
-                    info.irModuleFragment.irBuiltins,
+                    info.irPluginContext.irBuiltIns,
                 ),
                 printFilePath = false,
                 printFakeOverridesStrategy = FakeOverridesStrategy.ALL_EXCEPT_ANY,

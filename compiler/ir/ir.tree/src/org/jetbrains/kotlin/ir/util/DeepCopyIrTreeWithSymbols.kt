@@ -81,7 +81,6 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         val result = IrModuleFragmentImpl(
             declaration.descriptor,
-            declaration.irBuiltins,
         )
         transformedModule = result
         result.files += declaration.files.transform()

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal data class LoadedJsIr(
     val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
-    private val linker: JsIrLinker,
+    val linker: JsIrLinker,
     private val functionTypeInterfacePackages: FunctionTypeInterfacePackages,
 ) {
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()

@@ -274,6 +274,7 @@ fun serializeFirKlib(
         klibPath = outputKlibPath,
         moduleStructure.allDependencies,
         fir2IrActualizedResult.irModuleFragment,
+        fir2IrActualizedResult.irBuiltIns,
         cleanFiles = icData ?: emptyList(),
         nopack = nopack,
         perFile = false,

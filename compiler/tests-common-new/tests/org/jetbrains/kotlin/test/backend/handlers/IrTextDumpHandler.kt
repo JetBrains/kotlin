@@ -98,7 +98,7 @@ class IrTextDumpHandler(
         // IR dump after deserialization should not be verified in tests with SKIP_DESERIALIZED_IR_TEXT_DUMP directive
         if (isDeserializedInput && SKIP_DESERIALIZED_IR_TEXT_DUMP in module.directives) return
 
-        val irBuiltins = info.irModuleFragment.irBuiltins
+        val irBuiltins = info.irPluginContext.irBuiltIns
 
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,

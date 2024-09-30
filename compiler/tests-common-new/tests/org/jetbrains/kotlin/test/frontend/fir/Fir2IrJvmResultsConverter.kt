@@ -84,6 +84,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
 
         val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
             fir2IrResult.irModuleFragment,
+            fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,
             phaseConfig,
             fir2IrResult.components.irProviders,
