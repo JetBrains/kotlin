@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+@OptIn(AnnotationTargetListForDeprecation::class)
 object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
@@ -184,7 +187,17 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
-        if (useSiteTarget != null) {
+        if (declaration is FirBackingField && actualTargets === AnnotationTargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION &&
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters)
+        ) {
+            reporter.reportOn(
+                annotation.source,
+                FirErrors.WRONG_ANNOTATION_TARGET_WARNING,
+                targetDescription,
+                applicableTargets,
+                context
+            )
+        } else if (useSiteTarget != null) {
             reporter.reportOn(
                 annotation.source,
                 FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,

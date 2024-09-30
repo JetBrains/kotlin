@@ -42384,6 +42384,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("onPropertyAnnotation.kt")
+        public void testOnPropertyAnnotation() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/onPropertyAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("suppressOnFunctionReference.kt")
         public void testSuppressOnFunctionReference() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/suppressOnFunctionReference.kt");

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -80,8 +81,15 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 -> {
                 FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
             }
-            problem == ANNOTATION && !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) -> {
-                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+            problem == ANNOTATION -> {
+                when {
+                    !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) ->
+                        FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+                    languageVersionSettings.supportsFeature(ForbidFieldAnnotationsOnAnnotationParameters) ->
+                        return
+                    else ->
+                        FirJvmErrors.INAPPLICABLE_JVM_FIELD
+                }
             }
             else -> {
                 FirJvmErrors.INAPPLICABLE_JVM_FIELD

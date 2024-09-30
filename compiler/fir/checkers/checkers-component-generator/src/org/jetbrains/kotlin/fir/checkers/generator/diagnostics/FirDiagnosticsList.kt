@@ -406,6 +406,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("actualTarget")
             parameter<Collection<KotlinTarget>>("allowedTargets")
         }
+        val WRONG_ANNOTATION_TARGET_WARNING by warning<KtAnnotationEntry> {
+            parameter<String>("actualTarget")
+            parameter<Collection<KotlinTarget>>("allowedTargets")
+        }
         val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
             parameter<String>("useSiteTarget")

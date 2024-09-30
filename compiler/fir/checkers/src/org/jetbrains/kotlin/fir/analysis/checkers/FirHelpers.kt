@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
+import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -639,8 +640,16 @@ private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
 
 fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
     val annotated =
-        if (container is FirBackingField && !container.propertySymbol.hasBackingField) container.propertyIfBackingField
-        else container
+        if (container is FirBackingField) {
+            when {
+                !container.propertySymbol.hasBackingField -> container.propertyIfBackingField
+                container.propertySymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS -> {
+                    @OptIn(AnnotationTargetListForDeprecation::class)
+                    return TargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION
+                }
+                else -> container
+            }
+        } else container
 
     return when (annotated) {
         is FirRegularClass -> {

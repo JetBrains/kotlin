@@ -1,4 +1,4 @@
-// LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters
+// LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters +ForbidFieldAnnotationsOnAnnotationParameters
 // ISSUE: KT-70169
 
 annotation class A(
@@ -7,7 +7,7 @@ annotation class A(
     <!SYNCHRONIZED_IN_ANNOTATION_ERROR!>@get:Synchronized<!> val z: Int,
     <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:JvmOverloads<!> val v: Int,
     <!THROWS_IN_ANNOTATION_ERROR!>@get:Throws(Exception::class)<!> val w: Int,
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val r: Int,
-    <!VOLATILE_ON_VALUE!>@Volatile<!> val s: Int,
-    @Transient val t: Int,
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val r: Int,
+    <!VOLATILE_ON_VALUE, WRONG_ANNOTATION_TARGET!>@Volatile<!> val s: Int,
+    <!WRONG_ANNOTATION_TARGET!>@Transient<!> val t: Int,
 )

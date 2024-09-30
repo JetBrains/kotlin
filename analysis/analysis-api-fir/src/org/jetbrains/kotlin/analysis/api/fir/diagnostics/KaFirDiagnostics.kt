@@ -874,6 +874,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val allowedTargets: List<KotlinTarget>
     }
 
+    interface WrongAnnotationTargetWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = WrongAnnotationTargetWarning::class
+        val actualTarget: String
+        val allowedTargets: List<KotlinTarget>
+    }
+
     interface WrongAnnotationTargetWithUseSiteTarget : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = WrongAnnotationTargetWithUseSiteTarget::class
         val actualTarget: String

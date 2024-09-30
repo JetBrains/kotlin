@@ -1,4 +1,4 @@
-// LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters
+// LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters +ForbidFieldAnnotationsOnAnnotationParameters
 // ISSUE: KT-70169
 
 annotation class A(
