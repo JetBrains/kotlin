@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.getArrayElementType
+import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.org.objectweb.asm.Type
 
 object ArraySet : IntrinsicMethod() {

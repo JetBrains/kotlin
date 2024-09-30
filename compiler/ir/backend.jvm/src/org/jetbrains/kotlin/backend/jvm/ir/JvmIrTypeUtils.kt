@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
-import org.jetbrains.kotlin.ir.util.defaultValueForType
+import org.jetbrains.kotlin.ir.util.*
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.

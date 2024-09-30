@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
 
 /**
  * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
