@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -61,6 +64,15 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     ).lower(moduleFragment)
 }
 
+internal val KlibIrInlinerPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput, Fir2IrOutput>(
+        "KlibIrInlinerPhase",
+        "IR Inliner before Klib writing",
+        outputIfNotEnabled = { _, _, _, input -> input }
+) { context, input ->
+    // TODO: KT-68756: Invoke lowering prefix and IR Inliner
+    input
+}
+
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
         name = "CopyDefaultValuesToActual",
         description = "Copy default values from expect to actual declarations",
@@ -76,6 +88,15 @@ internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModul
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
+}
+
+internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+    val languageVersionSettings = environment.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+    return runPhase(
+            KlibIrInlinerPhase,
+            fir2IrOutput,
+            disable = languageVersionSettings?.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization) != true
+    )
 }
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

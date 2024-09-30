@@ -139,7 +139,8 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
                 }
 
                 engine.runK2SpecialBackendChecks(fir2IrOutput)
-                engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput))
+                val inlinedIr = engine.runIrInliner(fir2IrOutput, environment)
+                engine.runFir2IrSerializer(FirSerializerInput(inlinedIr))
             }
         }
     }

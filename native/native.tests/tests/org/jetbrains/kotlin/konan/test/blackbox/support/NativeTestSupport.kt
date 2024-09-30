@@ -44,6 +44,8 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 import kotlin.time.Duration
 
+const val KLIB_IR_INLINER = "klibIrInliner"
+
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
      * Note: [BeforeEachCallback.beforeEach] allows accessing test instances while [BeforeAllCallback.beforeAll] which may look
@@ -287,6 +289,7 @@ object NativeTestSupport {
         output += computeBinaryLibraryKind(enforcedProperties)
         output += computeCInterfaceMode(enforcedProperties)
         output += computeXCTestRunner(enforcedProperties, nativeTargets)
+        output += computeKlibIrInlinerMode(tags)
 
         // Compute tests timeouts with regard to already calculated properties that may affect execution time
         output += computeTimeouts(enforcedProperties, output)
@@ -316,6 +319,12 @@ object NativeTestSupport {
             CompilerOutputInterceptor.values(),
             default = CompilerOutputInterceptor.DEFAULT
         )
+
+    private fun computeKlibIrInlinerMode(tags: Set<String>): KlibIrInlinerMode =
+        if (tags.contains(KLIB_IR_INLINER))
+            KlibIrInlinerMode.ON
+        else
+            KlibIrInlinerMode.OFF
 
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
         ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.values(), default = GCType.UNSPECIFIED)

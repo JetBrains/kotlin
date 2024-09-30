@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
@@ -170,6 +171,21 @@ fun main() {
                 )
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
+        // KLIB IR Iliner tests (IR inliner is invoked before K2 Klib Serializer)
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxKlibIrInlinerTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    klibIrInliner(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
 
@@ -720,6 +736,7 @@ fun frontendFir() = arrayOf(
     annotation(FirPipeline::class.java)
 )
 
+private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 private fun klib() = annotation(Tag::class.java, "klib")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

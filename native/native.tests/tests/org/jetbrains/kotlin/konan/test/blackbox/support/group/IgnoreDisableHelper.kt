@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
@@ -32,6 +33,7 @@ private val THREAD_STATE_CHECKER_NAMES = ThreadStateChecker.entries.map { it.nam
 private val FAMILY_NAMES = Family.entries.map { it.name }
 private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
 private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
+private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
 
 // Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile
 internal fun Settings.isDisabledNative(directives: Directives) =
@@ -127,6 +129,7 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
                 TARGET_ARCHITECTURE -> get<KotlinNativeTargets>().testTarget.architecture.name to ARCHITECTURE_NAMES
                 IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES
                 SUPPORTS_CORE_SYMBOLICATION -> get<KotlinNativeTargets>().testTarget.supportsCoreSymbolication().toString() to BOOLEAN_NAMES
+                KLIB_IR_INLINER -> get<KlibIrInlinerMode>().name to KLIB_IR_INLINER_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
             }
             val valueFromTestDirective = matchResult.groups[2]?.value!!
