@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.util.*
 
 internal data class KlibWriterInput(
@@ -65,6 +65,11 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     */
     val linkDependencies = if (context.config.metadataKlib) emptyList()
     else input.serializerOutput.neededLibraries
+
+    config.writeDependenciesOfProducedKlibTo?.let { path ->
+        val usedDependenciesFile = File(path)
+        usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.canonicalPath })
+    }
 
     buildLibrary(
             natives = config.nativeLibraries,
