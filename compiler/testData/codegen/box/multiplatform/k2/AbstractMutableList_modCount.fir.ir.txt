@@ -160,7 +160,7 @@ FILE fqName:kotlin.collections fileName:/common.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getModCountAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList'
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
             receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.getModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
     FUN name:getModCountViaReferenceAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
@@ -176,9 +176,9 @@ FILE fqName:kotlin.collections fileName:/common.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
                 receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
-            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
+            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
               receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
               value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_0: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.Int origin=null
@@ -243,7 +243,7 @@ FILE fqName:kotlin.collections fileName:/common.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getModCountAtMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList'
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
             receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.getModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
     FUN name:getModCountViaReferenceAtMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.MyMutableList) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
@@ -259,9 +259,9 @@ FILE fqName:kotlin.collections fileName:/common.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
                 receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
-            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
+            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
               receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
               value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_1: kotlin.Int declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.Int origin=null
