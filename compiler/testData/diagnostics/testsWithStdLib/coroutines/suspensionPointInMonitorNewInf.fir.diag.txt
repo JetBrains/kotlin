@@ -12,4 +12,4 @@
 
 /suspensionPointInMonitorNewInf.fir.kt:(1083,1093): error: The 'returnsInt' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.fir.kt:(1130,1134): warning: 'when' is exhaustive so 'else' is redundant here
+/suspensionPointInMonitorNewInf.fir.kt:(1130,1134): warning: 'when' is exhaustive so 'else' is redundant here.

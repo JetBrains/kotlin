@@ -46,12 +46,12 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
-            "Non-external type extends external type ''{0}''",
+            "Non-external type extends external type ''{0}''.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
-            "External type extends non-external type ''{0}''",
+            "External type extends non-external type ''{0}''.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations.")
@@ -87,7 +87,10 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, "Cannot use '@WasmExport' and '@JsExport' for same function.")
         map.put(NESTED_WASM_IMPORT, "Only top-level functions can be imported with '@WasmImport'.")
         map.put(WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with '@WasmImport' must be external.")
-        map.put(WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE, "Default parameter values are not supported with '@WasmImport' and '@WasmExport'.")
+        map.put(
+            WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE,
+            "Default parameter values are not supported with '@WasmImport' and '@WasmExport'."
+        )
         map.put(WASM_IMPORT_EXPORT_VARARG_PARAMETER, "Vararg parameters are not supported with '@WasmImport' and '@WasmExport'.")
         map.put(
             WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE,

@@ -2,11 +2,11 @@
 
 /genericInvokeInCompanion.fir.kt:(193,199): error: Not enough information to infer type argument for 'T'.
 
-/genericInvokeInCompanion.fir.kt:(208,224): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(208,224): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(225,231): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(240,266): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(240,266): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(267,273): error: Unresolved reference 'invoke'.
 
@@ -18,11 +18,11 @@
 
 /genericInvokeInCompanion.fir.kt:(339,345): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(387,403): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(387,403): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(404,410): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(424,450): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(424,450): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(451,457): error: Unresolved reference 'invoke'.
 
@@ -38,11 +38,11 @@
 
 /genericInvokeInCompanion.fir.kt:(628,643): error: One type argument expected for fun <T> invoke(name: String): C<T>.
 
-/genericInvokeInCompanion.fir.kt:(652,668): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(652,668): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(669,675): error: Unresolved reference 'invoke'.
 
-/genericInvokeInCompanion.fir.kt:(699,725): error: Type arguments for outer class are redundant when nested class is referenced
+/genericInvokeInCompanion.fir.kt:(699,725): error: Type arguments for outer class are redundant when nested class is referenced.
 
 /genericInvokeInCompanion.fir.kt:(726,732): error: Unresolved reference 'invoke'.
 

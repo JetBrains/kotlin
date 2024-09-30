@@ -169,7 +169,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions.")
         map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions.")
         map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes.")
-        map.put(SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, "Synchronizing by ''{0}'' is forbidden", RENDER_TYPE)
+        map.put(SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, "Synchronizing on ''{0}'' is forbidden.", RENDER_TYPE)
         map.put(SYNCHRONIZED_ON_SUSPEND, "'@Synchronized' annotation is not applicable to 'suspend' functions and lambdas.")
         map.put(SYNCHRONIZED_IN_INTERFACE, "'@Synchronized' annotation cannot be used on interface members.")
         map.put(SYNCHRONIZED_IN_ANNOTATION, "'@Synchronized' annotation cannot be used on annotation parameters.")
@@ -373,7 +373,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY,
             "This variable access is resolved to Java field, but it is clashed with Kotlin property ''{0}'' with backing field " +
                     "which leads to the incorrect bytecode generation and failure at runtime. So such calls are prohibited until " +
-                    "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details",
+                    "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details.",
             SYMBOL
         )
 
@@ -386,7 +386,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             MISSING_BUILT_IN_DECLARATION,
-            "Cannot access built-in declaration ''{0}''. Ensure that you have a dependency on the Kotlin standard library",
+            "Cannot access built-in declaration ''{0}''. Ensure that you have a dependency on the Kotlin standard library.",
             DECLARATION_FQ_NAME
         )
     }

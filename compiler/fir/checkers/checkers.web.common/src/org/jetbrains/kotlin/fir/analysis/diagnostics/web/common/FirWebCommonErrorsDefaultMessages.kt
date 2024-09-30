@@ -57,7 +57,7 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CANNOT_CHECK_FOR_EXTERNAL_INTERFACE,
-            "Cannot check for external interface: ''{0}''",
+            "Cannot check for external interface ''{0}''.",
             FirDiagnosticRenderers.RENDER_TYPE,
         )
         map.put(

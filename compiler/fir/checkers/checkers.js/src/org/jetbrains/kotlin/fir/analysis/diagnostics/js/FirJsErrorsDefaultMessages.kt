@@ -64,8 +64,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERAT
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
-        map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' and '@JsNonModule' annotations are prohibited for 'var' declarations. Use 'val' instead.")
-        map.put(JS_MODULE_PROHIBITED_ON_NON_NATIVE, "'@JsModule' and '@JsNonModule' annotations are prohibited for non-external declarations.")
+        map.put(
+            JS_MODULE_PROHIBITED_ON_VAR,
+            "'@JsModule' and '@JsNonModule' annotations are prohibited for 'var' declarations. Use 'val' instead."
+        )
+        map.put(
+            JS_MODULE_PROHIBITED_ON_NON_NATIVE,
+            "'@JsModule' and '@JsNonModule' annotations are prohibited for non-external declarations."
+        )
         map.put(
             NESTED_JS_MODULE_PROHIBITED,
             "'@JsModule' and '@JsNonModule' cannot appear here since the file is already marked by either '@JsModule' or '@JsNonModule'."
@@ -185,7 +191,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) cannot be exported to JavaScript.", CommonRenderers.STRING)
         map.put(
             NON_EXPORTABLE_TYPE,
-            "Exported declaration uses non-exportable {0} type: ''{1}''",
+            "Exported declaration uses non-exportable {0} type ''{1}''.",
             CommonRenderers.STRING,
             FirDiagnosticRenderers.RENDER_TYPE,
         )
@@ -195,9 +201,9 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         map.put(NAMED_COMPANION_IN_EXPORTED_INTERFACE, "Named companions are not allowed inside exported interfaces.")
-        map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'.");
-        map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'.");
-        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const.");
+        map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'.")
+        map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'.")
+        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const.")
         map.put(JS_STATIC_ON_OVERRIDE, "Override member of a companion object cannot be '@JsStatic'.")
     }
 }

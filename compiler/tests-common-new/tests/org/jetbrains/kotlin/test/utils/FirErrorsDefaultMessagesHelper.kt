@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.junit.Assert
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
@@ -32,6 +33,15 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessages(objectWithErrors: Any) {
 
 private val messageParameterRegex = """\{\d.*?}""".toRegex()
 
+private val lastCharRegex = """[.}\d]""".toRegex()
+
+private val lastCharExclusions = setOf(
+    FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.name,
+    FirErrors.ERROR_SUPPRESSION.name,
+    FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
+    FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY.name,
+)
+
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>) = buildList {
     if (!containsKey(factory)) {
         add("No default diagnostic renderer is provided for ${property.name}")
@@ -56,10 +66,14 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
     }
 
     if (parameterCount > 0 && renderer.message.contains("(?<!')'(?!')".toRegex())) {
-        add("Renderer for ${property.name} has parameters and contains single quote. Text inside single quotes is not formatted in MessageFormat. Use double quote instead.")
+        add("Renderer for ${property.name} has parameters and contains a single quote. Text inside single quotes is not formatted in MessageFormat. Use double quotes instead.")
     }
 
     if (parameterCount == 0 && renderer.message.contains("(?<!')''(?!')".toRegex())) {
-        add("Renderer for ${property.name} has no parameters and contains double quote. Single quote should be used.")
+        add("Renderer for ${property.name} has no parameters and contains double quote. Single quotes should be used.")
+    }
+
+    if (property.name !in lastCharExclusions && !renderer.message.last().toString().matches(lastCharRegex)) {
+        add("Renderer for ${property.name} should end with a full stop. If this error is a false positive, add the name of the diagnostic to the list of exclusions.")
     }
 }

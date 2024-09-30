@@ -213,6 +213,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
 // ------------------------------ factories for deprecation ------------------------------
 
 sealed class KtDiagnosticFactoryForDeprecation<F : AbstractKtDiagnosticFactory>(
+    val name: String,
     val deprecatingFeature: LanguageFeature,
     val warningFactory: F,
     val errorFactory: F
@@ -227,6 +228,7 @@ class KtDiagnosticFactoryForDeprecation0(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory0>(
+    name,
     featureForError,
     KtDiagnosticFactory0("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType),
     KtDiagnosticFactory0("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType)
@@ -238,6 +240,7 @@ class KtDiagnosticFactoryForDeprecation1<A>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory1<A>>(
+    name,
     featureForError,
     KtDiagnosticFactory1("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType),
     KtDiagnosticFactory1("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType)
@@ -249,6 +252,7 @@ class KtDiagnosticFactoryForDeprecation2<A, B>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory2<A, B>>(
+    name,
     featureForError,
     KtDiagnosticFactory2("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType),
     KtDiagnosticFactory2("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType)
@@ -260,6 +264,7 @@ class KtDiagnosticFactoryForDeprecation3<A, B, C>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory3<A, B, C>>(
+    name,
     featureForError,
     KtDiagnosticFactory3("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType),
     KtDiagnosticFactory3("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType)
@@ -271,6 +276,7 @@ class KtDiagnosticFactoryForDeprecation4<A, B, C, D>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory4<A, B, C, D>>(
+    name,
     featureForError,
     KtDiagnosticFactory4("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType),
     KtDiagnosticFactory4("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType)
