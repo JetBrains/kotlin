@@ -57,46 +57,41 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         if (context.platform.isJs()) {
             irFile.transform(AtomicExtensionTransformer(), null)
             irFile.transformChildren(AtomicTransformer(), null)
-
             irFile.patchDeclarationParents()
         }
     }
 
     private inner class AtomicExtensionTransformer : IrElementTransformerVoid() {
         override fun visitFile(declaration: IrFile): IrFile {
-            declaration.declarations.addAllTransformedAtomicExtensions()
+            declaration.transformAllAtomicExtensions()
             return super.visitFile(declaration)
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
-            declaration.declarations.addAllTransformedAtomicExtensions()
+            declaration.transformAllAtomicExtensions()
             return super.visitClass(declaration)
         }
 
-        private fun MutableList<IrDeclaration>.addAllTransformedAtomicExtensions() {
-            val transformedDeclarations = mutableListOf<IrDeclaration>()
-            forEach { irDeclaration ->
-                irDeclaration.transformAtomicExtension()?.let { it -> transformedDeclarations.add(it) }
+        private fun IrDeclarationContainer.transformAllAtomicExtensions() {
+            declarations.filter { it is IrFunction && it.isAtomicExtension() }.forEach { atomicExtension ->
+                atomicExtension as IrFunction
+                declarations.add(transformAtomicExtension(atomicExtension))
             }
-            addAll(transformedDeclarations)
         }
 
-        private fun IrDeclaration.transformAtomicExtension(): IrDeclaration? {
+        private fun transformAtomicExtension(atomicExtension: IrFunction): IrFunction {
             // Transform the signature of the inline Atomic* extension declaration:
             // inline fun AtomicRef<T>.foo(arg) { ... } -> inline fun <T> foo(arg', atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit)
-            if (this is IrFunction && isAtomicExtension()) {
-                val newDeclaration = deepCopyWithSymbols(parent)
-                val type = newDeclaration.extensionReceiverParameter!!.type.atomicToValueType()
-                val getterType = context.buildGetterType(type)
-                val setterType = context.buildSetterType(type)
-                newDeclaration.valueParameters = newDeclaration.valueParameters + listOf(
-                    buildValueParameter(newDeclaration, GETTER, getterType),
-                    buildValueParameter(newDeclaration, SETTER, setterType)
-                )
-                newDeclaration.extensionReceiverParameter = null
-                return newDeclaration
-            }
-            return null
+            val newDeclaration = atomicExtension.deepCopyWithSymbols(atomicExtension.parent)
+            val type = newDeclaration.extensionReceiverParameter!!.type.atomicToValueType()
+            val getterType = context.buildGetterType(type)
+            val setterType = context.buildSetterType(type)
+            newDeclaration.valueParameters = newDeclaration.valueParameters + listOf(
+                buildValueParameter(newDeclaration, GETTER, getterType),
+                buildValueParameter(newDeclaration, SETTER, setterType)
+            )
+            newDeclaration.extensionReceiverParameter = null
+            return newDeclaration
         }
     }
 
@@ -159,85 +154,71 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
             expression.eraseAtomicFactory()?.let { return it.transform(this, data) }
             val isInline = expression.symbol.owner.isInline
-            (expression.extensionReceiver ?: expression.dispatchReceiver)?.transform(this, data)?.let { receiver ->
-                // Transform invocations of atomic functions
-                if (expression.symbol.isKotlinxAtomicfuPackage() && receiver.type.isAtomicValueType()) {
-                    // Substitute invocations of atomic functions on atomic receivers
-                    // with the corresponding inline declarations from `kotlinx-atomicfu-runtime`,
-                    // passing atomic receiver accessors as atomicfu$getter and atomicfu$setter parameters.
+            val receiver = (expression.extensionReceiver ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
+            val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
+            if (!propertyGetterCall.type.isAtomicValueType()) return super.visitCall(expression, data)
+            val valueType = if (receiver is IrTypeOperatorCallImpl) {
+                // val a = atomic<Any?>(null)
+                // (a as AtomicReference<Array<String>?>).getAndSet(arrayOf("aaa", "bbb"))
+                (receiver.type as IrSimpleType).arguments[0] as IrSimpleType
+            } else {
+                propertyGetterCall.type.atomicToValueType()
+            }
+            // Transform invocations of atomic functions
+            if (expression.symbol.isKotlinxAtomicfuPackage() && propertyGetterCall.type.isAtomicValueType()) {
+                // Substitute invocations of atomic functions on atomic receivers
+                // with the corresponding inline declarations from `kotlinx-atomicfu-runtime`,
+                // passing atomic receiver accessors as atomicfu$getter and atomicfu$setter parameters.
 
-                    // In case of the atomic field receiver, pass field accessors:
-                    // a.incrementAndGet() -> atomicfu_incrementAndGet(get_a {..}, set_a {..})
+                // In case of the atomic field receiver, pass field accessors:
+                // a.incrementAndGet() -> atomicfu_incrementAndGet(get_a {..}, set_a {..})
 
-                    // In case of the atomic `this` receiver, pass the corresponding atomicfu$getter and atomicfu$setter parameters
-                    // from the parent transformed atomic extension declaration:
-                    // Note: inline atomic extension signatures are already transformed with the [AtomicExtensionTransformer]
-                    // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { incrementAndGet() } ->
-                    // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { atomicfu_incrementAndGet(atomicfu$getter, atomicfu$setter) }
-                    receiver.getReceiverAccessors(data)?.let { accessors ->
-                        val receiverValueType = receiver.type.atomicToValueType()
-                        val inlineAtomic = expression.inlineAtomicFunction(receiverValueType, accessors).apply {
-                            if (symbol.owner.name.asString() in ATOMICFU_INLINE_FUNCTIONS) {
-                                val lambdaLoop = (getValueArgument(0) as IrFunctionExpression).function
-                                lambdaLoop.body?.transform(this@AtomicTransformer, data)
-                            }
+                // In case of the atomic `this` receiver, pass the corresponding atomicfu$getter and atomicfu$setter parameters
+                // from the parent transformed atomic extension declaration:
+                // Note: inline atomic extension signatures are already transformed with the [AtomicExtensionTransformer]
+                // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { incrementAndGet() } ->
+                // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { atomicfu_incrementAndGet(atomicfu$getter, atomicfu$setter) }
+                propertyGetterCall.getReceiverAccessors(data)?.let { accessors ->
+                    val inlineAtomic = expression.inlineAtomicFunction(valueType, accessors).apply {
+                        if (symbol.owner.name.asString() in ATOMICFU_INLINE_FUNCTIONS) {
+                            val lambdaLoop = (getValueArgument(0) as IrFunctionExpression).function
+                            lambdaLoop.body?.transform(this@AtomicTransformer, data)
                         }
-                        return super.visitCall(inlineAtomic, data)
                     }
+                    return super.visitCall(inlineAtomic, data)
                 }
-                // Transform invocations of atomic extension functions
-                if (isInline && receiver.type.isAtomicValueType()) {
-                    // Transform invocation of the atomic extension on the atomic receiver,
-                    // passing field accessors as atomicfu$getter and atomicfu$setter parameters.
+            }
+            // Transform invocations of atomic extension functions
+            if (isInline) {
+                // Transform invocation of the atomic extension on the atomic receiver,
+                // passing field accessors as atomicfu$getter and atomicfu$setter parameters.
 
-                    // In case of the atomic field receiver, pass field accessors:
-                    // a.foo(arg) -> foo(arg, get_a {..}, set_a {..})
+                // In case of the atomic field receiver, pass field accessors:
+                // a.foo(arg) -> foo(arg, get_a {..}, set_a {..})
 
-                    // In case of the atomic `this` receiver, pass the corresponding atomicfu$getter and atomicfu$setter parameters
-                    // from the parent transformed atomic extension declaration:
-                    // Note: inline atomic extension signatures are already transformed with the [AtomicExtensionTransformer]
-                    // inline fun bar(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { ... }
-                    // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { this.bar() } ->
-                    // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { bar(atomicfu$getter, atomicfu$setter) }
-                    receiver.getReceiverAccessors(data)?.let { accessors ->
-                        val declaration = expression.symbol.owner
-                        val transformedAtomicExtension = getDeclarationWithAccessorParameters(declaration, declaration.extensionReceiverParameter)
-                        val irCall = buildCall(
-                            expression.startOffset,
-                            expression.endOffset,
-                            target = transformedAtomicExtension.symbol,
-                            type = expression.type,
-                            valueArguments = expression.getValueArguments() + accessors
-                        ).apply {
-                            dispatchReceiver = expression.dispatchReceiver
-                        }
-                        return super.visitCall(irCall, data)
+                // In case of the atomic `this` receiver, pass the corresponding atomicfu$getter and atomicfu$setter parameters
+                // from the parent transformed atomic extension declaration:
+                // Note: inline atomic extension signatures are already transformed with the [AtomicExtensionTransformer]
+                // inline fun bar(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { ... }
+                // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { this.bar() } ->
+                // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { bar(atomicfu$getter, atomicfu$setter) }
+                propertyGetterCall.getReceiverAccessors(data)?.let { accessors ->
+                    val declaration = expression.symbol.owner
+                    val transformedAtomicExtension =
+                        getDeclarationWithAccessorParameters(declaration, declaration.extensionReceiverParameter)
+                    val irCall = buildCall(
+                        expression.startOffset,
+                        expression.endOffset,
+                        target = transformedAtomicExtension.symbol,
+                        type = expression.type,
+                        valueArguments = expression.getValueArguments() + accessors
+                    ).apply {
+                        dispatchReceiver = expression.dispatchReceiver
                     }
+                    return super.visitCall(irCall, data)
                 }
             }
             return super.visitCall(expression, data)
-        }
-
-        override fun visitGetValue(expression: IrGetValue, data: IrFunction?): IrExpression {
-            // For transformed atomic extension functions:
-            // replace all usages of old value parameters with the new parameters of the transformed declaration
-            // inline fun foo(arg', atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { bar(arg) } -> { bar(arg') }
-            if (expression.symbol is IrValueParameterSymbol) {
-                val valueParameter = expression.symbol.owner as IrValueParameter
-                val parent = valueParameter.parent
-                if (parent is IrFunction && parent.isTransformedAtomicExtensionFunction()) {
-                    val index = valueParameter.index
-                    if (index >= 0) { // index == -1 for `this` parameter
-                        val transformedValueParameter = parent.valueParameters[index]
-                        return buildGetValue(
-                            expression.startOffset,
-                            expression.endOffset,
-                            transformedValueParameter.symbol
-                        )
-                    }
-                }
-            }
-            return super.visitGetValue(expression, data)
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrFunction?): IrExpression {
@@ -336,15 +317,6 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 valueArguments = valueArguments + accessors
             )
         }
-
-        private fun IrFunction.hasReceiverAccessorParameters(): Boolean {
-            if (valueParameters.size < 2) return false
-            val params = valueParameters.takeLast(2)
-            return params[0].name.asString() == GETTER && params[1].name.asString() == SETTER
-        }
-
-        private fun IrDeclaration.isTransformedAtomicExtensionFunction(): Boolean =
-            this is IrFunction && hasReceiverAccessorParameters()
 
         private fun getDeclarationWithAccessorParameters(
             declaration: IrFunction,
@@ -481,12 +453,13 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 
     private fun IrType.atomicToValueType(): IrType {
         require(this is IrSimpleType)
-        return classifier.signature?.asPublic()?.declarationFqName?.let { classId ->
-            if (classId == "AtomicRef")
-                arguments.first().typeOrNull ?: error("$AFU_PKG.AtomicRef type parameter is not IrTypeProjection")
-            else
-                AFU_CLASSES[classId] ?: error("IrType ${this.getClass()} does not match any of atomicfu types")
-        } ?: error("Unexpected signature of the atomic type: ${this.render()}")
+        return when (classFqName?.shortName()?.asString()) {
+            "AtomicInt" -> irBuiltIns.intType
+            "AtomicLong" -> irBuiltIns.longType
+            "AtomicBoolean" -> irBuiltIns.booleanType
+            "AtomicRef" -> this.arguments.first().typeOrNull ?: error("$AFU_PKG.AtomicRef type parameter is not IrTypeProjection")
+            else -> error("Expected kotlinx.atomicfu.(AtomicInt|AtomicLong|AtomicBoolean|AtomicRef) type, but found ${this.render()}")
+        }
     }
 
     private fun IrCall.isAtomicFactory(): Boolean =
@@ -508,4 +481,13 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 
     private fun IrCall.isReentrantLockFactory(): Boolean =
         symbol.owner.name.asString() == REENTRANT_LOCK_FACTORY && type.isReentrantLockType()
+
+    private fun IrFunction.hasReceiverAccessorParameters(): Boolean {
+        if (valueParameters.size < 2) return false
+        val params = valueParameters.takeLast(2)
+        return params[0].name.asString() == GETTER && params[1].name.asString() == SETTER
+    }
+
+    private fun IrDeclaration.isTransformedAtomicExtensionFunction(): Boolean =
+        this is IrFunction && hasReceiverAccessorParameters()
 }

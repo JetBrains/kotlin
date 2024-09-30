@@ -153,6 +153,12 @@ public class AtomicfuJsFirTestGenerated extends AbstractAtomicfuJsFirTest {
     }
 
     @Test
+    @TestMetadata("LongConcatenationTest.kt")
+    public void testLongConcatenationTest() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LongConcatenationTest.kt");
+    }
+
+    @Test
     @TestMetadata("LoopTest.kt")
     public void testLoopTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LoopTest.kt");
