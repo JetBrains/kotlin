@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/javaClassWithDifferentName/test.kt
+$TESTDATA_DIR$/javaClassWithDifferentName/J.java
+-d
+$TEMP_DIR$

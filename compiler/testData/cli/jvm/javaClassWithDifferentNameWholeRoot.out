@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/javaClassWithDifferentName/test.kt:2:5: error: unresolved reference 'JPackagePrivate'.
+    JPackagePrivate()
+    ^^^^^^^^^^^^^^^
+COMPILATION_ERROR
