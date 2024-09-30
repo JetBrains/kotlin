@@ -166,12 +166,16 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
     }
 
+    override fun KotlinTypeMarker.typeDepthForApproximation(): Int {
+        return if (this is ConeCapturedType) {
+            constructor.projection.type?.typeDepth() ?: 1
+        } else {
+            typeDepth()
+        }
+    }
+
     override fun RigidTypeMarker.typeDepth(): Int {
         require(this is ConeRigidType)
-
-        if (this is ConeCapturedType) {
-            return constructor.projection.type?.typeDepth() ?: 1
-        }
 
         if (this is ConeClassLikeType) {
             val fullyExpanded = fullyExpandedType(session)

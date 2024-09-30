@@ -35,11 +35,11 @@ abstract class AbstractTypeApproximator(
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
     // type <: resultType
     fun approximateToSuperType(type: KotlinTypeMarker, conf: TypeApproximatorConfiguration): KotlinTypeMarker? =
-        approximateToSuperType(type, conf, -type.typeDepth())
+        approximateToSuperType(type, conf, -type.typeDepthForApproximation())
 
     // resultType <: type
     fun approximateToSubType(type: KotlinTypeMarker, conf: TypeApproximatorConfiguration): KotlinTypeMarker? =
-        approximateToSubType(type, conf, -type.typeDepth())
+        approximateToSubType(type, conf, -type.typeDepthForApproximation())
 
     fun clearCache() {
         cacheForIncorporationConfigToSubtypeDirection.clear()

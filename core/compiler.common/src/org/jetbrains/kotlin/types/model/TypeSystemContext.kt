@@ -122,6 +122,7 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
 
     fun RigidTypeMarker.isExtensionFunction(): Boolean
 
+    // TODO: KT-71905: consider removing all typeDepth() and typeDepthForApproximation() functions
     fun RigidTypeMarker.typeDepth(): Int
 
     fun KotlinTypeMarker.typeDepth(): Int = when (this) {
@@ -129,6 +130,9 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
         is FlexibleTypeMarker -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
         else -> error("Type should be rigid or flexible: $this")
     }
+
+    fun KotlinTypeMarker.typeDepthForApproximation(): Int =
+        typeDepth()
 
     fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): RigidTypeMarker?
 
