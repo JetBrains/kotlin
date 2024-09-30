@@ -1150,9 +1150,14 @@ private class ElementsToShortenCollector(
                 .hasScopeCloserThan(scopeForQualifiedAccess, expressionInScope)) return false
         val candidatesWithinSamePriorityScopes = candidates.filter { it.candidate.originScope == scopeForQualifiedAccess }
 
+        if (candidatesWithinSamePriorityScopes.isEmpty()) {
+            return true
+        }
+
+        val singleCandidate = candidatesWithinSamePriorityScopes.singleOrNull() ?: return false
+
         // TODO isInBestCandidates should probably be used more actively to filter candidates
-        return candidatesWithinSamePriorityScopes.isEmpty() ||
-                candidatesWithinSamePriorityScopes.singleOrNull()?.isInBestCandidates == true
+        return singleCandidate.isInBestCandidates
     }
 
     fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
