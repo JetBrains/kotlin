@@ -50,9 +50,7 @@ object FirExpectActualResolver {
 
                             when {
                                 actualSymbol is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
-                                // I disagree that FirEnumEntrySymbol should be a subclass of FirCallableSymbol
-                                actualSymbol !is FirEnumEntrySymbol && actualSymbol.isStatic ->
-                                    expectContainingClass?.getStaticCallablesForExpectClass(actualSymbol.name)
+                                actualSymbol.isStatic -> expectContainingClass?.getStaticCallablesForExpectClass(actualSymbol.name)
                                 else -> expectContainingClass?.getCallablesForExpectClass(actualSymbol.name)
                             }.orEmpty()
                         }
