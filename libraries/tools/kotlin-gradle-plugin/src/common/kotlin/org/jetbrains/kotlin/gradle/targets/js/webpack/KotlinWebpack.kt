@@ -53,7 +53,6 @@ constructor(
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
     private val versions = nodeJs.versions
-    private val rootPackageDir by lazy { nodeJs.rootPackageDirectory }
 
     private val npmProject = compilation.npmProject
 
@@ -304,7 +303,6 @@ constructor(
             runner.copy(
                 config = runner.config.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = rootPackageDir.getFile()
                 )
             ).execute(services)
 

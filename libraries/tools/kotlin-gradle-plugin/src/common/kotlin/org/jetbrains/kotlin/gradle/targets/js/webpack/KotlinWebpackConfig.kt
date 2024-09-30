@@ -41,7 +41,6 @@ data class KotlinWebpackConfig(
     var sourceMaps: Boolean = false,
     var export: Boolean = true,
     var progressReporter: Boolean = false,
-    var progressReporterPathFilter: File? = null,
     var resolveFromModulesFirst: Boolean = false
 ) : WebpackRulesDsl {
 
@@ -50,9 +49,6 @@ data class KotlinWebpackConfig(
 
     val outputPathInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
-
-    val progressReporterPathFilterInput: String?
-        get() = npmProjectDir?.get()?.let { npmProjectDir -> progressReporterPathFilter?.relativeOrAbsolute(npmProjectDir) }
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {

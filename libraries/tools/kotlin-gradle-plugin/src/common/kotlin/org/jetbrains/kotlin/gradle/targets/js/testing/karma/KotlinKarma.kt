@@ -56,7 +56,6 @@ class KotlinKarma(
 
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
-    private val nodeRootPackageDir by lazy { nodeJs.rootPackageDirectory }
     private val versions = nodeJs.versions
 
     private val config: KarmaConfig = KarmaConfig()
@@ -93,7 +92,6 @@ class KotlinKarma(
         devtool = null,
         export = false,
         progressReporter = true,
-        progressReporterPathFilter = nodeRootPackageDir.getFile(),
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait")
     )
