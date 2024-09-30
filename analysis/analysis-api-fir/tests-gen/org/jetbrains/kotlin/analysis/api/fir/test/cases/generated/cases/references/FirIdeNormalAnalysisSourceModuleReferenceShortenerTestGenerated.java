@@ -599,6 +599,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   }
 
   @Test
+  @TestMetadata("staticMethodFromBaseClassConflict2.kt")
+  public void testStaticMethodFromBaseClassConflict2() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/staticMethodFromBaseClassConflict2.kt");
+  }
+
+  @Test
   @TestMetadata("superClass.kt")
   public void testSuperClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/superClass.kt");

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -23,11 +26,17 @@ internal fun areReceiversEquivalent(existingCall: FirQualifiedAccessExpression, 
     val existingExtensionSymbol = existingCall.extensionReceiver?.boundSymbolForReceiverExpression()
     val candidateExtensionSymbol = candidateCall.singleExtensionReceiver?.boundSymbolForReceiverExpression()
 
+    if (existingExtensionSymbol != candidateExtensionSymbol) return false
+
+    if (resolvesToSameStaticMethods(existingCall, candidateCall)) {
+        // no need to compare dispatch receivers for static methods
+        return true
+    }
+
     val existingDispatchReceiver = existingCall.dispatchReceiver?.boundSymbolForReceiverExpression()
     val candidateDispatchReceiver = candidateCall.dispatchReceiverExpression()?.boundSymbolForReceiverExpression()
 
-    return existingExtensionSymbol == candidateExtensionSymbol &&
-            existingDispatchReceiver == candidateDispatchReceiver
+    return existingDispatchReceiver == candidateDispatchReceiver
 }
 
 /**
@@ -58,3 +67,17 @@ private fun FirExpression.boundSymbolForReceiverExpression(): FirBasedSymbol<*>?
 
     else -> null
 }
+
+private fun resolvesToSameStaticMethods(
+    existingCall: FirQualifiedAccessExpression,
+    candidateCall: Candidate,
+): Boolean {
+    val existingSymbol = existingCall.calleeReference.symbol ?: return false
+    val candidateSymbol = candidateCall.symbol
+
+    if (existingSymbol != candidateSymbol) return false
+
+    val referencedDeclaration = existingSymbol.fir
+    return referencedDeclaration is FirMemberDeclaration && referencedDeclaration.isStatic
+}
+
