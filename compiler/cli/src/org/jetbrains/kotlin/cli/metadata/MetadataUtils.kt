@@ -7,14 +7,21 @@ package org.jetbrains.kotlin.cli.metadata
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 
 fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedMetadata: SerializedMetadata, destDir: File) {
-    val versions = KotlinLibraryVersioning.CURRENT
+    val versions = KotlinLibraryVersioning(
+        abiVersion = KotlinAbiVersion.CURRENT,
+        compilerVersion = KotlinCompilerVersion.getVersion(),
+        metadataVersion = MetadataVersion.INSTANCE,
+    )
 
     buildKotlinLibrary(
         emptyList(),

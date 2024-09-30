@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -15,14 +14,6 @@ data class KotlinLibraryVersioning(
         require(irSignatureVersions.isNotEmpty()) {
             "Signature versions must not be empty!"
         }
-    }
-
-    companion object {
-        val CURRENT = KotlinLibraryVersioning(
-            compilerVersion = KotlinCompilerVersion.getVersion(),
-            abiVersion = KotlinAbiVersion.CURRENT,
-            metadataVersion = MetadataVersion.INSTANCE
-        )
     }
 }
 

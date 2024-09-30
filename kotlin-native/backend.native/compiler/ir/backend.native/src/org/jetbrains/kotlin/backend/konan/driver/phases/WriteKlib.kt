@@ -35,7 +35,14 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val output = outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
-    val versions = KotlinLibraryVersioning.CURRENT
+    val abiVersion = KotlinAbiVersion.CURRENT
+    val compilerVersion = KotlinCompilerVersion.getVersion().toString()
+    val metadataVersion = MetadataVersion.INSTANCE
+    val versions = KotlinLibraryVersioning(
+            abiVersion = abiVersion,
+            compilerVersion = compilerVersion,
+            metadataVersion = metadataVersion,
+    )
     val target = config.target
     val manifestProperties = config.manifestProperties ?: Properties()
 

@@ -8,7 +8,6 @@ description = "Common klib reader and writer"
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
-    api(project(":compiler:compiler.version"))
 
     compileOnly(project(":core:metadata"))
 
