@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 class JsExportDeclarationChecker(
     private val includeUnsignedNumbers: Boolean,
-    private val allowCompanionInInterface: Boolean,
+    private val allowCompanionInInterface: Boolean
 ) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace

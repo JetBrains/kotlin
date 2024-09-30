@@ -29,6 +29,71 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+/**
+ * The lowering generates a few functions from the original exported suspend functions
+ * to be used both from Kotlin and JS sides with minimal performance degradation
+ * It works both with top-level suspend functions and with member suspend functions
+ *
+ * For the top-level suspend functions we generate only one additional function supposed to be used only from the JS side.
+ * As an example:
+ *
+ * **Before the transformation:**
+ * ```kotlin
+ * @JsExport
+ * suspend fun foo(a: Int, b: String): String { ... }
+ * ```
+ *
+ * **After the transformation:**
+ * ```kotlin
+ * @JsExport.Ignore
+ * suspend fun foo(a: Int, b: String): String { ... }
+ *
+ * @JsExport
+ * @JsName("foo")
+ * fun foo$promisified(a: Int, b: String): Promise<String> =
+ *  /* The `promisify` function is defined inside `libraries/stdlib/js/runtime/coroutinesInterop.kt` */
+ *  kotlin.coroutines.promisify { foo(a, b) }
+ * ```
+ *
+ * For the member functions it's a little bit more complicated because we should take in account that they could be overridden from the JS side.
+ * To support the overriding, we introduce two more helper methods.
+ *
+ * **Before the transformation:**
+ * ```kotlin
+ * @JsExport
+ * class SomeClass {
+ *   suspend fun foo(a: Int, b: String): String { ... }
+ * }
+ * ```
+ *
+ * **After the transformation:**
+ * ```kotlin
+ * @JsExport
+ * class SomeClass {
+ *  @JsName("foo")
+ *  // This function is used from the JS side and is supposed to be overridden from the JS side
+ *  fun foo$promisified(a: Int, b: String): Promise<String> =
+ *      kotlin.coroutines.promisify { this.foo$original(a, b) }
+ *
+ *   @JsExport.Ignore
+ *   // This function is supposed to be overridden from the Kotlin side
+ *   suspend fun foo$original(a: Int, b: String): String { ... }
+ *
+ *   @JsExport.Ignore
+ *   // This function is used on the call side
+ *   suspend fun foo(a: Int, b: String): String =
+ *     if (this.foo === SomeClass.prototype.foo) {
+ *       this.foo$original(a, b)
+ *     } else {
+ *       /* The `await` function is defined inside `libraries/stdlib/js/runtime/coroutinesInterop.kt` */
+ *       kotlin.coroutines.await(this.foo$promisified(a, b))
+ *     }
+ * }
+ * ```
+ *
+ * Such a trick with the 3 functions helps us to call the original function instead of the promisified variant until the function is not overridden from the JS side
+ * and also helps us to not recompile each child class if body of the exported function is changed
+ */
 internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     companion object {
         private const val PROMISIFIED_WRAPPER_SUFFIX = "\$promisified"
