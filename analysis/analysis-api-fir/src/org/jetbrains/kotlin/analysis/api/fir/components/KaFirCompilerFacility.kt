@@ -290,13 +290,10 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
         fillInlineCache: (GenerationState) -> Unit,
     ): KaCompilationResult {
-        val classBuilderFactory = when (target) {
-            is KaCompilerTarget.Jvm -> target.classBuilderFactory
-        }
         val bindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
         val generationState = GenerationState.Builder(
             project,
-            classBuilderFactory,
+            target.classBuilderFactory,
             fir2IrResult.irModuleFragment.descriptor,
             bindingContext,
             targetFiles,

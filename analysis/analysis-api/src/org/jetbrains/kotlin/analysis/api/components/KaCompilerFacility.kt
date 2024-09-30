@@ -5,15 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import java.io.File
 
 /**
@@ -83,10 +91,61 @@ public val KaCompiledFile.isClassFile: Boolean
  */
 @KaExperimentalApi
 public sealed class KaCompilerTarget {
-    /** JVM target (produces '.class' files). */
+    /**
+     * JVM target (produces '.class' files).
+     *
+     * @property isTestMode `true` if the underlying code should support dumping the bytecode of the resulting class files to text.
+     * @property compiledClassHandler Handler which is called whenever a new class file is produced.
+     */
     @KaExperimentalApi
-    public class Jvm(public val classBuilderFactory: ClassBuilderFactory) : KaCompilerTarget()
+    public class Jvm(
+        public val isTestMode: Boolean,
+        public val compiledClassHandler: KaCompiledClassHandler? = null,
+    ) : KaCompilerTarget()
 }
+
+/**
+ * Handler which is called whenever a new class file is produced, when compiling sources to the JVM target.
+ *
+ * @see KaCompilerTarget.Jvm
+ */
+@KaExperimentalApi
+public fun interface KaCompiledClassHandler {
+    /**
+     * This method is called whenever a new class file is produced.
+     *
+     * @param file The PSI file containing the class definition. Can be null in case the generated class file has no PSI file in sources,
+     *  for example if it's an anonymous object from another module, regenerated during inline.
+     * @param className The name of the class in the JVM internal name format, for example `"java/lang/Object"`.
+     */
+    public fun handleClassDefinition(file: PsiFile?, className: String)
+}
+
+@KaExperimentalApi
+@KaImplementationDetail
+public val KaCompilerTarget.classBuilderFactory: ClassBuilderFactory
+    get() = when (this) {
+        is KaCompilerTarget.Jvm -> {
+            val base = if (isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES
+            if (compiledClassHandler == null) base
+            else object : DelegatingClassBuilderFactory(base) {
+                override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+                    val delegate = base.newClassBuilder(origin)
+                    return object : DelegatingClassBuilder() {
+                        override fun getDelegate(): ClassBuilder = delegate
+
+                        override fun defineClass(
+                            psi: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String,
+                            interfaces: Array<out String?>,
+                        ) {
+                            compiledClassHandler.handleClassDefinition(origin.element?.containingFile, name)
+                            super.defineClass(psi, version, access, name, signature, superName, interfaces)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 @KaExperimentalApi
 @Deprecated("Use 'KaCompilerTarget' instead.", replaceWith = ReplaceWith("KaCompilerTarget"))

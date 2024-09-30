@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.components.classBuilderFactory
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -71,10 +72,6 @@ internal class KaFe10CompilerFacility(
             throw UnsupportedOperationException("Code fragments are not supported in K1 implementation")
         }
 
-        val classBuilderFactory = when (target) {
-            is KaCompilerTarget.Jvm -> target.classBuilderFactory
-        }
-
         val effectiveConfiguration = configuration
             .copy()
             .apply {
@@ -130,7 +127,7 @@ internal class KaFe10CompilerFacility(
 
         val state = GenerationState.Builder(
             file.project,
-            classBuilderFactory,
+            target.classBuilderFactory,
             analysisContext.resolveSession.moduleDescriptor,
             bindingContext,
             filesToCompile,
