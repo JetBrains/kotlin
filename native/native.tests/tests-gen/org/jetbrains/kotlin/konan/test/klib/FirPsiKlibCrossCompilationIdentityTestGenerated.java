@@ -29,6 +29,18 @@ public class FirPsiKlibCrossCompilationIdentityTestGenerated extends AbstractFir
   }
 
   @Test
+  @TestMetadata("multiModuleReferenceToDarwinApi.kt")
+  public void testMultiModuleReferenceToDarwinApi() {
+    runTest("native/native.tests/testData/klib/cross-compilation/identity/multiModuleReferenceToDarwinApi.kt");
+  }
+
+  @Test
+  @TestMetadata("multiModuleSmoke.kt")
+  public void testMultiModuleSmoke() {
+    runTest("native/native.tests/testData/klib/cross-compilation/identity/multiModuleSmoke.kt");
+  }
+
+  @Test
   @TestMetadata("simpleReferenceToDarwinApi.kt")
   public void testSimpleReferenceToDarwinApi() {
     runTest("native/native.tests/testData/klib/cross-compilation/identity/simpleReferenceToDarwinApi.kt");
