@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 /**
- * @suppress TODO: KT-58858 add documentation
+ * Provides the DSL to configure [LanguageSettings] for a [KotlinSourceSet] entity.
+ *
+ * **Note**: This interface is soft-deprecated.
+ * Instead, it is better to use the existing `compilerOptions` DSL.
  */
 interface LanguageSettingsBuilder : LanguageSettings {
     override var languageVersion: String?
@@ -17,9 +20,18 @@ interface LanguageSettingsBuilder : LanguageSettings {
 
     override var progressiveMode: Boolean
 
+    /**
+     * @suppress
+     */
     fun enableLanguageFeature(name: String)
 
+    /**
+     * @suppress
+     */
     override val enabledLanguageFeatures: Set<String>
 
+    /**
+     * Adds an additional opt-in requirement marker with the given fully qualified name.
+     */
     fun optIn(annotationName: String)
 }
