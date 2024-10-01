@@ -78,6 +78,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("map")
+  public void testMap() {
+    runTest("native/swift/swift-export-standalone/testData/generation/map/");
+  }
+
+  @Test
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/generation/no_package/");

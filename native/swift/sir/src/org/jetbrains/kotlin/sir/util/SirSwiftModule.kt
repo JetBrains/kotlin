@@ -43,6 +43,7 @@ object SirSwiftModule : SirModule() {
 
     val array = struct("Array")
     val set = struct("Set")
+    val dictionary = struct("Dictionary")
 
     private val unicode = enum("Unicode")
     private val utf16 = unicode.enum("UTF16")

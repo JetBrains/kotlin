@@ -49,6 +49,14 @@ class SirArrayType(type: SirType): SirNominalType(
     val elementType: SirType get() = super.typeArguments.single()
 }
 
+class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
+    typeDeclaration = SirSwiftModule.dictionary,
+    typeArguments = listOf(keyType, valueType)
+) {
+    val keyType: SirType get() = super.typeArguments[0]
+    val valueType: SirType get() = super.typeArguments[1]
+}
+
 class SirExistentialType(
     // TODO: Protocols. For now, only `any Any` is supported
 ) : SirType {

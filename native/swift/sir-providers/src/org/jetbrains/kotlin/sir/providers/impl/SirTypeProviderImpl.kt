@@ -29,6 +29,7 @@ public class SirTypeProviderImpl(
     private object StandardClassIds {
         val LIST: ClassId = ClassId.topLevel(StandardNames.FqNames.list)
         val SET: ClassId = ClassId.topLevel(StandardNames.FqNames.set)
+        val MAP: ClassId = ClassId.topLevel(StandardNames.FqNames.map)
     }
 
     override fun KaType.translateType(
@@ -85,6 +86,17 @@ public class SirTypeProviderImpl(
                             val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
                             SirNominalType(SirSwiftModule.set, typeArguments = listOf(elementType))
                         }
+
+                        kaType.isClassType(StandardClassIds.MAP) -> {
+                            val keyType = buildSirNominalType(kaType.typeArguments[0].type!!, ktAnalysisSession)
+                            val valueType = buildSirNominalType(kaType.typeArguments[1].type!!, ktAnalysisSession)
+
+                            if (keyType is SirNominalType && keyType.typeDeclaration == SirSwiftModule.optional) {
+                                // TODO(KT-71920) At the moment optional keys are not supported
+                                null
+                            } else {
+                                SirDictionaryType(keyType, valueType)
+                            }
                         }
 
                         else -> {

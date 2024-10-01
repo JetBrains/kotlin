@@ -162,6 +162,7 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
     val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
         typeNamer.swiftFqName(it.bridge.swiftType)
             .replace(".", "_")
+            .replace(",", "_")
             .replace("<", "_")
             .replace(">", "_") +
                 if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
@@ -261,6 +262,7 @@ private fun bridgeType(type: SirType): Bridge {
 
         SirSwiftModule.array -> Bridge.AsNSArray(type)
         SirSwiftModule.set -> Bridge.AsNSSet(type)
+        SirSwiftModule.dictionary -> Bridge.AsNSDictionary(type)
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -318,6 +320,7 @@ private enum class CType(val repr: String) {
 
     NSArray("NSArray *"),
     NSSet("NSSet *"),
+    NSDictionary("NSDictionary *"),
 }
 
 private enum class KotlinType(val repr: kotlin.String) {
@@ -493,6 +496,7 @@ private sealed class Bridge(
 
     class AsNSArray(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSArray)
     class AsNSSet(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSSet)
+    class AsNSDictionary(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSDictionary)
 
     data object AsOptionalNothing : Bridge(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),

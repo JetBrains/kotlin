@@ -1,0 +1,16 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+NSDictionary * __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_Swift_Int64___(NSDictionary * m);
+
+NSDictionary * __root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___(NSDictionary * m);
+
+NSDictionary * __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swift_Array_Swift_Int32__Swift_Set_Swift_Int32____(NSDictionary * m);
+
+NSDictionary * __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_KotlinRuntime_KotlinBase___(NSDictionary * m);
+
+NSDictionary * __root___testMapNothingOptNothing__TypesOfArguments__Swift_Dictionary_Swift_Never_Swift_Optional_Swift_Never____(NSDictionary * m);
+
+NSDictionary * __root___testMapSetIntMapIntInt__TypesOfArguments__Swift_Dictionary_Swift_Set_Swift_Int32__Swift_Dictionary_Swift_Int32_Swift_Int32____(NSDictionary * m);
+
+NSDictionary * __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(NSDictionary * m);

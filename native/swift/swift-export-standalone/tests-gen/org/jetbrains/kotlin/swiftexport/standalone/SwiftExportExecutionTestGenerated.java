@@ -60,6 +60,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("map")
+  public void testMap() {
+    runTest("native/swift/swift-export-standalone/testData/execution/map/");
+  }
+
+  @Test
   @TestMetadata("never_type")
   public void testNever_type() {
     runTest("native/swift/swift-export-standalone/testData/execution/never_type/");
