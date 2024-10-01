@@ -94,11 +94,6 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR);
         String normalizedOutputWithoutExitCode = CompilerTestUtil.normalizeCompilerOutput(output, tmpdir);
 
-        // Debug output for KT-64822 investigation
-        System.out.println("testDataAbsoluteDir: " + testDataAbsoluteDir);
-        System.out.println("pureOutput: " + pureOutput);
-        System.out.println("normalizedOutputWithoutExitCode: " + normalizedOutputWithoutExitCode);
-
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
