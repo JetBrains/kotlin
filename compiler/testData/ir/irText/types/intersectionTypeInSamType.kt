@@ -1,9 +1,5 @@
 // FIR_IDENTICAL
-// SKIP_KT_DUMP
-// IGNORE_BACKEND_K1: JS_IR
-
-// KT-61141: difference in IR for implicit cast
-// IGNORE_BACKEND_K1: NATIVE
+// TARGET_BACKEND: JVM
 interface X
 interface Z
 

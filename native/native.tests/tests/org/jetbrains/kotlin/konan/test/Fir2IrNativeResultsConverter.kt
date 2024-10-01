@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
@@ -61,6 +62,13 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
     }
 
     override val klibFactories: KlibMetadataFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+
+    override fun createFir2IrConfiguration(
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+    ): Fir2IrConfiguration {
+        return Fir2IrConfiguration.forKlibCompilation(compilerConfiguration, diagnosticReporter)
+    }
 
     override fun createBackendInput(
         module: TestModule,

@@ -24,17 +24,16 @@ FILE fqName:<root> fileName:/samConversionClassInProjection.kt
       RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Unit declared in <root>'
         CALL 'public final fun foo <T> (comparator: <root>.Cmp<in T of <root>.foo>, x: T of <root>.foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Int
-          comparator: TYPE_OP type=<root>.Cmp<kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.Cmp<kotlin.Any?>
-            TYPE_OP type=kotlin.Function2<kotlin.Any?, kotlin.Any?, kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.Function2<kotlin.Any?, kotlin.Any?, kotlin.Int>
-              FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
-                  VALUE_PARAMETER name:a index:0 type:kotlin.Int
-                  VALUE_PARAMETER name:b index:1 type:kotlin.Int
-                  BLOCK_BODY
-                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>.bar'
-                      CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
-                        $this: GET_VAR 'a: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
-                        other: GET_VAR 'b: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
+          comparator: TYPE_OP type=<root>.Cmp<kotlin.Int> origin=SAM_CONVERSION typeOperand=<root>.Cmp<kotlin.Int>
+            FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
+                VALUE_PARAMETER name:a index:0 type:kotlin.Int
+                VALUE_PARAMETER name:b index:1 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: kotlin.Int, b: kotlin.Int): kotlin.Int declared in <root>.bar'
+                    CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+                      $this: GET_VAR 'a: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
+                      other: GET_VAR 'b: kotlin.Int declared in <root>.bar.<anonymous>' type=kotlin.Int origin=null
           x: CONST Int type=kotlin.Int value=1
   FUN name:foo visibility:public modality:FINAL <T> (comparator:<root>.Cmp<in T of <root>.foo>, x:T of <root>.foo) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

@@ -3471,12 +3471,6 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
-    @TestMetadata("intersectionTypeInSamType.kt")
-    public void testIntersectionTypeInSamType() {
-      runTest("compiler/testData/ir/irText/types/intersectionTypeInSamType.kt");
-    }
-
-    @Test
     @TestMetadata("kt36143.kt")
     public void testKt36143() {
       runTest("compiler/testData/ir/irText/types/kt36143.kt");

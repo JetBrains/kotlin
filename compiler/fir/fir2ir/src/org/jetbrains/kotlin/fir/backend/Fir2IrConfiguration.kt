@@ -40,6 +40,7 @@ class Fir2IrConfiguration private constructor(
     val allowNonCachedDeclarations: Boolean,
     val skipBodies: Boolean,
     val validateIrAfterPlugins: Boolean,
+    val carefulApproximationOfContravariantProjectionForSam: Boolean,
 ) {
     companion object {
         fun forJvmCompilation(
@@ -59,6 +60,7 @@ class Fir2IrConfiguration private constructor(
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
                 validateIrAfterPlugins = false,
+                carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
             )
 
         fun forKlibCompilation(
@@ -78,6 +80,7 @@ class Fir2IrConfiguration private constructor(
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
                 validateIrAfterPlugins = true,
+                carefulApproximationOfContravariantProjectionForSam = false,
             )
 
         fun forAnalysisApi(
@@ -98,6 +101,7 @@ class Fir2IrConfiguration private constructor(
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
                 validateIrAfterPlugins = false,
+                carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS,
             )
     }
 }

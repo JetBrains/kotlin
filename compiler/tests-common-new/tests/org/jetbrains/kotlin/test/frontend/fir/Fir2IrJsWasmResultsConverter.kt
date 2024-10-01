@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
@@ -55,6 +56,13 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
 
     override val klibFactories: KlibMetadataFactories
         get() = JsFactories
+
+    override fun createFir2IrConfiguration(
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+    ): Fir2IrConfiguration {
+        return Fir2IrConfiguration.forKlibCompilation(compilerConfiguration, diagnosticReporter)
+    }
 
     override fun createBackendInput(
         module: TestModule,

@@ -89,7 +89,7 @@ abstract class AbstractFir2IrResultsConverter(
             testServices
         )
 
-        val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(compilerConfiguration, diagnosticReporter)
+        val fir2IrConfiguration = createFir2IrConfiguration(compilerConfiguration, diagnosticReporter)
 
         val firResult = inputArtifact.toFirResult()
         val fir2irResult = firResult.convertToIrAndActualize(
@@ -121,6 +121,11 @@ abstract class AbstractFir2IrResultsConverter(
             ),
         )
     }
+
+    protected abstract fun createFir2IrConfiguration(
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+    ): Fir2IrConfiguration
 
     protected abstract fun createBackendInput(
         module: TestModule,

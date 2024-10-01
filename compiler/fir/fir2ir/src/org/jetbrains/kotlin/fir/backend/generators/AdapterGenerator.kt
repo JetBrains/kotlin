@@ -487,9 +487,8 @@ internal class AdapterGenerator(
             val newArguments = Array(arguments.size) { i ->
                 val argument = arguments[i]
                 val parameter = parameters.getOrNull(i) ?: return null
-
                 when {
-                    argument.kind == ProjectionKind.IN -> {
+                    argument.kind == ProjectionKind.IN && c.configuration.carefulApproximationOfContravariantProjectionForSam -> {
                         // Just erasing `in` from the type projection would lead to an incorrect type for the SAM adapter,
                         // and error at runtime on JVM if invokedynamic + LambdaMetafactory is used, see KT-51868.
                         // So we do it "carefully". If we have a class `A<T>` and a method that takes e.g. `A<in String>`, we check

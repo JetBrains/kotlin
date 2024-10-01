@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
@@ -69,6 +70,13 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
 
     override val klibFactories: KlibMetadataFactories
         get() = error("Should not be called")
+
+    override fun createFir2IrConfiguration(
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+    ): Fir2IrConfiguration {
+        return Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
+    }
 
     override fun createBackendInput(
         module: TestModule,

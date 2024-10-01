@@ -7,7 +7,7 @@ fun bar() {
   return foo<Int>(comparator = local fun <anonymous>(a: Int, b: Int): Int {
     return a.minus(other = b)
   }
- /*as Function2<Any?, Any?, Int> */ /*-> Cmp<Any?> */, x = 1)
+ /*-> Cmp<Int> */, x = 1)
 }
 
 fun <T : Any?> foo(comparator: Cmp<in T>, x: T) {
