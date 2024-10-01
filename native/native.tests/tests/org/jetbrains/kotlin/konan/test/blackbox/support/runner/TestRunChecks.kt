@@ -223,7 +223,11 @@ sealed interface TestRunCheck {
                         add("CHECK-BIGBINARY")
                     }
                 }
-                val checkPrefixesWithOptMode = checkPrefixes.map { "$it-${optimizationMode.name}" }
+                val optMode = when (optimizationMode) {
+                    OptimizationMode.NO, OptimizationMode.DEBUG -> "DEBUG" // generated LLVM bitcode should be the same; split them up if this stops being the case.
+                    OptimizationMode.OPT -> "OPT"
+                }
+                val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optMode" }
                 val cacheMode = settings.get<CacheMode>().alias
                 val checkPrefixesWithCacheMode = checkPrefixes.map { "$it-CACHE_$cacheMode" }
                 return (checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode).joinToString(",")
