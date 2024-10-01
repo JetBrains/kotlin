@@ -4475,6 +4475,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     public void testSamAdapter() {
       runTest("compiler/testData/ir/irText/lambdas/samAdapter.kt");
     }
+
+    @Test
+    @TestMetadata("samConversionClassInProjection.kt")
+    public void testSamConversionClassInProjection() {
+      runTest("compiler/testData/ir/irText/lambdas/samConversionClassInProjection.kt");
+    }
   }
 
   @Nested

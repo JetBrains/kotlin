@@ -1,0 +1,23 @@
+// CHECK:
+//   Mangled name: Cmp
+//   Public signature: /Cmp|null[0]
+fun interface Cmp<T : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: Cmp#compare(1:0;1:0){}kotlin.Int
+  //   Public signature: /Cmp.compare|-7354958910700435228[0]
+  //   Public signature debug description: compare(1:0;1:0){}kotlin.Int
+  abstract fun compare(a: T, b: T): Int
+
+}
+
+// CHECK:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+//   Public signature debug description: bar(){}
+fun bar(): Unit
+
+// CHECK:
+//   Mangled name: #foo(Cmp<in|0:0>;0:0){0§<kotlin.Any?>}
+//   Public signature: /foo|-2204685303742732333[0]
+//   Public signature debug description: foo(Cmp<in|0:0>;0:0){0§<kotlin.Any?>}
+fun <T : Any?> foo(comparator: Cmp<in T>, x: T): Unit
