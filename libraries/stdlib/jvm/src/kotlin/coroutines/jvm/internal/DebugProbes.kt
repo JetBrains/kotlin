@@ -5,8 +5,19 @@
 
 package kotlin.coroutines.jvm.internal
 
+import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
+
+
+public interface CoroutinesDebugProbes {
+    public fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T>
+    public fun probeCoroutineResumed(frame: Continuation<*>)
+    public fun probeCoroutineSuspended(frame: Continuation<*>)
+}
+
+private val probes = ServiceLoader.load(CoroutinesDebugProbes::class.java).firstOrNull()
+
 
 /**
  * This probe is invoked when coroutine is being created and it can replace completion
@@ -43,8 +54,7 @@ import kotlin.coroutines.intrinsics.*
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
-    /** implementation of this function is replaced by debugger */
-    return completion
+    return probes?.probeCoroutineCreated(completion) ?: completion
 }
 
 /**
@@ -62,6 +72,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
+    probes?.probeCoroutineResumed(frame)
     /** implementation of this function is replaced by debugger */
 }
 
@@ -78,6 +89,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
+    probes?.probeCoroutineSuspended(frame)
     /** implementation of this function is replaced by debugger */
 }
 
