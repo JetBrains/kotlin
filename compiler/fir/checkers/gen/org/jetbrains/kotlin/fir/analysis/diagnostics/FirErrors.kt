@@ -228,8 +228,6 @@ object FirErrors {
     val PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL: KtDiagnosticFactory1<List<String>> = KtDiagnosticFactory1("PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val RESOLUTION_TO_CLASSIFIER: KtDiagnosticFactory1<FirRegularClassSymbol> = KtDiagnosticFactory1("RESOLUTION_TO_CLASSIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val AMBIGUOUS_ALTERED_ASSIGN: KtDiagnosticFactory1<List<String?>> = KtDiagnosticFactory1("AMBIGUOUS_ALTERED_ASSIGN", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val FORBIDDEN_BINARY_MOD: KtDiagnosticFactory2<FirBasedSymbol<*>, String> = KtDiagnosticFactory2("FORBIDDEN_BINARY_MOD", ERROR, SourceElementPositioningStrategies.OPERATOR_MODIFIER, PsiElement::class)
-    val DEPRECATED_BINARY_MOD: KtDiagnosticFactory2<FirBasedSymbol<*>, String> = KtDiagnosticFactory2("DEPRECATED_BINARY_MOD", ERROR, SourceElementPositioningStrategies.OPERATOR_MODIFIER, PsiElement::class)
     val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Super

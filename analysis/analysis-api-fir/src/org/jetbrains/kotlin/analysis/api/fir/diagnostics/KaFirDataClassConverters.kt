@@ -602,22 +602,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.FORBIDDEN_BINARY_MOD) { firDiagnostic ->
-        ForbiddenBinaryModImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.DEPRECATED_BINARY_MOD) { firDiagnostic ->
-        DeprecatedBinaryModImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR) { firDiagnostic ->
         SelfCallInNestedObjectConstructorErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

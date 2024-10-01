@@ -626,11 +626,6 @@ public class DefaultErrorMessages {
         MAP.put(FORBIDDEN_IDENTITY_EQUALS, "Identity equality for arguments of types {0} and {1} is forbidden", RENDER_TYPE, RENDER_TYPE);
         MAP.put(FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES, "Synchronizing by {0} is forbidden", RENDER_TYPE);
 
-        MAP.put(DEPRECATED_BINARY_MOD, "Deprecated convention for ''{0}''. Use ''{1}''", NAME, STRING);
-        MAP.put(FORBIDDEN_BINARY_MOD, "Convention for ''{0}'' is forbidden. Use ''{1}''", NAME, STRING);
-        MAP.put(DEPRECATED_BINARY_MOD_AS_REM, "''%'' is resolved to deprecated ''{0}'' operator. Replace with ''.{0}'' or add operator ''{1}''", NAME, STRING);
-        MAP.put(FORBIDDEN_BINARY_MOD_AS_REM, "''%'' is resolved to forbidden ''{0}'' operator. Replace with ''.{0}'' or add operator ''{1}''", NAME, STRING);
-
         MAP.put(NO_GET_METHOD, "No get method providing array access");
         MAP.put(NO_SET_METHOD, "No set method providing array access");
 
