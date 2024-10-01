@@ -278,10 +278,6 @@ class FirCompilerOutputTest : CompilerOutputTestBase()
 internal fun TestCompilationResult<*>.toOutput(): String {
     check(this is TestCompilationResult.ImmediateResult<*>) { this }
     val loggedData = this.loggedData
-
-    // Debug output for KT-64822 investigation
-    println("Compiler logged data:\n$loggedData")
-
     check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
     return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
 }
