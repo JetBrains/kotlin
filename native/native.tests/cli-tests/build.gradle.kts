@@ -25,7 +25,14 @@ sourceSets {
 
 testsJar {}
 
-nativeTest("test", null, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0))
+nativeTest(
+    "test", null, defineJDKEnvVariables = listOf(
+        JdkMajorVersion.JDK_1_8,
+        JdkMajorVersion.JDK_11_0,
+        JdkMajorVersion.JDK_17_0,
+        JdkMajorVersion.JDK_21_0
+    )
+)
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
