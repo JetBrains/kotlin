@@ -272,11 +272,11 @@ internal fun PsiToIrContext.psiToIr(
         val libraryName = libraryToCache.klib.libraryName
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
         PsiToIrOutput.ForBackend(
-                modules.filterKeys { it != libraryName },
-                libraryModule,
-                generatorContext.irBuiltIns,
-                symbols,
-                irDeserializer as KonanIrLinker
+                irModules = modules.filterKeys { it != libraryName },
+                irModule = libraryModule,
+                irBuiltIns = generatorContext.irBuiltIns,
+                symbols = symbols,
+                irLinker = irDeserializer as KonanIrLinker
         )
     }
 }

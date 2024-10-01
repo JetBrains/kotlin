@@ -771,7 +771,7 @@ class CacheUpdater(
 
         stopwatch.startNext("Processing IR - initializing backend context")
         val mainModuleFragment = loadedIr.loadedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.linker.builtIns, compilerConfiguration)
+        val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
 
         // Load declarations referenced during `context` initialization
         loadedIr.loadUnboundSymbols()
@@ -874,7 +874,7 @@ fun rebuildCacheForDirtyFiles(
 
     val compilerWithIC = JsIrCompilerWithIC(
         currentIrModule,
-        loadedIr.linker.builtIns,
+        loadedIr.irBuiltIns,
         mainArguments,
         configuration,
         JsGenerationGranularity.PER_MODULE,

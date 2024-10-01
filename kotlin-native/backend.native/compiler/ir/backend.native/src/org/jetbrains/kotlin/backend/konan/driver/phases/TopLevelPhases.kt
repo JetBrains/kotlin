@@ -53,7 +53,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule to psiToIrOutput.irBuiltIns)
+    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
     return psiToIrOutput to additionalOutput
 }
 

@@ -61,13 +61,13 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     ).lower(moduleFragment)
 }
 
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
+internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
         name = "CopyDefaultValuesToActual",
         description = "Copy default values from expect to actual declarations",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { _, input ->
-    ExpectToActualDefaultValueCopier(input.first, input.second).process()
+    ExpectToActualDefaultValueCopier(input.irModule, input.irBuiltIns).process()
 }
 
 internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
