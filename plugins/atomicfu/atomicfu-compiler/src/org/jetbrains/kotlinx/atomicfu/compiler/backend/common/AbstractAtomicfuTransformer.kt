@@ -110,7 +110,7 @@ abstract class AbstractAtomicfuTransformer(
         }
     }
 
-    abstract inner class AtomicPropertiesTransformer : IrElementTransformer<IrFunction?> {
+    abstract inner class AtomicPropertiesTransformer : IrTransformer<IrFunction?>() {
 
         override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
             val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
@@ -387,7 +387,7 @@ abstract class AbstractAtomicfuTransformer(
             }
     }
 
-    abstract inner class AtomicFunctionCallTransformer : IrElementTransformer<IrFunction?> {
+    abstract inner class AtomicFunctionCallTransformer : IrTransformer<IrFunction?>() {
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
@@ -705,7 +705,7 @@ abstract class AbstractAtomicfuTransformer(
      *
      * It's launched as a separate transformation stage to avoid recursive visiting.
      */
-    private inner class RemapValueParameters : IrElementTransformer<IrFunction?> {
+    private inner class RemapValueParameters : IrTransformer<IrFunction?>() {
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
@@ -748,7 +748,7 @@ abstract class AbstractAtomicfuTransformer(
         }
     }
 
-    private inner class FinalTransformationChecker : IrElementTransformer<IrFunction?> {
+    private inner class FinalTransformationChecker : IrTransformer<IrFunction?>() {
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
         }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.platform.isJs
 
 private const val AFU_PKG = "kotlinx.atomicfu"
@@ -95,7 +95,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         }
     }
 
-    private inner class AtomicTransformer : IrElementTransformer<IrFunction?> {
+    private inner class AtomicTransformer : IrTransformer<IrFunction?>() {
 
         override fun visitProperty(declaration: IrProperty, data: IrFunction?): IrStatement {
             // Support transformation for delegated properties:
