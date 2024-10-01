@@ -293,7 +293,7 @@ class CallAndReferenceGenerator(
                     val containingClassLookupTag = containingClassType.lookupTag
                     val typeContext = session.typeContext
                     return type.intersectedTypes.first {
-                        val componentConstructor = with(typeContext) { it.lowerBoundIfFlexible().typeConstructor() }
+                        val componentConstructor = with(typeContext) { it.typeConstructor() }
                         AbstractTypeChecker.isSubtypeOfClass(
                             typeContext,
                             componentConstructor,

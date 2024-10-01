@@ -41,10 +41,10 @@ object ConeTypeIntersector {
         val isResultNotNullable = with(context) {
             inputTypes.any { !it.isNullableType() }
         }
-        val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
+        val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet<ConeKotlinType>()) {
             if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
-        if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single()
+        if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single() as ConeRigidType
 
         /*
          * Here we drop types from intersection set for cases like that:
@@ -65,7 +65,12 @@ object ConeTypeIntersector {
 
         resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> AbstractTypeChecker.equalTypes(context, candidate, other) }
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
-        return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
+        // Sometimes we can return raw type here
+        return resultList.singleOrNull() ?: run {
+            require(resultList.all { it is ConeRigidType })
+            @Suppress("UNCHECKED_CAST")
+            ConeIntersectionType(resultList as List<ConeRigidType>)
+        }
     }
 
     private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(

@@ -258,7 +258,7 @@ class ConeRawType private constructor(
  * @param upperBoundForApproximation a super-type (upper bound), if it's known, to be used as an approximation.
  */
 class ConeIntersectionType(
-    val intersectedTypes: Collection<ConeKotlinType>,
+    val intersectedTypes: Collection<ConeRigidType>,
     val upperBoundForApproximation: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker, ConeTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)

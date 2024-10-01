@@ -129,7 +129,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
 
     if (this is ConeIntersectionType) {
         return ConeIntersectionType(intersectedTypes.map {
-            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck)
+            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck) as ConeRigidType
         })
     }
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
@@ -258,7 +258,7 @@ fun <T : ConeKotlinType> T.withNullability(
                 it.withNullability(true, typeContext, preserveAttributes = preserveAttributes)
             }
 
-            false -> if (intersectedTypes.any { !it.isMarkedOrFlexiblyNullable }) this else this.mapTypes {
+            false -> if (intersectedTypes.any { !it.isMarkedNullable }) this else this.mapTypes {
                 it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
             }
         }

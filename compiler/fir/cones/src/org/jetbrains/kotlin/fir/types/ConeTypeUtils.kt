@@ -139,7 +139,7 @@ fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeInterse
 }
 
 inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
+    return ConeIntersectionType(intersectedTypes.map { func(it) as ConeRigidType }, upperBoundForApproximation?.let(func))
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
