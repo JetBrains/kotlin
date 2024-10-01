@@ -923,12 +923,11 @@ class BodyResolveContext(
     ): T {
         return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
             if (constructor.isPrimary) {
-                getPrimaryConstructorAllParametersScope()?.let {
-                    withTowerDataCleanup {
-                        addLocalScope(it)
-                        f()
-                    }
-                } ?: f()
+                withTowerDataCleanup {
+                    // TODO: rename function
+                    addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
+                    f()
+                }
             } else {
                 withTowerDataCleanup {
                     addInaccessibleImplicitReceiverValue(owningClass, holder)
