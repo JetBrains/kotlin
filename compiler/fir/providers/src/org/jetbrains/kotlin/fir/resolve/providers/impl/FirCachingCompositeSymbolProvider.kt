@@ -121,7 +121,6 @@ class FirCachingCompositeSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
         return classLikeCache.getValue(classId)
     }
 

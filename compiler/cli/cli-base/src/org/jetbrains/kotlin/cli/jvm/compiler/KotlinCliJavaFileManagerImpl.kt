@@ -250,10 +250,16 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
+    /**
+     * Keys are directories, values are maps of names to files containing a class with that name.
+     * Classes that have the same name as the containing file are skipped.
+     */
+    private val classesWithNonMatchingNamesCache: MutableMap<VirtualFile, Map<String, VirtualFile>> = Object2ObjectOpenHashMap()
+
     private fun findVirtualFileGivenPackage(
         packageDir: VirtualFile,
         classNameWithInnerClasses: String,
-        rootType: JavaRoot.RootType
+        rootType: JavaRoot.RootType,
     ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
@@ -261,6 +267,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             JavaRoot.RootType.BINARY -> packageDir.findChild("$topLevelClassName.class")
             JavaRoot.RootType.BINARY_SIG -> packageDir.findChild("$topLevelClassName.sig")
             JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
+                ?: classesWithNonMatchingNamesCache.getOrPut(packageDir) { fillClassesWithNonMatchingNamesCache(packageDir) }[topLevelClassName]
         } ?: return null
 
         if (!vFile.isValid) {
@@ -269,6 +276,21 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
 
         return vFile
+    }
+
+    private fun fillClassesWithNonMatchingNamesCache(packageDir: VirtualFile): MutableMap<String, VirtualFile> {
+        val result = Object2ObjectOpenHashMap<String, VirtualFile>()
+        for (child in packageDir.children) {
+            if (child.isDirectory || child.extension != "java") continue
+            val classIds = SingleJavaFileRootsIndex.JavaSourceClassIdReader(child).readClassIds()
+            for (classId in classIds) {
+                val className = classId.shortClassName.asString()
+                if (className != child.nameWithoutExtension) {
+                    result[className] = child
+                }
+            }
+        }
+        return result
     }
 
     private fun VirtualFile.findPsiClassInVirtualFile(classNameWithInnerClasses: String): PsiClass? {

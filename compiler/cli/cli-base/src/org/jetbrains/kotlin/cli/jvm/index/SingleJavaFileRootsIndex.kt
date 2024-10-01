@@ -53,7 +53,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     /**
      * Given a .java file, [readClassIds] uses lexer to determine which classes are declared in that file
      */
-    private class JavaSourceClassIdReader(file: VirtualFile) {
+    internal class JavaSourceClassIdReader(file: VirtualFile) {
         private val lexer = JavaLexer(LanguageLevel.HIGHEST).apply {
             start(String(file.contentsToByteArray()))
         }

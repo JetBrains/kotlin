@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -71,6 +70,16 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 
     fun getPackage(fqName: FqName): FqName? =
         packageCache.getValue(fqName)?.fqName
+
+    /**
+     * Because Java source files can contain package private classes with different names, it is not enough to check if a file with a
+     * given name exists when we want to load such a file.
+     */
+    fun hasAnyClassInPackage(packageName: FqName): Boolean {
+        if (!classFinder.canComputeKnownClassNamesInPackage()) return true
+        val knownNames = knownClassNamesInPackage.getValue(packageName) ?: return true
+        return knownNames.isNotEmpty()
+    }
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
         val knownNames = knownClassNamesInPackage(classId.packageFqName) ?: return true

@@ -45,7 +45,7 @@ open class JavaSymbolProvider(
         }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
+        if (javaFacade.hasAnyClassInPackage(classId.packageFqName)) getClassLikeSymbolByClassId(classId, null) else null
 
     fun getClassLikeSymbolByClassId(classId: ClassId, javaClass: JavaClass?): FirRegularClassSymbol? =
         classCache.getValue(
