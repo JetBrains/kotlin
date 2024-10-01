@@ -1,6 +1,8 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
+// IGNORE_NATIVE: optimizationMode=DEBUG
+// IGNORE_NATIVE: optimizationMode=NO
 
 import kotlinx.cinterop.*
 
@@ -8,10 +10,6 @@ import kotlinx.cinterop.*
 // CHECK-DEFAULTABI-OPT-LABEL: define zeroext i1 @"kfun:kotlin.native.internal.NonNullNativePtr#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
 // CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlin.native.internal.NonNullNativePtr#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
 // CHECK-OPT: call ptr @"kfun:kotlin.native.internal#<NonNullNativePtr-unbox>(kotlin.Any?){}kotlin.native.internal.NonNullNativePtr?"
-
-// This test is useless in debug mode.
-// TODO(KT-59288): add ability to ignore tests in debug mode
-// CHECK-DEBUG-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String = memScoped {

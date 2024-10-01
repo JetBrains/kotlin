@@ -1,5 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// IGNORE_NATIVE: optimizationMode=DEBUG
+// IGNORE_NATIVE: optimizationMode=NO
 
 import kotlinx.cinterop.*
 
@@ -10,10 +12,6 @@ import kotlinx.cinterop.*
 // CHECK-OPT: call ptr @"kfun:kotlinx.cinterop#<StableRef-unbox>(kotlin.Any?){}kotlinx.cinterop.StableRef<-1:0>?"
 
 // CHECK-OPT-LABEL: epilogue:
-
-// This test is useless in debug mode.
-// TODO(KT-59288): add ability to ignore tests in debug mode
-// CHECK-DEBUG-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String {

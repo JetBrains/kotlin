@@ -66,8 +66,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.<init>#internal"
 // CHECK-SAME: (ptr {{%[0-9]+}})
 
-// CHECK-DEBUG: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<-1:0>){}kotlin.Int#internal"
-// CHECK-OPT: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<-1:0>){}kotlin.Int#internal"
+// CHECK-LABEL: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<-1:0>){}kotlin.Int#internal"
 // CHECK-SAME: (ptr [[this:%[0-9]+]], ptr [[array:%[0-9]+]], ptr {{%[0-9]+}})
 // CHECK-OPT: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(ptr [[this]], ptr {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(ptr {{%[0-9]+}}, ptr {{%[0-9]+}})
@@ -80,8 +79,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$get$FUNCTION_REFERENCE$1.<init>#internal"
 // CHECK-SAME: (ptr {{%[0-9]+}})
 
-// CHECK-DEBUG: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNU>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
-// CHECK-OPT: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNU>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
+// CHECK-LABEL: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNU>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
 // CHECK-SAME: (ptr [[this:%[0-9]+]], ptr [[array:%[0-9]+]], ptr [[boxedIndex:%[0-9]+]], ptr [[ret:%[0-9]+]])
 // CHECK-OPT: call ptr @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"(ptr [[this]], ptr {{%[0-9]+}}, i32 {{%[0-9]+}}, ptr [[ret]])
 // CHECK-DEBUG: call ptr @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"(ptr {{%[0-9]+}}, ptr {{%[0-9]+}}, i32 {{%[0-9]+}}, ptr {{%[0-9]+}})
@@ -92,8 +90,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.<init>#internal"
 // CHECK-SAME: (ptr {{%[0-9]+}})
 
-// CHECK-DEBUG: define internal ptr @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-UNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
-// CHECK-OPT: define internal ptr @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-UNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
+// CHECK-LABEL: define internal ptr @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-UNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
 // CHECK-SAME: (ptr [[this:%[0-9]+]], ptr [[array:%[0-9]+]], ptr {{%[0-9]+}})
 // CHECK-OPT: call i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"(ptr [[this]], ptr {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"(ptr {{%[0-9]+}}, ptr {{%[0-9]+}})
@@ -104,8 +101,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$get$FUNCTION_REFERENCE$3.<init>#internal"
 // CHECK-SAME: (ptr {{%[0-9]+}})
 
-// CHECK-DEBUG: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-UNNNU>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
-// CHECK-OPT: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-UNNNU>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
+// CHECK-LABEL: define internal ptr @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-UNNNU>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
 // CHECK-SAME: (ptr [[this:%[0-9]+]], ptr [[array:%[0-9]+]], ptr {{%[0-9]+}}, ptr {{%[0-9]+}})
 // CHECK-OPT: call i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"(ptr [[this]], ptr {{%[0-9]+}}, i32 {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"(ptr {{%[0-9]+}}, ptr {{%[0-9]+}}, i32 {{%[0-9]+}})
