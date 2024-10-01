@@ -561,8 +561,15 @@ object AbstractTypeChecker {
         if (subType.isStubType() || superType.isStubType())
             return state.isStubTypeEqualsToAnything
 
+        val superTypeConstructor = superType.typeConstructor()
+        if (superTypeConstructor.isIntersection()) {
+            assert(!superType.isMarkedNullable()) { "Intersection type should not be marked nullable!: $superType" }
+
+            return superTypeConstructor.supertypes().all { isSubtypeOf(state, subType, it) }
+        }
+
         // superType might be a definitely notNull type (see KT-42824)
-        val superTypeCaptured = superType.asCapturedTypeUnwrappingDnn()
+        val superTypeCaptured = (superType as DenotableTypeMarker).asCapturedTypeUnwrappingDnn()
         val lowerType = superTypeCaptured?.lowerType()
         if (superTypeCaptured != null && lowerType != null) {
             // If superType is nullable, e.g., to check if Foo? a subtype of Captured<in Foo>?, we check the LHS, Foo?,
@@ -577,13 +584,6 @@ object AbstractTypeChecker {
                 CHECK_SUBTYPE_AND_LOWER -> if (isSubtypeOf(state, subType, nullableLowerType)) return true
                 SKIP_LOWER -> Unit
             }
-        }
-
-        val superTypeConstructor = superType.typeConstructor()
-        if (superTypeConstructor.isIntersection()) {
-            assert(!superType.isMarkedNullable()) { "Intersection type should not be marked nullable!: $superType" }
-
-            return superTypeConstructor.supertypes().all { isSubtypeOf(state, subType, it) }
         }
 
         /*

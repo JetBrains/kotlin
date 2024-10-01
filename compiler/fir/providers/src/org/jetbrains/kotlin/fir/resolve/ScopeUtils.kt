@@ -114,7 +114,8 @@ private fun ConeKotlinType.scope(
         intersectedTypes.mapNotNullTo(mutableListOf()) {
             it.scope(useSiteSession, scopeSession, requiredMembersPhase)
         },
-        this
+        // !!!!!!!!!!
+        this as ConeSimpleKotlinType
     )
 
     is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredMembersPhase)

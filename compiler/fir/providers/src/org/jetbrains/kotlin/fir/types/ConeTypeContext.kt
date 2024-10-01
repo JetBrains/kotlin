@@ -88,6 +88,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
+    override fun KotlinTypeMarker.asDenotableType(): DenotableTypeMarker? {
+        assert(this is ConeKotlinType)
+        return when (this) {
+            is ConeClassLikeType -> fullyExpandedType(session)
+            is ConeDenotableType -> this
+            is ConeRigidType -> null
+            is ConeFlexibleType -> null
+            else -> errorWithAttachment("Unknown simpleType: ${this::class}") {
+                withConeTypeEntry("type", this@asDenotableType as? ConeKotlinType)
+            }
+        }
+    }
+
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
         assert(this is ConeKotlinType)
         return this as? ConeFlexibleType
@@ -440,11 +453,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.variable.typeConstructor
     }
 
-    override fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+    override fun intersectTypes(types: Collection<SimpleTypeMarker>): ConeRigidType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(
             this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
-        ) as SimpleTypeMarker
+        ) as ConeRigidType
     }
 
     override fun intersectTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {

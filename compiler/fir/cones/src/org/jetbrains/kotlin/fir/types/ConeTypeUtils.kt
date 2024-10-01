@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
 val ConeKotlinType.isMarkedOrFlexiblyNullable: Boolean
     get() = when (this) {
         is ConeFlexibleType -> upperBound.isMarkedNullable
-        is ConeRigidType -> isMarkedNullable
+        is ConeDenotableType, is ConeIntersectionType -> isMarkedNullable
     }
 
 @Deprecated(
     "`isMarkedOrFlexiblyNullable` on non-flexible types is the same as `isMarkedNullable`. Also consider using `canBeNull()`.",
     level = DeprecationLevel.ERROR
 )
-val ConeRigidType.isMarkedOrFlexiblyNullable: Boolean get() = isMarkedNullable
+val ConeDenotableType.isMarkedOrFlexiblyNullable: Boolean get() = isMarkedNullable
 
 /**
  * Returns `true` if the type is marked as nullable.
@@ -110,11 +110,12 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
 
 // ----------------------------------- Transformations -----------------------------------
 
-fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
-    return when(this) {
-        is ConeDefinitelyNotNullType -> original.unwrapLowerBound()
+fun ConeKotlinType.unwrapLowerBound(): ConeRigidType {
+    return when (this) {
+        is ConeDefinitelyNotNullType -> original
         is ConeFlexibleType -> lowerBound.unwrapLowerBound()
         is ConeSimpleKotlinType -> this
+        is ConeIntersectionType -> this
     }
 }
 
@@ -123,6 +124,7 @@ fun ConeKotlinType.upperBoundIfFlexible(): ConeRigidType {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> upperBound
         is ConeDefinitelyNotNullType -> this
+        is ConeIntersectionType -> this
     }
 }
 
@@ -131,6 +133,7 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> lowerBound
         is ConeDefinitelyNotNullType -> this
+        is ConeIntersectionType -> this
     }
 }
 
@@ -139,7 +142,7 @@ fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeInterse
 }
 
 inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map { func(it) as ConeRigidType }, upperBoundForApproximation?.let(func))
+    return ConeIntersectionType(intersectedTypes.map { func(it) as ConeDenotableType }, upperBoundForApproximation?.let(func))
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {

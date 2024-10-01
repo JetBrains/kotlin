@@ -84,10 +84,10 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     }
 
     private fun ConeIntersectionType.substituteIntersectedTypes(): ConeIntersectionType? {
-        val substitutedTypes = ArrayList<ConeRigidType>(intersectedTypes.size)
+        val substitutedTypes = ArrayList<ConeDenotableType>(intersectedTypes.size)
         var somethingIsSubstituted = false
         for (type in intersectedTypes) {
-            val substitutedType = (substituteOrNull(type) as? ConeRigidType)?.also {
+            val substitutedType = (substituteOrNull(type) as? ConeDenotableType)?.also {
                 somethingIsSubstituted = true
             } ?: type
             substitutedTypes += substitutedType

@@ -141,6 +141,13 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
 
     private fun ConeRigidType.removeOutProjection(isCovariant: Boolean): ConeRigidType {
         return when (this) {
+            is ConeDenotableType -> removeOutProjection(isCovariant)
+            is ConeIntersectionType -> mapTypes { it.removeOutProjection(isCovariant) }
+        }
+    }
+
+    private fun ConeDenotableType.removeOutProjection(isCovariant: Boolean): ConeDenotableType {
+        return when (this) {
             is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
         }
@@ -158,7 +165,6 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
                     )
                 },
             )
-            is ConeIntersectionType -> mapTypes { it.removeOutProjection(isCovariant) }
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),

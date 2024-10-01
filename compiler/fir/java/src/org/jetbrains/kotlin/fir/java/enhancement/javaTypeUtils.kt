@@ -91,7 +91,7 @@ private fun ConeRigidType.enhanceInflexibleType(
     subtreeSizes: List<Int>,
     isFromDefinitelyNotNullType: Boolean,
     convertErrorToWarning: Boolean,
-): ConeRigidType? {
+): ConeDenotableType? {
     if (this is ConeDefinitelyNotNullType) {
         return original.enhanceInflexibleType(session, position, qualifiers, index, subtreeSizes, isFromDefinitelyNotNullType = true, convertErrorToWarning)
     }
@@ -164,7 +164,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     nullabilityFromQualifiers: NullabilityQualifier?,
     enhancedTag: ConeClassifierLookupTag,
     convertNestedErrorsToWarnings: Boolean,
-): ConeRigidType? {
+): ConeDenotableType? {
     val enhancedIsNullable = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
         NullabilityQualifier.NOT_NULL -> false

@@ -108,7 +108,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedStubTypeForVariableInSubtyping(type: RigidTypeMarker) =
-        type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
+        type.asDenotableType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
             ?.getType()?.asRigidType()?.isStubTypeForVariableInSubtyping() == true
 
     private fun TypeSystemCommonSuperTypesContext.refineNullabilityForUndefinedNullability(
@@ -248,7 +248,7 @@ object NewCommonSuperTypeCalculator {
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: RigidTypeMarker): Boolean {
         val projectedType =
-            type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
+            type.asDenotableType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
                 it.isStarProjection()
             }?.getType() ?: return false
         return projectedType.asRigidType()?.isStubTypeForVariableInSubtyping() == true
@@ -380,7 +380,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
-        val capturedType = typeArgument.getType()?.asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
+        val capturedType = typeArgument.getType()?.asDenotableType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
         if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
 
         return capturedType.typeConstructor().projection()
@@ -439,8 +439,9 @@ object NewCommonSuperTypeCalculator {
         return true
     }
 
-    private fun TypeSystemCommonSuperTypesContext.typeConstructorsWithExpandedStarProjections(types: Set<SimpleTypeMarker>) = sequence {
+    private fun TypeSystemCommonSuperTypesContext.typeConstructorsWithExpandedStarProjections(types: Set<RigidTypeMarker>) = sequence {
         for (type in types) {
+            if (type !is SimpleTypeMarker) continue
             if (isCapturedStarProjection(type)) {
                 for (supertype in supertypesIfCapturedStarProjection(type).orEmpty()) {
                     yield(supertype.lowerBoundIfFlexible().typeConstructor())
@@ -454,7 +455,8 @@ object NewCommonSuperTypeCalculator {
     private fun TypeSystemCommonSuperTypesContext.isCapturedStarProjection(type: SimpleTypeMarker): Boolean =
         type.asCapturedType()?.typeConstructor()?.projection()?.isStarProjection() == true
 
-    private fun TypeSystemCommonSuperTypesContext.supertypesIfCapturedStarProjection(type: SimpleTypeMarker): Collection<KotlinTypeMarker>? {
+    private fun TypeSystemCommonSuperTypesContext.supertypesIfCapturedStarProjection(type: RigidTypeMarker): Collection<KotlinTypeMarker>? {
+        if (type !is SimpleTypeMarker) return null
         val constructor = type.asCapturedType()?.typeConstructor() ?: return null
         return if (constructor.projection().isStarProjection())
             constructor.supertypes()

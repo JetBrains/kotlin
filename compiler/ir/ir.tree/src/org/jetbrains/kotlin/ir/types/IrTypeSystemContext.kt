@@ -43,6 +43,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.asRigidType() = this as? SimpleTypeMarker
 
+    override fun KotlinTypeMarker.asDenotableType() = this as? SimpleTypeMarker
+
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? = this as? FlexibleTypeMarker
 
     override fun KotlinTypeMarker.isError() = this is IrErrorType

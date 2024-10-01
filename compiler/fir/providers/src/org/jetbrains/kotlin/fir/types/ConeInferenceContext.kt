@@ -98,14 +98,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes
             )
-            is ConeIntersectionType -> if (coneAttributes === constructor.attributes) {
-                constructor
-            } else {
-                ConeIntersectionType(
-                    constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
-                )
-            }
+            is ConeIntersectionType,
             is ConeCapturedTypeConstructor,
             is ConeIntegerLiteralType,
             is ConeStubTypeConstructor,
@@ -163,6 +156,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             is ConeSimpleKotlinType -> typeDepth()
             is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
             is ConeDefinitelyNotNullType -> original.typeDepth()
+            is ConeIntersectionType -> 1
         }
     }
 

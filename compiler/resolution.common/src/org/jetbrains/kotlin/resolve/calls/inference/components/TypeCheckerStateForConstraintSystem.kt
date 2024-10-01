@@ -100,7 +100,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
-        val rigidType = type.asRigidType()
+        val rigidType = type.asDenotableType()
         val typeMarker = rigidType?.asCapturedTypeUnwrappingDnn() ?: return null
 
         val projection = typeMarker.typeConstructorProjection()
@@ -158,7 +158,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     private fun extractTypeVariableForSubtype(subType: KotlinTypeMarker, superType: KotlinTypeMarker): KotlinTypeMarker? =
         with(extensionTypeContext) {
 
-            val typeMarker = subType.asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return null
+            val typeMarker = subType.asDenotableType()?.asCapturedTypeUnwrappingDnn() ?: return null
 
             val projection = typeMarker.typeConstructorProjection()
             if (projection.isStarProjection()) return null

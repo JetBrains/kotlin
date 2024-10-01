@@ -282,6 +282,7 @@ fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<
         is ConeSimpleKotlinType -> toClassSymbol(session)
         is ConeFlexibleType -> upperBound.toClassSymbol(session)
         is ConeDefinitelyNotNullType -> original.toClassSymbol(session)
+        is ConeIntersectionType -> null
     }
 }
 

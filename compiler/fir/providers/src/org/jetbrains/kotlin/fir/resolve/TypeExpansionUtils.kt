@@ -69,7 +69,7 @@ fun ConeKotlinType.fullyExpandedType(
         val expandedUpper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
         when {
             expandedLower === lowerBound && expandedUpper === upperBound -> this
-            this is ConeRawType -> ConeRawType.create(expandedLower, expandedUpper)
+            this is ConeRawType -> ConeRawType.create(expandedLower as ConeDenotableType, expandedUpper as ConeDenotableType)
             else -> ConeFlexibleType(expandedLower, expandedUpper)
         }
     }
@@ -93,14 +93,27 @@ fun ConeSimpleKotlinType.fullyExpandedType(
 /**
  * @see fullyExpandedType (the first function in the file)
  */
+fun ConeDenotableType.fullyExpandedType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+): ConeDenotableType {
+    return when (this) {
+        is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
+        // Expanding DNN type makes no sense, as its original type cannot be class-like type
+        is ConeDefinitelyNotNullType -> this
+    }
+}
+
+/**
+ * @see fullyExpandedType (the first function in the file)
+ */
 fun ConeRigidType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeRigidType {
     return when (this) {
-        is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
-        // Expanding DNN type makes no sense, as its original type cannot be class-like type
-        is ConeDefinitelyNotNullType -> this
+        is ConeDenotableType -> fullyExpandedType(useSiteSession, expandedConeType)
+        is ConeIntersectionType -> this
     }
 }
 

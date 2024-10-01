@@ -215,7 +215,7 @@ private fun isSubtypeForSamConversion(
             session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
         ) ?: return false
     // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
-    val expectedReturnType = classLikeExpectedFunctionType.returnType(session).unwrapToSimpleTypeUsingLowerBound()
+    val expectedReturnType = classLikeExpectedFunctionType.returnType(session).unwrapToSimpleTypeUsingLowerBound()!!
     val returnTypeCompatible =
         // TODO: can we remove is ConeTypeParameterType check here?
         expectedReturnType is ConeTypeParameterType ||
@@ -247,7 +247,7 @@ private fun isSubtypeForSamConversion(
                         stubTypesEqualToAnything = true
                     ),
                     invokeParameter.returnTypeRef.coneType,
-                    expectedParameterType,
+                    expectedParameterType!!,
                     isFromNullabilityConstraint = false
                 )
     }

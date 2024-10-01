@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.types.ConeRigidType
+import org.jetbrains.kotlin.fir.types.ConeDenotableType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.mpp.ClassLikeSymbolMarker
@@ -64,8 +64,8 @@ sealed class FirClassSymbol<out C : FirClass>(classId: ClassId) : FirClassLikeSy
             return fir.superTypeRefs as List<FirResolvedTypeRef>
         }
 
-    val resolvedSuperTypes: List<ConeRigidType>
-        get() = resolvedSuperTypeRefs.map { it.coneType as ConeRigidType }
+    val resolvedSuperTypes: List<ConeDenotableType>
+        get() = resolvedSuperTypeRefs.map { it.coneType as ConeDenotableType }
 
     val declarationSymbols: List<FirBasedSymbol<*>>
         get() = fir.declarations.map { it.symbol }

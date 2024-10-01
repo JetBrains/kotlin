@@ -232,7 +232,7 @@ internal class StubBasedFirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    private fun simpleType(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType? {
+    private fun simpleType(typeReference: KtTypeReference, attributes: ConeAttributes): ConeDenotableType? {
         val constructor = typeSymbol(typeReference) ?: return null
         val isNullable = typeReference.typeElement is KtNullableType
         if (constructor is ConeTypeParameterLookupTag) {
@@ -276,7 +276,7 @@ internal class StubBasedFirTypeDeserializer(
         )
     }
 
-    private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
+    private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeDenotableType =
         simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
 
     private fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =

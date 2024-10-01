@@ -44,7 +44,7 @@ object ConeTypeIntersector {
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet<ConeKotlinType>()) {
             if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
-        if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single() as ConeRigidType
+        if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single() as ConeDenotableType
 
         /*
          * Here we drop types from intersection set for cases like that:
@@ -67,9 +67,9 @@ object ConeTypeIntersector {
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
         // Sometimes we can return raw type here
         return resultList.singleOrNull() ?: run {
-            require(resultList.all { it is ConeRigidType })
+            require(resultList.all { it is ConeDenotableType })
             @Suppress("UNCHECKED_CAST")
-            ConeIntersectionType(resultList as List<ConeRigidType>)
+            ConeIntersectionType(resultList as List<ConeDenotableType>)
         }
     }
 

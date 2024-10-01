@@ -143,6 +143,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.unwrap() as? SimpleType
     }
 
+    override fun KotlinTypeMarker.asDenotableType(): SimpleTypeMarker? {
+        require(this is KotlinType, this::errorMessage)
+        return this.unwrap() as? SimpleType
+    }
+
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
         require(this is KotlinType, this::errorMessage)
         return this.unwrap() as? FlexibleType

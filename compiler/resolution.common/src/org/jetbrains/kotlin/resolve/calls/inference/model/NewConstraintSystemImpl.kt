@@ -410,7 +410,7 @@ class NewConstraintSystemImpl(
 
     private fun isProperTypeImpl(type: KotlinTypeMarker): Boolean =
         !type.contains {
-            val capturedType = it.asRigidType()?.asCapturedTypeUnwrappingDnn()
+            val capturedType = it.asDenotableType()?.asCapturedTypeUnwrappingDnn()
 
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
                 capturedType.typeConstructorProjection().getType()

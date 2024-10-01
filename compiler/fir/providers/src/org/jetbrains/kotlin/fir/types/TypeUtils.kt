@@ -98,6 +98,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
         is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original, avoidComprehensiveCheck)) {
             ConeDefinitelyNotNullType(original)
         }
+        is ConeIntersectionType -> null
     }
 }
 
@@ -129,7 +130,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
 
     if (this is ConeIntersectionType) {
         return ConeIntersectionType(intersectedTypes.map {
-            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck) as ConeRigidType
+            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck) as ConeDenotableType
         })
     }
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
@@ -295,7 +296,7 @@ fun coneFlexibleOrSimpleType(
 }
 
 fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
-    val type = this.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session)
+    val type = this.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType(session) ?: return false
     return type.attributes.extensionFunctionType != null
 }
 

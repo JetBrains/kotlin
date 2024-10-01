@@ -35,9 +35,9 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
 
-fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
+fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeDenotableType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
-    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
+    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeDenotableType }
     fields.singleOrNull()?.let { (name, type) ->
         if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
@@ -53,21 +53,21 @@ private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSessio
 }
 
 private fun isRecursiveSingleFieldValueClass(
-    type: ConeRigidType,
+    type: ConeDenotableType,
     session: FirSession,
-    visited: MutableSet<ConeRigidType>
+    visited: MutableSet<ConeDenotableType>
 ): Boolean {
     val nextType = type.valueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
     return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
 }
 
-private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
+private fun ConeDenotableType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeDenotableType>>? {
     val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
-    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }
+    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeDenotableType }
 }
 
 fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =

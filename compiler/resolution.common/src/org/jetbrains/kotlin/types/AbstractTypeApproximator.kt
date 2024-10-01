@@ -457,7 +457,7 @@ abstract class AbstractTypeApproximator(
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
 
         fun TypeArgumentMarker.unwrapForComparison(): CapturedTypeMarker? {
-            return getType()?.lowerBoundIfFlexible()?.asCapturedTypeUnwrappingDnn()
+            return getType()?.lowerBoundIfFlexible()?.asDenotableType()?.asCapturedTypeUnwrappingDnn()
         }
 
         return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
@@ -490,14 +490,18 @@ abstract class AbstractTypeApproximator(
             return approximateParametrizedType(type, conf, toSuper, depth + 1)
         }
 
-        val definitelyNotNullType = type.asDefinitelyNotNullType()
+        val typeConstructor = type.typeConstructor()
+        if (typeConstructor.isIntersection()) {
+            return approximateIntersectionType(type, conf, toSuper, depth)
+        }
+
+        val definitelyNotNullType = (type as? DenotableTypeMarker)?.asDefinitelyNotNullType()
         if (definitelyNotNullType != null) {
             return approximateDefinitelyNotNullType(definitelyNotNullType, conf, toSuper, depth)
         }
 
-        // DNN case is handled above
+        // DNN & intersection cases are handled above
         require(type is SimpleTypeMarker)
-        val typeConstructor = type.typeConstructor()
 
         if (typeConstructor.isCapturedTypeConstructor()) {
             val capturedType = type.asCapturedType()
@@ -507,10 +511,6 @@ abstract class AbstractTypeApproximator(
                         "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
             return approximateCapturedType(capturedType, conf, toSuper, depth)
-        }
-
-        if (typeConstructor.isIntersection()) {
-            return approximateIntersectionType(type, conf, toSuper, depth)
         }
 
         if (typeConstructor is TypeVariableTypeConstructorMarker) {
@@ -599,7 +599,7 @@ abstract class AbstractTypeApproximator(
 
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
 
-            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
+            val capturedType = argumentType.lowerBoundIfFlexible().asDenotableType()?.asCapturedTypeUnwrappingDnn()
 
             val capturedStarProjectionOrNull =
                 capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
@@ -774,7 +774,7 @@ abstract class AbstractTypeApproximator(
 
     private fun KotlinTypeMarker.isFlexibleOrCapturedWithFlexibleSuperTypes(): Boolean {
         return hasFlexibleNullability() ||
-                (asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.supertypes()?.all {
+                (asDenotableType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.supertypes()?.all {
                     it.hasFlexibleNullability()
                 } == true)
     }
