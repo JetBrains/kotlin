@@ -149,7 +149,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
 
         fun MultiModuleInfoDumper.checkGoldenData(goldenDataFileExtension: String): () -> Unit = {
             assertions.assertEqualsToFile(
-                expectedFile = testDataDir.resolve("$baseName.$goldenDataFileExtension"),
+                expectedFile = testDataDir.resolve("$baseName.klib-$goldenDataFileExtension"),
                 actual = generateResultingDump()
             )
         }
