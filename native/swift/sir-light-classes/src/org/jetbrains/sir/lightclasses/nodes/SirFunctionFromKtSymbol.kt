@@ -16,7 +16,8 @@ import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.utils.isSuitableForCovariantOverrideOf
+import org.jetbrains.sir.lightclasses.utils.*
+import org.jetbrains.sir.lightclasses.utils.isSubtypeOf
 import org.jetbrains.sir.lightclasses.utils.overridableCandidates
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
@@ -53,8 +54,8 @@ internal class SirFunctionFromKtSymbol(
     override val isOverride: Boolean
         get() = isInstance && overridableCandidates.any {
             this.name == it.name &&
-            this.parameters == it.parameters &&
-            this.returnType.isSuitableForCovariantOverrideOf(it.returnType) &&
+            this.parameters.isSuitableForOverrideOf(it.parameters) &&
+            this.returnType.isSubtypeOf(it.returnType) &&
             this.isInstance == it.isInstance
         }
 

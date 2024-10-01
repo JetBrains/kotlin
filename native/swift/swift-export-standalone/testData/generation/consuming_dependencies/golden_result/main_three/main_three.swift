@@ -1,5 +1,5 @@
-import dependency_deeper_neighbor_exported
 @_implementationOnly import KotlinBridges_main_three
+import dependency_deeper_neighbor_exported
 
 public typealias Foo = ExportedKotlinPackages.dependency.four.AnotherBar
 public var deps_instance_3: main_three.Foo {

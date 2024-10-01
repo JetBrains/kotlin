@@ -34,13 +34,11 @@ public object KotlinRuntimeModule : SirModule() {
             declarations += buildInit {
                 origin = KotlinRuntimeElement()
                 isFailable = false
-                initKind = SirInitializerKind.ORDINARY
                 isOverride = false
             }
             declarations += buildInit {
                 origin = KotlinRuntimeElement()
                 isFailable = false
-                initKind = SirInitializerKind.ORDINARY
                 isOverride = false
                 parameters.add(
                     SirParameter(

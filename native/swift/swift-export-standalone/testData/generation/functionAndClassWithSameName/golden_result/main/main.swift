@@ -1,8 +1,8 @@
 @_exported import ExportedKotlinPackages
-import flattened
+@_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import dep
-@_implementationOnly import KotlinBridges_main
+import flattened
 
 public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {

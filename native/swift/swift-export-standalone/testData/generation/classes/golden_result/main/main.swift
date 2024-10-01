@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
-import KotlinRuntime
 @_implementationOnly import KotlinBridges_main
+import KotlinRuntime
 
 public final class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
     public override init() {

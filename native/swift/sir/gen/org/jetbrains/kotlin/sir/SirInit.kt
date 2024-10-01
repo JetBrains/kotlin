@@ -20,6 +20,7 @@ abstract class SirInit : SirElementBase(), SirCallable {
     abstract override var body: SirFunctionBody?
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
-    abstract val initKind: SirInitializerKind
+    abstract val isConvenience: Boolean
+    abstract val isRequired: Boolean
     abstract val isOverride: Boolean
 }

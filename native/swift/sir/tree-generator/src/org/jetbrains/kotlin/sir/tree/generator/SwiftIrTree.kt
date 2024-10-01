@@ -125,7 +125,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("isFailable", boolean)
         +listField("parameters", parameterType)
 
-        +field("initKind", initKind)
+        +field("isConvenience", boolean)
+        +field("isRequired", boolean)
 
         +field("isOverride", boolean)
     }

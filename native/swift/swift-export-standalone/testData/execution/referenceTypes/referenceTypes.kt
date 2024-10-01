@@ -148,7 +148,7 @@ class HostDerived : HostBase() {
 // EXPORT_TO_SWIFT
 // FILE: overrides.kt
 
-open class Parent() {
+open class Parent(val value: String) {
     open fun foo(): String = "Parent"
     open var bar: Int = 10
 
@@ -159,7 +159,7 @@ open class Parent() {
     open fun nullable(): Parent? = this
 }
 
-open class Child : Parent() {
+open class Child(value: Int) : Parent("$value") {
     override fun foo(): String = "Child"
     override var bar: Int = 20
 
@@ -170,7 +170,7 @@ open class Child : Parent() {
     override fun nullable(): Parent? = this
 }
 
-class GrandChild : Child() {
+class GrandChild(value: Short) : Child(value.toInt()) {
     final override fun foo(): String = "GrandChild"
     final override var bar: Int
         get() = 42
@@ -187,7 +187,7 @@ class GrandChild : Child() {
 // EXPORT_TO_SWIFT
 // FILE: overrides_across_modules.kt
 
-open class Cousin : Parent() {
+open class Cousin(value: String) : Parent(value) {
     override fun foo(): String = "Cousin"
     override var bar: Int = 21
 

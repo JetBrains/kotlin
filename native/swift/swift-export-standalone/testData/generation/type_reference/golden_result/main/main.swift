@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
-import KotlinRuntime
 @_implementationOnly import KotlinBridges_main
+import KotlinRuntime
 
 public final class Class_without_package : KotlinRuntime.KotlinBase {
     public final class INNER_CLASS : KotlinRuntime.KotlinBase {

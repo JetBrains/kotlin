@@ -61,13 +61,22 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirModule.printImports() {
-        val lastImport = imports.lastOrNull()
-        imports.forEach {
-            it.print()
-            if (it == lastImport) {
+        imports
+            .let {
+                if (stableDeclarationsOrder)
+                    imports.sortedWith(compareBy(
+                            { it.moduleName },
+                            { it.mode },
+                        ))
+                else
+                    imports
+            }.takeIf {
+                it.isNotEmpty()
+            }?.forEach {
+                it.print()
+            }?.also {
                 println()
             }
-        }
     }
 
     private fun SirTypealias.print() {
@@ -203,7 +212,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirCallable.printOverride() {
         when (this) {
-            is SirInit -> if (this.isOverride) {
+            is SirInit -> if (this.isOverride && !this.isRequired) {
                 print("override ")
             }
             is SirClassMemberDeclaration -> (this as SirClassMemberDeclaration).printOverride()
@@ -322,11 +331,20 @@ public class SirAsSwiftSourcesPrinter(
         }
     }
 
-    private fun SirCallable.printPreNameKeywords() = when (this) {
-        is SirInit -> initKind.print()
-        is SirFunction -> {}
-        is SirGetter -> print("get")
-        is SirSetter -> print("set")
+    private fun SirCallable.printPreNameKeywords() = this.also {
+        when (this) {
+            is SirInit -> {
+                if (isRequired) {
+                    print("required ")
+                }
+                if (isConvenience) {
+                    print("convenience ")
+                }
+            }
+            is SirFunction -> {}
+            is SirGetter -> print("get")
+            is SirSetter -> print("set")
+        }
     }
 
     private fun SirCallable.printName() = print(
@@ -361,14 +379,6 @@ public class SirAsSwiftSourcesPrinter(
             is SirGetter,
             is SirSetter,
                 -> ""
-        }
-    )
-
-    private fun SirInitializerKind.print() = print(
-        when (this) {
-            SirInitializerKind.ORDINARY -> ""
-            SirInitializerKind.REQUIRED -> "required "
-            SirInitializerKind.CONVENIENCE -> "convenience "
         }
     )
 

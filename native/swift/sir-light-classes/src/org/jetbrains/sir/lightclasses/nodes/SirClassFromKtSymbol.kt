@@ -7,10 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -19,7 +16,6 @@ import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
-import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -27,6 +23,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 
 internal class SirClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -93,7 +90,6 @@ internal class SirClassFromKtSymbol(
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInit {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         isFailable = false
-        initKind = SirInitializerKind.ORDINARY
         isOverride = true
         parameters.add(
             SirParameter(
@@ -106,13 +102,7 @@ internal class SirClassFromKtSymbol(
     private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
         KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(
             kotlinBaseInitDeclaration(),
-            buildInit {
-                origin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
-                visibility = SirVisibility.PRIVATE
-                isFailable = false
-                initKind = SirInitializerKind.ORDINARY
-                isOverride = computeIsOverrideForDesignatedInit(this@SirClassFromKtSymbol, emptyList())
-            },
+            SirObjectSyntheticInit(ktSymbol),
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PUBLIC
@@ -128,4 +118,18 @@ internal class SirClassFromKtSymbol(
 
         else -> listOf(kotlinBaseInitDeclaration())
     }
+}
+
+internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {
+    override val origin: SirOrigin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
+    override val visibility: SirVisibility = SirVisibility.PRIVATE
+    override val isFailable: Boolean = false
+    override val parameters: List<SirParameter> = emptyList()
+    override val documentation: String? = null
+    override val isRequired: Boolean = false
+    override val isConvenience: Boolean = false
+    override val isOverride: Boolean get() = computeIsOverride()
+    override lateinit var parent: SirDeclarationParent
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override var body: SirFunctionBody? = null
 }

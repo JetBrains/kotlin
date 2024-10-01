@@ -7,15 +7,17 @@ open class Cousin : overrides.Parent {
             return Cousin_primitiveTypeVar_get(self.__externalRCRef())
         }
     }
-    public override init() {
-        let __kt = __root___Cousin_init_allocate()
-        super.init(__externalRCRef: __kt)
-        __root___Cousin_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
-    }
     public override init(
         __externalRCRef: Swift.UInt
     ) {
         super.init(__externalRCRef: __externalRCRef)
+    }
+    public override init(
+        value: Swift.String
+    ) {
+        let __kt = __root___Cousin_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___Cousin_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt, value)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Cousin_finalOverrideFunc(self.__externalRCRef())

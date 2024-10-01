@@ -286,9 +286,13 @@ func companionObject() throws {
 }
 
 func overridesShouldWork() throws {
-    let parent: Parent = Parent()
-    let child: Parent = Child()
-    let grandchild: Parent = GrandChild()
+    let parent: Parent = Parent(value: "10")
+    let child: Parent = Child(value: 20)
+    let grandchild: Parent = GrandChild(value: Int16(30))
+
+    try assertEquals(actual: parent.value, expected: "10")
+    try assertEquals(actual: child.value, expected: "20")
+    try assertEquals(actual: grandchild.value, expected: "30")
 
     try assertEquals(actual: parent.foo(), expected: "Parent")
     try assertEquals(actual: child.foo(), expected: "Child")
@@ -322,8 +326,11 @@ func overridesShouldWork() throws {
 }
 
 func overridesShouldWorkAcrossModules() throws {
-    let parent: Parent = Parent()
-    let cousin: Parent = Cousin()
+    let parent: Parent = Parent(value: "parent")
+    let cousin: Parent = Cousin(value: "cousin")
+
+    try assertEquals(actual: parent.value, expected: "parent")
+    try assertEquals(actual: cousin.value, expected: "cousin")
 
     try assertEquals(actual: parent.foo(), expected: "Parent")
     try assertEquals(actual: cousin.foo(), expected: "Cousin")
@@ -386,7 +393,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "openClassesAdhereToLSP", method: withAutorelease(openClassesAdhereToLSP)),
             TestCase(name: "companionObject", method: withAutorelease(companionObject)),
             TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWork)),
-            TestCase(name: "overridesShouldWork", method: withAutorelease(overridesShouldWorkAcrossModules)),
+            TestCase(name: "overridesShouldWorkAcrossModules", method: withAutorelease(overridesShouldWorkAcrossModules)),
         ]
     }
 }

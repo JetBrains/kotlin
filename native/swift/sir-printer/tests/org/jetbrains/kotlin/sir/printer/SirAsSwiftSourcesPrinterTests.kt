@@ -574,7 +574,6 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildInit {
                             origin = SirOrigin.Unknown
-                            initKind = SirInitializerKind.ORDINARY
                             visibility = SirVisibility.PUBLIC
                             isFailable = true
                             isOverride = false
@@ -620,7 +619,6 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildInit {
                             origin = SirOrigin.Unknown
-                            initKind = SirInitializerKind.ORDINARY
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
@@ -650,7 +648,7 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildInit {
                             origin = SirOrigin.Unknown
-                            initKind = SirInitializerKind.REQUIRED
+                            isRequired = true
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
@@ -680,7 +678,7 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildInit {
                             origin = SirOrigin.Unknown
-                            initKind = SirInitializerKind.CONVENIENCE
+                            isConvenience = true
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
